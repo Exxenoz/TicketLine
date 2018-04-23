@@ -1,0 +1,9 @@
+.button {
+    -fx-background-color: #2196F3;
+    -fx-background-radius: 3;
+    -fx-text-fill: white;
+}
+
+.button:default {
+    -fx-background-radius: 3 10;
+}

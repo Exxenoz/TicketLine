@@ -1,0 +1,29 @@
+logging:
+  file: ./log/ticketline.server.log
+  level.: WARN
+
+banner:
+  location: banner/banner.txt
+
+server:
+  context-path: /
+
+spring:
+  application:
+    name: Ticketline Server
+    version: @project.version@
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      use-new-id-generator-mappings: true
+  profiles:
+    active: development
+
+security:
+  basic:
+    enabled: false
+
+management:
+  info:
+    git:
+      mode: full

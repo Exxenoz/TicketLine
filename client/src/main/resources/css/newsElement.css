@@ -1,0 +1,13 @@
+.newsPublishDate {
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+}
+
+.newsTitle {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.newsText {
+    -fx-font-size: 12px;
+}

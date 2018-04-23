@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.*?>
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0"
+           prefWidth="600.0" stylesheets="@/css/ticketlineInfo.css" xmlns="http://javafx.com/javafx/8.0.92"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.TicketlineInfoController">
+    <children>
+        <ImageView fitHeight="220.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@/image/preloader.png"/>
+            </image>
+        </ImageView>
+        <Pane>
+            <children>
+                <Label layoutX="23.0" layoutY="83.0" rotate="-8.0" text="TICKETLINE" textFill="WHITE">
+                    <font>
+                        <Font name="Caviar Dreams Bold" size="60.0"/>
+                    </font>
+                </Label>
+                <Label layoutX="16.0" layoutY="57.0" rotate="-8.0" text="DATE:" textFill="WHITE">
+                    <font>
+                        <Font name="Caviar Dreams Bold" size="18.0"/>
+                    </font>
+                </Label>
+                <Label layoutX="211.0" layoutY="30.0" rotate="-8.0" text="TIME:" textFill="WHITE">
+                    <font>
+                        <Font name="Caviar Dreams Bold" size="18.0"/>
+                    </font>
+                </Label>
+                <Label fx:id="labVersionMajor" layoutX="346.0" layoutY="52.0" rotate="-8.0" textFill="WHITE">
+                    <font>
+                        <Font name="Caviar Dreams Bold" size="64.0"/>
+                    </font>
+                </Label>
+                <Label fx:id="labVersionMinor" alignment="CENTER" layoutX="451.0" layoutY="158.0" prefHeight="30.0"
+                       prefWidth="30.0" text="0" textFill="WHITE">
+                    <font>
+                        <Font name="Caviar Dreams Bold" size="18.0"/>
+                    </font>
+                </Label>
+                <Label fx:id="labVersionPatch" alignment="CENTER" layoutX="518.0" layoutY="158.0" prefHeight="30.0"
+                       prefWidth="30.0" text="0" textFill="WHITE">
+                    <font>
+                        <Font name="Caviar Dreams Bold" size="18.0"/>
+                    </font>
+                </Label>
+                <Label alignment="CENTER" layoutX="411.0" layoutY="39.0" prefWidth="110.0" rotate="-90.0" text="ADMIT"
+                       textFill="WHITE">
+                    <font>
+                        <Font name="Caviar Dreams Bold" size="28.0"/>
+                    </font>
+                </Label>
+                <Label fx:id="labLicenseNumber" alignment="CENTER" layoutX="478.0" layoutY="39.0" prefWidth="110.0"
+                       rotate="-90.0" text="ONE" textFill="WHITE">
+                    <font>
+                        <Font name="Caviar Dreams Bold" size="28.0"/>
+                    </font>
+                </Label>
+                <Label fx:id="labBuildTime" layoutX="259.0" layoutY="23.0" rotate="-8.0" text="23:59" textFill="WHITE">
+                    <font>
+                        <Font name="Caviar Dreams Bold" size="18.0"/>
+                    </font>
+                </Label>
+                <Label fx:id="labBuildDate" layoutX="66.0" layoutY="46.0" rotate="-8.0" text="2016-02-02"
+                       textFill="WHITE">
+                    <font>
+                        <Font name="Caviar Dreams Bold" size="18.0"/>
+                    </font>
+                </Label>
+                <Label fx:id="labInfo" layoutX="18.0" layoutY="63.0" prefHeight="21.0" prefWidth="360.0" rotate="-8.0" textFill="WHITE">
+                    <font>
+                        <Font name="Caviar Dreams Bold" size="10.0"/>
+                    </font>
+                </Label>
+                <Label alignment="CENTER" layoutX="441.0" layoutY="134.0" prefHeight="16.0" prefWidth="49.0" text="ROW"
+                       textFill="#c42424">
+                    <font>
+                        <Font name="Caviar Dreams Bold" size="14.0"/>
+                    </font>
+                </Label>
+                <Label alignment="CENTER" layoutX="509.0" layoutY="134.0" prefHeight="16.0" prefWidth="49.0" text="SEAT"
+                       textFill="#c42424">
+                    <font>
+                        <Font name="Caviar Dreams Bold" size="14.0"/>
+                    </font>
+                </Label>
+            </children>
+        </Pane>
+    </children>
+</StackPane>

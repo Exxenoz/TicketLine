@@ -1,0 +1,21 @@
+logging:
+  file: ./log/ticketline.client.log
+  level.: WARN
+
+banner:
+  location: banner/banner.txt
+
+spring:
+  application:
+    name: Ticketline Client
+    version: @project.version@
+  profiles:
+    active: development
+
+rest-client:
+  user-agent: ${spring.application.name} - ${spring.application.version}
+
+java-fx:
+  initial-height: 640
+  initial-width: 1080
+  title: ${spring.application.name} - ${spring.application.version}

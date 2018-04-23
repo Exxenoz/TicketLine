@@ -1,0 +1,25 @@
+logging:
+  level.: INFO
+  level.at.ac.tuwien.inso.sepm.ticketline.server: DEBUG
+
+application:
+  authentication:
+    signature-algorithm: HS256
+    secret: jwtSecret
+    validity-duration: 600
+    overlap-duration: 300
+
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:h2:file:./database/ticketline;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: ticketline
+    password: ticketline
+  h2:
+    console:
+      enabled: true
+      access-matcher: "hasIpAddress('10.0.0.0/16') or hasIpAddress('127.0.0.0/8') or hasIpAddress('::1')"

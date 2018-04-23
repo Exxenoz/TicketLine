@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<VBox fx:id="vBoxMain" prefHeight="768.0" prefWidth="1024.0" stylesheets="@/css/main.css"
+      xmlns="http://javafx.com/javafx/8.0.92" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.MainController">
+    <children>
+        <ProgressBar fx:id="pbLoadingProgress" maxWidth="1.7976931348623157E308" progress="0.4"
+                     style="-fx-border-insets: 0; -fx-border-radius: 0; -fx-border-style: none;"/>
+        <MenuBar fx:id="mbMain">
+            <menus>
+                <Menu mnemonicParsing="false" text="%menu.application">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#exitApplication" text="%menu.application.exit"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="%menu.help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#aboutApplication" text="%menu.help.about"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <StackPane fx:id="spMainContent" VBox.vgrow="ALWAYS">
+            <children>
+                <TabPane fx:id="tpContent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                         side="LEFT" tabClosingPolicy="UNAVAILABLE">
+                </TabPane>
+            </children>
+        </StackPane>
+    </children>
+</VBox>

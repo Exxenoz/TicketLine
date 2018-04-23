@@ -1,0 +1,49 @@
+{
+  "properties": [
+    {
+      "name": "spring.application.version",
+      "type": "java.lang.String",
+      "description": "The version of the application."
+    },
+    {
+      "name": "rest-client.user-agent",
+      "type": "java.lang.String",
+      "description": "The user agent string which is used to identify to the server."
+    },
+    {
+      "name": "rest-client.remote.protocol",
+      "type": "java.lang.String",
+      "description": "The protocol on which the server can be reached, defaults to http."
+    },
+    {
+      "name": "rest-client.remote.host",
+      "type": "java.lang.String",
+      "description": "The hostname or ipAddress of the server, defaults to localhost."
+    },
+    {
+      "name": "rest-client.remote.port",
+      "type": "java.lang.Integer",
+      "description": "The port of the server, defaults to 8080."
+    },
+    {
+      "name": "rest-client.remote.path",
+      "type": "java.lang.String",
+      "description": "The context path where the api can be reached, defaults to /."
+    },
+    {
+      "name": "java-fx.initial-height",
+      "type": "java.lang.String",
+      "description": "The initial width of the javafx application, defaults to 540."
+    },
+    {
+      "name": "java-fx.initial-width",
+      "type": "java.lang.String",
+      "description": "The initial width of the javafx application, defaults to 960."
+    },
+    {
+      "name": "java-fx.title",
+      "type": "java.lang.String",
+      "description": "The title of the java fx application."
+    }
+  ]
+}

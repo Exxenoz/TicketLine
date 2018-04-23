@@ -1,0 +1,34 @@
+{
+  "properties": [
+    {
+      "name": "spring.application.version",
+      "type": "java.lang.String",
+      "description": "The version of the application."
+    },
+    {
+      "name": "spring.h2.console.access-matcher",
+      "type": "java.lang.String",
+      "description": "The ant-accessMatcher declaring the access rules for the h2-web-console."
+    },
+    {
+      "name": "application.authentication.signature-algorithm",
+      "type": "java.lang.String",
+      "description": "The signature algorithm to use for signing tokens, defaults to HS256."
+    },
+    {
+      "name": "application.authentication.secret",
+      "type": "java.lang.String",
+      "description": "The secret used to sign the authentication token."
+    },
+    {
+      "name": "application.authentication.validity-duration",
+      "type": "java.lang.Long",
+      "description": "The duration in seconds for which an authentication token is valid, defaults to 600."
+    },
+    {
+      "name": "application.authentication.overlap-duration",
+      "type": "java.lang.Long",
+      "description": "The duration in seconds for which the new and the old authentication token are both valid, defaults to 300."
+    }
+  ]
+}

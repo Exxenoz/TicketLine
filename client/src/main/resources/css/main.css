@@ -1,0 +1,97 @@
+/* dark menu bar */
+
+.menu-bar {
+    -fx-background-color: #3c3f41;
+    -fx-padding: 0.0em 0.0em 0.0em 0.0em;
+}
+
+.context-menu {
+    -fx-background-color: #3c3f41;
+}
+
+.menu-bar .label {
+    -fx-text-fill: #BDBDBD;
+}
+
+.menu-button:hover,
+.menu-button:showing {
+     -fx-background-color: #2f65ca;
+}
+
+.menu-item:hover,
+.menu-item:showing, 
+.menu-item:active {
+     -fx-background-color: #2f65ca;
+}
+
+/* glass pane */
+
+.glass > .background {
+    -fx-background-color: derive(#3c3f41, 25%);
+}
+
+.glass > * * > .button {
+    -fx-background-color: white;
+}
+
+/* buttons */
+
+.button {
+    -fx-background-radius: 3;
+}
+
+.button:default {
+    -fx-background-radius: 3 10;
+}
+
+/* bar */
+
+.progress-bar {
+    -fx-indeterminate-bar-length: 500;
+    -fx-indeterminate-bar-escape: true;
+    -fx-indeterminate-bar-flip: true;
+    -fx-indeterminate-bar-animation-time: 1.5;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: linear-gradient(to bottom, derive(-fx-accent, -70%), derive(-fx-accent, 0%), derive(-fx-accent, -30%), derive(-fx-accent, -90%));
+    -fx-background-insets: 0 0 0 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0.2em;
+}
+
+.progress-bar:indeterminate > .bar {
+    -fx-background-color: linear-gradient(to left, transparent, -fx-accent);
+}
+
+.progress-bar > .track {
+    -fx-background-color: #3c3f41;
+    -fx-background-insets: 0, 0 0 0 0, 0 0 0 0;
+    -fx-background-radius: 0;
+}
+
+/* tabs */
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: derive(#3c3f41, 25%);
+}
+
+.tab-pane .tab {
+    -fx-background-color: derive(#3c3f41, 25%);
+    -fx-min-height: 50px;
+    -fx-min-width: 50px;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: #3c3f41;
+}
+
+.tab-pane {
+    -fx-tab-min-height: 50px;
+    -fx-tab-min-width: 50px;
+}
+
+.tab, .tab-pane, .tab-header-background, .tab-pane *.tab-header-area {
+    -fx-background-insets: 0;
+    -fx-padding: 0.0em 0.0em 0.0em 0.0em;
+}
