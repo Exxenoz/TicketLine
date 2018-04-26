@@ -3,12 +3,13 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import org.controlsfx.glyphfont.FontAwesome;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 @Component
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+@Scope(SCOPE_PROTOTYPE)
 public class TabHeaderController {
 
     private static final int HEADER_ICON_SIZE = 25;

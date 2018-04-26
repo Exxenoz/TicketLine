@@ -6,7 +6,13 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 
 import static java.util.Locale.ENGLISH;
 import static java.util.Locale.GERMAN;
@@ -86,15 +92,15 @@ public class BundleManager {
 
         @Override
         public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
-            throws IllegalAccessException, InstantiationException, IOException {
-            String bundleName = toBundleName(baseName, locale);
-            String resourceName = toResourceName(bundleName, "properties");
+            throws IOException {
+            final var bundleName = toBundleName(baseName, locale);
+            final var resourceName = toResourceName(bundleName, "properties");
             ResourceBundle bundle = null;
             InputStream stream = null;
             if (reload) {
-                URL url = loader.getResource(resourceName);
+                final var url = loader.getResource(resourceName);
                 if (url != null) {
-                    URLConnection connection = url.openConnection();
+                    final var connection = url.openConnection();
                     if (connection != null) {
                         connection.setUseCaches(false);
                         stream = connection.getInputStream();

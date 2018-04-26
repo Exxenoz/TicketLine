@@ -8,7 +8,12 @@ import at.ac.tuwien.inso.sepm.ticketline.server.service.NewsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -25,23 +30,23 @@ public class NewsEndpoint {
         this.newsMapper = newsMapper;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    @ApiOperation(value = "Get list of simple news entries")
+    @GetMapping
+    @ApiOperation("Get list of simple news entries")
     public List<SimpleNewsDTO> findAll() {
         return newsMapper.newsToSimpleNewsDTO(newsService.findAll());
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Get detailed information about a specific news entry")
+    @GetMapping("/{id}")
+    @ApiOperation("Get detailed information about a specific news entry")
     public DetailedNewsDTO find(@PathVariable Long id) {
         return newsMapper.newsToDetailedNewsDTO(newsService.findOne(id));
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Publish a new news entry")
     public DetailedNewsDTO publishNews(@RequestBody DetailedNewsDTO detailedNewsDTO) {
-        News news = newsMapper.detailedNewsDTOToNews(detailedNewsDTO);
+        var news = newsMapper.detailedNewsDTOToNews(detailedNewsDTO);
         news = newsService.publishNews(news);
         return newsMapper.newsToDetailedNewsDTO(news);
     }

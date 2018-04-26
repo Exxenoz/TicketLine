@@ -1,14 +1,20 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+
+import static javax.persistence.GenerationType.AUTO;
 
 @Entity
 public class News {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_news_id")
+    @GeneratedValue(strategy = AUTO, generator = "seq_news_id")
     @SequenceGenerator(name = "seq_news_id", sequenceName = "seq_news_id")
     private Long id;
 

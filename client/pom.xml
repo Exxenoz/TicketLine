@@ -20,10 +20,10 @@
         <preloader-class>at.ac.tuwien.inso.sepm.ticketline.client.preloader.AppPreloader</preloader-class>
         <!-- dependency -->
         <ticketline-rest.version>3.1.0-SNAPSHOT</ticketline-rest.version>
-        <httpclient.version>4.5.3</httpclient.version>
+        <httpclient.version>4.5.5</httpclient.version>
         <controlsfx.version>9.0.0</controlsfx.version>
         <!-- plugins -->
-        <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
+        <maven-jar-plugin.version>3.1.0</maven-jar-plugin.version>
     </properties>
 
     <dependencies>
@@ -45,10 +45,6 @@
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -79,35 +75,21 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <jvmArguments>--add-modules java.xml.bind</jvmArguments>
-                    <jvmArguments>-Djavafx.preloader=${preloader-class}</jvmArguments>
+                    <jvmArguments>
+                        -Djavafx.preloader=${preloader-class}
+                    </jvmArguments>
                     <executable>true</executable>
                     <skip>false</skip>
                     <fork>true</fork>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>${maven-jar-plugin.version}</version>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <JavaFX-Preloader-Class>${preloader-class}</JavaFX-Preloader-Class>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
             </plugin>
         </plugins>
     </build>

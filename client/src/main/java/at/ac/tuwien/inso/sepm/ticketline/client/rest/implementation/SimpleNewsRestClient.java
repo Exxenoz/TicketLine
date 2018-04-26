@@ -6,35 +6,37 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.news.SimpleNewsDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 
+import java.lang.invoke.MethodHandles;
+import java.net.URI;
 import java.util.List;
+
+import static org.springframework.http.HttpMethod.GET;
 
 @Component
 public class SimpleNewsRestClient implements NewsRestClient {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleNewsRestClient.class);
-    private static final String NEWS_URL = "/news";
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private final RestClient restClient;
+    private final URI newsUri;
 
     public SimpleNewsRestClient(RestClient restClient) {
         this.restClient = restClient;
+        this.newsUri = restClient.getServiceURI("/news");
     }
 
     @Override
     public List<SimpleNewsDTO> findAll() throws DataAccessException {
         try {
-            LOGGER.debug("Retrieving all news from {}", restClient.getServiceURI(NEWS_URL));
-            ResponseEntity<List<SimpleNewsDTO>> news =
+            LOGGER.debug("Retrieving all news from {}", newsUri);
+            final var news =
                 restClient.exchange(
-                    restClient.getServiceURI(NEWS_URL),
-                    HttpMethod.GET,
-                    null,
+                    new RequestEntity<>(GET, newsUri),
                     new ParameterizedTypeReference<List<SimpleNewsDTO>>() {
                     });
             LOGGER.debug("Result status was {} with content {}", news.getStatusCode(), news.getBody());

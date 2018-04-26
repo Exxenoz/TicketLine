@@ -3,14 +3,14 @@ package at.ac.tuwien.inso.sepm.ticketline.server.integrationtest;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.DetailedNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.SimpleNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.News;
-import at.ac.tuwien.inso.sepm.ticketline.server.integrationtest.base.BaseIntegrationTest;
+import at.ac.tuwien.inso.sepm.ticketline.server.integrationtest.base.BaseIT;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.NewsRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.BDDMockito;
+import org.mockito.*;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,9 +21,9 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.*;
 
-public class NewsEndpointTest extends BaseIntegrationTest {
+public class NewsEndpointIT extends BaseIT {
 
     private static final String NEWS_ENDPOINT = "/news";
     private static final String SPECIFIC_NEWS_PATH = "/{newsId}";

@@ -7,17 +7,18 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+
+import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
 
 @Component
 public class LocaleInterceptor implements ClientHttpRequestInterceptor {
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-        HttpHeaders headers = request.getHeaders();
-        headers.add(HttpHeaders.ACCEPT_LANGUAGE, StringUtils.toLanguageTag(LocaleContextHolder.getLocale()));
+        final var headers = request.getHeaders();
+        headers.add(ACCEPT_LANGUAGE, LocaleContextHolder.getLocale().toLanguageTag());
         return execution.execute(request, body);
     }
 

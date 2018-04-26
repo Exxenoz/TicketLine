@@ -7,7 +7,9 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
+
+import static io.jsonwebtoken.SignatureAlgorithm.HS256;
+import static java.time.temporal.ChronoUnit.SECONDS;
 
 @Validated
 @Configuration
@@ -15,13 +17,13 @@ import java.time.temporal.ChronoUnit;
 public class AuthenticationConfigurationProperties {
 
     @NotNull
-    private SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+    private SignatureAlgorithm signatureAlgorithm = HS256;
     @NotNull
     private String secret;
     @NotNull
-    private Duration validityDuration = Duration.of(600L, ChronoUnit.SECONDS);
+    private Duration validityDuration = Duration.of(600L, SECONDS);
     @NotNull
-    private Duration overlapDuration = Duration.of(300L, ChronoUnit.SECONDS);
+    private Duration overlapDuration = Duration.of(300L, SECONDS);
 
     public SignatureAlgorithm getSignatureAlgorithm() {
         return signatureAlgorithm;
@@ -44,7 +46,7 @@ public class AuthenticationConfigurationProperties {
     }
 
     public void setValidityDuration(long validityDuration) {
-        this.validityDuration = Duration.of(validityDuration, ChronoUnit.SECONDS);
+        this.validityDuration = Duration.of(validityDuration, SECONDS);
     }
 
     public Duration getOverlapDuration() {
@@ -52,6 +54,6 @@ public class AuthenticationConfigurationProperties {
     }
 
     public void setOverlapDuration(long overlapDuration) {
-        this.overlapDuration = Duration.of(overlapDuration, ChronoUnit.SECONDS);
+        this.overlapDuration = Duration.of(overlapDuration, SECONDS);
     }
 }

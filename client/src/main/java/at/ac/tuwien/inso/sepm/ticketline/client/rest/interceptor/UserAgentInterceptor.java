@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+import static org.springframework.http.HttpHeaders.USER_AGENT;
+
 @Component
 public class UserAgentInterceptor implements ClientHttpRequestInterceptor {
 
@@ -21,9 +23,9 @@ public class UserAgentInterceptor implements ClientHttpRequestInterceptor {
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-        HttpHeaders headers = request.getHeaders();
+        final var headers = request.getHeaders();
         if (userAgent != null) {
-            headers.add(HttpHeaders.USER_AGENT, userAgent);
+            headers.add(USER_AGENT, userAgent);
         }
         return execution.execute(request, body);
     }

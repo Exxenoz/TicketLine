@@ -3,12 +3,13 @@ package at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.news;
 import org.mapstruct.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 @Component
 public class NewsSummaryMapper {
@@ -17,8 +18,8 @@ public class NewsSummaryMapper {
     private static final Pattern PATTERN = Pattern.compile("^(.{0," + NUMBER_OF_ALLOWED_CHARACTERS + "})(\\s|$)|.*$");
 
     @Qualifier
-    @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.SOURCE)
+    @Target(METHOD)
+    @Retention(SOURCE)
     public @interface NewsSummary {
     }
 
@@ -33,7 +34,7 @@ public class NewsSummaryMapper {
      */
     @NewsSummary
     public String trimTextToSummary(String text) {
-        Matcher matcher = PATTERN.matcher(text);
+        final var matcher = PATTERN.matcher(text);
         if (!matcher.find()) {
             return "";
         }

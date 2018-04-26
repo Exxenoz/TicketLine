@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.text.Font?>
 <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0"
            prefWidth="600.0" stylesheets="@/css/ticketlineInfo.css" xmlns="http://javafx.com/javafx/8.0.92"
            xmlns:fx="http://javafx.com/fxml/1"
@@ -73,7 +73,8 @@
                         <Font name="Caviar Dreams Bold" size="18.0"/>
                     </font>
                 </Label>
-                <Label fx:id="labInfo" layoutX="18.0" layoutY="63.0" prefHeight="21.0" prefWidth="360.0" rotate="-8.0" textFill="WHITE">
+                <Label fx:id="labInfo" layoutX="18.0" layoutY="63.0" prefHeight="21.0" prefWidth="360.0" rotate="-8.0"
+                       textFill="WHITE">
                     <font>
                         <Font name="Caviar Dreams Bold" size="10.0"/>
                     </font>

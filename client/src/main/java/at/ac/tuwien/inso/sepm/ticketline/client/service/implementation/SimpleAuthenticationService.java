@@ -13,6 +13,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
+import java.lang.invoke.MethodHandles;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -21,7 +22,7 @@ import java.util.concurrent.ScheduledFuture;
 @Service
 public class SimpleAuthenticationService implements AuthenticationService, DisposableBean {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleAuthenticationService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private final AuthenticationRestClient authenticationRestClient;
     private final AuthenticationInformationService authenticationInformationService;
@@ -67,7 +68,7 @@ public class SimpleAuthenticationService implements AuthenticationService, Dispo
         }
         LOGGER.debug("authentication result {}", authenticationToken);
         authenticationInformationService.setCurrentAuthenticationToken(authenticationToken.getCurrentToken());
-        AuthenticationTokenInfo authenticationTokenInfo = authenticationRestClient.tokenInfoCurrent();
+        final var authenticationTokenInfo = authenticationRestClient.tokenInfoCurrent();
         scheduleReAuthenticationTask(authenticationTokenInfo
             .getExpireAt()
             .minus(authenticationTokenInfo.getOverlapDuration().dividedBy(2)));

@@ -10,9 +10,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import org.springframework.stereotype.Component;
+
+import static javafx.scene.control.ProgressIndicator.INDETERMINATE_PROGRESS;
 
 @Component
 public class AuthenticationController {
@@ -34,7 +35,7 @@ public class AuthenticationController {
 
     @FXML
     private void handleAuthenticate(ActionEvent actionEvent) {
-        Task<AuthenticationTokenInfo> task = new Task<AuthenticationTokenInfo>() {
+        final var task = new Task<AuthenticationTokenInfo>() {
             @Override
             protected AuthenticationTokenInfo call() throws DataAccessException {
                 return authenticationService.authenticate(
@@ -52,8 +53,7 @@ public class AuthenticationController {
             }
         };
         task.runningProperty().addListener((observable, oldValue, running) ->
-            mainController.setProgressbarProgress(
-                running ? ProgressBar.INDETERMINATE_PROGRESS : 0)
+            mainController.setProgressbarProgress(running ? INDETERMINATE_PROGRESS : 0)
         );
         new Thread(task).start();
     }

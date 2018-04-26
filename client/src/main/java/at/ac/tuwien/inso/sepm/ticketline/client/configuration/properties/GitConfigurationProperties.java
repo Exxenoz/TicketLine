@@ -10,18 +10,19 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.Properties;
 
 @Configuration
 @ConditionalOnMissingBean(GitProperties.class)
 public class GitConfigurationProperties {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GitConfigurationProperties.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final String PREFIX_TO_STRIP = "git.";
 
     @Bean
     public GitProperties gitProperties() {
-        Properties properties = new Properties();
+        final var properties = new Properties();
         try {
             PropertiesLoaderUtils.loadProperties(new ClassPathResource("git.properties"))
                 .forEach((key, value) -> {

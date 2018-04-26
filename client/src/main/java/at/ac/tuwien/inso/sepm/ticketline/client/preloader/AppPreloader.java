@@ -10,19 +10,18 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 
+import static javafx.stage.StageStyle.TRANSPARENT;
+
 public class AppPreloader extends Preloader {
 
-    public static final String DEFAULT_BUILD_VERSION = "3.0.0";
+    private static final String DEFAULT_BUILD_VERSION = "3.0.0";
 
     private Stage stage;
 
@@ -37,24 +36,27 @@ public class AppPreloader extends Preloader {
 
     public void start(Stage stage) throws IOException {
         this.stage = stage;
-        this.stage.initStyle(StageStyle.TRANSPARENT);
+        stage.initStyle(TRANSPARENT);
         Font.loadFont(getClass().getResource("/font/CaviarDreams_Bold.ttf").toExternalForm(), 12);
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/preloader.fxml"));
+        final var fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/preloader.fxml"));
         fxmlLoader.setController(this);
-        this.stage.setScene(new Scene(fxmlLoader.load()));
+        stage.setScene(new Scene(fxmlLoader.load()));
         ticketlineInfoController.setInfoText("Loading ...");
-        Properties properties = new Properties();
-        InputStream buildInfoPropertiesResource = getClass().getResourceAsStream("/git.properties");
+        final var properties = new Properties();
+        final var buildInfoPropertiesResource = getClass().getResourceAsStream("/git.properties");
         if (buildInfoPropertiesResource != null) {
             properties.load(buildInfoPropertiesResource);
         }
         ticketlineInfoController.setVersion(properties.getProperty("git.build.version", DEFAULT_BUILD_VERSION));
-        LocalDateTime localDateTime = ZonedDateTime.parse(
+        final var localDateTime = ZonedDateTime.parse(
             properties.getProperty("git.build.time", ISO_DATETIME_FORMATTER.format(DEFAULT_BUILD_TIME)),
             ISO_DATETIME_FORMATTER
         ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
         ticketlineInfoController.setBuildDateTime(localDateTime);
-        this.stage.show();
+        stage.show();
+        stage.setAlwaysOnTop(true);
+        stage.toFront();
+        stage.setAlwaysOnTop(false);
     }
 
     @Override
@@ -62,17 +64,17 @@ public class AppPreloader extends Preloader {
         if (pn instanceof StateChangeNotification) {
             stage.hide();
         } else if (pn instanceof SpringFxApplication.SpringProgressNotification) {
-            double progress = ((SpringFxApplication.SpringProgressNotification) pn).getProgress();
-            if (progress <= 0) {
+            final var progressInPercent = ((SpringFxApplication.SpringProgressNotification) pn).getProgress();
+            if (progressInPercent <= 0) {
                 if (pbLoad.getProgress() != ProgressIndicator.INDETERMINATE_PROGRESS) {
                     pbLoad.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
                 }
             } else {
-                pbLoad.setProgress(progress);
+                pbLoad.setProgress(progressInPercent);
             }
-            String details = ((SpringFxApplication.SpringProgressNotification) pn).getDetails();
-            if ((details != null) && !details.isEmpty()) {
-                ticketlineInfoController.setInfoText(details);
+            final var detailsText = ((SpringFxApplication.SpringProgressNotification) pn).getDetails();
+            if ((detailsText != null) && !detailsText.isEmpty()) {
+                ticketlineInfoController.setInfoText(detailsText);
             } else {
                 ticketlineInfoController.setInfoText("Loading...");
             }

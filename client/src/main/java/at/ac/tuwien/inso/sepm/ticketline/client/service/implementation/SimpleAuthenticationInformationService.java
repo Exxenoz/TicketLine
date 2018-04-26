@@ -2,20 +2,22 @@ package at.ac.tuwien.inso.sepm.ticketline.client.service.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationInformationService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationTokenInfo;
-import javafx.application.Platform;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Optional.ofNullable;
+import static javafx.application.Platform.runLater;
+
 @Service
 public class SimpleAuthenticationInformationService implements AuthenticationInformationService {
 
-    private String currentAuthenticationToken;
+    private final List<AuthenticationChangeListener> changeListener = new ArrayList<>();
 
+    private String currentAuthenticationToken;
     private AuthenticationTokenInfo currentAuthenticationTokenInfo;
-    private List<AuthenticationChangeListener> changeListener = new ArrayList<>();
 
     @Override
     public void setCurrentAuthenticationToken(String currentAuthenticationToken) {
@@ -26,7 +28,7 @@ public class SimpleAuthenticationInformationService implements AuthenticationInf
     public void setCurrentAuthenticationTokenInfo(AuthenticationTokenInfo currentAuthenticationTokenInfo) {
         this.currentAuthenticationTokenInfo = currentAuthenticationTokenInfo;
         changeListener.forEach(authenticationChangeListener ->
-            Platform.runLater(() -> authenticationChangeListener.changed(this.currentAuthenticationTokenInfo)
+            runLater(() -> authenticationChangeListener.changed(this.currentAuthenticationTokenInfo)
             ));
     }
 
@@ -37,7 +39,7 @@ public class SimpleAuthenticationInformationService implements AuthenticationInf
 
     @Override
     public Optional<AuthenticationTokenInfo> getCurrentAuthenticationTokenInfo() {
-        return Optional.ofNullable(currentAuthenticationTokenInfo);
+        return ofNullable(currentAuthenticationTokenInfo);
     }
 
     @Override

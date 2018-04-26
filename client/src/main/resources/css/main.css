@@ -15,13 +15,13 @@
 
 .menu-button:hover,
 .menu-button:showing {
-     -fx-background-color: #2f65ca;
+    -fx-background-color: #2f65ca;
 }
 
 .menu-item:hover,
-.menu-item:showing, 
+.menu-item:showing,
 .menu-item:active {
-     -fx-background-color: #2f65ca;
+    -fx-background-color: #2f65ca;
 }
 
 /* glass pane */

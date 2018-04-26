@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.concurrent.TimeUnit;
@@ -17,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class NewsDataGenerator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NewsDataGenerator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final int NUMBER_OF_NEWS_TO_GENERATE = 25;
 
     private final NewsRepository newsRepository;
@@ -35,7 +36,7 @@ public class NewsDataGenerator {
         } else {
             LOGGER.info("generating {} news entries", NUMBER_OF_NEWS_TO_GENERATE);
             for (int i = 0; i < NUMBER_OF_NEWS_TO_GENERATE; i++) {
-                News news = News.builder()
+                final var news = News.builder()
                     .title(faker.lorem().characters(25, 100))
                     .text(faker.lorem().paragraph(faker.number().numberBetween(5, 10)))
                     .publishedAt(

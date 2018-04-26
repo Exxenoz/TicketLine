@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -18,7 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 @Component
 public class SpringFxmlLoader {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpringFxmlLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private final ApplicationContext applicationContext;
 
@@ -50,9 +51,9 @@ public class SpringFxmlLoader {
                     bean = clazz.getDeclaredConstructor().newInstance();
                 } catch (
                     InvocationTargetException |
-                    NoSuchMethodException |
-                    InstantiationException |
-                    IllegalAccessException e
+                        NoSuchMethodException |
+                        InstantiationException |
+                        IllegalAccessException e
                     ) {
                     LOGGER.error("Failed to instantiate bean of type {}", clazz.getName(), e);
                     throw new RuntimeException("Failed to instantiate bean of type " + clazz.getName(), e);

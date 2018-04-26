@@ -2,13 +2,12 @@ logging:
   file: ./log/ticketline.client.log
   level.: WARN
 
-banner:
-  location: banner/banner.txt
-
 spring:
   application:
     name: Ticketline Client
     version: @project.version@
+  banner:
+    location: banner/banner.txt
   profiles:
     active: development
 

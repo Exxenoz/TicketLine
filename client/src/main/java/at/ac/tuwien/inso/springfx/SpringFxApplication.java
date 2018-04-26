@@ -13,7 +13,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.beans.PropertyDescriptor;
-import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -89,7 +88,7 @@ public abstract class SpringFxApplication extends Application {
         private int loadedBeans;
         private int toLoad;
 
-        public PreloaderNotifyingBeanPostProcessor(ConfigurableApplicationContext ac) {
+        PreloaderNotifyingBeanPostProcessor(ConfigurableApplicationContext ac) {
             this.ac = ac;
             progress = 0;
             loadedBeans = 0;

@@ -6,7 +6,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.service.implementation.SimpleHea
 import io.restassured.RestAssured;
 import io.restassured.config.ObjectMapperConfig;
 import io.restassured.config.RestAssuredConfig;
-import org.assertj.core.util.Strings;
+import org.assertj.core.util.*;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +19,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("integration-test")
-public abstract class BaseIntegrationTest {
+public abstract class BaseIT {
 
-    private static final String SERVER_HOST = "http://localhost";
     private static final String USER_USERNAME = "user";
     private static final String USER_PASSWORD = "password";
-    private static final String ADMIN_PASSWORD = "password";
     private static final String ADMIN_USERNAME = "admin";
+    private static final String ADMIN_PASSWORD = "password";
 
-    @Value("${server.context-path}")
+    @Value("${server.servlet.context-path:/}")
     private String contextPath;
 
     @LocalServerPort
@@ -44,7 +43,6 @@ public abstract class BaseIntegrationTest {
 
     @Before
     public void beforeBase() {
-        RestAssured.baseURI = SERVER_HOST;
         RestAssured.basePath = contextPath;
         RestAssured.port = port;
         RestAssured.config = RestAssuredConfig.config().

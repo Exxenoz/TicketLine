@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
+
+import static java.time.temporal.ChronoUnit.MILLIS;
 
 @Component
 public class InfoEndpointUptimeContributor implements InfoContributor {
-
 
     private final RuntimeMXBean runtimeMXBean;
 
@@ -21,6 +21,6 @@ public class InfoEndpointUptimeContributor implements InfoContributor {
 
     @Override
     public void contribute(Info.Builder builder) {
-        builder.withDetail("uptime", Duration.of(runtimeMXBean.getUptime(), ChronoUnit.MILLIS));
+        builder.withDetail("uptime", Duration.of(runtimeMXBean.getUptime(), MILLIS));
     }
 }

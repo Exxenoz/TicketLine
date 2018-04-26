@@ -12,15 +12,15 @@ public class AuthenticationHeaderToken extends AbstractAuthenticationToken {
     private final String token;
     private final Object principal;
 
-    public AuthenticationHeaderToken(String token) {
+    AuthenticationHeaderToken(String token) {
         super(null);
         this.token = token;
         principal = null;
         setAuthenticated(false);
     }
 
-    public AuthenticationHeaderToken(Object principal, String token,
-                                     Collection<? extends GrantedAuthority> authorities) {
+    AuthenticationHeaderToken(Object principal, String token,
+                              Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.principal = principal;
         this.token = token;

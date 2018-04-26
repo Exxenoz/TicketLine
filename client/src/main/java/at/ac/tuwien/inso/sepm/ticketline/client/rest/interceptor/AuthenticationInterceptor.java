@@ -21,7 +21,7 @@ public class AuthenticationInterceptor implements ClientHttpRequestInterceptor {
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-        HttpHeaders headers = request.getHeaders();
+        final var headers = request.getHeaders();
         authenticationInformationService.getCurrentAuthenticationToken().ifPresent(
             authenticationToken -> headers.add("Authorization", "Bearer " + authenticationToken));
         return execution.execute(request, body);

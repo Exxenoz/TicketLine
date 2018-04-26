@@ -7,7 +7,6 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.info.Info;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.info.GitProperties;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -21,8 +20,10 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 @Component
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+@Scope(SCOPE_PROTOTYPE)
 public class AboutController {
 
     @FXML
@@ -83,7 +84,7 @@ public class AboutController {
     @FXML
     private void initialize() {
         labClientVersion.setText(gitProperties.get("build.version"));
-        String buildTimeString = gitProperties.get("build.time");
+        final var buildTimeString = gitProperties.get("build.time");
         LocalDateTime buildTime = null;
         if (buildTimeString != null && !buildTimeString.isEmpty()) {
             buildTime = ZonedDateTime.parse(buildTimeString, ISO_DATETIME_FORMATTER)
@@ -91,7 +92,7 @@ public class AboutController {
         }
         labClientBuildTime.setText((buildTime != null) ? DATETIME_FORMATTER.format(buildTime) : "-");
         labClientCommit.setText(gitProperties.get("commit.id.abbrev"));
-        String commitTimeString = gitProperties.get("commit.time");
+        final var commitTimeString = gitProperties.get("commit.time");
         LocalDateTime commitTime = null;
         if (commitTimeString != null && !commitTimeString.isEmpty()) {
             commitTime = ZonedDateTime.parse(commitTimeString, ISO_DATETIME_FORMATTER)
@@ -99,7 +100,7 @@ public class AboutController {
         }
         labClientCommitTime.setText((commitTime != null) ? DATETIME_FORMATTER.format(commitTime) : "-");
         labClientBranch.setText(gitProperties.get("branch"));
-        String tags = gitProperties.get("tags");
+        final var tags = gitProperties.get("tags");
         labClientTags.setText((tags != null && !tags.isEmpty()) ? tags : "-");
         labClientUptime.setText(formatDuration(Duration.of(runtimeMXBean.getUptime(), ChronoUnit.MILLIS)));
 
@@ -113,7 +114,7 @@ public class AboutController {
         labServerTags.setText("-");
         labServerUptime.setText("-");
 
-        Task<Info> task = new Task<Info>() {
+        final var task = new Task<Info>() {
             @Override
             protected Info call() throws DataAccessException {
                 return infoRestClient.find();
@@ -122,17 +123,17 @@ public class AboutController {
             @Override
             protected void succeeded() {
                 super.succeeded();
-                Info info = getValue();
+                final var info = getValue();
                 if (info != null) {
-                    Info.Git git = info.getGit();
+                    final var git = info.getGit();
                     if (git != null) {
-                        Info.Git.Build build = git.getBuild();
+                        final var build = git.getBuild();
                         if (build != null) {
                             labServerVersion.setText((build.getVersion() != null) ? build.getVersion() : "-");
                             labServerBuildTime.setText((build.getTime() != null) ? DATETIME_FORMATTER.format(
                                 build.getTime().withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()) : "-");
                         }
-                        Info.Git.Commit commit = git.getCommit();
+                        final var commit = git.getCommit();
                         if (commit != null) {
                             labServerCommit.setText(
                                 (commit.getId() != null && commit.getId().getAbbrev() != null) ?
@@ -140,12 +141,12 @@ public class AboutController {
                             labServerCommitTime.setText((commit.getTime() != null) ? DATETIME_FORMATTER.format(
                                 commit.getTime().withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()) : "-");
                         }
-                        String branch = git.getBranch();
+                        final var branch = git.getBranch();
                         labServerBranch.setText((branch != null && !branch.isEmpty()) ? branch : "-");
-                        String tags = git.getTags();
+                        final var tags = git.getTags();
                         labServerTags.setText((tags != null && !tags.isEmpty()) ? tags : "-");
                     }
-                    Duration uptime = info.getUptime();
+                    final var uptime = info.getUptime();
                     labServerUptime.setText((uptime != null) ? formatDuration(uptime) : "-");
                 }
             }
@@ -157,13 +158,13 @@ public class AboutController {
         ticketlineInfoController.setInfoText("Client & Server Information");
     }
 
-    public static String formatDuration(Duration duration) {
+    private static String formatDuration(Duration duration) {
         if (duration == null) {
             return "-";
         }
-        long seconds = duration.getSeconds();
-        long absSeconds = Math.abs(seconds);
-        String positive = String.format(
+        final var seconds = duration.getSeconds();
+        final var absSeconds = Math.abs(seconds);
+        final var positive = String.format(
             "%02d:%02d:%02d:%02d",
             absSeconds / 86400,
             (absSeconds % 86400) / 3600,

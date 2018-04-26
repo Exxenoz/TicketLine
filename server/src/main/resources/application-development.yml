@@ -1,6 +1,8 @@
 logging:
   level.: INFO
-  level.at.ac.tuwien.inso.sepm.ticketline.server: DEBUG
+  level.at.ac.tuwien.inso.sepm.ticketline.server.: DEBUG
+  level.org.hibernate.SQL: DEBUG
+  level.org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 application:
   authentication:
@@ -8,17 +10,18 @@ application:
     secret: jwtSecret
     validity-duration: 600
     overlap-duration: 300
-
 spring:
   jpa:
-    show-sql: true
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
   datasource:
-    url: jdbc:h2:file:./database/ticketline;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:./database/ticketline;MODE=PostgreSQL;AUTO_RECONNECT=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: ticketline
     password: ticketline
+    platform: POSTGRESQL
   h2:
     console:
       enabled: true

@@ -11,21 +11,23 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
-import org.controlsfx.glyphfont.FontAwesome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Iterator;
 import java.util.List;
+
+import static javafx.scene.control.ProgressIndicator.INDETERMINATE_PROGRESS;
+import static org.controlsfx.glyphfont.FontAwesome.Glyph.NEWSPAPER_ALT;
 
 @Component
 public class NewsController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NewsController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @FXML
     private VBox vbNewsElements;
@@ -45,14 +47,14 @@ public class NewsController {
 
     @FXML
     private void initialize() {
-        tabHeaderController.setIcon(FontAwesome.Glyph.NEWSPAPER_ALT);
+        tabHeaderController.setIcon(NEWSPAPER_ALT);
         tabHeaderController.setTitle("News");
     }
 
     public void loadNews() {
         ObservableList<Node> vbNewsBoxChildren = vbNewsElements.getChildren();
         vbNewsBoxChildren.clear();
-        Task<List<SimpleNewsDTO>> task = new Task<List<SimpleNewsDTO>>() {
+        final var task = new Task<List<SimpleNewsDTO>>() {
             @Override
             protected List<SimpleNewsDTO> call() throws DataAccessException {
                 return newsService.findAll();
@@ -82,8 +84,7 @@ public class NewsController {
             }
         };
         task.runningProperty().addListener((observable, oldValue, running) ->
-            mainController.setProgressbarProgress(
-                running ? ProgressBar.INDETERMINATE_PROGRESS : 0)
+            mainController.setProgressbarProgress(running ? INDETERMINATE_PROGRESS : 0)
         );
         new Thread(task).start();
     }

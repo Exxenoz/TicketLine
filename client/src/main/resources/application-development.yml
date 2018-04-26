@@ -1,6 +1,6 @@
 logging:
   level.: INFO
-  level.at.ac.tuwien.inso.sepm.ticketline.client: DEBUG
+  level.at.ac.tuwien.inso.sepm.ticketline.client.: DEBUG
 
 rest-client:
   remote:

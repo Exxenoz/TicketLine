@@ -3,19 +3,20 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.news;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.SimpleNewsDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
+
+import static java.time.format.FormatStyle.LONG;
+import static java.time.format.FormatStyle.SHORT;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 @Component
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+@Scope(SCOPE_PROTOTYPE)
 public class NewsElementController {
 
-    private static final DateTimeFormatter NEWS_DTF =
-        DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG, FormatStyle.SHORT);
+    private static final DateTimeFormatter NEWS_DTF = DateTimeFormatter.ofLocalizedDateTime(LONG, SHORT);
 
     @FXML
     private Label lblDate;

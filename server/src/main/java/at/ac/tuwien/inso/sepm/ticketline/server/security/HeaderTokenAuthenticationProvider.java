@@ -19,9 +19,9 @@ public class HeaderTokenAuthenticationProvider implements AuthenticationProvider
 
     @Override
     public Authentication authenticate(Authentication authentication) {
-        String headerToken = (String) authentication.getCredentials();
-        User user = headerTokenAuthenticationService.authenticate(headerToken);
-        AuthenticationHeaderToken authenticationResult = new AuthenticationHeaderToken(user, headerToken, user.getAuthorities());
+        final var headerToken = (String) authentication.getCredentials();
+        final var user = headerTokenAuthenticationService.authenticate(headerToken);
+        final var authenticationResult = new AuthenticationHeaderToken(user, headerToken, user.getAuthorities());
         authenticationResult.setDetails(authentication.getDetails());
         return authenticationResult;
     }
