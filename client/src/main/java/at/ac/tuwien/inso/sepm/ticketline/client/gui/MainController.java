@@ -92,10 +92,11 @@ public class MainController {
             springFxmlLoader.loadAndWrap("/fxml/news/newsComponent.fxml");
         newsController = wrapper.getController();
         final var newsTab = new Tab(null, wrapper.getLoadedObject());
-        final var newsGlyph = fontAwesome.create(NEWSPAPER_ALT);
+        final var newsGlyph = fontAwesome.create("NEWS");
         newsGlyph.setFontSize(TAB_ICON_FONT_SIZE);
         newsGlyph.setColor(Color.WHITE);
         newsTab.setGraphic(newsGlyph);
+        //newsTab.setText("News");
         tpContent.getTabs().add(newsTab);
     }
 

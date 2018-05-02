@@ -30,7 +30,7 @@
         <StackPane fx:id="spMainContent" VBox.vgrow="ALWAYS">
             <children>
                 <TabPane fx:id="tpContent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                         side="LEFT" tabClosingPolicy="UNAVAILABLE">
+                         side="TOP" tabClosingPolicy="UNAVAILABLE">
                 </TabPane>
             </children>
         </StackPane>

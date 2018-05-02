@@ -79,7 +79,7 @@
 .tab-pane .tab {
     -fx-background-color: derive(#3c3f41, 25%);
     -fx-min-height: 50px;
-    -fx-min-width: 50px;
+    -fx-min-width: 150px;
 }
 
 .tab-pane .tab:selected {
@@ -88,7 +88,7 @@
 
 .tab-pane {
     -fx-tab-min-height: 50px;
-    -fx-tab-min-width: 50px;
+    -fx-tab-min-width: 150px;
 }
 
 .tab, .tab-pane, .tab-header-background, .tab-pane *.tab-header-area {
