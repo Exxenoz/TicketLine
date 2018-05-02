@@ -31,9 +31,7 @@ import java.util.Map;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest.to;
 import static org.springframework.boot.autoconfigure.security.SecurityProperties.BASIC_AUTH_ORDER;
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.OPTIONS;
-import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -98,6 +96,7 @@ public class SecurityConfiguration {
                 .sessionManagement().sessionCreationPolicy(STATELESS).and()
                 .exceptionHandling().authenticationEntryPoint((req, res, aE) -> res.sendError(SC_UNAUTHORIZED)).and()
                 .authorizeRequests()
+                //.antMatchers("**").permitAll()
                 .antMatchers(OPTIONS).permitAll()
                 .antMatchers(POST, "/authentication").permitAll()
                 .antMatchers(GET,
