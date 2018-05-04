@@ -5,6 +5,10 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
 import javafx.scene.control.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 public class EventsController {
 
     @FXML
@@ -23,7 +27,7 @@ public class EventsController {
     private TextField eventDescriptionTextField;
 
     @FXML
-    private Spinner<?> eventLengthSpinner;
+    private Spinner<Integer> eventLengthSpinner;
 
     @FXML
     private RadioButton seatingYesButton;
@@ -38,10 +42,10 @@ public class EventsController {
     private DatePicker beginTimeDatePicker;
 
     @FXML
-    private Spinner<?> beginTimeHourSpinner;
+    private Spinner<Integer> beginTimeHourSpinner;
 
     @FXML
-    private Spinner<?> beginTimeMinuteSpinner;
+    private Spinner<Integer> beginTimeMinuteSpinner;
 
     @FXML
     private TextField priceTextField;
@@ -90,7 +94,42 @@ public class EventsController {
 
 
     private void initialize() {
+        SpinnerValueFactory<Integer> eventLengthFactory = buildSpinner(480);
+        SpinnerValueFactory<Integer> beginTimeHoursFactory = buildSpinner(23);
+        SpinnerValueFactory<Integer> beginTimeMinutesFactory = buildSpinner(59);
 
+       /* eventLengthFactory.setValue(0);
+        beginTimeHoursFactory.setValue(0);
+        beginTimeMinutesFactory.setValue(0); */
+
+       eventLengthSpinner.setValueFactory(eventLengthFactory);
+       beginTimeHourSpinner.setValueFactory(beginTimeHoursFactory);
+       beginTimeMinuteSpinner.setValueFactory(beginTimeMinutesFactory);
+
+    }
+
+    private SpinnerValueFactory<Integer> buildSpinner(int maxValue){
+        return new SpinnerValueFactory<Integer>() {
+            @Override
+            public void decrement(int steps) {
+                Integer current = this.getValue();
+                if (current == 0) {
+                    this.setValue(maxValue);
+                } else {
+                    this.setValue(current - 1);
+                }
+            }
+
+            @Override
+            public void increment(int steps) {
+                Integer current = this.getValue();
+                if (current == maxValue) {
+                    this.setValue(0);
+                } else {
+                    this.setValue(current + 1);
+                }
+            }
+        };
     }
 
     @FXML
@@ -105,6 +144,26 @@ public class EventsController {
 
     @FXML
     void searchForPerformances(ActionEvent event) {
+        String artistFirstName =  artistFirstNameTextField.getText();
+        String artistLastName = artistLastNameTextField.getText();
+        String eventName = eventNameTextField.getText();
+        String eventDescription = eventDescriptionTextField.getText();
+        LocalDate beginDate = beginTimeDatePicker.getValue();
+        LocalDateTime beginDateAndTime = null;
+        Integer beginTimeHours = null;
+        Integer beginTimeMinutes = null;
+        if(beginDate != null) {
+            beginTimeHours = beginTimeHourSpinner.getValue();
+            beginTimeMinutes = beginTimeMinuteSpinner.getValue();
+            beginDateAndTime = LocalDateTime.of(beginDate,LocalTime.of(beginTimeHours,beginTimeMinutes));
+        }
+        String price = priceTextField.getText();
+        String locationName = locationNameTextField.getText();
+        String street = streetTextField.getText();
+        String city = cityTextField.getText();
+        String postalCode = postalCodeTextField.getText();
+
+
 
     }
 
