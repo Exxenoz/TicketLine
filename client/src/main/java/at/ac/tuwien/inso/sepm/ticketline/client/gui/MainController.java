@@ -1,5 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui;
 
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventsController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.news.NewsController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationInformationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Component;
 import static javafx.application.Platform.runLater;
 import static javafx.stage.Modality.APPLICATION_MODAL;
 import static javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST;
+import static org.controlsfx.glyphfont.FontAwesome.Glyph.CALENDAR_ALT;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.NEWSPAPER_ALT;
 
 @Component
@@ -48,6 +50,7 @@ public class MainController {
     private final SpringFxmlLoader springFxmlLoader;
     private final FontAwesome fontAwesome;
     private NewsController newsController;
+    private EventsController eventsController;
 
     public MainController(
         SpringFxmlLoader springFxmlLoader,
@@ -67,6 +70,7 @@ public class MainController {
         login = springFxmlLoader.load("/fxml/authenticationComponent.fxml");
         spMainContent.getChildren().add(login);
         initNewsTabPane();
+        initEventsTabPane();
     }
 
     @FXML
@@ -92,12 +96,24 @@ public class MainController {
             springFxmlLoader.loadAndWrap("/fxml/news/newsComponent.fxml");
         newsController = wrapper.getController();
         final var newsTab = new Tab(null, wrapper.getLoadedObject());
-        final var newsGlyph = fontAwesome.create("NEWS");
+        final var newsGlyph = fontAwesome.create(NEWSPAPER_ALT);
         newsGlyph.setFontSize(TAB_ICON_FONT_SIZE);
         newsGlyph.setColor(Color.WHITE);
         newsTab.setGraphic(newsGlyph);
-        //newsTab.setText("News");
         tpContent.getTabs().add(newsTab);
+
+    }
+
+    private void initEventsTabPane(){
+        SpringFxmlLoader.Wrapper<EventsController> wrapperEvents =
+            springFxmlLoader.loadAndWrap("/fxml/events/eventMain.fxml");
+        eventsController = wrapperEvents.getController();
+        final var eventsTab = new Tab(null, wrapperEvents.getLoadedObject());
+        final var eventsGlyph = fontAwesome.create(CALENDAR_ALT);
+        eventsGlyph.setFontSize(TAB_ICON_FONT_SIZE);
+        eventsGlyph.setColor(Color.WHITE);
+        eventsTab.setGraphic(eventsGlyph);
+        tpContent.getTabs().add(eventsTab);
     }
 
     private void setAuthenticated(boolean authenticated) {

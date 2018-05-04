@@ -12,10 +12,10 @@ import javax.validation.constraints.NotNull;
 public class JavaFxConfigurationProperties {
 
     @NotNull
-    private Integer initialHeight = 540;
+    private Integer initialHeight = 640;
 
     @NotNull
-    private Integer initialWidth = 960;
+    private Integer initialWidth = 1060;
 
     @NotNull
     private String title;

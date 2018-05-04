@@ -9,10 +9,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="503.0" prefWidth="688.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxml.events.PerformanceDetailView">
+<AnchorPane prefHeight="503.0" prefWidth="688.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.PerformanceDetailViewController">
    <children>
-      <Label layoutX="268.0" layoutY="81.0" text="Event Name">
+      <Label fx:id="performanceHeader" layoutX="268.0" layoutY="81.0" text="Event Name">
          <font>
             <Font name="System Bold" size="21.0" />
          </font>
@@ -30,13 +29,13 @@
          <children>
             <Label text="Location:" />
             <Label text="Start Time:" GridPane.rowIndex="1" />
-            <Label text="Location Name, City" GridPane.columnIndex="1" />
-            <Label text="Date and Time" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label fx:id="locationName" text="Location Name, City" GridPane.columnIndex="1" />
+            <Label fx:id="startTime" text="Date and Time" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label text="Artist:" GridPane.rowIndex="2" />
-            <Label text="Artist Name" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label fx:id="artistNamePerformance" text="Artist Name" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
       </GridPane>
-      <Label layoutX="535.0" layoutY="321.0" text="100€">
+      <Label fx:id="performancePrice" layoutX="535.0" layoutY="321.0" text="100€">
          <font>
             <Font size="19.0" />
          </font>
@@ -44,8 +43,8 @@
       <Label layoutX="410.0" layoutY="327.0" text="Tickets starting at" />
       <HBox layoutX="415.0" layoutY="379.0" spacing="15.0">
          <children>
-            <Button mnemonicParsing="false" text="Event" />
-            <Button mnemonicParsing="false" text="Book Tickets" />
+            <Button fx:id="eventButtonPerformance" mnemonicParsing="false" onAction="#changeToEventDetailView" text="Event" />
+            <Button fx:id="bookButtonPerformance" mnemonicParsing="false" onAction="#bookPerformance" text="Book Tickets" />
          </children>
       </HBox>
    </children>

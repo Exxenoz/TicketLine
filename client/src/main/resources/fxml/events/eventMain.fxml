@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<TabPane fx:id="eventTabPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="1045.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventsController" stylesheets="@/css/secondLevelTabs.css">
+  <tabs>
+    <Tab text="All Events">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <Accordion layoutX="829.0" layoutY="42.0" prefHeight="546.0" prefWidth="218.0">
+                    <panes>
+                      <TitledPane animated="false" text="Artist">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <VBox layoutX="14.0" layoutY="14.0" spacing="10.0">
+                                       <children>
+                                          <Label text="First Name:" />
+                                          <TextField fx:id="artistFirstNameTextField" />
+                                          <Label text="Last Name:" />
+                                          <TextField fx:id="artistLastNameTextField" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                        </content>
+                      </TitledPane>
+                      <TitledPane animated="false" text="Event">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <VBox layoutX="10.0" layoutY="9.0" spacing="10.0">
+                                       <children>
+                                          <Label text="Event Name:" />
+                                          <TextField fx:id="eventNameTextField" />
+                                          <Label text="Type:" />
+                                          <TextField fx:id="eventDescriptionTextField" />
+                                          <Label text="Length in Minutes:" />
+                                          <Spinner fx:id="eventLengthSpinner" />
+                                          <Label text="Seating:" />
+                                          <HBox spacing="15.0">
+                                             <children>
+                                                <RadioButton fx:id="seatingYesButton" mnemonicParsing="false" text="Yes">
+                                                   <toggleGroup>
+                                                      <ToggleGroup fx:id="seatingToggleGroup" />
+                                                   </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="seatingNoButton" mnemonicParsing="false" text="No" toggleGroup="$seatingToggleGroup" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                        </content>
+                      </TitledPane>
+                      <TitledPane animated="false" text="Time">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <VBox layoutX="10.0" layoutY="9.0" spacing="10.0">
+                                       <children>
+                                          <Label text="Begin:" />
+                                          <DatePicker fx:id="beginTimeDatePicker" prefHeight="26.0" prefWidth="177.0" />
+                                          <HBox spacing="15.0">
+                                             <children>
+                                                <Spinner fx:id="beginTimeHourSpinner" prefHeight="26.0" prefWidth="71.0" />
+                                                <Label prefHeight="28.0" prefWidth="1.0" text=":" />
+                                                <Spinner fx:id="beginTimeMinuteSpinner" prefHeight="26.0" prefWidth="71.0" />
+                                             </children>
+                                          </HBox>
+                                          <Label text="Price:" />
+                                          <TextField fx:id="priceTextField" prefHeight="26.0" prefWidth="73.0" />
+                                          <HBox spacing="15.0" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                        </content>
+                      </TitledPane>
+                        <TitledPane animated="false" layoutX="10.0" layoutY="581.0" text="Location">
+                           <content>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="333.0" prefWidth="216.0">
+                                 <children>
+                                    <VBox layoutX="7.0" layoutY="10.0" prefHeight="248.0" prefWidth="198.0" spacing="10.0">
+                                       <children>
+                                          <Label text="Location Name:" />
+                                          <TextField fx:id="locationNameTextField" prefHeight="26.0" prefWidth="73.0" />
+                                          <Label text="Street:" />
+                                          <HBox spacing="15.0" />
+                                          <TextField fx:id="streetTextField" prefHeight="26.0" prefWidth="73.0" />
+                                          <Label text="City:" />
+                                          <TextField fx:id="cityTextField" prefHeight="26.0" prefWidth="73.0" />
+                                          <Label text="Postal Code:" />
+                                          <TextField fx:id="postalCodeTextField" prefHeight="26.0" prefWidth="73.0" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                        </TitledPane>
+                    </panes>
+                  </Accordion>
+                  <TableView fx:id="foundEventsTableView" layoutX="13.0" layoutY="42.0" prefHeight="546.0" prefWidth="817.0">
+                    <columns>
+                      <TableColumn prefWidth="75.0" text="C1" />
+                      <TableColumn prefWidth="75.0" text="C2" />
+                    </columns>
+                  </TableView>
+                  <Label layoutX="14.0" layoutY="14.0" text="Active Filters:" />
+                  <Label fx:id="activeFiltersListLabel" layoutX="112.0" layoutY="14.0" text="Criteria 1, Criteria 2,...." />
+                  <Button fx:id="clearButton" layoutX="987.0" layoutY="9.0" mnemonicParsing="false" onAction="#showAllPerformances" text="Clear" />
+                  <HBox layoutX="779.0" layoutY="601.0" spacing="140.0">
+                     <children>
+                        <Button fx:id="bookButton" mnemonicParsing="false" onAction="#bookPerformance" text="Book" />
+                        <Button fx:id="searchButton" mnemonicParsing="false" onAction="#searchForPerformances" text="Search" />
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+      </content>
+    </Tab>
+    <Tab text="Top 10">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <Label layoutX="72.0" layoutY="38.0" text="Month">
+                     <font>
+                        <Font name="System Bold" size="19.0" />
+                     </font>
+                  </Label>
+                  <HBox layoutX="71.0" layoutY="74.0" spacing="15.0">
+                     <children>
+                        <ChoiceBox fx:id="monthChoiceBox" prefWidth="150.0" />
+                        <Button fx:id="showTopTenButton" mnemonicParsing="false" onAction="#showTopTenChartForMonth" text="Show" />
+                     </children>
+                  </HBox>
+                  <BarChart fx:id="topTenBarChart" layoutX="53.0" layoutY="119.0" prefHeight="400.0" prefWidth="873.0">
+                    <xAxis>
+                      <CategoryAxis side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis side="LEFT" />
+                    </yAxis>
+                  </BarChart>
+                  <HBox layoutX="72.0" layoutY="540.0" spacing="15.0">
+                     <children>
+                        <Label text="Event:">
+                           <font>
+                              <Font size="19.0" />
+                           </font>
+                        </Label>
+                        <ChoiceBox fx:id="topTenEventChoiceBox" prefWidth="150.0" />
+                        <Button fx:id="bookTopTenEventButton" mnemonicParsing="false" onAction="#bookTopTenEvent" text="Book" />
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+      </content>
+    </Tab>
+  </tabs>
+</TabPane>

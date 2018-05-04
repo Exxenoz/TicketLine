@@ -10,10 +10,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="631.0" prefWidth="878.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxml.events.EventDetailView">
+<AnchorPane prefHeight="631.0" prefWidth="878.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventDetailViewController">
    <children>
-      <Label layoutX="359.0" layoutY="70.0" text="Event Name">
+      <Label fx:id="eventHeading" layoutX="359.0" layoutY="70.0" text="Event Name">
          <font>
             <Font name="System Bold" size="21.0" />
          </font>
@@ -32,15 +31,15 @@
          <children>
             <Label text="Name:" />
             <Label text="Artist:" GridPane.rowIndex="1" />
-            <Label text="Event Type:" GridPane.rowIndex="2" />
+            <Label text="Description:" GridPane.rowIndex="2" />
             <Label text="Seating:" GridPane.rowIndex="3" />
-            <Label text="Full name of event" GridPane.columnIndex="1" />
-            <Label text="artist name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label text="concert, theatre,...." GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label text="yes/no" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label fx:id="eventNameEvent" text="Full name of event" GridPane.columnIndex="1" />
+            <Label fx:id="artistNameEvent" text="artist name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label fx:id="descriptionEvent" text="concert, theatre,...." GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label fx:id="eventTypeEvent" text="yes/no" GridPane.columnIndex="1" GridPane.rowIndex="3" />
          </children>
       </GridPane>
-      <TableView layoutX="197.0" layoutY="316.0" prefHeight="200.0" prefWidth="468.0">
+      <TableView fx:id="performanceDatesTableView" layoutX="197.0" layoutY="316.0" prefHeight="200.0" prefWidth="468.0">
         <columns>
           <TableColumn prefWidth="75.0" text="C1" />
           <TableColumn prefWidth="75.0" text="C2" />
@@ -51,6 +50,6 @@
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <Button layoutX="571.0" layoutY="536.0" mnemonicParsing="false" text="Book Tickets" />
+      <Button fx:id="bookButtonEvent" layoutX="571.0" layoutY="536.0" mnemonicParsing="false" onAction="#changeToPerformanceDetailView" text="Book Tickets" />
    </children>
 </AnchorPane>
