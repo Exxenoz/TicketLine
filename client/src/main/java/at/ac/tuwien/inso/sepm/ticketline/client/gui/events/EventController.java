@@ -1,15 +1,27 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
+import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
 import javafx.scene.control.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
-public class EventsController {
+@Component
+public class EventController {
 
     @FXML
     private TabPane eventTabPane;
@@ -63,7 +75,7 @@ public class EventsController {
     private TextField postalCodeTextField;
 
     @FXML
-    private TableView<?> foundEventsTableView;
+    private TableView<PerformanceDTO> foundEventsTableView;
 
     @FXML
     private Label activeFiltersListLabel;
@@ -86,11 +98,36 @@ public class EventsController {
     @FXML
     private BarChart<?, ?> topTenBarChart;
 
+
+    @FXML
+    private TableColumn<PerformanceDTO, String> nameColumn;
+
+    @FXML
+    private TableColumn<PerformanceDTO, String> eventColumn;
+
+    @FXML
+    private TableColumn<PerformanceDTO, String> startTimeColumn;
+
+    @FXML
+    private TableColumn<PerformanceDTO, String> locationColumn;
+
     @FXML
     private ChoiceBox<?> topTenEventChoiceBox;
 
     @FXML
     private Button bookTopTenEventButton;
+
+    private PerformanceService performanceService;
+
+    private ObservableList<PerformanceDTO> performanceData = FXCollections.observableArrayList();
+
+    private List<PerformanceDTO> performances;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+    public EventController(PerformanceService performanceService) {
+        this.performanceService = performanceService;
+    }
 
 
     private void initialize() {
@@ -102,13 +139,20 @@ public class EventsController {
         beginTimeHoursFactory.setValue(0);
         beginTimeMinutesFactory.setValue(0); */
 
-       eventLengthSpinner.setValueFactory(eventLengthFactory);
-       beginTimeHourSpinner.setValueFactory(beginTimeHoursFactory);
-       beginTimeMinuteSpinner.setValueFactory(beginTimeMinutesFactory);
+        eventLengthSpinner.setValueFactory(eventLengthFactory);
+        beginTimeHourSpinner.setValueFactory(beginTimeHoursFactory);
+        beginTimeMinuteSpinner.setValueFactory(beginTimeMinutesFactory);
+
+        try {
+            performances = performanceService.findAll();
+            intializeTableView();
+        } catch (DataAccessException e) {
+            LOGGER.error("Couldn't fetch performances from server!", e);
+        }
 
     }
 
-    private SpinnerValueFactory<Integer> buildSpinner(int maxValue){
+    private SpinnerValueFactory<Integer> buildSpinner(int maxValue) {
         return new SpinnerValueFactory<Integer>() {
             @Override
             public void decrement(int steps) {
@@ -144,7 +188,7 @@ public class EventsController {
 
     @FXML
     void searchForPerformances(ActionEvent event) {
-        String artistFirstName =  artistFirstNameTextField.getText();
+        String artistFirstName = artistFirstNameTextField.getText();
         String artistLastName = artistLastNameTextField.getText();
         String eventName = eventNameTextField.getText();
         String eventDescription = eventDescriptionTextField.getText();
@@ -152,10 +196,10 @@ public class EventsController {
         LocalDateTime beginDateAndTime = null;
         Integer beginTimeHours = null;
         Integer beginTimeMinutes = null;
-        if(beginDate != null) {
+        if (beginDate != null) {
             beginTimeHours = beginTimeHourSpinner.getValue();
             beginTimeMinutes = beginTimeMinuteSpinner.getValue();
-            beginDateAndTime = LocalDateTime.of(beginDate,LocalTime.of(beginTimeHours,beginTimeMinutes));
+            beginDateAndTime = LocalDateTime.of(beginDate, LocalTime.of(beginTimeHours, beginTimeMinutes));
         }
         String price = priceTextField.getText();
         String locationName = locationNameTextField.getText();
@@ -164,12 +208,22 @@ public class EventsController {
         String postalCode = postalCodeTextField.getText();
 
 
-
     }
 
     @FXML
     void showAllPerformances(ActionEvent event) {
 
+
+    }
+
+    private void intializeTableView() {
+        nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
+        eventColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEvent().getName()));
+        startTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPerformanceStart().toString()));
+        locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAddress().getLocation()));
+
+        performanceData = FXCollections.observableArrayList(performances);
+        foundEventsTableView.setItems(performanceData);
     }
 
     @FXML

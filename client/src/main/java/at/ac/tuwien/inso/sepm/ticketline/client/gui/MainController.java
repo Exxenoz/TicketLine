@@ -1,11 +1,10 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui;
 
-import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventsController;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.news.NewsController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationInformationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -19,7 +18,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.controlsfx.glyphfont.FontAwesome;
-import org.controlsfx.glyphfont.Glyph;
 import org.springframework.stereotype.Component;
 
 import static javafx.application.Platform.runLater;
@@ -50,7 +48,7 @@ public class MainController {
     private final SpringFxmlLoader springFxmlLoader;
     private final FontAwesome fontAwesome;
     private NewsController newsController;
-    private EventsController eventsController;
+    private EventController eventController;
 
     public MainController(
         SpringFxmlLoader springFxmlLoader,
@@ -104,10 +102,10 @@ public class MainController {
 
     }
 
-    private void initEventsTabPane(){
-        SpringFxmlLoader.Wrapper<EventsController> wrapperEvents =
+    private void initEventsTabPane() {
+        SpringFxmlLoader.Wrapper<EventController> wrapperEvents =
             springFxmlLoader.loadAndWrap("/fxml/events/eventMain.fxml");
-        eventsController = wrapperEvents.getController();
+        eventController = wrapperEvents.getController();
         final var eventsTab = new Tab(null, wrapperEvents.getLoadedObject());
         final var eventsGlyph = fontAwesome.create(CALENDAR_ALT);
         eventsGlyph.setFontSize(TAB_ICON_FONT_SIZE);
