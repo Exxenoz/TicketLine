@@ -15,4 +15,6 @@ public interface PerformanceRepository extends JpaRepository<Performance, Long>,
 
     @Override
     List<Performance> findAll();
+
+    List<Performance> findByExample();
 }

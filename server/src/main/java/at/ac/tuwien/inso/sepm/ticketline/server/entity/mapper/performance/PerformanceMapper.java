@@ -1,4 +1,4 @@
-package at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.news;
+package at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.performance;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;

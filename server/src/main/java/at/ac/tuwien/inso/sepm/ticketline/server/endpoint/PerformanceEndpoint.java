@@ -1,7 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.news.PerformanceMapper;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.performance.PerformanceMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.PerformanceService;
 import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.GetMapping;
