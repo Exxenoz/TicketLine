@@ -1,5 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -38,7 +39,12 @@ public class PerformanceDetailViewController {
 
     }
 
-    private void fill(){
+    private void fill(PerformanceDTO performance) {
+        performanceHeader.setText(performance.getEvent().getName());
+        locationName.setText(performance.getAddress().getBuildingName() + ", " + performance.getAddress().getLocation());
+        startTime.setText(performance.getPerformanceStart().toString());
+        artistNamePerformance.setText(performance.getEvent().getArtists().toString());
+        performancePrice.setText(performance.getPrice().toString());
 
     }
 }

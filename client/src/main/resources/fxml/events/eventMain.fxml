@@ -54,7 +54,7 @@
                                        <children>
                                           <Label text="Event Name:" />
                                           <TextField fx:id="eventNameTextField" />
-                                          <Label text="Type:" />
+                                          <Label text="Description:" />
                                           <TextField fx:id="eventDescriptionTextField" />
                                           <Label text="Length in Minutes:" />
                                           <Spinner fx:id="eventLengthSpinner" />

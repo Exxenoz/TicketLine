@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -90,13 +91,13 @@ public class EventController {
     private Button searchButton;
 
     @FXML
-    private ChoiceBox<?> monthChoiceBox;
+    private ChoiceBox<String> monthChoiceBox;
 
     @FXML
     private Button showTopTenButton;
 
     @FXML
-    private BarChart<?, ?> topTenBarChart;
+    private BarChart<String, Integer> topTenBarChart;
 
 
     @FXML
@@ -130,14 +131,15 @@ public class EventController {
     }
 
 
+    @FXML
     private void initialize() {
         SpinnerValueFactory<Integer> eventLengthFactory = buildSpinner(480);
         SpinnerValueFactory<Integer> beginTimeHoursFactory = buildSpinner(23);
         SpinnerValueFactory<Integer> beginTimeMinutesFactory = buildSpinner(59);
 
-       /* eventLengthFactory.setValue(0);
+        eventLengthFactory.setValue(0);
         beginTimeHoursFactory.setValue(0);
-        beginTimeMinutesFactory.setValue(0); */
+        beginTimeMinutesFactory.setValue(0);
 
         eventLengthSpinner.setValueFactory(eventLengthFactory);
         beginTimeHourSpinner.setValueFactory(beginTimeHoursFactory);
@@ -192,6 +194,7 @@ public class EventController {
         String artistLastName = artistLastNameTextField.getText();
         String eventName = eventNameTextField.getText();
         String eventDescription = eventDescriptionTextField.getText();
+        Integer duration = eventLengthSpinner.getValue();
         LocalDate beginDate = beginTimeDatePicker.getValue();
         LocalDateTime beginDateAndTime = null;
         Integer beginTimeHours = null;
@@ -207,12 +210,16 @@ public class EventController {
         String city = cityTextField.getText();
         String postalCode = postalCodeTextField.getText();
 
-
     }
 
     @FXML
     void showAllPerformances(ActionEvent event) {
-
+        try {
+            performances = performanceService.findAll();
+        } catch (DataAccessException e) {
+            LOGGER.error("Couldn't fetch performances from server!", e);
+        }
+        intializeTableView();
 
     }
 
