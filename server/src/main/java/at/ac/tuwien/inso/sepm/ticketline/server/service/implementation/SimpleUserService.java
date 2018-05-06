@@ -1,15 +1,12 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.UsersRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.sql.DataSource;
-
+@Service
 public class SimpleUserService implements UserService {
 
     private UsersRepository usersRepository;
@@ -19,8 +16,14 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public void enableUser(User user) {
+    public UserDTO enableUser(User user) {
         user.setEnabled(true);
-        usersRepository.save(user);
+        user = usersRepository.save(user);
+        return UserDTO.builder()
+            .id(user.getId())
+            .username(user.getUsername())
+            .password(user.getPassword())
+            .enabled(user.isEnabled())
+            .build();
     }
 }

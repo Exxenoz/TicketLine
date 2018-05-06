@@ -1,17 +1,18 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
-import static javax.persistence.GenerationType.AUTO;
 import static javax.persistence.GenerationType.IDENTITY;
-import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "Users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -52,5 +53,46 @@ public class User {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public static UserBuilder builder() {
+        return new UserBuilder();
+    }
+
+    public static final class UserBuilder {
+        private Long id;
+        private String username;
+        private String password;
+        private boolean enabled;
+
+        public UserBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public UserBuilder username(String username) {
+            this.username = username;
+            return this;
+        }
+
+        public UserBuilder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public UserBuilder enabled(boolean enabled) {
+            this.enabled = enabled;
+            return this;
+        }
+
+        public User build() {
+
+            User user = new User();
+            user.setId(id);
+            user.setUsername(username);
+            user.setPassword(password);
+            user.setEnabled(enabled);
+            return user;
+        }
     }
 }
