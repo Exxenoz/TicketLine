@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 import static javax.persistence.GenerationType.AUTO;
 import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "Users")
 public class User {

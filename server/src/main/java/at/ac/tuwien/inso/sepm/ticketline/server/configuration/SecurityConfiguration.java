@@ -1,7 +1,9 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.configuration;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.configuration.properties.H2ConsoleConfigurationProperties;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.Authorities;
 import at.ac.tuwien.inso.sepm.ticketline.server.security.HeaderTokenAuthenticationFilter;
+import org.apache.catalina.startup.UserDatabase;
 import org.hibernate.engine.jdbc.connections.spi.JdbcConnectionAccess;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.info.InfoEndpoint;
@@ -19,8 +21,13 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
@@ -28,6 +35,8 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -71,11 +80,24 @@ public class SecurityConfiguration {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth, List<AuthenticationProvider> providerList) throws Exception {
-        new JdbcUserDetailsManagerConfigurer<AuthenticationManagerBuilder>().dataSource(dataSource)
-            .withUser("user").password(passwordEncoder.encode("password")).authorities("USER").and()
-            .withUser("admin").password(passwordEncoder.encode("password")).authorities("ADMIN", "USER").and()
-            .passwordEncoder(passwordEncoder)
-            .configure(auth);
+        var mgr = new JdbcUserDetailsManager();
+        mgr.setDataSource(dataSource);
+        if (!mgr.userExists("user")) {
+            var authorities = new ArrayList<GrantedAuthority>();
+            authorities.add(new SimpleGrantedAuthority("USER"));
+            mgr.createUser(new User("user", passwordEncoder.encode("password"), authorities));
+        }
+        if (!mgr.userExists("admin")) {
+            var authorities = new ArrayList<GrantedAuthority>();
+            authorities.add(new SimpleGrantedAuthority("USER"));
+            authorities.add(new SimpleGrantedAuthority("ADMIN"));
+            mgr.createUser(new User("admin", passwordEncoder.encode("password"), authorities));
+        }
+        auth
+            .jdbcAuthentication()
+            .dataSource(dataSource)
+            .usersByUsernameQuery(JdbcUserDetailsManager.DEF_USERS_BY_USERNAME_QUERY)
+            .authoritiesByUsernameQuery(JdbcUserDetailsManager.DEF_USERS_BY_USERNAME_QUERY);
         providerList.forEach(auth::authenticationProvider);
     }
 
