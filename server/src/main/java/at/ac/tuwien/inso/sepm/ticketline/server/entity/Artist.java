@@ -2,7 +2,6 @@ package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-
 import java.util.Objects;
 
 import static javax.persistence.GenerationType.AUTO;
@@ -17,13 +16,34 @@ public class Artist {
 
     @Column(nullable = false)
     @Size(max = 100)
-    private String name;
+    private String firstName;
+
+    @Column(nullable = false)
+    @Size(max = 100)
+    private String lastName;
 
     public Artist() {
     }
 
-    public Artist(@Size(max = 100) String name) {
-        this.name = name;
+    public Artist(@Size(max = 100) String firstName, @Size(max = 100) String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public Long getId() {
@@ -34,18 +54,12 @@ public class Artist {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @Override
     public String toString() {
         return "Artist{" +
-            "name='" + name + '\'' +
+            "id=" + id +
+            ", firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
             '}';
     }
 
@@ -59,12 +73,13 @@ public class Artist {
         }
         Artist artist = (Artist) o;
         return Objects.equals(id, artist.id) &&
-            Objects.equals(name, artist.name);
+            Objects.equals(firstName, artist.firstName) &&
+            Objects.equals(lastName, artist.lastName);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, name);
+        return Objects.hash(id, firstName, lastName);
     }
 }

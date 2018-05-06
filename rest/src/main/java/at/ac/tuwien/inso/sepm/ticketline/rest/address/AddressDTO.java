@@ -8,7 +8,7 @@ public class AddressDTO {
     private String street;
     private String location;
     private String country;
-    private int postalCode;
+    private String postalCode;
 
     public String getBuildingName() {
         return buildingName;
@@ -42,11 +42,11 @@ public class AddressDTO {
         this.country = country;
     }
 
-    public int getPostalCode() {
+    public String getPostalCode() {
         return postalCode;
     }
 
-    public void setPostalCode(int postalCode) {
+    public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
     }
 
@@ -70,7 +70,7 @@ public class AddressDTO {
             return false;
         }
         AddressDTO that = (AddressDTO) o;
-        return postalCode == that.postalCode &&
+        return postalCode.equals(that.postalCode) &&
             Objects.equals(buildingName, that.buildingName) &&
             Objects.equals(street, that.street) &&
             Objects.equals(location, that.location) &&

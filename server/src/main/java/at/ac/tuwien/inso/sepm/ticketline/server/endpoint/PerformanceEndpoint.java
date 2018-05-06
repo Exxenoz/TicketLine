@@ -1,6 +1,8 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.Event;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.performance.PerformanceMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.PerformanceService;
 import io.swagger.annotations.Api;
@@ -28,4 +30,13 @@ public class PerformanceEndpoint {
         return performanceMapper.performanceToPerformanceDTO(performanceService.findAll());
     }
 
+    @GetMapping("event")
+    public List<PerformanceDTO> findByEvent(Event event) {
+        return performanceMapper.performanceToPerformanceDTO(performanceService.findByEvent(event));
+    }
+
+    @GetMapping("search")
+    public List<PerformanceDTO> search(SearchDTO search) {
+        return performanceMapper.performanceToPerformanceDTO(performanceService.search(search));
+    }
 }

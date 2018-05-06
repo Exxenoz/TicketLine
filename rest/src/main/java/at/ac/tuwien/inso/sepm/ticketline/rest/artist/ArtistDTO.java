@@ -5,7 +5,8 @@ import java.util.Objects;
 public class ArtistDTO {
 
     private Long id;
-    private String name;
+    private String firstName;
+    private String lastName;
 
     public Long getId() {
         return id;
@@ -15,19 +16,28 @@ public class ArtistDTO {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     @Override
     public String toString() {
         return "ArtistDTO{" +
             "id=" + id +
-            ", name='" + name + '\'' +
+            ", firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
             '}';
     }
 
@@ -41,12 +51,13 @@ public class ArtistDTO {
         }
         ArtistDTO artistDTO = (ArtistDTO) o;
         return Objects.equals(id, artistDTO.id) &&
-            Objects.equals(name, artistDTO.name);
+            Objects.equals(firstName, artistDTO.firstName) &&
+            Objects.equals(lastName, artistDTO.lastName);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, name);
+        return Objects.hash(id, firstName, lastName);
     }
 }

@@ -10,7 +10,7 @@ public class Address {
 
     @Column(nullable = false)
     @Size(max = 100)
-    private String buildingName;
+    private String locationName;
 
     @Column(nullable = false)
     @Size(max = 100)
@@ -18,36 +18,36 @@ public class Address {
 
     @Column(nullable = false)
     @Size(max = 100)
-    private String location;
+    private String city;
 
     @Column(nullable = false)
     @Size(max = 100)
     private String country;
 
     @Column(nullable = false)
-    private int postalCode;
+    private String postalCode;
 
     public Address() {
     }
 
-    public Address(@Size(max = 100) String buildingName,
+    public Address(@Size(max = 100) String locationName,
                    @Size(max = 100) String street,
-                   @Size(max = 100) String location,
+                   @Size(max = 100) String city,
                    @Size(max = 100) String country,
-                   int postalCode) {
-        this.buildingName = buildingName;
+                   String postalCode) {
+        this.locationName = locationName;
         this.street = street;
-        this.location = location;
+        this.city = city;
         this.country = country;
         this.postalCode = postalCode;
     }
 
-    public String getBuildingName() {
-        return buildingName;
+    public String getLocationName() {
+        return locationName;
     }
 
-    public void setBuildingName(String buildingName) {
-        this.buildingName = buildingName;
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
     }
 
     public String getStreet() {
@@ -58,12 +58,12 @@ public class Address {
         this.street = street;
     }
 
-    public String getLocation() {
-        return location;
+    public String getCity() {
+        return city;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public String getCountry() {
@@ -74,20 +74,20 @@ public class Address {
         this.country = country;
     }
 
-    public int getPostalCode() {
+    public String getPostalCode() {
         return postalCode;
     }
 
-    public void setPostalCode(int postalCode) {
+    public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
     }
 
     @Override
     public String toString() {
         return "Address{" +
-            "buildingName='" + buildingName + '\'' +
+            "locationName='" + locationName + '\'' +
             ", street='" + street + '\'' +
-            ", location='" + location + '\'' +
+            ", city='" + city + '\'' +
             ", country='" + country + '\'' +
             ", postalCode=" + postalCode +
             '}';
@@ -102,15 +102,15 @@ public class Address {
             return false;
         }
         Address address = (Address) o;
-        return postalCode == address.postalCode &&
-            Objects.equals(buildingName, address.buildingName) &&
+        return postalCode.equals(address.postalCode) &&
+            Objects.equals(locationName, address.locationName) &&
             Objects.equals(street, address.street) &&
-            Objects.equals(location, address.location) &&
+            Objects.equals(city, address.city) &&
             Objects.equals(country, address.country);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(buildingName, street, location, country, postalCode);
+        return Objects.hash(locationName, street, city, country, postalCode);
     }
 }

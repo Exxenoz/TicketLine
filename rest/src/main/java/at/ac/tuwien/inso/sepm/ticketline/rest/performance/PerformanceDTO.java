@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.rest.performance;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.address.AddressDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -12,7 +13,9 @@ public class PerformanceDTO {
     private EventDTO event;
     private String name;
     private Double price;
+    @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime performanceStart;
+    @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime performanceEnd;
     private AddressDTO address;
 

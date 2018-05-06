@@ -1,17 +1,16 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.repository;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Event;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.query.QueryByExampleExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
+@Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    @Override
-    Optional<Event> findById(Long id);
-
-    @Override
-    List<Event> findAll();
+    @Query("select e from Performance p join p.event as e where p = ?1")
+    List<Event> findByPerformance(Performance performance);
 }

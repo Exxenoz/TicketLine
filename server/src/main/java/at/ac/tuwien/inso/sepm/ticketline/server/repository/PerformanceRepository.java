@@ -4,17 +4,12 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.Event;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.QueryByExampleExecutor;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
+@Repository
 public interface PerformanceRepository extends JpaRepository<Performance, Long>, QueryByExampleExecutor<Performance> {
 
-    @Override
-    Optional<Performance> findById(Long id);
-
-    @Override
-    List<Performance> findAll();
-
-    List<Performance> findByExample();
+    List<Performance> findByEvent(Event event);
 }
