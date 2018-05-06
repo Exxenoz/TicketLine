@@ -14,6 +14,16 @@ public class EventDTO {
     private EventTypeDTO eventType;
     private String description;
 
+    public EventDTO() {
+    }
+
+    public EventDTO(String name, Set<ArtistDTO> artists, EventTypeDTO eventType, String description) {
+        this.name = name;
+        this.artists = artists;
+        this.eventType = eventType;
+        this.description = description;
+    }
+
     public Long getId() {
         return id;
     }

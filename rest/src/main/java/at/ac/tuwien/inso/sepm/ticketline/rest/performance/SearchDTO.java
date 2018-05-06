@@ -23,6 +23,28 @@ public class SearchDTO {
     private String postalCode;
     private Duration duration;
 
+    public SearchDTO() {
+    }
+
+    public SearchDTO(String performanceName, String eventName, String artistFirstName,
+                     String artistLastName, EventTypeDTO eventType, LocalDateTime performanceStart,
+                     Double price, String locationName, String street, String city, String country,
+                     String postalCode, Duration duration) {
+        this.performanceName = performanceName;
+        this.eventName = eventName;
+        this.artistFirstName = artistFirstName;
+        this.artistLastName = artistLastName;
+        this.eventType = eventType;
+        this.performanceStart = performanceStart;
+        this.price = price;
+        this.locationName = locationName;
+        this.street = street;
+        this.city = city;
+        this.country = country;
+        this.postalCode = postalCode;
+        this.duration = duration;
+    }
+
     public String getCountry() {
         return country;
     }
