@@ -1,5 +1,6 @@
-package at.ac.tuwien.inso.sepm.ticketline.rest.hall;
+package at.ac.tuwien.inso.sepm.ticketline.rest.seat;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.sector.SectorDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 

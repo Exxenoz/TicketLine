@@ -1,6 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.rest.reservation;
 
-import at.ac.tuwien.inso.sepm.ticketline.rest.hall.SeatDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
