@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
 import javafx.beans.property.SimpleStringProperty;
@@ -145,13 +146,30 @@ public class EventController {
         beginTimeHourSpinner.setValueFactory(beginTimeHoursFactory);
         beginTimeMinuteSpinner.setValueFactory(beginTimeMinutesFactory);
 
+        initMonthChoiceBox();
+
         try {
             performances = performanceService.findAll();
             intializeTableView();
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch performances from server!", e);
         }
+    }
 
+    private void initMonthChoiceBox() {
+        monthChoiceBox.getItems().setAll(
+            BundleManager.getBundle().getString("events.main.january"),
+            BundleManager.getBundle().getString("events.main.february"),
+            BundleManager.getBundle().getString("events.main.march"),
+            BundleManager.getBundle().getString("events.main.april"),
+            BundleManager.getBundle().getString("events.main.may"),
+            BundleManager.getBundle().getString("events.main.june"),
+            BundleManager.getBundle().getString("events.main.july"),
+            BundleManager.getBundle().getString("events.main.august"),
+            BundleManager.getBundle().getString("events.main.september"),
+            BundleManager.getBundle().getString("events.main.october"),
+            BundleManager.getBundle().getString("events.main.november"),
+            BundleManager.getBundle().getString("events.main.december"));
     }
 
     private SpinnerValueFactory<Integer> buildSpinner(int maxValue) {
@@ -235,8 +253,6 @@ public class EventController {
 
     @FXML
     void showTopTenChartForMonth(ActionEvent event) {
-
+        
     }
-
-
 }

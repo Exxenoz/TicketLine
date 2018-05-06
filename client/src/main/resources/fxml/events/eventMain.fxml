@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
@@ -22,7 +23,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<TabPane fx:id="eventTabPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="1045.0" stylesheets="@/css/secondLevelTabs.css" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventController">
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<TabPane fx:id="eventTabPane" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@/css/secondLevelTabs.css" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventController">
   <tabs>
     <Tab text="All Events">
       <content>
@@ -145,20 +148,21 @@
     </Tab>
     <Tab text="Top 10">
       <content>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+            <VBox>
                <children>
-                  <Label layoutX="72.0" layoutY="38.0" text="Month">
+                  <Label text="%events.main.month">
                      <font>
                         <Font name="System Bold" size="19.0" />
                      </font>
                   </Label>
-                  <HBox layoutX="71.0" layoutY="74.0" spacing="15.0">
+                  <HBox spacing="15.0">
                      <children>
-                        <ChoiceBox fx:id="monthChoiceBox" prefWidth="150.0" />
-                        <Button fx:id="showTopTenButton" mnemonicParsing="false" onAction="#showTopTenChartForMonth" text="Show" />
+                         <ChoiceBox fx:id="monthChoiceBox" prefWidth="150.0" >
+                         </ChoiceBox>
+                        <Button fx:id="showTopTenButton" mnemonicParsing="false" onAction="#showTopTenChartForMonth" text="%events.main.button.show" />
                      </children>
                   </HBox>
-                  <BarChart fx:id="topTenBarChart" layoutX="53.0" layoutY="119.0" prefHeight="400.0" prefWidth="873.0">
+                  <BarChart fx:id="topTenBarChart">
                     <xAxis>
                       <CategoryAxis side="BOTTOM" />
                     </xAxis>
@@ -166,7 +170,7 @@
                       <NumberAxis side="LEFT" />
                     </yAxis>
                   </BarChart>
-                  <HBox layoutX="72.0" layoutY="540.0" spacing="15.0">
+                  <HBox spacing="15.0">
                      <children>
                         <Label text="Event:">
                            <font>
@@ -174,11 +178,14 @@
                            </font>
                         </Label>
                         <ChoiceBox fx:id="topTenEventChoiceBox" prefWidth="150.0" />
-                        <Button fx:id="bookTopTenEventButton" mnemonicParsing="false" onAction="#bookTopTenEvent" text="Book" />
+                        <Button fx:id="bookTopTenEventButton" mnemonicParsing="false" onAction="#bookTopTenEvent" text="%events.main.button.book" />
                      </children>
                   </HBox>
                </children>
-            </AnchorPane>
+               <padding>
+                  <Insets bottom="30.0" left="30.0" top="30.0" />
+               </padding>
+            </VBox>
       </content>
     </Tab>
   </tabs>
