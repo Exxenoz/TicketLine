@@ -2,9 +2,12 @@ package at.ac.tuwien.inso.sepm.ticketline.rest.performance;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.address.AddressDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 public class PerformanceDTO {
@@ -18,6 +21,9 @@ public class PerformanceDTO {
     @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime performanceEnd;
     private AddressDTO address;
+
+    @ApiModelProperty(required = true, readOnly = true, name = "The reservations of the performance")
+    private List<ReservationDTO> reservations;
 
     public long getId() {
         return id;
@@ -75,6 +81,14 @@ public class PerformanceDTO {
         this.address = address;
     }
 
+    public List<ReservationDTO> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<ReservationDTO> reservations) {
+        this.reservations = reservations;
+    }
+
     @Override
     public String toString() {
         return "PerformanceDTO{" +
@@ -84,6 +98,7 @@ public class PerformanceDTO {
             ", performanceStart=" + performanceStart +
             ", performanceEnd=" + performanceEnd +
             ", address=" + address +
+            ", reservations=" + reservations +
             '}';
     }
 
@@ -102,12 +117,13 @@ public class PerformanceDTO {
             Objects.equals(price, that.price) &&
             Objects.equals(performanceStart, that.performanceStart) &&
             Objects.equals(performanceEnd, that.performanceEnd) &&
-            Objects.equals(address, that.address);
+            Objects.equals(address, that.address) &&
+            Objects.equals(reservations, that.reservations);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, event, name, price, performanceStart, performanceEnd, address);
+        return Objects.hash(id, event, name, price, performanceStart, performanceEnd, address, reservations);
     }
 }
