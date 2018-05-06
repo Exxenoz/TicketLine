@@ -5,6 +5,7 @@ import javax.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set;
 
 import static javax.persistence.GenerationType.AUTO;
 
@@ -35,16 +36,20 @@ public class Performance {
     @Column(nullable = false)
     private Address address;
 
+    @OneToMany
+    private Set<Reservation> reservations;
+
     public Performance() {
     }
 
-    public Performance(Event event, @Size(max = 100) String name, Double price, LocalDateTime performanceStart, LocalDateTime performanceEnd, Address address) {
+    public Performance(Event event, @Size(max = 100) String name, Double price, LocalDateTime performanceStart, LocalDateTime performanceEnd, Address address, Set<Reservation> reservations) {
         this.event = event;
         this.name = name;
         this.price = price;
         this.performanceStart = performanceStart;
         this.performanceEnd = performanceEnd;
         this.address = address;
+        this.reservations = reservations;
     }
 
     public Address getAddress() {
@@ -103,6 +108,14 @@ public class Performance {
         this.performanceEnd = performanceEnd;
     }
 
+    public Set<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(Set<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+
     @Override
     public String toString() {
         return "Performance{" +
@@ -112,6 +125,7 @@ public class Performance {
             ", performanceStart=" + performanceStart +
             ", performanceEnd=" + performanceEnd +
             ", address=" + address +
+            ", reservations=" + reservations +
             '}';
     }
 
@@ -130,12 +144,13 @@ public class Performance {
             Objects.equals(price, that.price) &&
             Objects.equals(performanceStart, that.performanceStart) &&
             Objects.equals(performanceEnd, that.performanceEnd) &&
-            Objects.equals(address, that.address);
+            Objects.equals(address, that.address) &&
+            Objects.equals(reservations, that.reservations);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, event, name, price, performanceStart, performanceEnd, address);
+        return Objects.hash(id, event, name, price, performanceStart, performanceEnd, address, reservations);
     }
 }
