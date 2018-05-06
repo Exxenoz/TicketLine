@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.rest.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.AuthenticationRestClient;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationRequest;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationToken;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationTokenInfo;
@@ -48,9 +49,9 @@ public class SimpleAuthenticationRestClient implements AuthenticationRestClient 
             LOGGER.debug("Authenticate {} status {}", authenticationRequest.getUsername(), response.getStatusCode());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed to login with status code " + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
-            throw new DataAccessException(e.getMessage(), e);
+            throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
         }
     }
 
@@ -66,10 +67,9 @@ public class SimpleAuthenticationRestClient implements AuthenticationRestClient 
             LOGGER.debug("Get AuthenticationToken status {}", response.getStatusCode());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed to obtain authentication token with status code " + e.getStatusCode()
-                .toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
-            throw new DataAccessException(e.getMessage(), e);
+            throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
         }
     }
 
@@ -85,10 +85,9 @@ public class SimpleAuthenticationRestClient implements AuthenticationRestClient 
             LOGGER.debug("Get AuthenticationTokenInfo status {}", response.getStatusCode());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed to authentication token info with status code " + e.getStatusCode()
-                .toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
-            throw new DataAccessException(e.getMessage(), e);
+            throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
         }
     }
 }

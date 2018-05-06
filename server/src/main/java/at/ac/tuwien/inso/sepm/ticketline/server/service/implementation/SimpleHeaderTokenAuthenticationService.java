@@ -172,9 +172,9 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
                 headerToken,
                 authorities);
         } catch (ExpiredJwtException e) {
-            throw new CredentialsExpiredException(e.getMessage(), e);
+            throw new CredentialsExpiredException("Credentials expired");
         } catch (JwtException e) {
-            throw new BadCredentialsException(e.getMessage(), e);
+            throw new BadCredentialsException("Bad Credentials");
         }
     }
 
