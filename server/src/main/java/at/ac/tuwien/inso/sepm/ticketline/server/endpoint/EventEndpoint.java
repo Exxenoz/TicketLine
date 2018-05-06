@@ -33,6 +33,4 @@ public class EventEndpoint {
     public List<EventDTO> findByPerformance(Performance performance) {
         return eventMapper.eventToEventDTO(eventService.findByPerformance(performance));
     }
-
-
 }

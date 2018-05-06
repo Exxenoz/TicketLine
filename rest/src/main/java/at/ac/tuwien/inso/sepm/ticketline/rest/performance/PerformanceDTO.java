@@ -19,6 +19,18 @@ public class PerformanceDTO {
     private LocalDateTime performanceEnd;
     private AddressDTO address;
 
+    public PerformanceDTO() {
+    }
+
+    public PerformanceDTO(EventDTO event, String name, Double price, LocalDateTime performanceStart, LocalDateTime performanceEnd, AddressDTO address) {
+        this.event = event;
+        this.name = name;
+        this.price = price;
+        this.performanceStart = performanceStart;
+        this.performanceEnd = performanceEnd;
+        this.address = address;
+    }
+
     public long getId() {
         return id;
     }

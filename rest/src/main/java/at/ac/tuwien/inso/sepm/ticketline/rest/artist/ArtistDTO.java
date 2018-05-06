@@ -8,6 +8,14 @@ public class ArtistDTO {
     private String firstName;
     private String lastName;
 
+    public ArtistDTO() {
+    }
+
+    public ArtistDTO(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
     public Long getId() {
         return id;
     }

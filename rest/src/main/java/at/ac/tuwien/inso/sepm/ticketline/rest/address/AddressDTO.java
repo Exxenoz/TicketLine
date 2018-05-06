@@ -10,6 +10,17 @@ public class AddressDTO {
     private String country;
     private String postalCode;
 
+    public AddressDTO() {
+    }
+
+    public AddressDTO(String buildingName, String street, String location, String country, String postalCode) {
+        this.buildingName = buildingName;
+        this.street = street;
+        this.location = location;
+        this.country = country;
+        this.postalCode = postalCode;
+    }
+
     public String getBuildingName() {
         return buildingName;
     }
