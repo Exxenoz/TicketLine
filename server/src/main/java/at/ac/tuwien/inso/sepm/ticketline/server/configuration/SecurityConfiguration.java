@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.configuration;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.configuration.properties.H2ConsoleConfigurationProperties;
 import at.ac.tuwien.inso.sepm.ticketline.server.security.HeaderTokenAuthenticationFilter;
+import org.hibernate.engine.jdbc.connections.spi.JdbcConnectionAccess;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.info.InfoEndpoint;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
@@ -13,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configurers.provisioning.InMemoryUserDetailsManagerConfigurer;
+import org.springframework.security.config.annotation.authentication.configurers.provisioning.JdbcUserDetailsManagerConfigurer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -25,6 +27,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.sql.DataSource;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +45,9 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfiguration {
 
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private DataSource dataSource;
 
     public SecurityConfiguration(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
@@ -65,7 +71,7 @@ public class SecurityConfiguration {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth, List<AuthenticationProvider> providerList) throws Exception {
-        new InMemoryUserDetailsManagerConfigurer<AuthenticationManagerBuilder>()
+        new JdbcUserDetailsManagerConfigurer<AuthenticationManagerBuilder>().dataSource(dataSource)
             .withUser("user").password(passwordEncoder.encode("password")).authorities("USER").and()
             .withUser("admin").password(passwordEncoder.encode("password")).authorities("ADMIN", "USER").and()
             .passwordEncoder(passwordEncoder)
