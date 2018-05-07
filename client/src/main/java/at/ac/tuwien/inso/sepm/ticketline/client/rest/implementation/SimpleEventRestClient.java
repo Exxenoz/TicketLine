@@ -7,6 +7,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -14,6 +15,8 @@ import org.springframework.web.client.RestClientException;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.springframework.http.HttpMethod.GET;
@@ -55,6 +58,26 @@ public class SimpleEventRestClient implements EventRestClient {
             final var event =
                 restClient.exchange(
                     new RequestEntity<>(perf, GET, eventUri),
+                    new ParameterizedTypeReference<List<EventDTO>>() {
+                    });
+            LOGGER.debug("Result status was {} with content {}", event.getStatusCode(), event.getBody());
+            return event.getBody();
+        } catch (HttpStatusCodeException e) {
+            throw new DataAccessException("Failed retrieve events with status code " + e.getStatusCode().toString());
+        } catch (RestClientException e) {
+            throw new DataAccessException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public List<EventDTO> findTop10ByPaidReservationCountByMonth(int month, Integer category) throws DataAccessException {
+        try {
+            LOGGER.debug("Retrieving top 10 events by sales from month: {}", eventUri);
+            final var event =
+                restClient.exchange(
+                    restClient.getServiceURI(eventUri + "/top_ten/filter?month=" + month + "&category=" + category),
+                    HttpMethod.GET,
+                    null,
                     new ParameterizedTypeReference<List<EventDTO>>() {
                     });
             LOGGER.debug("Result status was {} with content {}", event.getStatusCode(), event.getBody());

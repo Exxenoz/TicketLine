@@ -159,6 +159,8 @@
                      <children>
                          <ChoiceBox fx:id="monthChoiceBox" prefWidth="150.0" >
                          </ChoiceBox>
+                         <ChoiceBox fx:id="categoryChoiceBox" prefWidth="150.0" >
+                         </ChoiceBox>
                         <Button fx:id="showTopTenButton" mnemonicParsing="false" onAction="#showTopTenChartForMonth" text="%events.main.button.show" />
                      </children>
                   </HBox>

@@ -1,8 +1,12 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.client.rest.EventRestClient;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.EventService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
+import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
 import javafx.beans.property.SimpleStringProperty;
@@ -10,6 +14,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.control.*;
 import org.slf4j.Logger;
@@ -95,6 +100,9 @@ public class EventController {
     private ChoiceBox<String> monthChoiceBox;
 
     @FXML
+    public ChoiceBox categoryChoiceBox;
+
+    @FXML
     private Button showTopTenButton;
 
     @FXML
@@ -119,6 +127,8 @@ public class EventController {
     @FXML
     private Button bookTopTenEventButton;
 
+    private EventService eventService;
+
     private PerformanceService performanceService;
 
     private ObservableList<PerformanceDTO> performanceData = FXCollections.observableArrayList();
@@ -127,7 +137,8 @@ public class EventController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public EventController(PerformanceService performanceService) {
+    public EventController(EventService eventService, PerformanceService performanceService) {
+        this.eventService = eventService;
         this.performanceService = performanceService;
     }
 
@@ -170,6 +181,7 @@ public class EventController {
             BundleManager.getBundle().getString("events.main.october"),
             BundleManager.getBundle().getString("events.main.november"),
             BundleManager.getBundle().getString("events.main.december"));
+        monthChoiceBox.getSelectionModel().selectFirst();
     }
 
     private SpinnerValueFactory<Integer> buildSpinner(int maxValue) {
@@ -253,6 +265,13 @@ public class EventController {
 
     @FXML
     void showTopTenChartForMonth(ActionEvent event) {
-        
+        int month = monthChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? monthChoiceBox.getSelectionModel().getSelectedIndex() + 1 : 1;
+        Integer category = categoryChoiceBox.getSelectionModel().getSelectedIndex() >= 0 ? categoryChoiceBox.getSelectionModel().getSelectedIndex() : null;
+        try {
+            List<EventDTO> events = eventService.findTop10ByPaidReservationCountByMonth(month, category);
+        } catch (DataAccessException e) {
+            LOGGER.error("Couldn't fetch top 10 events from server for month: " + month + " " + e.getMessage());
+            JavaFXUtils.createErrorDialog(e.getMessage(), monthChoiceBox.getScene().getWindow()).showAndWait();
+        }
     }
 }
