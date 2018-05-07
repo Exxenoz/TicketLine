@@ -324,6 +324,23 @@ public class EventController {
             foundEventsTableView.refresh();
             activeFilters = "";
             updateCurrentSearchParameters();
+
+            artistFirstNameTextField.setText("");
+            artistLastNameTextField.setText("");
+            eventNameTextField.setText("");
+            seatingYesButton.setSelected(false);
+            seatingNoButton.setSelected(false);
+            lengthInMinutesTextField.setText("");
+            beginTimeDatePicker.setValue(null);
+            beginTimeHourSpinner.getValueFactory().setValue(0);
+            beginTimeMinuteSpinner.getValueFactory().setValue(0);
+            priceTextField.setText("");
+            locationNameTextField.setText("");
+            streetTextField.setText("");
+            cityTextField.setText("");
+            countryTextField.setText("");
+            postalCodeTextField.setText("");
+
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch performances from server!", e);
         }

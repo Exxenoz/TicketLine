@@ -39,9 +39,20 @@ public class PerformanceDetailViewController {
 
     private EventDetailViewController eventDetailViewController;
 
+    private PerformanceDTO performance;
+
   /*  public PerformanceDetailViewController(EventDetailViewController eventDetailViewController) {
         this.eventDetailViewController = eventDetailViewController;
     } */
+
+    @FXML
+    private void initialize(){
+        performanceHeader.setText(performance.getEvent().getName());
+        locationName.setText(performance.getAddress().getLocationName() + ", " + performance.getAddress().getCity());
+        startTime.setText(performance.getPerformanceStart().toString());
+        artistNamePerformance.setText(performance.getEvent().getArtists().toString());
+        performancePrice.setText(performance.getPrice().toString());
+    }
 
     @FXML
     void bookPerformance(ActionEvent event) {
@@ -69,11 +80,7 @@ public class PerformanceDetailViewController {
     }
 
     public void fill(PerformanceDTO performance) {
-        performanceHeader.setText(performance.getEvent().getName());
-        locationName.setText(performance.getAddress().getLocationName() + ", " + performance.getAddress().getCity());
-        startTime.setText(performance.getPerformanceStart().toString());
-        artistNamePerformance.setText(performance.getEvent().getArtists().toString());
-        performancePrice.setText(performance.getPrice().toString());
+       this.performance = performance;
 
     }
 }
