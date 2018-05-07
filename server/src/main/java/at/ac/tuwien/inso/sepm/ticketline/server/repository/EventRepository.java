@@ -16,6 +16,14 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("select e from Performance p join p.event as e where p = ?1")
     List<Event> findByPerformance(Performance performance);
 
+    /**
+     * Find top 10 event entries by month and sector category ordered by paid reservation count (descending).
+     *
+     * @param startOfTheMonth the start of the month
+     * @param endOfTheMonth the end of the month
+     * @param categoryId the sector category id of the paid reservations
+     * @return ordered list of the filtered top 10 entries
+     */
     @Query(value = "SELECT e.*" +
         " FROM event e, performance p, reservation r, seat s, sector sec" +
         " WHERE e.id = p.event_id AND p.id = r.performance_id AND r.seat_id = s.id AND s.sector_id = sec.id" +
