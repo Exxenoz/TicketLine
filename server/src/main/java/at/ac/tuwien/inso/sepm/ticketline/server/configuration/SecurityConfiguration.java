@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.configuration;
 import at.ac.tuwien.inso.sepm.ticketline.server.configuration.properties.H2ConsoleConfigurationProperties;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.UserDisabledException;
 import at.ac.tuwien.inso.sepm.ticketline.server.security.HeaderTokenAuthenticationFilter;
+import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.info.InfoEndpoint;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
@@ -53,6 +54,9 @@ public class SecurityConfiguration {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    private UserService userService;
+
     public SecurityConfiguration(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
@@ -80,14 +84,24 @@ public class SecurityConfiguration {
         if (!mgr.userExists("user")) {
             var authorities = new ArrayList<GrantedAuthority>();
             authorities.add(new SimpleGrantedAuthority("USER"));
-            mgr.createUser(new User("user", passwordEncoder.encode("password"), authorities));
+
+            User user = new User("user", passwordEncoder.encode("password"), authorities);
+            mgr.createUser(user);
+            //Now add aditional information for this user
+            userService.initiateSecurityUser(user);
         }
+
         if (!mgr.userExists("admin")) {
             var authorities = new ArrayList<GrantedAuthority>();
             authorities.add(new SimpleGrantedAuthority("USER"));
             authorities.add(new SimpleGrantedAuthority("ADMIN"));
-            mgr.createUser(new User("admin", passwordEncoder.encode("password"), authorities));
+
+            User user = new User("admin", passwordEncoder.encode("password"), authorities);
+            mgr.createUser(user);
+            //Now add aditional information for this user
+            userService.initiateSecurityUser(user);
         }
+
         auth
             .jdbcAuthentication()
             .dataSource(dataSource)

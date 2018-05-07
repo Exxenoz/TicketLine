@@ -23,8 +23,8 @@ public class User {
     @Column(nullable = false)
     private boolean enabled = true;
 
-    @Column
-    private int strikes;
+    @Column(nullable = true)
+    private Integer strikes = 0;
 
     public long getId() {
         return id;
@@ -58,11 +58,11 @@ public class User {
         this.enabled = enabled;
     }
 
-    public int getStrikes() {
+    public Integer getStrikes() {
         return strikes;
     }
 
-    public void setStrikes(int strikes) {
+    public void setStrikes(Integer strikes) {
         this.strikes = strikes;
     }
 
@@ -75,6 +75,7 @@ public class User {
         private String username;
         private String password;
         private boolean enabled;
+        private int strikes;
 
         public UserBuilder id(Long id) {
             this.id = id;
@@ -96,6 +97,11 @@ public class User {
             return this;
         }
 
+        public UserBuilder strikes(int strikes) {
+            this.strikes = strikes;
+            return this;
+        }
+
         public User build() {
 
             User user = new User();
@@ -103,6 +109,7 @@ public class User {
             user.setUsername(username);
             user.setPassword(password);
             user.setEnabled(enabled);
+            user.setStrikes(strikes);
             return user;
         }
     }
