@@ -42,19 +42,23 @@ public class SimpleUserService implements UserService {
 
     @Override
     public boolean increaseStrikes(User user) {
-        LOGGER.info(String.format("Increasing strikes for user: %s", user.getUsername()));
+        if(!user.isEnabled()) {
+            return true;
+        }
         int strike = user.getStrikes();
         strike += 1;
 
+        user.setStrikes(strike);
+        LOGGER.info(String.format("Increasing strikes for user: %s to amount: %d", user.getUsername(), user.getStrikes()));
+
         if(strike >= 5) {
-            //Make sure that the user is disabled
-            if (user.isEnabled()) {
-                user.setEnabled(false);
-                usersRepository.save(user);
-            }
+            user.setEnabled(false);
+            LOGGER.info(String.format("User: %s has been disabled", user.getUsername(), user.getStrikes()));
+            usersRepository.save(user);
             return true;
         }
 
+        usersRepository.save(user);
         return false;
     }
 
