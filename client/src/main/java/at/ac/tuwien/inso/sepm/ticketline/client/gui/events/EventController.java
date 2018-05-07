@@ -4,6 +4,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.EventService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.SectorCategoryService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
@@ -12,6 +13,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.sector.SectorCategoryDTO;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -34,6 +36,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -144,6 +147,7 @@ public class EventController {
     private EventService eventService;
     private PerformanceService performanceService;
     private ReservationService reservationService;
+    private SectorCategoryService sectorCategoryService;
 
     private ObservableList<PerformanceDTO> performanceData = FXCollections.observableArrayList();
 
@@ -155,10 +159,11 @@ public class EventController {
 
     private String activeFilters = "";
 
-    public EventController(EventService eventService, PerformanceService performanceService, ReservationService reservationService) {
+    public EventController(EventService eventService, PerformanceService performanceService, ReservationService reservationService, SectorCategoryService sectorCategoryService) {
         this.eventService = eventService;
         this.performanceService = performanceService;
         this.reservationService = reservationService;
+        this.sectorCategoryService = sectorCategoryService;
         this.performanceDetailViewController = performanceDetailViewController;
         this.eventDetailViewController = eventDetailViewController;
     }
@@ -177,13 +182,6 @@ public class EventController {
         beginTimeMinuteSpinner.setValueFactory(beginTimeMinutesFactory);
 
         initMonthChoiceBox();
-
-        try {
-            performances = performanceService.findAll();
-            intializeTableView();
-        } catch (DataAccessException e) {
-            LOGGER.error("Couldn't fetch performances from server!", e);
-        }
     }
 
     private void initMonthChoiceBox() {
@@ -200,6 +198,32 @@ public class EventController {
             BundleManager.getBundle().getString("events.main.october"),
             BundleManager.getBundle().getString("events.main.november"),
             BundleManager.getBundle().getString("events.main.december"));
+        monthChoiceBox.getSelectionModel().selectFirst();
+    }
+
+    public void loadData() {
+        try {
+            performances = performanceService.findAll();
+            intializeTableView();
+        } catch (DataAccessException e) {
+            LOGGER.error("Couldn't fetch performances from server!", e);
+        }
+
+        updateCategories();
+    }
+
+    public void updateCategories() {
+        categoryChoiceBox.getItems().clear();
+        categoryChoiceBox.getItems().add(BundleManager.getBundle().getString("events.main.all"));
+        try {
+            List<SectorCategoryDTO> sectorCategories = sectorCategoryService.findAllOrderByBasePriceModAsc();
+            for(SectorCategoryDTO sectorCategory : sectorCategories) {
+                categoryChoiceBox.getItems().add(sectorCategory.getBasePriceMod());
+            }
+        } catch (DataAccessException e) {
+            LOGGER.error("Couldn't get sector categories: " + e.getMessage());
+            JavaFXUtils.createErrorDialog(e.getMessage(), categoryChoiceBox.getScene().getWindow()).showAndWait();
+        }
         monthChoiceBox.getSelectionModel().selectFirst();
     }
 
@@ -358,10 +382,12 @@ public class EventController {
     @FXML
     void showTopTenClicked(ActionEvent event) {
         Integer month = monthChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? monthChoiceBox.getSelectionModel().getSelectedIndex() + 1 : 1;
-        Long category = categoryChoiceBox.getSelectionModel().getSelectedIndex() >= 0 ? Long.valueOf(categoryChoiceBox.getSelectionModel().getSelectedIndex()) : null;
+        Long categoryId = categoryChoiceBox.getSelectionModel().getSelectedIndex() >= 0 ? Long.valueOf(categoryChoiceBox.getSelectionModel().getSelectedIndex()) : null;
+
+        LOGGER.info("Show Top 10 Events for month: " + monthChoiceBox.getSelectionModel().getSelectedItem() + " and categoryId: " + categoryId);
 
         try {
-            List<EventDTO> events = eventService.findTop10ByPaidReservationCountByFilter(new EventFilterTopTenDTO(month, category));
+            List<EventDTO> events = eventService.findTop10ByPaidReservationCountByFilter(new EventFilterTopTenDTO(month, categoryId));
             showTopTenEvents(events);
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch top 10 events from server for month: " + month + " " + e.getMessage());
@@ -370,6 +396,8 @@ public class EventController {
     }
 
     private void showTopTenEvents(List<EventDTO> events) {
+        topTenBarChart.getData().clear();
+
         XYChart.Series barSeries = new XYChart.Series();
 
         for (EventDTO event : events) {
@@ -378,11 +406,14 @@ public class EventController {
                 int ticketSaleCount = getTicketSaleCountFromReservations(reservations);
                 barSeries.getData().add(new XYChart.Data(event.getName(), ticketSaleCount));
             } catch (DataAccessException e) {
-                e.printStackTrace();
+                LOGGER.error("Couldn't fetch reservation of event: " + event + " " + e.getMessage());
+                JavaFXUtils.createErrorDialog(e.getMessage(), monthChoiceBox.getScene().getWindow()).showAndWait();
             }
         }
 
-        topTenBarChart.getData().add(barSeries);
+        if(events.size() > 0) {
+            topTenBarChart.getData().add(barSeries);
+        }
     }
 
     private int getTicketSaleCountFromReservations(List<ReservationDTO> reservations) {
