@@ -20,4 +20,9 @@ public class SimpleReservationService implements ReservationService {
     public List<Reservation> findAllByEventId(Long eventId) {
         return reservationRepository.findAllByEventId(eventId);
     }
+
+    @Override
+    public Long getPaidReservationCountByEventId(Long eventId) {
+        return reservationRepository.getPaidReservationCountByEventId(eventId);
+    }
 }

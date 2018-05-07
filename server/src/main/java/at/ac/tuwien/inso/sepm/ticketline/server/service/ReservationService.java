@@ -13,4 +13,12 @@ public interface ReservationService {
      * @return list of all reservation entries with the passed event id
      */
     List<Reservation> findAllByEventId(Long eventId);
+
+    /**
+     * Get paid reservation count by event id.
+     *
+     * @param eventId the id of the event
+     * @return count of paid reservation entries with the passed event id
+     */
+    Long getPaidReservationCountByEventId(Long eventId);
 }

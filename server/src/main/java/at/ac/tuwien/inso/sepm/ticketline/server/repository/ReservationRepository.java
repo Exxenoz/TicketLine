@@ -21,4 +21,15 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
         " FROM performance p, reservation r" +
         " WHERE p.id = r.performance_id AND p.event_id = :eventId", nativeQuery = true)
     List<Reservation> findAllByEventId(@Param("eventId")Long eventId);
+
+    /**
+     * Get paid reservation count by event id.
+     *
+     * @param eventId the id of the event
+     * @return count of paid reservation entries with the passed event id
+     */
+    @Query(value = "SELECT COUNT(r.id)" +
+        " FROM performance p, reservation r" +
+        " WHERE p.id = r.performance_id AND p.event_id = :eventId AND r.is_paid = true", nativeQuery = true)
+    Long getPaidReservationCountByEventId(@Param("eventId")Long eventId);
 }

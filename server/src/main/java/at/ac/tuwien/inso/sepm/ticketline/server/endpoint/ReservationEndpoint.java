@@ -30,4 +30,10 @@ public class ReservationEndpoint {
     public List<ReservationDTO> findAllByEventId(@PathVariable Long eventId) {
         return reservationMapper.reservationToReservationDTO(reservationService.findAllByEventId(eventId));
     }
+
+    @GetMapping("/event/{eventId}/count")
+    @ApiOperation("Get count of paid reservation entries by event id")
+    public Long getPaidReservationCountByEventId(@PathVariable Long eventId) {
+        return reservationService.getPaidReservationCountByEventId(eventId);
+    }
 }
