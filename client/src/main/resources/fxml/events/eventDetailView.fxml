@@ -41,8 +41,9 @@
       </GridPane>
       <TableView fx:id="performanceDatesTableView" layoutX="197.0" layoutY="316.0" prefHeight="200.0" prefWidth="468.0">
         <columns>
-          <TableColumn prefWidth="75.0" text="C1" />
-          <TableColumn prefWidth="75.0" text="C2" />
+          <TableColumn fx:id="startTimeColumn" prefWidth="151.0" text="Start Time" />
+            <TableColumn fx:id="endTimeColumn" prefWidth="155.0" text="End Time" />
+            <TableColumn fx:id="locationColumn" prefWidth="160.0" text="Location" />
         </columns>
       </TableView>
       <Label layoutX="197.0" layoutY="286.0" text="Performance Dates:">

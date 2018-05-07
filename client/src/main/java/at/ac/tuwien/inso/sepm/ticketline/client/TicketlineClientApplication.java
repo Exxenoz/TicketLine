@@ -18,7 +18,7 @@ import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
 import static javafx.scene.control.ButtonType.OK;
 import static javafx.stage.Modality.APPLICATION_MODAL;
 
-@SpringBootApplication(scanBasePackages = { "at.ac.tuwien.inso.sepm.ticketline.client", "at.ac.tuwien.inso.springfx" })
+@SpringBootApplication(scanBasePackages = {"at.ac.tuwien.inso.sepm.ticketline.client", "at.ac.tuwien.inso.springfx"})
 public class TicketlineClientApplication extends SpringFxApplication {
 
     private static final String JAVAFX_PRELOADER = "javafx.preloader";
@@ -32,9 +32,9 @@ public class TicketlineClientApplication extends SpringFxApplication {
     public void start(Stage stage) {
         stage.setTitle(javaFxConfigurationProperties.getTitle());
      /*   stage.setMinHeight(1100);
-        stage.setMinWidth(1100);
-        javaFxConfigurationProperties.setInitialHeight(1100);
-        javaFxConfigurationProperties.setInitialWidth(1100); */
+        stage.setMinWidth(1100);*/
+        javaFxConfigurationProperties.setInitialHeight(740);
+        javaFxConfigurationProperties.setInitialWidth(1100);
         stage.setScene(new Scene(
             loadParent("/fxml/mainWindow.fxml"),
             javaFxConfigurationProperties.getInitialWidth(),

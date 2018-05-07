@@ -15,7 +15,7 @@ public class JavaFxConfigurationProperties {
     private Integer initialHeight = 640;
 
     @NotNull
-    private Integer initialWidth = 1060;
+    private Integer initialWidth =1055;
 
     @NotNull
     private String title;
