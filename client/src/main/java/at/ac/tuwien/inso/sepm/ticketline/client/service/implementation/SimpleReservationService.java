@@ -31,4 +31,13 @@ public class SimpleReservationService implements ReservationService {
 
         return reservationRestClient.findAllByEvent(event);
     }
+
+    @Override
+    public Long getPaidReservationCountByEvent(EventDTO event) throws DataAccessException {
+        if(event == null) {
+            throw new DataAccessException("Event not found");
+        }
+
+        return reservationRestClient.getPaidReservationCountByEvent(event);
+    }
 }

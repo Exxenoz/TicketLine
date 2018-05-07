@@ -15,4 +15,12 @@ public interface ReservationService {
      * @throws DataAccessException in case something went wrong
      */
     List<ReservationDTO> findAllByEvent(EventDTO event) throws DataAccessException;
+
+    /**
+     * Find number of paid reservations by given event
+     * @param event event of performances
+     * @return count of paid reservations
+     * @throws DataAccessException in case something went wrong
+     */
+    Long getPaidReservationCountByEvent(EventDTO event) throws DataAccessException;
 }

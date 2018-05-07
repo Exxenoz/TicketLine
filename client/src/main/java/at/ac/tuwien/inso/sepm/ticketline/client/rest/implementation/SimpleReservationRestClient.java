@@ -50,4 +50,22 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             throw new DataAccessException(e.getMessage(), e);
         }
     }
+
+    @Override
+    public Long getPaidReservationCountByEvent(EventDTO event) throws DataAccessException {
+        try {
+            LOGGER.debug("Retrieving paid reservation count of a specific event from {}", reservationByEventUri);
+            final var reservation =
+                restClient.exchange(
+                    new RequestEntity<>(GET, reservationByEventUri.resolve(event.getId() + "/count")),
+                    new ParameterizedTypeReference<Long>() {
+                    });
+            LOGGER.debug("Result status was {} with content {}", reservation.getStatusCode(), reservation.getBody());
+            return reservation.getBody();
+        } catch (HttpStatusCodeException e) {
+            throw new DataAccessException("Failed retrieve paid reservation count with status code " + e.getStatusCode().toString());
+        } catch (RestClientException e) {
+            throw new DataAccessException(e.getMessage(), e);
+        }
+    }
 }

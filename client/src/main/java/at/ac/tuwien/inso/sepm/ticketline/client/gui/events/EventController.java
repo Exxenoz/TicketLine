@@ -1,6 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.EventService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
@@ -41,7 +42,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+
+import static org.controlsfx.glyphfont.FontAwesome.Glyph.CALENDAR_ALT;
+import static org.controlsfx.glyphfont.FontAwesome.Glyph.NEWSPAPER_ALT;
 
 @Component
 public class EventController {
@@ -158,11 +163,13 @@ public class EventController {
     private List<PerformanceDTO> performances;
 
     private PerformanceDetailViewController performanceDetailViewController;
-
     private EventDetailViewController eventDetailViewController;
 
     private List<SectorCategoryDTO> sectorCategories;
     private List<EventDTO> currentEvents;
+
+    @FXML
+    private TabHeaderController tabHeaderController;
 
     private String activeFilters = "";
 
@@ -171,14 +178,15 @@ public class EventController {
         this.performanceService = performanceService;
         this.reservationService = reservationService;
         this.sectorCategoryService = sectorCategoryService;
-        this.performanceDetailViewController = performanceDetailViewController;
-        this.eventDetailViewController = eventDetailViewController;
         sectorCategories = new ArrayList<>();
         currentEvents = new ArrayList<>();
     }
 
     @FXML
     private void initialize() {
+        tabHeaderController.setIcon(CALENDAR_ALT);
+        tabHeaderController.setTitle("Top 10 Events");
+
         SpinnerValueFactory<Integer> beginTimeHoursFactory = buildSpinner(23);
         SpinnerValueFactory<Integer> beginTimeMinutesFactory = buildSpinner(59);
         seatingYesButton.setSelected(false);
@@ -419,11 +427,10 @@ public class EventController {
 
         for (EventDTO event : events) {
             try {
-                List<ReservationDTO> reservations = reservationService.findAllByEvent(event);
-                int ticketSaleCount = getTicketSaleCountFromReservations(reservations);
-                barSeries.getData().add(new XYChart.Data(event.getName() + " " + event.getId(), ticketSaleCount));
+                Long ticketSaleCount = reservationService.getPaidReservationCountByEvent(event);
+                barSeries.getData().add(new XYChart.Data(event.getName(), ticketSaleCount));
                 currentEvents.add(event);
-                topTenEventChoiceBox.getItems().add(event.getName() + " " + event.getId());
+                topTenEventChoiceBox.getItems().add(event.getName());
             } catch (DataAccessException e) {
                 LOGGER.error("Couldn't fetch reservation of event: " + event + " " + e.getMessage());
                 JavaFXUtils.createErrorDialog(e.getMessage(), monthChoiceBox.getScene().getWindow()).showAndWait();
@@ -433,6 +440,9 @@ public class EventController {
         if (events.size() > 0) {
             topTenBarChart.getData().add(barSeries);
             topTenEventChoiceBox.getSelectionModel().selectFirst();
+            bookTopTenEventButton.setDisable(false);
+        } else {
+            bookTopTenEventButton.setDisable(true);
         }
 
         registerBarChartListener(barSeries);
@@ -441,7 +451,7 @@ public class EventController {
     private void registerBarChartListener(XYChart.Series<String, Integer> barSeries) {
         for (final XYChart.Data<String, Integer> data : barSeries.getData()) {
             Node node = data.getNode();
-            LOGGER.info("EX: " + data.getExtraValue());
+
             node.setOnMouseEntered(event -> {
                 node.getStyleClass().add("hover");
             });
@@ -462,23 +472,13 @@ public class EventController {
         }
     }
 
-    private int getTicketSaleCountFromReservations(List<ReservationDTO> reservations) {
-        int count = 0;
-        for(ReservationDTO reservation : reservations) {
-            if(reservation.isPaid()) {
-                count++;
-            }
-        }
-
-        return count;
-    }
-
     @FXML
     void bookTopTenEvent(ActionEvent event) {
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/events/eventDetailView.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(eventDetailViewController) ? eventDetailViewController : null);
 
-        //TODO: Fill detail view
+        int selectedIndex = topTenEventChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? topTenEventChoiceBox.getSelectionModel().getSelectedIndex() : 0;
+        eventDetailViewController.fill(currentEvents.get(selectedIndex));
 
         Stage stage = new Stage();
         try {
