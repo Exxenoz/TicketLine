@@ -1,9 +1,12 @@
 package at.ac.tuwien.inso.sepm.ticketline.rest.event;
 
+import io.swagger.annotations.ApiModel;
+
 import java.util.Objects;
 
+@ApiModel(value = "EventFilterTopTenDTO", description = "The event filter top ten DTO for filtered event entries via rest")
 public class EventFilterTopTenDTO {
-	
+
     private Integer month;
     private Long categoryId;
 
