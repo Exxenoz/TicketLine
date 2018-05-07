@@ -5,9 +5,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.event.EventMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.EventService;
 import io.swagger.annotations.Api;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,5 +30,10 @@ public class EventEndpoint {
     @GetMapping("performance")
     public List<EventDTO> findByPerformance(Performance performance) {
         return eventMapper.eventToEventDTO(eventService.findByPerformance(performance));
+    }
+
+    @GetMapping("/top_ten/{month}/{categoryId}")
+    public List<EventDTO> findTop10ByPaidReservationCountByMonthByCategory(@PathVariable Integer month, @PathVariable Integer categoryId) {
+        return eventMapper.eventToEventDTO(eventService.findTop10ByPaidReservationCountByMonthByCategory(month, categoryId));
     }
 }
