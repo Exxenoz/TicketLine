@@ -30,7 +30,7 @@ public class Reservation {
     @Column(nullable = false)
     private Boolean isPaid;
 
-    @Column(nullable = false, name = "paid_at")
+    @Column(nullable = true, name = "paid_at")
     private LocalDateTime paidAt;
 
     public Long getId() {

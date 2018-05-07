@@ -67,6 +67,9 @@ public class ReservationDataGenerator {
                         reservation.setPaid(true);
                         reservation.setPaidAt(LocalDateTime.now());
                     }
+                    else {
+                        reservation.setPaid(false);
+                    }
                     LOGGER.debug("Saving reservation {}", reservation);
                     reservationRepository.save(reservation);
                 }
