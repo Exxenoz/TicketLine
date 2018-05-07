@@ -17,7 +17,10 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Profile("generateData")
 @Component
@@ -60,6 +63,10 @@ public class ReservationDataGenerator {
                     final var reservation = new Reservation();
                     reservation.setPerformance(performance);
                     reservation.setSeat(seats.get(i));
+                    if (faker.random().nextBoolean()) {
+                        reservation.setPaid(true);
+                        reservation.setPaidAt(LocalDateTime.now());
+                    }
                     LOGGER.debug("Saving reservation {}", reservation);
                     reservationRepository.save(reservation);
                 }
