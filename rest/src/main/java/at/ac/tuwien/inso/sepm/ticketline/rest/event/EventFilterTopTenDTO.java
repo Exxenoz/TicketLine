@@ -6,6 +6,9 @@ public class EventFilterTopTenDTO {
     private Integer month;
     private Integer category;
 
+    public EventFilterTopTenDTO() {
+    }
+
     public EventFilterTopTenDTO(Integer month, Integer category) {
         this.month = month;
         this.category = category;

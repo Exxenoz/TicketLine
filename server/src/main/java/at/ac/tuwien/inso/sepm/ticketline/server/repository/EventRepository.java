@@ -24,5 +24,5 @@ public interface EventRepository extends JpaRepository<Event, Long> {
         " GROUP BY e.id" +
         " ORDER BY COUNT(r.id) DESC" +
         " LIMIT 10", nativeQuery = true)
-    List<Event> findTop10ByPaidReservationCountByMonthByCategory(@Param("startOfTheMonth")Timestamp startOfTheMonth, @Param("endOfTheMonth")Timestamp endOfTheMonth, @Param("categoryId")Integer categoryId);
+    List<Event> findTop10ByPaidReservationCountByFilter(@Param("startOfTheMonth")Timestamp startOfTheMonth, @Param("endOfTheMonth")Timestamp endOfTheMonth, @Param("categoryId")Long categoryId);
 }

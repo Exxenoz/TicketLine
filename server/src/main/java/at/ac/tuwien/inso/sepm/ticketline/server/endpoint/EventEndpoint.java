@@ -1,7 +1,9 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventFilterTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.event.EventFilterTop10Mapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.event.EventMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.EventService;
 import io.swagger.annotations.Api;
@@ -16,10 +18,12 @@ public class EventEndpoint {
 
     private final EventService eventService;
     private final EventMapper eventMapper;
+    private final EventFilterTop10Mapper eventFilterTop10Mapper;
 
-    public EventEndpoint(EventService eventService, EventMapper eventMapper) {
+    public EventEndpoint(EventService eventService, EventMapper eventMapper, EventFilterTop10Mapper eventFilterTop10Mapper) {
         this.eventService = eventService;
         this.eventMapper = eventMapper;
+        this.eventFilterTop10Mapper = eventFilterTop10Mapper;
     }
 
     @GetMapping
@@ -32,8 +36,9 @@ public class EventEndpoint {
         return eventMapper.eventToEventDTO(eventService.findByPerformance(performance));
     }
 
-    @GetMapping("/top_ten/{month}/{categoryId}")
-    public List<EventDTO> findTop10ByPaidReservationCountByMonthByCategory(@PathVariable Integer month, @PathVariable Integer categoryId) {
-        return eventMapper.eventToEventDTO(eventService.findTop10ByPaidReservationCountByMonthByCategory(month, categoryId));
+    @PostMapping("/top_ten")
+    public List<EventDTO> findTop10ByPaidReservationCountByFilter(@RequestBody final EventFilterTopTenDTO eventFilterTopTenDTO) {
+        var eventFilterTop10 = eventFilterTop10Mapper.eventFilterTop10DTOToEventFilterTop10(eventFilterTopTenDTO);
+        return eventMapper.eventToEventDTO(eventService.findTop10ByPaidReservationCountByFilter(eventFilterTop10));
     }
 }
