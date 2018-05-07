@@ -18,12 +18,15 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
@@ -140,7 +143,7 @@ public class EventController {
     private BarChart<String, Integer> topTenBarChart;
 
     @FXML
-    private ChoiceBox<?> topTenEventChoiceBox;
+    private ChoiceBox<String> topTenEventChoiceBox;
 
     @FXML
     private Button bookTopTenEventButton;
@@ -159,6 +162,7 @@ public class EventController {
     private EventDetailViewController eventDetailViewController;
 
     private List<SectorCategoryDTO> sectorCategories;
+    private List<EventDTO> currentEvents;
 
     private String activeFilters = "";
 
@@ -170,6 +174,7 @@ public class EventController {
         this.performanceDetailViewController = performanceDetailViewController;
         this.eventDetailViewController = eventDetailViewController;
         sectorCategories = new ArrayList<>();
+        currentEvents = new ArrayList<>();
     }
 
     @FXML
@@ -386,44 +391,74 @@ public class EventController {
 
     @FXML
     void showTopTenClicked(ActionEvent event) {
+        topTenEventChoiceBox.getItems().clear();
+
         Integer month = monthChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? monthChoiceBox.getSelectionModel().getSelectedIndex() + 1 : 1;
         Integer categorySelectionIndex = categoryChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? categoryChoiceBox.getSelectionModel().getSelectedIndex() - 1 : null;
         Long categoryId = null;
-        if(categorySelectionIndex != null) {
+        if (categorySelectionIndex != null) {
             categoryId = sectorCategories.get(categorySelectionIndex).getId();
         }
 
         LOGGER.info("Show Top 10 Events for month: " + monthChoiceBox.getSelectionModel().getSelectedItem() + " and categoryId: " + categoryId);
 
-        topTenBarChart.setTitle(monthChoiceBox.getSelectionModel().getSelectedItem());
-
         try {
             List<EventDTO> events = eventService.findTop10ByPaidReservationCountByFilter(new EventFilterTopTenDTO(month, categoryId));
-            showTopTenEvents(events);
+            showTopTenEvents(events, monthChoiceBox.getSelectionModel().getSelectedItem());
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch top 10 events from server for month: " + month + " " + e.getMessage());
             JavaFXUtils.createErrorDialog(e.getMessage(), monthChoiceBox.getScene().getWindow()).showAndWait();
         }
     }
 
-    private void showTopTenEvents(List<EventDTO> events) {
+    private void showTopTenEvents(List<EventDTO> events, String month) {
         topTenBarChart.getData().clear();
 
-        XYChart.Series barSeries = new XYChart.Series();
+        XYChart.Series<String, Integer> barSeries = new XYChart.Series();
+        barSeries.setName(month);
 
         for (EventDTO event : events) {
             try {
                 List<ReservationDTO> reservations = reservationService.findAllByEvent(event);
                 int ticketSaleCount = getTicketSaleCountFromReservations(reservations);
-                barSeries.getData().add(new XYChart.Data(event.getName(), ticketSaleCount));
+                barSeries.getData().add(new XYChart.Data(event.getName() + " " + event.getId(), ticketSaleCount));
+                currentEvents.add(event);
+                topTenEventChoiceBox.getItems().add(event.getName() + " " + event.getId());
             } catch (DataAccessException e) {
                 LOGGER.error("Couldn't fetch reservation of event: " + event + " " + e.getMessage());
                 JavaFXUtils.createErrorDialog(e.getMessage(), monthChoiceBox.getScene().getWindow()).showAndWait();
             }
         }
 
-        if(events.size() > 0) {
+        if (events.size() > 0) {
             topTenBarChart.getData().add(barSeries);
+            topTenEventChoiceBox.getSelectionModel().selectFirst();
+        }
+
+        registerBarChartListener(barSeries);
+    }
+
+    private void registerBarChartListener(XYChart.Series<String, Integer> barSeries) {
+        for (final XYChart.Data<String, Integer> data : barSeries.getData()) {
+            Node node = data.getNode();
+            LOGGER.info("EX: " + data.getExtraValue());
+            node.setOnMouseEntered(event -> {
+                node.getStyleClass().add("hover");
+            });
+
+            node.setOnMouseExited(event -> {
+                node.getStyleClass().remove("hover");
+                node.getStyleClass().remove("mouse-down");
+            });
+
+            node.setOnMousePressed(event -> {
+                node.getStyleClass().add("mouse-down");
+            });
+
+            node.setOnMouseClicked(event -> {
+                topTenEventChoiceBox.getSelectionModel().select(data.getXValue());
+                node.getStyleClass().remove("mouse-down");
+            });
         }
     }
 

@@ -1,0 +1,7 @@
+.hover {
+    -fx-background-color: red;
+}
+
+.mouse-down {
+    -fx-background-color: peru !important;
+}

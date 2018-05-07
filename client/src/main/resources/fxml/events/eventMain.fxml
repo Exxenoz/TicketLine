@@ -26,8 +26,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import java.net.URL?>
 <TabPane fx:id="eventTabPane" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@/css/secondLevelTabs.css" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventController">
-  <tabs>
+    <stylesheets>
+        <URL value="@/css/events.css"/>
+    </stylesheets>
+    <tabs>
     <Tab text="All Events">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
@@ -179,7 +183,7 @@
                         </Label>
                      </children>
                   </GridPane>
-                  <BarChart fx:id="topTenBarChart">
+                  <BarChart fx:id="topTenBarChart" animated="false">
                     <xAxis>
                       <CategoryAxis fx:id="barAxisX" label="Events" side="BOTTOM" />
                     </xAxis>
@@ -194,7 +198,7 @@
                               <Font size="19.0" />
                            </font>
                         </Label>
-                        <ChoiceBox fx:id="topTenEventChoiceBox" disable="true" prefWidth="150.0" />
+                        <ChoiceBox fx:id="topTenEventChoiceBox" prefWidth="150.0" />
                         <Button fx:id="bookTopTenEventButton" disable="true" mnemonicParsing="false" onAction="#bookTopTenEvent" text="%events.main.button.book" />
                      </children>
                   </HBox>
