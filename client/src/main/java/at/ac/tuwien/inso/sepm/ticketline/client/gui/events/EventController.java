@@ -26,6 +26,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -157,6 +158,8 @@ public class EventController {
 
     private EventDetailViewController eventDetailViewController;
 
+    private List<SectorCategoryDTO> sectorCategories;
+
     private String activeFilters = "";
 
     public EventController(EventService eventService, PerformanceService performanceService, ReservationService reservationService, SectorCategoryService sectorCategoryService) {
@@ -166,6 +169,7 @@ public class EventController {
         this.sectorCategoryService = sectorCategoryService;
         this.performanceDetailViewController = performanceDetailViewController;
         this.eventDetailViewController = eventDetailViewController;
+        sectorCategories = new ArrayList<>();
     }
 
     @FXML
@@ -215,8 +219,9 @@ public class EventController {
     public void updateCategories() {
         categoryChoiceBox.getItems().clear();
         categoryChoiceBox.getItems().add(BundleManager.getBundle().getString("events.main.all"));
+
         try {
-            List<SectorCategoryDTO> sectorCategories = sectorCategoryService.findAllOrderByBasePriceModAsc();
+            sectorCategories = sectorCategoryService.findAllOrderByBasePriceModAsc();
             for(SectorCategoryDTO sectorCategory : sectorCategories) {
                 categoryChoiceBox.getItems().add(sectorCategory.getName());
             }
@@ -382,7 +387,11 @@ public class EventController {
     @FXML
     void showTopTenClicked(ActionEvent event) {
         Integer month = monthChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? monthChoiceBox.getSelectionModel().getSelectedIndex() + 1 : 1;
-        Long categoryId = categoryChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? Long.valueOf(categoryChoiceBox.getSelectionModel().getSelectedIndex()) : null;
+        Integer categorySelectionIndex = categoryChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? categoryChoiceBox.getSelectionModel().getSelectedIndex() - 1 : null;
+        Long categoryId = null;
+        if(categorySelectionIndex != null) {
+            categoryId = sectorCategories.get(categorySelectionIndex).getId();
+        }
 
         LOGGER.info("Show Top 10 Events for month: " + monthChoiceBox.getSelectionModel().getSelectedItem() + " and categoryId: " + categoryId);
 
