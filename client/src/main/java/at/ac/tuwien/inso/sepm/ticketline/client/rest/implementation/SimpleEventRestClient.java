@@ -3,11 +3,11 @@ package at.ac.tuwien.inso.sepm.ticketline.client.rest.implementation;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.EventRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventFilterTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -15,8 +15,6 @@ import org.springframework.web.client.RestClientException;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.springframework.http.HttpMethod.GET;
@@ -27,10 +25,12 @@ public class SimpleEventRestClient implements EventRestClient {
 
     private final RestClient restClient;
     private final URI eventUri;
+    private final URI topTenUri;
 
     public SimpleEventRestClient(RestClient restClient) {
         this.restClient = restClient;
         this.eventUri = restClient.getServiceURI("/event");
+        this.topTenUri = restClient.getServiceURI("/event/top_ten");
     }
 
     @Override
@@ -70,14 +70,12 @@ public class SimpleEventRestClient implements EventRestClient {
     }
 
     @Override
-    public List<EventDTO> findTop10ByPaidReservationCountByMonth(int month, Integer category) throws DataAccessException {
+    public List<EventDTO> findTop10ByPaidReservationCountByMonthAndCategory(EventFilterTopTenDTO eventFilterTopTen) throws DataAccessException {
         try {
-            LOGGER.debug("Retrieving top 10 events by sales from month: {}", eventUri);
+            LOGGER.debug("Retrieving top 10 events by sales from month: {}", topTenUri);
             final var event =
                 restClient.exchange(
-                    restClient.getServiceURI(eventUri + "/top_ten/" + month + category != null ? "/" + category : ""),
-                    HttpMethod.GET,
-                    null,
+                    new RequestEntity<>(eventFilterTopTen, GET, topTenUri),
                     new ParameterizedTypeReference<List<EventDTO>>() {
                     });
             LOGGER.debug("Result status was {} with content {}", event.getStatusCode(), event.getBody());

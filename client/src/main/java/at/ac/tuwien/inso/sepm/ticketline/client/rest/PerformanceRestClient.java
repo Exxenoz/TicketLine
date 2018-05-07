@@ -11,6 +11,12 @@ public interface PerformanceRestClient {
 
     List<PerformanceDTO> findAllPerformances() throws DataAccessException;
 
+    /**
+     * Find all performances of given event
+     * @param event event of performances
+     * @return list of performances
+     * @throws DataAccessException in case something went wrong
+     */
     List<PerformanceDTO> findByEvent(EventDTO event) throws DataAccessException;
 
     List<PerformanceDTO> search(SearchDTO search) throws DataAccessException;
