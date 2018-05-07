@@ -17,7 +17,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      * @param eventId the id of the event
      * @return list of all reservation entries with the passed event id
      */
-    @Query(value = "SELECT r" +
+    @Query(value = "SELECT r.*" +
         " FROM performance p, reservation r" +
         " WHERE p.id = r.performance_id AND p.event_id = :eventId", nativeQuery = true)
     List<Reservation> findAllByEventId(@Param("eventId")Long eventId);
