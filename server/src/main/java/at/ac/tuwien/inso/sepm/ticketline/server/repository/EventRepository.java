@@ -27,7 +27,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query(value = "SELECT e.*" +
         " FROM event e, performance p, reservation r, seat s, sector sec" +
         " WHERE e.id = p.event_id AND p.id = r.performance_id AND r.seat_id = s.id AND s.sector_id = sec.id" +
-        " AND r.is_paid = true AND (:categoryId = null OR sec.category_id = :categoryId)" +
+        " AND r.is_paid = true AND (:categoryId IS null OR sec.category_id = :categoryId)" +
         " AND r.paid_at >= :startOfTheMonth AND r.paid_at <= :endOfTheMonth" +
         " GROUP BY e.id" +
         " ORDER BY COUNT(r.id) DESC" +
