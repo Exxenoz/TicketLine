@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationToken;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationTokenInfo;
 import at.ac.tuwien.inso.sepm.ticketline.server.configuration.properties.AuthenticationConfigurationProperties;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.UserDisabledException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.HeaderTokenAuthenticationService;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -86,10 +87,17 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
 
         } catch (AuthenticationException a) {
             LOGGER.error(String.format("Failed to authenticate user with name: %s", username),  a);
-            boolean isDisabled = userService.increaseStrikes(userService.findUserByName(username));
 
-            if(isDisabled) {
-                return null;
+            if(userService.findUserByName(username) != null) {
+                boolean isDisabled = userService.increaseStrikes(userService.findUserByName(username));
+                if (!isDisabled) {
+                    throw new BadCredentialsException("Wrong password.");
+                } else {
+                    LOGGER.info("User will been informed that he was disabled.");
+                    throw new UserDisabledException("User is disabled.");
+                }
+            } else {
+               throw new BadCredentialsException("User name was not found.");
             }
         }
 

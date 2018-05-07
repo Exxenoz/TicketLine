@@ -38,11 +38,7 @@ public class AuthenticationEndpoint {
         AuthenticationToken token = authenticationService.authenticate(authenticationRequest.getUsername(),
             authenticationRequest.getPassword());
 
-        if(token != null) {
-            return token;
-        } else {
-            return null;
-        }
+        return token;
     }
 
     @GetMapping

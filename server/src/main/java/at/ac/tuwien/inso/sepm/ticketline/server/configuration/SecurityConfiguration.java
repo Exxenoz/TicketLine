@@ -1,6 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.configuration;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.configuration.properties.H2ConsoleConfigurationProperties;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.UserDisabledException;
 import at.ac.tuwien.inso.sepm.ticketline.server.security.HeaderTokenAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.info.InfoEndpoint;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest.to;
 import static org.springframework.boot.autoconfigure.security.SecurityProperties.BASIC_AUTH_ORDER;
@@ -117,7 +119,13 @@ public class SecurityConfiguration {
                 .csrf().disable()
                 .headers().frameOptions().sameOrigin().and()
                 .sessionManagement().sessionCreationPolicy(STATELESS).and()
-                .exceptionHandling().authenticationEntryPoint((req, res, aE) -> res.sendError(SC_UNAUTHORIZED)).and()
+                .exceptionHandling().authenticationEntryPoint((req, res, aE) ->  {
+                    if(aE instanceof UserDisabledException) {
+                        res.sendError(SC_FORBIDDEN);
+                    } else {
+                        res.sendError(SC_UNAUTHORIZED);
+                    }
+            }).and()
                 .authorizeRequests()
                 .antMatchers(OPTIONS).permitAll()
                 .antMatchers(POST, "/authentication").permitAll()
