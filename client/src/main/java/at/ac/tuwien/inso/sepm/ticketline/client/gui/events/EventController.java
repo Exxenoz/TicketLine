@@ -218,7 +218,7 @@ public class EventController {
         try {
             List<SectorCategoryDTO> sectorCategories = sectorCategoryService.findAllOrderByBasePriceModAsc();
             for(SectorCategoryDTO sectorCategory : sectorCategories) {
-                categoryChoiceBox.getItems().add(sectorCategory.getBasePriceMod());
+                categoryChoiceBox.getItems().add(sectorCategory.getName());
             }
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't get sector categories: " + e.getMessage());
@@ -382,7 +382,7 @@ public class EventController {
     @FXML
     void showTopTenClicked(ActionEvent event) {
         Integer month = monthChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? monthChoiceBox.getSelectionModel().getSelectedIndex() + 1 : 1;
-        Long categoryId = categoryChoiceBox.getSelectionModel().getSelectedIndex() >= 0 ? Long.valueOf(categoryChoiceBox.getSelectionModel().getSelectedIndex()) : null;
+        Long categoryId = categoryChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? Long.valueOf(categoryChoiceBox.getSelectionModel().getSelectedIndex()) : null;
 
         LOGGER.info("Show Top 10 Events for month: " + monthChoiceBox.getSelectionModel().getSelectedItem() + " and categoryId: " + categoryId);
 
