@@ -16,9 +16,6 @@ public class SectorDTO {
     @ApiModelProperty(required = true, readOnly = true, name = "The category of the sector")
     private SectorCategoryDTO category;
 
-    @ApiModelProperty(required = true, readOnly = true, name = "The available seats of the sector")
-    private List<SeatDTO> seats;
-
     public Long getId() {
         return id;
     }
@@ -35,20 +32,11 @@ public class SectorDTO {
         this.category = category;
     }
 
-    public List<SeatDTO> getSeats() {
-        return seats;
-    }
-
-    public void setSeats(List<SeatDTO> seats) {
-        this.seats = seats;
-    }
-
     @Override
     public String toString() {
         return "SectorDTO{" +
             "id=" + id +
             ", category=" + category +
-            ", seats=" + seats +
             '}';
     }
 
@@ -60,13 +48,12 @@ public class SectorDTO {
         SectorDTO sectorDTO = (SectorDTO) o;
 
         return Objects.equals(id, sectorDTO.id) &&
-            Objects.equals(category, sectorDTO.category) &&
-            Objects.equals(seats, sectorDTO.seats);
+            Objects.equals(category, sectorDTO.category);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, category, seats);
+        return Objects.hash(id, category);
     }
 }

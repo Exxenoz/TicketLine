@@ -45,7 +45,7 @@ public class PerformanceDataGenerator {
                 final var event = eventRepository.save(new Event(Collections.emptySet(), "Event Name", EventType.SEAT, "Event description"));
 
                 final var address = new Address(faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(4, 5));
-                final var performance = new Performance(event, "Perf", 12.5d, LocalDateTime.now(), LocalDateTime.now(), address, new HashSet<>());
+                final var performance = new Performance(event, "Perf", 12.5d, LocalDateTime.now(), LocalDateTime.now(), address);
 
                 LOGGER.debug("saving performance {}", performance);
 

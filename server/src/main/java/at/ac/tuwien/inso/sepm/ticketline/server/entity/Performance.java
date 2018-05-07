@@ -36,20 +36,16 @@ public class Performance {
     @Column(nullable = false)
     private Address address;
 
-    @OneToMany
-    private Set<Reservation> reservations;
-
     public Performance() {
     }
 
-    public Performance(Event event, @Size(max = 100) String name, Double price, LocalDateTime performanceStart, LocalDateTime performanceEnd, Address address, Set<Reservation> reservations) {
+    public Performance(Event event, @Size(max = 100) String name, Double price, LocalDateTime performanceStart, LocalDateTime performanceEnd, Address address) {
         this.event = event;
         this.name = name;
         this.price = price;
         this.performanceStart = performanceStart;
         this.performanceEnd = performanceEnd;
         this.address = address;
-        this.reservations = reservations;
     }
 
     public Address getAddress() {
@@ -108,14 +104,6 @@ public class Performance {
         this.performanceEnd = performanceEnd;
     }
 
-    public Set<Reservation> getReservations() {
-        return reservations;
-    }
-
-    public void setReservations(Set<Reservation> reservations) {
-        this.reservations = reservations;
-    }
-
     @Override
     public String toString() {
         return "Performance{" +
@@ -125,7 +113,6 @@ public class Performance {
             ", performanceStart=" + performanceStart +
             ", performanceEnd=" + performanceEnd +
             ", address=" + address +
-            ", reservations=" + reservations +
             '}';
     }
 
@@ -144,13 +131,12 @@ public class Performance {
             Objects.equals(price, that.price) &&
             Objects.equals(performanceStart, that.performanceStart) &&
             Objects.equals(performanceEnd, that.performanceEnd) &&
-            Objects.equals(address, that.address) &&
-            Objects.equals(reservations, that.reservations);
+            Objects.equals(address, that.address);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, event, name, price, performanceStart, performanceEnd, address, reservations);
+        return Objects.hash(id, event, name, price, performanceStart, performanceEnd, address);
     }
 }

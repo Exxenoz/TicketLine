@@ -22,9 +22,6 @@ public class PerformanceDTO {
     private LocalDateTime performanceEnd;
     private AddressDTO address;
 
-    @ApiModelProperty(required = true, readOnly = true, name = "The reservations of the performance")
-    private List<ReservationDTO> reservations;
-
     public PerformanceDTO() {
     }
 
@@ -93,14 +90,6 @@ public class PerformanceDTO {
         this.address = address;
     }
 
-    public List<ReservationDTO> getReservations() {
-        return reservations;
-    }
-
-    public void setReservations(List<ReservationDTO> reservations) {
-        this.reservations = reservations;
-    }
-
     @Override
     public String toString() {
         return "PerformanceDTO{" +
@@ -110,7 +99,6 @@ public class PerformanceDTO {
             ", performanceStart=" + performanceStart +
             ", performanceEnd=" + performanceEnd +
             ", address=" + address +
-            ", reservations=" + reservations +
             '}';
     }
 
@@ -129,13 +117,12 @@ public class PerformanceDTO {
             Objects.equals(price, that.price) &&
             Objects.equals(performanceStart, that.performanceStart) &&
             Objects.equals(performanceEnd, that.performanceEnd) &&
-            Objects.equals(address, that.address) &&
-            Objects.equals(reservations, that.reservations);
+            Objects.equals(address, that.address);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, event, name, price, performanceStart, performanceEnd, address, reservations);
+        return Objects.hash(id, event, name, price, performanceStart, performanceEnd, address);
     }
 }

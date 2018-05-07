@@ -18,9 +18,6 @@ public class Sector {
     @ManyToOne
     private SectorCategory category;
 
-    @OneToMany
-    private Set<Seat> seats;
-
     public Long getId() {
         return id;
     }
@@ -37,20 +34,11 @@ public class Sector {
         this.category = category;
     }
 
-    public Set<Seat> getSeats() {
-        return seats;
-    }
-
-    public void setSeats(Set<Seat> seats) {
-        this.seats = seats;
-    }
-
     @Override
     public String toString() {
         return "Sector{" +
             "id=" + id +
             ", category=" + category +
-            ", seats=" + seats +
             '}';
     }
 
@@ -62,13 +50,12 @@ public class Sector {
         Sector sector = (Sector) o;
 
         return Objects.equals(id, sector.id) &&
-            Objects.equals(category, sector.category) &&
-            Objects.equals(seats, sector.seats);
+            Objects.equals(category, sector.category);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, category, seats);
+        return Objects.hash(id, category);
     }
 }
