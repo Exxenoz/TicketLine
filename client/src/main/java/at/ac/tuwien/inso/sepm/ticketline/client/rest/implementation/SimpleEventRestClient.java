@@ -11,6 +11,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
@@ -52,9 +53,17 @@ public class SimpleEventRestClient implements EventRestClient {
     public List<EventDTO> findByPerformance(PerformanceDTO perf) throws DataAccessException {
         try {
             LOGGER.debug("Retrieving event of a specific performance from {}", eventUri);
+
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUri(restClient.getServiceURI("/event/findAll"))
+                .queryParam("event", perf.getEvent())
+                .queryParam("name", perf.getName())
+                .queryParam("performanceStart", perf.getPerformanceStart())
+                .queryParam("performanceEnd", perf.getPerformanceEnd())
+                .queryParam("address", perf.getAddress());
+
             final var event =
                 restClient.exchange(
-                    new RequestEntity<>(perf, GET, eventUri),
+                    new RequestEntity<>(GET, builder.build().toUri()),
                     new ParameterizedTypeReference<List<EventDTO>>() {
                     });
             LOGGER.debug("Result status was {} with content {}", event.getStatusCode(), event.getBody());

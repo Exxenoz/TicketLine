@@ -2,7 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -24,7 +24,7 @@ public class Performance {
     private String name;
 
     @Column(nullable = false)
-    private Double price;
+    private BigDecimal price;
 
     @Column(nullable = false)
     private LocalDateTime performanceStart;
@@ -38,7 +38,7 @@ public class Performance {
     public Performance() {
     }
 
-    public Performance(Event event, @Size(max = 100) String name, Double price, LocalDateTime performanceStart, LocalDateTime performanceEnd, Address address) {
+    public Performance(Event event, @Size(max = 100) String name, BigDecimal price, LocalDateTime performanceStart, LocalDateTime performanceEnd, Address address) {
         this.event = event;
         this.name = name;
         this.price = price;
@@ -79,11 +79,11 @@ public class Performance {
         this.name = name;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

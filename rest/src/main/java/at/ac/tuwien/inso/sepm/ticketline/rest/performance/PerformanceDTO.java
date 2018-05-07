@@ -4,6 +4,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.address.AddressDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -12,7 +13,7 @@ public class PerformanceDTO {
     private long id;
     private EventDTO event;
     private String name;
-    private Double price;
+    private BigDecimal price;
     @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime performanceStart;
     @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
@@ -22,7 +23,7 @@ public class PerformanceDTO {
     public PerformanceDTO() {
     }
 
-    public PerformanceDTO(EventDTO event, String name, Double price, LocalDateTime performanceStart, LocalDateTime performanceEnd, AddressDTO address) {
+    public PerformanceDTO(EventDTO event, String name, BigDecimal price, LocalDateTime performanceStart, LocalDateTime performanceEnd, AddressDTO address) {
         this.event = event;
         this.name = name;
         this.price = price;
@@ -55,11 +56,11 @@ public class PerformanceDTO {
         this.name = name;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
