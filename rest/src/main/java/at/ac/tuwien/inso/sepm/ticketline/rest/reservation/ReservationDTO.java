@@ -5,6 +5,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @ApiModel(value = "ReservationDTO", description = "The reservation DTO for reservation entries via rest")
@@ -22,6 +23,12 @@ public class ReservationDTO {
 
     @ApiModelProperty(required = true, readOnly = true, name = "The seat of the reservation")
     private SeatDTO seat;
+
+    @ApiModelProperty(required = true, readOnly = true, name = "The pay state of the reservation")
+    private Boolean isPaid;
+
+    @ApiModelProperty(required = true, readOnly = true, name = "The date and time when the reservation was paid")
+    private LocalDateTime paidAt;
 
     public Long getId() {
         return id;
@@ -47,12 +54,30 @@ public class ReservationDTO {
         this.seat = seat;
     }
 
+    public Boolean isPaid() {
+        return isPaid;
+    }
+
+    public void setPaid(Boolean paid) {
+        isPaid = paid;
+    }
+
+    public LocalDateTime getPaidAt() {
+        return paidAt;
+    }
+
+    public void setPaidAt(LocalDateTime paidAt) {
+        this.paidAt = paidAt;
+    }
+
     @Override
     public String toString() {
         return "ReservationDTO{" +
             "id=" + id +
             ", performance=" + performance +
             ", seat=" + seat +
+            ", isPaid=" + isPaid +
+            ", paidAt=" + paidAt +
             '}';
     }
 
@@ -65,12 +90,14 @@ public class ReservationDTO {
 
         return Objects.equals(id, that.id) &&
             Objects.equals(performance, that.performance) &&
-            Objects.equals(seat, that.seat);
+            Objects.equals(seat, that.seat) &&
+            Objects.equals(isPaid, that.isPaid) &&
+            Objects.equals(paidAt, that.paidAt);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, performance, seat);
+        return Objects.hash(id, performance, seat, isPaid, paidAt);
     }
 }
