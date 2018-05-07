@@ -75,7 +75,7 @@ public class SimpleEventRestClient implements EventRestClient {
             LOGGER.debug("Retrieving top 10 events by sales from month: {}", eventUri);
             final var event =
                 restClient.exchange(
-                    restClient.getServiceURI(eventUri + "/top_ten/filter?month=" + month + "&category=" + category),
+                    restClient.getServiceURI(eventUri + "/top_ten/" + month + category != null ? "/" + category : ""),
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<List<EventDTO>>() {

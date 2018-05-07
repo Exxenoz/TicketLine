@@ -166,10 +166,10 @@
                   </HBox>
                   <BarChart fx:id="topTenBarChart">
                     <xAxis>
-                      <CategoryAxis side="BOTTOM" />
+                      <CategoryAxis side="BOTTOM" fx:id="barAxisX"/>
                     </xAxis>
                     <yAxis>
-                      <NumberAxis side="LEFT" />
+                      <NumberAxis side="LEFT" fx:id="barAxisY"/>
                     </yAxis>
                   </BarChart>
                   <HBox spacing="15.0">
