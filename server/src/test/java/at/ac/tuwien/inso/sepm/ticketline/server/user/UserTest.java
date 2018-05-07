@@ -21,7 +21,6 @@ import java.util.ArrayList;
 public class UserTest {
     private static final String TEST_USERNAME = "test";
     private static final String TEST_PASSWORD = "test";
-    private static final String EXISTING_USER_USERNAME = "user";
 
     @Autowired
     private UserService userService;
@@ -54,6 +53,12 @@ public class UserTest {
             //Now add aditional information for this user
             userService.initiateSecurityUser(user);
 
+        } else {
+            var user = new org.springframework.security.core.userdetails.User(TEST_USERNAME, TEST_PASSWORD,
+                enabled, true, true, true, authorities);
+            mgr.updateUser(user);
+            //Now add aditional information for this user
+            userService.initiateSecurityUser(user);
         }
     }
 
@@ -62,7 +67,6 @@ public class UserTest {
         createTestUser(false);
 
         var user = userService.findUserByName(TEST_USERNAME);
-        System.out.println(user.getUsername());
         Assert.assertFalse(user.isEnabled());
         userService.enableUser(user);
         user = userService.findUserByName(TEST_USERNAME);
@@ -71,10 +75,12 @@ public class UserTest {
 
     @Test
     public void disableUserTest() {
+        createTestUser(true);
 
-        var user = userService.findUserByName(EXISTING_USER_USERNAME);
+        var user = userService.findUserByName(TEST_USERNAME);
+        Assert.assertTrue(user.isEnabled());
         userService.disableUser(user);
-        user = userService.findUserByName(EXISTING_USER_USERNAME);
+        user = userService.findUserByName(TEST_USERNAME);
         Assert.assertFalse(user.isEnabled());
     }
 
