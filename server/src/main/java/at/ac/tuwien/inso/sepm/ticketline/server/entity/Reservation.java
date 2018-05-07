@@ -1,7 +1,10 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
+import com.github.javafaker.Bool;
+
 import javax.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static javax.persistence.GenerationType.AUTO;
@@ -23,6 +26,12 @@ public class Reservation {
 
     @ManyToOne
     private Seat seat;
+
+    @Column(nullable = false)
+    private Boolean isPaid;
+
+    @Column(nullable = false, name = "paid_at")
+    private LocalDateTime paidAt;
 
     public Long getId() {
         return id;
@@ -48,12 +57,30 @@ public class Reservation {
         this.seat = seat;
     }
 
+    public Boolean isPaid() {
+        return isPaid;
+    }
+
+    public void setPaid(Boolean paid) {
+        isPaid = paid;
+    }
+
+    public LocalDateTime getPaidAt() {
+        return paidAt;
+    }
+
+    public void setPaidAt(LocalDateTime paidAt) {
+        this.paidAt = paidAt;
+    }
+
     @Override
     public String toString() {
         return "Reservation{" +
             "id=" + id +
             ", performance=" + performance +
             ", seat=" + seat +
+            ", isPaid=" + isPaid +
+            ", paidAt=" + paidAt +
             '}';
     }
 
@@ -66,12 +93,14 @@ public class Reservation {
 
         return Objects.equals(id, that.id) &&
             Objects.equals(performance, that.performance) &&
-            Objects.equals(seat, that.seat);
+            Objects.equals(seat, that.seat) &&
+            Objects.equals(isPaid, that.isPaid) &&
+            Objects.equals(paidAt, that.paidAt);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, performance, seat);
+        return Objects.hash(id, performance, seat, isPaid, paidAt);
     }
 }

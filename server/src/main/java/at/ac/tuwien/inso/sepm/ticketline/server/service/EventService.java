@@ -10,4 +10,6 @@ public interface EventService {
     List<Event> findByPerformance(Performance performance);
 
     List<Event> findAll();
+
+    List<Event> findTop10ByPaidReservationCountByMonthByCategory(int month, Integer categoryId);
 }
