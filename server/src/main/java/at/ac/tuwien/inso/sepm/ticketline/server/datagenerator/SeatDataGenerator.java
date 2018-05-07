@@ -42,7 +42,7 @@ public class SeatDataGenerator {
         } else {
             LOGGER.info("Generating {} seat entries", NUMBER_OF_SEATS_TO_GENERATE);
             List<Sector> sectors = sectorRepository.findAll();
-            final int seatsPerSector = sectors.size() / NUMBER_OF_SEATS_TO_GENERATE;
+            final int seatsPerSector = NUMBER_OF_SEATS_TO_GENERATE / sectors.size();
 
             for (int i = 0, x = 0, y = 0; i < NUMBER_OF_SEATS_TO_GENERATE; i++, x++) {
                 final var seat = new Seat();
