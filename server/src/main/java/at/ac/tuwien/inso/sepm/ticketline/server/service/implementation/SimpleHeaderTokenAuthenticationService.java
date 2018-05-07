@@ -4,6 +4,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationToken
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationTokenInfo;
 import at.ac.tuwien.inso.sepm.ticketline.server.configuration.properties.AuthenticationConfigurationProperties;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.HeaderTokenAuthenticationService;
+import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,12 +15,14 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -55,6 +58,9 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
     private final Duration validityDuration;
     private final Duration overlapDuration;
 
+    @Autowired
+    private UserService userService;
+
     public SimpleHeaderTokenAuthenticationService(
         @Lazy AuthenticationManager authenticationManager,
         AuthenticationConfigurationProperties authenticationConfigurationProperties,
@@ -72,8 +78,21 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
 
     @Override
     public AuthenticationToken authenticate(String username, CharSequence password) {
-        final var authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(username, password));
+
+        Authentication authentication = null;
+        try {
+            authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(username, password));
+
+        } catch (AuthenticationException a) {
+            LOGGER.error(String.format("Failed to authenticate user with name: %s", username),  a);
+            boolean isDisabled = userService.increaseStrikes(userService.findUserByName(username));
+
+            if(isDisabled) {
+                return null;
+            }
+        }
+
         final var now = Instant.now();
         var authorities = "";
         try {

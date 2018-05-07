@@ -23,6 +23,9 @@ public class User {
     @Column(nullable = false)
     private boolean enabled = true;
 
+    @Column
+    private int strikes;
+
     public long getId() {
         return id;
     }
@@ -53,6 +56,14 @@ public class User {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public int getStrikes() {
+        return strikes;
+    }
+
+    public void setStrikes(int strikes) {
+        this.strikes = strikes;
     }
 
     public static UserBuilder builder() {
