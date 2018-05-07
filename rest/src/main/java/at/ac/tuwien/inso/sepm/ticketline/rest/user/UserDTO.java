@@ -19,6 +19,9 @@ public class UserDTO {
     @ApiModelProperty(required = true, readOnly = true, name = "Indicates whether the user is enabled or not")
     private boolean enabled;
 
+    @ApiModelProperty(readOnly = true, name = "The number of tries the user had for authorization")
+    private Integer strikes = 0;
+
     public static UserDTOBuilder builder() {
         return new UserDTOBuilder();
     }
@@ -55,11 +58,29 @@ public class UserDTO {
         this.enabled = enabled;
     }
 
+    public Integer getStrikes() {
+        return strikes;
+    }
+
+    public void setStrikes(Integer strikes) {
+        this.strikes = strikes;
+    }
+
+    @Override
+    public String toString() {
+        return "User{"
+            + "id=" + id
+            + ", username='" + username + '\''
+            + ", isEnabled=" + enabled
+            + ", strikes=" + strikes +
+            "}";
+    }
     public static final class UserDTOBuilder {
         private Long id;
         private String username;
         private String password;
         private boolean enabled;
+        private Integer strikes;
 
         public UserDTOBuilder id(Long id) {
             this.id = id;
@@ -81,6 +102,11 @@ public class UserDTO {
             return this;
         }
 
+        public UserDTOBuilder strikes(Integer strikes) {
+            this.strikes = strikes;
+            return this;
+        }
+
         public UserDTO build() {
 
             UserDTO userDTO = new UserDTO();
@@ -88,6 +114,7 @@ public class UserDTO {
             userDTO.setUsername(username);
             userDTO.setPassword(password);
             userDTO.setEnabled(enabled);
+            userDTO.setStrikes(strikes);
             return userDTO;
         }
     }

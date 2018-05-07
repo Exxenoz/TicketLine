@@ -39,9 +39,7 @@ import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest.to;
 import static org.springframework.boot.autoconfigure.security.SecurityProperties.BASIC_AUTH_ORDER;
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.OPTIONS;
-import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -85,7 +83,8 @@ public class SecurityConfiguration {
             var authorities = new ArrayList<GrantedAuthority>();
             authorities.add(new SimpleGrantedAuthority("USER"));
 
-            User user = new User("user", passwordEncoder.encode("password"), authorities);
+            User user = new User("user", passwordEncoder.encode("password"),
+                true, true, true, true, authorities);
             mgr.createUser(user);
             //Now add aditional information for this user
             userService.initiateSecurityUser(user);
@@ -96,7 +95,8 @@ public class SecurityConfiguration {
             authorities.add(new SimpleGrantedAuthority("USER"));
             authorities.add(new SimpleGrantedAuthority("ADMIN"));
 
-            User user = new User("admin", passwordEncoder.encode("password"), authorities);
+            User user = new User("admin", passwordEncoder.encode("password"),
+                true, true, true, true, authorities);
             mgr.createUser(user);
             //Now add aditional information for this user
             userService.initiateSecurityUser(user);

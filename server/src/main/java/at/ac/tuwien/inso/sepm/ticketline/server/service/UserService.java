@@ -1,16 +1,18 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service;
 
-import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
+
+import java.util.List;
 
 public interface UserService {
 
     /**
      * Enabling a user again, in order to allow him to authenticate
      * @param user The user that is enabled again
-     * @return DTO object created from the user
      */
-    UserDTO enableUser(User user);
+    void enableUser(User user);
+
+    List<User> findAll();
 
     /**
      * Disabling a user's right to authenticate

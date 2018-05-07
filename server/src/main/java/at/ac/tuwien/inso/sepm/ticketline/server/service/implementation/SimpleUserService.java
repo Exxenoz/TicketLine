@@ -1,6 +1,5 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
-import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.UsersRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
@@ -9,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
+import java.util.List;
 
 @Service
 public class SimpleUserService implements UserService {
@@ -22,16 +22,15 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public UserDTO enableUser(User user) {
+    public void enableUser(User user) {
+        LOGGER.info("Enabling user: {}", user.getUsername());
         user.setEnabled(true);
-        user = usersRepository.save(user);
+        usersRepository.save(user);
+    }
 
-        return UserDTO.builder()
-            .id(user.getId())
-            .username(user.getUsername())
-            .password(user.getPassword())
-            .enabled(user.isEnabled())
-            .build();
+    @Override
+    public List<User> findAll() {
+        return usersRepository.findAll();
     }
 
     @Override
@@ -71,7 +70,7 @@ public class SimpleUserService implements UserService {
         assimilatedUser.setUsername(user.getUsername());
         assimilatedUser.setPassword(user.getPassword());
         assimilatedUser.setStrikes(0);
-        assimilatedUser.setEnabled(true);
+        assimilatedUser.setEnabled(user.isEnabled());
 
         usersRepository.save(assimilatedUser);
     }
