@@ -224,7 +224,7 @@ public class EventController {
             LOGGER.error("Couldn't get sector categories: " + e.getMessage());
             JavaFXUtils.createErrorDialog(e.getMessage(), categoryChoiceBox.getScene().getWindow()).showAndWait();
         }
-        monthChoiceBox.getSelectionModel().selectFirst();
+        categoryChoiceBox.getSelectionModel().selectFirst();
     }
 
     private SpinnerValueFactory<Integer> buildSpinner(int maxValue) {
@@ -385,6 +385,8 @@ public class EventController {
         Long categoryId = categoryChoiceBox.getSelectionModel().getSelectedIndex() >= 0 ? Long.valueOf(categoryChoiceBox.getSelectionModel().getSelectedIndex()) : null;
 
         LOGGER.info("Show Top 10 Events for month: " + monthChoiceBox.getSelectionModel().getSelectedItem() + " and categoryId: " + categoryId);
+
+        topTenBarChart.setTitle(monthChoiceBox.getSelectionModel().getSelectedItem());
 
         try {
             List<EventDTO> events = eventService.findTop10ByPaidReservationCountByFilter(new EventFilterTopTenDTO(month, categoryId));
