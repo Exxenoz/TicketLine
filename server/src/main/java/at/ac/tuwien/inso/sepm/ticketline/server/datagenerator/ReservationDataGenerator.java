@@ -19,9 +19,11 @@ import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 @Profile("generateData")
@@ -41,6 +43,13 @@ public class ReservationDataGenerator {
         this.performanceRepository = performanceRepository;
         this.seatRepository = seatRepository;
         faker = new Faker();
+    }
+
+    private LocalDate getRandomLocalDateForCurrentYear() {
+        long minDay = LocalDate.of(LocalDate.now().getYear(), 1, 1).toEpochDay();
+        long maxDay = LocalDate.of(LocalDate.now().getYear(), 12, 31).toEpochDay();
+        long randomDay = ThreadLocalRandom.current().nextLong(minDay, maxDay);
+        return LocalDate.ofEpochDay(randomDay);
     }
 
     @PostConstruct
@@ -66,10 +75,8 @@ public class ReservationDataGenerator {
                     reservation.setPerformance(performance);
                     reservation.setSeat(seats.get(i));
                     if (faker.random().nextBoolean()) {
-                        Date date = faker.date().between(new Date(LocalDate.now().getYear(), 1, 1), new Date(LocalDate.now().getYear(), 12, 31));
-
                         reservation.setPaid(true);
-                        reservation.setPaidAt(LocalDateTime.of(date.getYear(), date.getMonth(), date.getDay(), 0, 0));
+                        reservation.setPaidAt(LocalDateTime.of(getRandomLocalDateForCurrentYear(), LocalTime.now()));
                     }
                     else {
                         reservation.setPaid(false);
