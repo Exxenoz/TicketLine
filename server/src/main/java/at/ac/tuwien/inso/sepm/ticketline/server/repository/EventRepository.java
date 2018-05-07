@@ -16,7 +16,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("select e from Performance p join p.event as e where p = ?1")
     List<Event> findByPerformance(Performance performance);
 
-    @Query(value = "SELECT e" +
+    @Query(value = "SELECT e.*" +
         " FROM event e, performance p, reservation r, seat s, sector sec" +
         " WHERE e.id = p.event_id AND p.id = r.performance_id AND r.seat_id = s.id AND s.sector_id = sec.id" +
         " AND r.is_paid = true AND (:categoryId = null OR sec.category_id = :categoryId)" +
