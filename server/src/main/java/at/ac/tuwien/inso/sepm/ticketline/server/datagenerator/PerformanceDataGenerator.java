@@ -42,10 +42,10 @@ public class PerformanceDataGenerator {
         } else {
             LOGGER.info("generating {} performance entries", NUMBER_OF_PERFORMANCES_TO_GENERATE);
             for (int i = 0; i < NUMBER_OF_PERFORMANCES_TO_GENERATE; i++) {
-                final var event = eventRepository.save(new Event(Collections.emptySet(), "Event Name", EventType.SEAT, "Event description"));
+                final var event = eventRepository.save(new Event(Collections.emptySet(), faker.pokemon().name(), EventType.SEAT, "Event description"));
 
                 final var address = new Address(faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(4, 5));
-                final var performance = new Performance(event, "Perf", 12.5d, LocalDateTime.now(), LocalDateTime.now(), address);
+                final var performance = new Performance(event, faker.harryPotter().character(), 12.5d, LocalDateTime.now(), LocalDateTime.now(), address);
 
                 LOGGER.debug("saving performance {}", performance);
 

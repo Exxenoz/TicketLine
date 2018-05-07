@@ -17,8 +17,10 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -64,8 +66,10 @@ public class ReservationDataGenerator {
                     reservation.setPerformance(performance);
                     reservation.setSeat(seats.get(i));
                     if (faker.random().nextBoolean()) {
+                        Date date = faker.date().between(new Date(LocalDate.now().getYear(), 1, 1), new Date(LocalDate.now().getYear(), 12, 31));
+
                         reservation.setPaid(true);
-                        reservation.setPaidAt(LocalDateTime.now());
+                        reservation.setPaidAt(LocalDateTime.of(date.getYear(), date.getMonth(), date.getDay(), 0, 0));
                     }
                     else {
                         reservation.setPaid(false);
