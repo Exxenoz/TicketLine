@@ -18,6 +18,7 @@ import java.net.URI;
 import java.util.List;
 
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 
 @Component
 public class SimpleEventRestClient implements EventRestClient {
@@ -57,7 +58,7 @@ public class SimpleEventRestClient implements EventRestClient {
             LOGGER.debug("Retrieving event of a specific performance from {}", eventUri);
             final var event =
                 restClient.exchange(
-                    new RequestEntity<>(perf, GET, eventUri),
+                    new RequestEntity<>(perf, POST, eventUri),
                     new ParameterizedTypeReference<List<EventDTO>>() {
                     });
             LOGGER.debug("Result status was {} with content {}", event.getStatusCode(), event.getBody());
@@ -75,7 +76,7 @@ public class SimpleEventRestClient implements EventRestClient {
             LOGGER.debug("Retrieving top 10 events by sales from month: {}", topTenUri);
             final var event =
                 restClient.exchange(
-                    new RequestEntity<>(eventFilterTopTen, GET, topTenUri),
+                    new RequestEntity<>(eventFilterTopTen, POST, topTenUri),
                     new ParameterizedTypeReference<List<EventDTO>>() {
                     });
             LOGGER.debug("Result status was {} with content {}", event.getStatusCode(), event.getBody());

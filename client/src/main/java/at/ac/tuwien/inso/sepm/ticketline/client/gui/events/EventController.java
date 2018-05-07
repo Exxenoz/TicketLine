@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.EventService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
@@ -10,6 +11,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventFilterTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -107,7 +109,6 @@ public class EventController {
     @FXML
     private Button searchButton;
 
-
     @FXML
     private TableColumn<PerformanceDTO, String> nameColumn;
 
@@ -119,7 +120,6 @@ public class EventController {
 
     @FXML
     private TableColumn<PerformanceDTO, String> locationColumn;
-
 
     // ---------- Top Ten Tab -----------
 
@@ -142,8 +142,8 @@ public class EventController {
     private Button bookTopTenEventButton;
 
     private EventService eventService;
-
     private PerformanceService performanceService;
+    private ReservationService reservationService;
 
     private ObservableList<PerformanceDTO> performanceData = FXCollections.observableArrayList();
 
@@ -155,13 +155,13 @@ public class EventController {
 
     private String activeFilters = "";
 
-    public EventController(EventService eventService, PerformanceService performanceService) {
+    public EventController(EventService eventService, PerformanceService performanceService, ReservationService reservationService) {
         this.eventService = eventService;
         this.performanceService = performanceService;
+        this.reservationService = reservationService;
         this.performanceDetailViewController = performanceDetailViewController;
         this.eventDetailViewController = eventDetailViewController;
     }
-
 
     @FXML
     private void initialize() {
@@ -373,10 +373,27 @@ public class EventController {
         XYChart.Series barSeries = new XYChart.Series();
 
         for (EventDTO event : events) {
-            barSeries.getData().add(new XYChart.Data(event.getName(), 10));
+            try {
+                List<ReservationDTO> reservations = reservationService.findAllByEvent(event);
+                int ticketSaleCount = getTicketSaleCountFromReservations(reservations);
+                barSeries.getData().add(new XYChart.Data(event.getName(), ticketSaleCount));
+            } catch (DataAccessException e) {
+                e.printStackTrace();
+            }
         }
 
         topTenBarChart.getData().add(barSeries);
+    }
+
+    private int getTicketSaleCountFromReservations(List<ReservationDTO> reservations) {
+        int count = 0;
+        for(ReservationDTO reservation : reservations) {
+            if(reservation.isPaid()) {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     @FXML
@@ -399,6 +416,4 @@ public class EventController {
             LOGGER.error("Detail View Events window couldn't be opened!");
         }
     }
-
-
 }
