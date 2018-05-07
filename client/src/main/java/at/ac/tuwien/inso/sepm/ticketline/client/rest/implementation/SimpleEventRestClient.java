@@ -70,7 +70,7 @@ public class SimpleEventRestClient implements EventRestClient {
     }
 
     @Override
-    public List<EventDTO> findTop10ByPaidReservationCountByMonthAndCategory(EventFilterTopTenDTO eventFilterTopTen) throws DataAccessException {
+    public List<EventDTO> findTop10ByPaidReservationCountByFilter(EventFilterTopTenDTO eventFilterTopTen) throws DataAccessException {
         try {
             LOGGER.debug("Retrieving top 10 events by sales from month: {}", topTenUri);
             final var event =

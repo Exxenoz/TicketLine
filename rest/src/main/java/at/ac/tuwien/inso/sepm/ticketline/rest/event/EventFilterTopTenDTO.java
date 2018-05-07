@@ -3,15 +3,17 @@ package at.ac.tuwien.inso.sepm.ticketline.rest.event;
 import java.util.Objects;
 
 public class EventFilterTopTenDTO {
+	
     private Integer month;
-    private Integer category;
+    private Long categoryId;
 
     public EventFilterTopTenDTO() {
+
     }
 
-    public EventFilterTopTenDTO(Integer month, Integer category) {
+    public EventFilterTopTenDTO(Integer month, Long categoryId) {
         this.month = month;
-        this.category = category;
+        this.categoryId = categoryId;
     }
 
     public Integer getMonth() {
@@ -22,19 +24,19 @@ public class EventFilterTopTenDTO {
         this.month = month;
     }
 
-    public Integer getCategory() {
-        return category;
+    public Long getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(Integer category) {
-        this.category = category;
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 
     @Override
     public String toString() {
         return "EventFilterTopTenDTO{" +
             "month=" + month +
-            ", category=" + category +
+            ", categoryId=" + categoryId +
             '}';
     }
 
@@ -44,11 +46,11 @@ public class EventFilterTopTenDTO {
         if (o == null || getClass() != o.getClass()) return false;
         EventFilterTopTenDTO that = (EventFilterTopTenDTO) o;
         return Objects.equals(month, that.month) &&
-            Objects.equals(category, that.category);
+            Objects.equals(categoryId, that.categoryId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(month, category);
+        return Objects.hash(month, categoryId);
     }
 }

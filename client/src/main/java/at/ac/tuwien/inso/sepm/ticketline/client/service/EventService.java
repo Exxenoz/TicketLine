@@ -14,5 +14,5 @@ public interface EventService {
      * @return list of top 10 events
      * @throws DataAccessException in case something went wrong
      */
-    List<EventDTO> findTop10ByPaidReservationCountByMonthAndCategory(EventFilterTopTenDTO eventFilterTopTen) throws DataAccessException;
+    List<EventDTO> findTop10ByPaidReservationCountByFilter(EventFilterTopTenDTO eventFilterTopTen) throws DataAccessException;
 }

@@ -358,10 +358,10 @@ public class EventController {
     @FXML
     void showTopTenClicked(ActionEvent event) {
         Integer month = monthChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? monthChoiceBox.getSelectionModel().getSelectedIndex() + 1 : 1;
-        Integer category = categoryChoiceBox.getSelectionModel().getSelectedIndex() >= 0 ? categoryChoiceBox.getSelectionModel().getSelectedIndex() : null;
+        Long category = categoryChoiceBox.getSelectionModel().getSelectedIndex() >= 0 ? Long.valueOf(categoryChoiceBox.getSelectionModel().getSelectedIndex()) : null;
 
         try {
-            List<EventDTO> events = eventService.findTop10ByPaidReservationCountByMonthAndCategory(new EventFilterTopTenDTO(month, category));
+            List<EventDTO> events = eventService.findTop10ByPaidReservationCountByFilter(new EventFilterTopTenDTO(month, category));
             showTopTenEvents(events);
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch top 10 events from server for month: " + month + " " + e.getMessage());

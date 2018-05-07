@@ -14,9 +14,9 @@ public interface EventRestClient {
 
     /**
      * Find top 10 events by ticket sale for a given month
-     * @param eventFilterTopTen filter by month and category
+     * @param eventFilterTopTen filter by month and categoryId
      * @return list of top 10 events
      * @throws DataAccessException in case something went wrong
      */
-    List<EventDTO> findTop10ByPaidReservationCountByMonthAndCategory(EventFilterTopTenDTO eventFilterTopTen) throws DataAccessException;
+    List<EventDTO> findTop10ByPaidReservationCountByFilter(EventFilterTopTenDTO eventFilterTopTen) throws DataAccessException;
 }

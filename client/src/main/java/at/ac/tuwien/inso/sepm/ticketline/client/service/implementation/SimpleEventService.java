@@ -24,7 +24,7 @@ public class SimpleEventService implements EventService {
     }
 
     @Override
-    public List<EventDTO> findTop10ByPaidReservationCountByMonthAndCategory(EventFilterTopTenDTO eventFilterTopTen) throws DataAccessException {
+    public List<EventDTO> findTop10ByPaidReservationCountByFilter(EventFilterTopTenDTO eventFilterTopTen) throws DataAccessException {
         return eventRestClient.findTop10ByPaidReservationCountByMonthAndCategory(eventFilterTopTen);
     }
 }
