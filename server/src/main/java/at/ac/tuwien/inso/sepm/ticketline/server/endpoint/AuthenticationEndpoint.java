@@ -7,6 +7,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.service.HeaderTokenAuthenticatio
 import at.ac.tuwien.inso.sepm.ticketline.server.service.implementation.SimpleHeaderTokenAuthenticationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,7 +34,11 @@ public class AuthenticationEndpoint {
     @PostMapping
     @ApiOperation("Get an authentication token with your username and password")
     public AuthenticationToken authenticate(@RequestBody final AuthenticationRequest authenticationRequest) {
-        return authenticationService.authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+
+        AuthenticationToken token = authenticationService.authenticate(authenticationRequest.getUsername(),
+            authenticationRequest.getPassword());
+
+        return token;
     }
 
     @GetMapping

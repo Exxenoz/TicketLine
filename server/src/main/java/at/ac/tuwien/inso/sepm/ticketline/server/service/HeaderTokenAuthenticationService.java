@@ -8,10 +8,10 @@ import org.springframework.security.core.userdetails.User;
 public interface HeaderTokenAuthenticationService {
 
     /**
-     * Authenticate user with username and password.
+     * Authenticate users with username and password.
      *
-     * @param username of the user
-     * @param password of the user
+     * @param username of the users
+     * @param password of the users
      * @return an authentication token
      */
     AuthenticationToken authenticate(String username, CharSequence password);
@@ -33,10 +33,10 @@ public interface HeaderTokenAuthenticationService {
     AuthenticationToken renewAuthentication(String headerToken);
 
     /**
-     * Authenticate user with a header token.
+     * Authenticate users with a header token.
      *
-     * @param headerToken which should be user to authenticate user
-     * @return Authenticated user
+     * @param headerToken which should be users to authenticate users
+     * @return Authenticated users
      * @throws AuthenticationException when the authentication of the provided headerToken fails
      */
     User authenticate(String headerToken) throws AuthenticationException;

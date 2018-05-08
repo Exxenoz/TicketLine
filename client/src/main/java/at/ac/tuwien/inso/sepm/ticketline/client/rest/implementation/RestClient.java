@@ -1,9 +1,11 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.rest.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.configuration.properties.RestClientConfigurationProperties;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
@@ -47,6 +49,20 @@ public class RestClient extends RestTemplate {
             return URI.create(baseUrl + "/" + serviceLocation);
         }
         return URI.create(baseUrl + serviceLocation);
+    }
+
+    public String getMessageFromHttpStatusCode(HttpStatus httpStatus) {
+        String message = String.format("%s %s", BundleManager.getExceptionBundle().getString("exception.unknown"), httpStatus.value());
+
+        if(httpStatus == HttpStatus.UNAUTHORIZED) {
+            message = BundleManager.getExceptionBundle().getString("exception.http_unauthorized");
+        } else if(httpStatus == HttpStatus.FORBIDDEN) {
+            message = BundleManager.getExceptionBundle().getString("exception.http_forbidden");
+        } else if(httpStatus == HttpStatus.NOT_FOUND) {
+            message = BundleManager.getExceptionBundle().getString("exception.http_not_found");
+        }
+
+        return message;
     }
 
 }

@@ -3,23 +3,23 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationToken;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationTokenInfo;
 import at.ac.tuwien.inso.sepm.ticketline.server.configuration.properties.AuthenticationConfigurationProperties;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.UserDisabledException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.HeaderTokenAuthenticationService;
+import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -38,10 +38,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static at.ac.tuwien.inso.sepm.ticketline.server.security.AuthenticationConstants.JWT_CLAIM_AUTHORITY;
-import static at.ac.tuwien.inso.sepm.ticketline.server.security.AuthenticationConstants.JWT_CLAIM_PRINCIPAL;
-import static at.ac.tuwien.inso.sepm.ticketline.server.security.AuthenticationConstants.JWT_CLAIM_PRINCIPAL_ID;
-import static at.ac.tuwien.inso.sepm.ticketline.server.security.AuthenticationConstants.ROLE_PREFIX;
+import static at.ac.tuwien.inso.sepm.ticketline.server.security.AuthenticationConstants.*;
 
 @Service
 public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthenticationService {
@@ -54,6 +51,9 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
     private final SignatureAlgorithm signatureAlgorithm;
     private final Duration validityDuration;
     private final Duration overlapDuration;
+
+    @Autowired
+    private UserService userService;
 
     public SimpleHeaderTokenAuthenticationService(
         @Lazy AuthenticationManager authenticationManager,
@@ -72,8 +72,28 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
 
     @Override
     public AuthenticationToken authenticate(String username, CharSequence password) {
-        final var authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(username, password));
+
+        Authentication authentication = null;
+        try {
+            authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(username, password));
+
+        } catch (AuthenticationException a) {
+            LOGGER.error(String.format("Failed to authenticate users with name: %s", username), a);
+
+            if(userService.findUserByName(username) != null) {
+                boolean isDisabled = userService.increaseStrikes(userService.findUserByName(username));
+                if (!isDisabled) {
+                    throw new BadCredentialsException("Wrong password.");
+                } else {
+                    LOGGER.info("User will been informed that he was disabled.");
+                    throw new UserDisabledException("User is disabled.");
+                }
+            } else {
+               throw new BadCredentialsException("User name was not found.");
+            }
+        }
+
         final var now = Instant.now();
         var authorities = "";
         try {
@@ -172,9 +192,9 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
                 headerToken,
                 authorities);
         } catch (ExpiredJwtException e) {
-            throw new CredentialsExpiredException(e.getMessage(), e);
+            throw new CredentialsExpiredException("Credentials expired");
         } catch (JwtException e) {
-            throw new BadCredentialsException(e.getMessage(), e);
+            throw new BadCredentialsException("Bad Credentials");
         }
     }
 
