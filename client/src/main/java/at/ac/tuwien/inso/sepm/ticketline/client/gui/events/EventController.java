@@ -14,6 +14,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.sector.SectorCategoryDTO;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -412,22 +413,22 @@ public class EventController {
 
         try {
             List<EventDTO> events = eventService.findTop10ByPaidReservationCountByFilter(new EventFilterTopTenDTO(month, categoryId));
-            showTopTenEvents(events, monthChoiceBox.getSelectionModel().getSelectedItem());
+            showTopTenEvents(events);
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch top 10 events from server for month: " + month + " " + e.getMessage());
             JavaFXUtils.createErrorDialog(e.getMessage(), monthChoiceBox.getScene().getWindow()).showAndWait();
         }
     }
 
-    private void showTopTenEvents(List<EventDTO> events, String month) {
+    private void showTopTenEvents(List<EventDTO> events) {
         topTenBarChart.getData().clear();
 
         XYChart.Series<String, Integer> barSeries = new XYChart.Series();
-        barSeries.setName(month);
+        barSeries.setName( monthChoiceBox.getSelectionModel().getSelectedItem());
 
         for (EventDTO event : events) {
             try {
-                Long ticketSaleCount = reservationService.getPaidReservationCountByEvent(event);
+                Long ticketSaleCount = reservationService.getPaidReservationCountByFilter(new ReservationFilterTopTenDTO(monthChoiceBox.getSelectionModel().getSelectedIndex() + 1, event.getId()));
                 barSeries.getData().add(new XYChart.Data(event.getName(), ticketSaleCount));
                 currentEvents.add(event);
                 topTenEventChoiceBox.getItems().add(event.getName());

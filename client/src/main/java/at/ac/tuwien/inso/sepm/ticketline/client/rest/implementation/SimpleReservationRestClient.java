@@ -5,6 +5,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.rest.ReservationRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
 import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import java.net.URI;
 import java.util.List;
 
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 
 @Component
 public class SimpleReservationRestClient implements ReservationRestClient {
@@ -27,10 +29,12 @@ public class SimpleReservationRestClient implements ReservationRestClient {
 
     private final RestClient restClient;
     private final URI reservationByEventUri;
+    private final URI reservationTopTenUri;
 
     public SimpleReservationRestClient(RestClient restClient) {
         this.restClient = restClient;
         this.reservationByEventUri = restClient.getServiceURI("/reservation/event/");
+        this.reservationTopTenUri = restClient.getServiceURI("/reservation/top_ten/");
     }
 
     @Override
@@ -59,7 +63,25 @@ public class SimpleReservationRestClient implements ReservationRestClient {
                 restClient.exchange(
                     new RequestEntity<>(GET, reservationByEventUri.resolve(event.getId() + "/count")),
                     new ParameterizedTypeReference<Long>() {
-                    });
+                });
+            LOGGER.debug("Result status was {} with content {}", reservation.getStatusCode(), reservation.getBody());
+            return reservation.getBody();
+        } catch (HttpStatusCodeException e) {
+            throw new DataAccessException("Failed retrieve paid reservation count with status code " + e.getStatusCode().toString());
+        } catch (RestClientException e) {
+            throw new DataAccessException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public Long getPaidReservationCountByFilter(ReservationFilterTopTenDTO reservationFilterTopTen) throws DataAccessException {
+        try {
+            LOGGER.debug("Retrieving paid reservation count of a specific event and month from {}", reservationByEventUri);
+            final var reservation =
+                restClient.exchange(
+                    new RequestEntity<>(reservationFilterTopTen, POST, reservationTopTenUri),
+                    new ParameterizedTypeReference<Long>() {
+                });
             LOGGER.debug("Result status was {} with content {}", reservation.getStatusCode(), reservation.getBody());
             return reservation.getBody();
         } catch (HttpStatusCodeException e) {
