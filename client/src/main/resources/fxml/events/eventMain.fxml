@@ -144,7 +144,7 @@
                   <Button fx:id="clearButton" layoutX="987.0" layoutY="9.0" mnemonicParsing="false" onAction="#showAllPerformances" text="Clear" />
                   <HBox layoutX="779.0" layoutY="601.0" spacing="140.0">
                      <children>
-                        <Button fx:id="bookButton" mnemonicParsing="false" onAction="#bookPerformance" text="Book" />
+                        <Button fx:id="bookButton" disable="true" mnemonicParsing="false" onAction="#bookPerformance" text="Book" />
                         <Button fx:id="searchButton" mnemonicParsing="false" onAction="#searchForPerformances" text="Search" />
                      </children>
                   </HBox>
