@@ -12,6 +12,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
@@ -36,7 +37,8 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
     public List<PerformanceDTO> findAllPerformances() throws DataAccessException {
 
         try {
-            LOGGER.debug("Retrieving all performances from {}", performanceUri);
+            LOGGER.debug("Retrieving all performances from {}", performanceUri + "/findAll");
+
             final var performance =
                 restClient.exchange(
                     new RequestEntity<>(GET, performanceUri),
@@ -54,10 +56,17 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
     @Override
     public List<PerformanceDTO> findByEvent(EventDTO event) throws DataAccessException {
         try {
-            LOGGER.debug("Retrieving all performances of a specific event from {}", performanceUri);
+            LOGGER.debug("Retrieving all performances of a specific event from {}", performanceUri + "/findByEvent");
+
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUri(restClient.getServiceURI("/performance/findByEvent"))
+                .queryParam("name", event.getName())
+                .queryParam("artists", event.getArtists())
+                .queryParam("eventType", event.getEventType())
+                .queryParam("description", event.getDescription());
+
             final var performance =
                 restClient.exchange(
-                    new RequestEntity<>(event, GET, performanceUri),
+                    new RequestEntity<>(GET, builder.build().toUri()),
                     new ParameterizedTypeReference<List<PerformanceDTO>>() {
                     });
             LOGGER.debug("Result status was {} with content {}", performance.getStatusCode(), performance.getBody());
@@ -72,10 +81,25 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
     @Override
     public List<PerformanceDTO> search(SearchDTO search) throws DataAccessException {
         try {
-            LOGGER.debug("Retrieving all performances of a specific query from {}", performanceUri);
+            LOGGER.debug("Retrieving all performances of a specific query from {}", performanceUri + "/performance/search");
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUri(restClient.getServiceURI("/performance/search"))
+                .queryParam("performanceName", search.getPerformanceName())
+                .queryParam("eventName", search.getEventName())
+                .queryParam("artistFirstName", search.getArtistFirstName())
+                .queryParam("artistLastname", search.getArtistLastName())
+                .queryParam("eventType", search.getEventType())
+                .queryParam("performanceStart", search.getPerformanceStart())
+                .queryParam("price", search.getPrice())
+                .queryParam("locationName", search.getLocationName())
+                .queryParam("street", search.getStreet())
+                .queryParam("city", search.getCity())
+                .queryParam("country", search.getCountry())
+                .queryParam("postalCode", search.getPostalCode())
+                .queryParam("duration", search.getDuration());
+
             final var performance =
                 restClient.exchange(
-                    new RequestEntity<>(search, GET, performanceUri),
+                    new RequestEntity<>(GET, builder.build().toUri()),
                     new ParameterizedTypeReference<List<PerformanceDTO>>() {
                     });
             LOGGER.debug("Result status was {} with content {}", performance.getStatusCode(), performance.getBody());

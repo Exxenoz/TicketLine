@@ -3,6 +3,8 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.EventService;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.EventService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.SectorCategoryService;
@@ -10,6 +12,11 @@ import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventFilterTopTenDTO;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.SectorCategoryService;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
+import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
@@ -38,6 +45,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -274,7 +282,7 @@ public class EventController {
         nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
         eventColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEvent().getName()));
         startTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPerformanceStart().toString()));
-        locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAddress().getLocation()));
+        locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAddress().getCity()));
 
         performanceData = FXCollections.observableArrayList(performances);
         foundEventsTableView.setItems(performanceData);
@@ -338,10 +346,10 @@ public class EventController {
         }
 
         String priceString = priceTextField.getText();
-        Double price = null;
+        BigDecimal price = null;
         if (!priceString.equals("")) {
             addToCurrentSearchParameters(priceString);
-            price = Double.parseDouble(priceString);
+            price = new BigDecimal(priceString);
         }
 
         String locationName = locationNameTextField.getText();
@@ -392,6 +400,23 @@ public class EventController {
             foundEventsTableView.refresh();
             activeFilters = "";
             updateCurrentSearchParameters();
+
+            artistFirstNameTextField.setText("");
+            artistLastNameTextField.setText("");
+            eventNameTextField.setText("");
+            seatingYesButton.setSelected(false);
+            seatingNoButton.setSelected(false);
+            lengthInMinutesTextField.setText("");
+            beginTimeDatePicker.setValue(null);
+            beginTimeHourSpinner.getValueFactory().setValue(0);
+            beginTimeMinuteSpinner.getValueFactory().setValue(0);
+            priceTextField.setText("");
+            locationNameTextField.setText("");
+            streetTextField.setText("");
+            cityTextField.setText("");
+            countryTextField.setText("");
+            postalCodeTextField.setText("");
+
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch performances from server!", e);
         }
