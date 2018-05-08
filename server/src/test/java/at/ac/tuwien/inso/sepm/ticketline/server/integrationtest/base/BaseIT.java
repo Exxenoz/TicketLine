@@ -6,7 +6,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.service.implementation.SimpleHea
 import io.restassured.RestAssured;
 import io.restassured.config.ObjectMapperConfig;
 import io.restassured.config.RestAssuredConfig;
-import org.assertj.core.util.*;
+import org.assertj.core.util.Strings;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ActiveProfiles("integration-test")
 public abstract class BaseIT {
 
-    private static final String USER_USERNAME = "user";
+    private static final String USER_USERNAME = "users";
     private static final String USER_PASSWORD = "password";
     private static final String ADMIN_USERNAME = "admin";
     private static final String ADMIN_PASSWORD = "password";

@@ -16,7 +16,7 @@ public interface AuthenticationService {
     AuthenticationTokenInfo authenticate(AuthenticationRequest authenticationRequest) throws DataAccessException;
 
     /**
-     * Deauthenticate current user
+     * Deauthenticate current users
      */
     void deAuthenticate();
 
