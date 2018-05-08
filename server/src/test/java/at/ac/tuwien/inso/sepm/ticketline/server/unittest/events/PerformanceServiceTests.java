@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.sql.DataSource;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -89,15 +90,22 @@ public class PerformanceServiceTests {
     @Test
     public void searchByCity() {
         SearchDTO searchDTO = new SearchDTO();
-        searchDTO.setCity("");
+        searchDTO.setCity("Vienna");
 
         List<Performance> performances = service.search(searchDTO);
-        Assert.assertTrue(performances.size() == 1);
-        Assert.assertTrue(performances.get(0).getName().equals("Zauberflöte"));
+        Assert.assertTrue(performances.size() == 3);
+
+        for(Performance p: performances) {
+            Assert.assertTrue(p.getAddress().getCity().equals("Vienna"));
+        }
     }
 
     @Test
     public void searchByFutureDate() {
+        SearchDTO searchDTO = new SearchDTO();
+        searchDTO.setPerformanceStart(LocalDateTime.now().plusDays(22));
 
+        List<Performance> performances = service.search(searchDTO);
+        Assert.assertTrue(performances.size() == 0);
     }
 }
