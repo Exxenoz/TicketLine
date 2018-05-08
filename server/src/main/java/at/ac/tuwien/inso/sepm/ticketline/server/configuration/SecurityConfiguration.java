@@ -55,6 +55,9 @@ public class SecurityConfiguration {
     @Autowired
     private UserService userService;
 
+    private final static String ADMIN_ROLE = "ADMIN";
+    private final static String USER_ROLE = "USER";
+
     public SecurityConfiguration(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
@@ -81,32 +84,43 @@ public class SecurityConfiguration {
         mgr.setDataSource(dataSource);
         if (!mgr.userExists("user")) {
             var authorities = new ArrayList<GrantedAuthority>();
-            authorities.add(new SimpleGrantedAuthority("USER"));
+            authorities.add(new SimpleGrantedAuthority(USER_ROLE));
 
             User user = new User("user", passwordEncoder.encode("password"),
                 true, true, true, true, authorities);
             mgr.createUser(user);
-            //Now add aditional information for this user
+            //Now add aditional information for this users
+            userService.initiateSecurityUser(user);
+        }
+
+        if (!mgr.userExists("gruntz")) {
+            var authorities = new ArrayList<GrantedAuthority>();
+            authorities.add(new SimpleGrantedAuthority(USER_ROLE));
+
+            User user = new User("gruntz", passwordEncoder.encode("password"),
+                false, true, true, true, authorities);
+            mgr.createUser(user);
+            //Now add aditional information for this users
             userService.initiateSecurityUser(user);
         }
 
         if (!mgr.userExists("admin")) {
             var authorities = new ArrayList<GrantedAuthority>();
-            authorities.add(new SimpleGrantedAuthority("USER"));
-            authorities.add(new SimpleGrantedAuthority("ADMIN"));
+            authorities.add(new SimpleGrantedAuthority(USER_ROLE));
+            authorities.add(new SimpleGrantedAuthority(ADMIN_ROLE));
 
             User user = new User("admin", passwordEncoder.encode("password"),
                 true, true, true, true, authorities);
             mgr.createUser(user);
-            //Now add aditional information for this user
             userService.initiateSecurityUser(user);
         }
 
         auth
             .jdbcAuthentication()
             .dataSource(dataSource)
+            .rolePrefix("ROLE_")
             .usersByUsernameQuery(JdbcUserDetailsManager.DEF_USERS_BY_USERNAME_QUERY)
-            .authoritiesByUsernameQuery(JdbcUserDetailsManager.DEF_USERS_BY_USERNAME_QUERY);
+            .authoritiesByUsernameQuery(JdbcUserDetailsManager.DEF_AUTHORITIES_BY_USERNAME_QUERY);
         providerList.forEach(auth::authenticationProvider);
     }
 

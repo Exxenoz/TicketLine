@@ -23,7 +23,7 @@ public class SimpleUserService implements UserService {
 
     @Override
     public void enableUser(User user) {
-        LOGGER.info("Enabling user: {}", user.getUsername());
+        LOGGER.info("Enabling users: {}", user.getUsername());
         user.setEnabled(true);
         usersRepository.save(user);
     }
@@ -35,7 +35,7 @@ public class SimpleUserService implements UserService {
 
     @Override
     public void disableUser(User user) {
-        LOGGER.info(String.format("Disabling user: %s",user.getUsername()));
+        LOGGER.info(String.format("Disabling users: %s", user.getUsername()));
         user.setEnabled(false);
         usersRepository.save(user);
     }
@@ -49,7 +49,7 @@ public class SimpleUserService implements UserService {
         strike += 1;
 
         user.setStrikes(strike);
-        LOGGER.info(String.format("Increasing strikes for user: %s to amount: %d", user.getUsername(), user.getStrikes()));
+        LOGGER.info(String.format("Increasing strikes for users: %s to amount: %d", user.getUsername(), user.getStrikes()));
 
         if(strike >= 5) {
             user.setEnabled(false);

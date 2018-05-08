@@ -50,14 +50,14 @@ public class UserTest {
             var user = new org.springframework.security.core.userdetails.User(TEST_USERNAME, TEST_PASSWORD,
                 enabled, true, true, true, authorities);
             mgr.createUser(user);
-            //Now add aditional information for this user
+            //Now add aditional information for this users
             userService.initiateSecurityUser(user);
 
         } else {
             var user = new org.springframework.security.core.userdetails.User(TEST_USERNAME, TEST_PASSWORD,
                 enabled, true, true, true, authorities);
             mgr.updateUser(user);
-            //Now add aditional information for this user
+            //Now add aditional information for this users
             userService.initiateSecurityUser(user);
         }
     }

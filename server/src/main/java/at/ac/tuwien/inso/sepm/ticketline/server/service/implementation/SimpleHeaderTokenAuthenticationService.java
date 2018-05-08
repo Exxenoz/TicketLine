@@ -9,11 +9,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +38,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static at.ac.tuwien.inso.sepm.ticketline.server.security.AuthenticationConstants.JWT_CLAIM_AUTHORITY;
-import static at.ac.tuwien.inso.sepm.ticketline.server.security.AuthenticationConstants.JWT_CLAIM_PRINCIPAL;
-import static at.ac.tuwien.inso.sepm.ticketline.server.security.AuthenticationConstants.JWT_CLAIM_PRINCIPAL_ID;
-import static at.ac.tuwien.inso.sepm.ticketline.server.security.AuthenticationConstants.ROLE_PREFIX;
+import static at.ac.tuwien.inso.sepm.ticketline.server.security.AuthenticationConstants.*;
 
 @Service
 public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthenticationService {
@@ -86,7 +79,7 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
                 new UsernamePasswordAuthenticationToken(username, password));
 
         } catch (AuthenticationException a) {
-            LOGGER.error(String.format("Failed to authenticate user with name: %s", username),  a);
+            LOGGER.error(String.format("Failed to authenticate users with name: %s", username), a);
 
             if(userService.findUserByName(username) != null) {
                 boolean isDisabled = userService.increaseStrikes(userService.findUserByName(username));

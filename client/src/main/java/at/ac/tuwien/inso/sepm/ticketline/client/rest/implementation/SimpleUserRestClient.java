@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.rest.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.UserRestClient;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,9 +40,9 @@ public class SimpleUserRestClient implements UserRestClient {
                 });
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed retrieve news with status code " + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
-            throw new DataAccessException(e.getMessage(), e);
+            throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
         }
     }
 
@@ -55,9 +56,9 @@ public class SimpleUserRestClient implements UserRestClient {
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed retrieve news with status code " + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
-            throw new DataAccessException(e.getMessage(), e);
+            throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
         }
     }
 }

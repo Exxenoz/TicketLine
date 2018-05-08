@@ -16,10 +16,10 @@ public class UserDTO {
     @ApiModelProperty(required = true, readOnly = true, name = "The password of the useraccount")
     private String password;
 
-    @ApiModelProperty(required = true, readOnly = true, name = "Indicates whether the user is enabled or not")
+    @ApiModelProperty(required = true, readOnly = true, name = "Indicates whether the users is enabled or not")
     private boolean enabled;
 
-    @ApiModelProperty(readOnly = true, name = "The number of tries the user had for authorization")
+    @ApiModelProperty(readOnly = true, name = "The number of tries the users had for authorization")
     private Integer strikes = 0;
 
     public static UserDTOBuilder builder() {

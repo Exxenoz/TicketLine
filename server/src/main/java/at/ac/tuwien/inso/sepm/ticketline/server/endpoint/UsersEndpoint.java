@@ -24,7 +24,6 @@ public class UsersEndpoint {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation("find all existing Users")
     public List<UserDTO> findAll() {
         return userMapper.userListToUserDTOList(userService.findAll());

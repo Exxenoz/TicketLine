@@ -1,10 +1,10 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.news.NewsController;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.users.UsersController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationInformationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -18,13 +18,13 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.controlsfx.glyphfont.FontAwesome;
-import org.controlsfx.glyphfont.Glyph;
 import org.springframework.stereotype.Component;
 
 import static javafx.application.Platform.runLater;
 import static javafx.stage.Modality.APPLICATION_MODAL;
 import static javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.NEWSPAPER_ALT;
+import static org.controlsfx.glyphfont.FontAwesome.Glyph.USERS;
 
 @Component
 public class MainController {
@@ -48,6 +48,7 @@ public class MainController {
     private final SpringFxmlLoader springFxmlLoader;
     private final FontAwesome fontAwesome;
     private NewsController newsController;
+    private UsersController usersController;
 
     public MainController(
         SpringFxmlLoader springFxmlLoader,
@@ -67,6 +68,7 @@ public class MainController {
         login = springFxmlLoader.load("/fxml/authenticationComponent.fxml");
         spMainContent.getChildren().add(login);
         initNewsTabPane();
+        initUserManageTabPane();
     }
 
     @FXML
@@ -99,10 +101,23 @@ public class MainController {
         tpContent.getTabs().add(newsTab);
     }
 
+    private void initUserManageTabPane() {
+        SpringFxmlLoader.Wrapper<UsersController> wrapper =
+            springFxmlLoader.loadAndWrap("/fxml/users/usersMain.fxml");
+        usersController = wrapper.getController();
+        final var usersTab = new Tab(null, wrapper.getLoadedObject());
+        final var usersGlyph = fontAwesome.create(USERS);
+        usersGlyph.setFontSize(TAB_ICON_FONT_SIZE);
+        usersGlyph.setColor(Color.WHITE);
+        usersTab.setGraphic(usersGlyph);
+        tpContent.getTabs().add(usersTab);
+    }
+
     private void setAuthenticated(boolean authenticated) {
         if (authenticated) {
             spMainContent.getChildren().remove(login);
             newsController.loadNews();
+            usersController.loadUsers();
         } else {
             if (!spMainContent.getChildren().contains(login)) {
                 spMainContent.getChildren().add(login);
