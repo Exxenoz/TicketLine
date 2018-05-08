@@ -1,10 +1,10 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui;
 
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.news.NewsController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationInformationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -18,12 +18,12 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.controlsfx.glyphfont.FontAwesome;
-import org.controlsfx.glyphfont.Glyph;
 import org.springframework.stereotype.Component;
 
 import static javafx.application.Platform.runLater;
 import static javafx.stage.Modality.APPLICATION_MODAL;
 import static javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST;
+import static org.controlsfx.glyphfont.FontAwesome.Glyph.CALENDAR_ALT;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.NEWSPAPER_ALT;
 
 @Component
@@ -48,6 +48,7 @@ public class MainController {
     private final SpringFxmlLoader springFxmlLoader;
     private final FontAwesome fontAwesome;
     private NewsController newsController;
+    private EventController eventController;
 
     public MainController(
         SpringFxmlLoader springFxmlLoader,
@@ -67,6 +68,7 @@ public class MainController {
         login = springFxmlLoader.load("/fxml/authenticationComponent.fxml");
         spMainContent.getChildren().add(login);
         initNewsTabPane();
+        initEventsTabPane();
     }
 
     @FXML
@@ -97,12 +99,26 @@ public class MainController {
         newsGlyph.setColor(Color.WHITE);
         newsTab.setGraphic(newsGlyph);
         tpContent.getTabs().add(newsTab);
+
+    }
+
+    private void initEventsTabPane() {
+        SpringFxmlLoader.Wrapper<EventController> wrapperEvents =
+            springFxmlLoader.loadAndWrap("/fxml/events/eventMain.fxml");
+        eventController = wrapperEvents.getController();
+        final var eventsTab = new Tab(null, wrapperEvents.getLoadedObject());
+        final var eventsGlyph = fontAwesome.create(CALENDAR_ALT);
+        eventsGlyph.setFontSize(TAB_ICON_FONT_SIZE);
+        eventsGlyph.setColor(Color.WHITE);
+        eventsTab.setGraphic(eventsGlyph);
+        tpContent.getTabs().add(eventsTab);
     }
 
     private void setAuthenticated(boolean authenticated) {
         if (authenticated) {
             spMainContent.getChildren().remove(login);
             newsController.loadNews();
+            eventController.loadData();
         } else {
             if (!spMainContent.getChildren().contains(login)) {
                 spMainContent.getChildren().add(login);

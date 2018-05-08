@@ -47,5 +47,4 @@ public class SimpleNewsRestClient implements NewsRestClient {
             throw new DataAccessException(e.getMessage(), e);
         }
     }
-
 }

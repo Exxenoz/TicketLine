@@ -1,0 +1,25 @@
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: derive(#3c3f41, 25%);
+}
+
+.tab-pane .tab {
+    -fx-background-color: #1E90FF;
+    -fx-text-fill: #FFFFFF;
+    -fx-min-height: 50px;
+    -fx-min-width: 50px;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: derive(#ececec, 26.4%);
+    -fx-text-fill: #000000;
+}
+
+.tab-pane {
+    -fx-tab-min-height: 30px;
+    -fx-tab-min-width: 70px;
+}
+
+.tab, .tab-pane, .tab-header-background, .tab-pane *.tab-header-area {
+    -fx-background-insets: 0;
+    -fx-padding: 0.0em 0.0em 0.0em 0.0em;
+}

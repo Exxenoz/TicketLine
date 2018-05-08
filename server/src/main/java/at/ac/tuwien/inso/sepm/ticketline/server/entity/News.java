@@ -76,14 +76,24 @@ public class News {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         News news = (News) o;
 
-        if (id != null ? !id.equals(news.id) : news.id != null) return false;
-        if (publishedAt != null ? !publishedAt.equals(news.publishedAt) : news.publishedAt != null) return false;
-        if (title != null ? !title.equals(news.title) : news.title != null) return false;
+        if (id != null ? !id.equals(news.id) : news.id != null) {
+            return false;
+        }
+        if (publishedAt != null ? !publishedAt.equals(news.publishedAt) : news.publishedAt != null) {
+            return false;
+        }
+        if (title != null ? !title.equals(news.title) : news.title != null) {
+            return false;
+        }
         return text != null ? text.equals(news.text) : news.text == null;
 
     }
