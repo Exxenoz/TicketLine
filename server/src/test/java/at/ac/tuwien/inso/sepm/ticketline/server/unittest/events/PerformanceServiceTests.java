@@ -88,7 +88,12 @@ public class PerformanceServiceTests {
 
     @Test
     public void searchByCity() {
+        SearchDTO searchDTO = new SearchDTO();
+        searchDTO.setCity("");
 
+        List<Performance> performances = service.search(searchDTO);
+        Assert.assertTrue(performances.size() == 1);
+        Assert.assertTrue(performances.get(0).getName().equals("Zauberflöte"));
     }
 
     @Test
