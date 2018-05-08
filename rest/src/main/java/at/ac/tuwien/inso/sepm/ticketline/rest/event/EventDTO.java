@@ -70,7 +70,7 @@ public class EventDTO {
             " name='" + name + '\'' +
             ", eventType=" + eventType +
             ", description='" + description + '\'' +
-            ", artist=" + artists.toString() + '\'' +
+            ", artist=" + artists + '\'' +
             '}';
     }
 

@@ -118,6 +118,7 @@ public class MainController {
         if (authenticated) {
             spMainContent.getChildren().remove(login);
             newsController.loadNews();
+            eventController.loadData();
         } else {
             if (!spMainContent.getChildren().contains(login)) {
                 spMainContent.getChildren().add(login);

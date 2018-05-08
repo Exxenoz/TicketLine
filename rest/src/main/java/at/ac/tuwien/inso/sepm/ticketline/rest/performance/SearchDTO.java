@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.rest.performance;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -14,7 +15,7 @@ public class SearchDTO {
     private EventTypeDTO eventType;
     @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime performanceStart;
-    private Double price;
+    private BigDecimal price;
 
     private String locationName;
     private String street;
@@ -28,7 +29,7 @@ public class SearchDTO {
 
     public SearchDTO(String performanceName, String eventName, String artistFirstName,
                      String artistLastName, EventTypeDTO eventType, LocalDateTime performanceStart,
-                     Double price, String locationName, String street, String city, String country,
+                     BigDecimal price, String locationName, String street, String city, String country,
                      String postalCode, Duration duration) {
         this.performanceName = performanceName;
         this.eventName = eventName;
@@ -93,11 +94,11 @@ public class SearchDTO {
         this.performanceStart = performanceStart;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

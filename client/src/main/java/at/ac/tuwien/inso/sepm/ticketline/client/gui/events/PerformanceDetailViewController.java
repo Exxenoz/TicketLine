@@ -3,17 +3,12 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
 @Component
@@ -44,9 +39,20 @@ public class PerformanceDetailViewController {
 
     private EventDetailViewController eventDetailViewController;
 
+    private PerformanceDTO performance;
+
   /*  public PerformanceDetailViewController(EventDetailViewController eventDetailViewController) {
         this.eventDetailViewController = eventDetailViewController;
     } */
+
+    @FXML
+    private void initialize(){
+        performanceHeader.setText(performance.getEvent().getName());
+        locationName.setText(performance.getAddress().getLocationName() + ", " + performance.getAddress().getCity());
+        startTime.setText(performance.getPerformanceStart().toString());
+        artistNamePerformance.setText(performance.getEvent().getArtists().toString());
+        performancePrice.setText(performance.getPrice().toString());
+    }
 
     @FXML
     void bookPerformance(ActionEvent event) {
@@ -74,11 +80,7 @@ public class PerformanceDetailViewController {
     }
 
     public void fill(PerformanceDTO performance) {
-        performanceHeader.setText(performance.getEvent().getName());
-        locationName.setText(performance.getAddress().getBuildingName() + ", " + performance.getAddress().getLocation());
-        startTime.setText(performance.getPerformanceStart().toString());
-        artistNamePerformance.setText(performance.getEvent().getArtists().toString());
-        performancePrice.setText(performance.getPrice().toString());
+       this.performance = performance;
 
     }
 }

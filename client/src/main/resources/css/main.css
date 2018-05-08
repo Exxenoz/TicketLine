@@ -6,11 +6,15 @@
 }
 
 .context-menu {
-    -fx-background-color: #3c3f41;
+
 }
 
 .menu-bar .label {
-    -fx-text-fill: #BDBDBD;
+    -fx-text-fill: #FFFFFF;
+}
+
+.menu:showing .label {
+    -fx-text-fill: #000000;
 }
 
 .menu-button:hover,
