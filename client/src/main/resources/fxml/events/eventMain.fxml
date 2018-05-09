@@ -144,7 +144,8 @@
                   <Button fx:id="clearButton" layoutX="987.0" layoutY="9.0" mnemonicParsing="false" onAction="#showAllPerformances" text="Clear" />
                   <HBox layoutX="779.0" layoutY="601.0" spacing="140.0">
                      <children>
-                        <Button fx:id="bookButton" disable="true" mnemonicParsing="false" onAction="#bookPerformance" text="Book" />
+                         <Button fx:id="bookButton" disable="false" mnemonicParsing="false" onAction="#bookPerformance"
+                                 text="Book"/>
                         <Button fx:id="searchButton" mnemonicParsing="false" onAction="#searchForPerformances" text="Search" />
                      </children>
                   </HBox>
@@ -211,7 +212,8 @@
                            </font>
                         </Label>
                         <ChoiceBox fx:id="topTenEventChoiceBox" prefWidth="150.0" />
-                        <Button fx:id="bookTopTenEventButton" disable="true" mnemonicParsing="false" onAction="#bookTopTenEvent" text="%events.main.button.book" />
+                         <Button fx:id="bookTopTenEventButton" disable="false" mnemonicParsing="false"
+                                 onAction="#bookTopTenEvent" text="%events.main.button.book"/>
                      </children>
                      <VBox.margin>
                         <Insets left="10.0" right="10.0" />

@@ -37,7 +37,7 @@ public class PerformanceServiceTests {
             "Vienna",
             "Austria",
             "1010");
-        Performance p = new Performance(null,
+   /*     Performance p = new Performance(null,
             "Zauberflöte",
             20.0,
             LocalDateTime.now().plusDays(5),
@@ -74,7 +74,7 @@ public class PerformanceServiceTests {
             LocalDateTime.now().plusDays(10).plusHours(2),
             address
         );
-        repository.save(p);
+        repository.save(p); */
     }
 
     @Test

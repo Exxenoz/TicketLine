@@ -52,11 +52,26 @@ public class EventDetailViewController {
 
     private List<PerformanceDTO> performances;
 
+    private EventDTO event;
+
     private ObservableList<PerformanceDTO> performanceData = FXCollections.observableArrayList();
 
 
     @FXML
     private Button bookButtonEvent;
+
+    @FXML
+    private void initilaize() {
+        eventHeading.setText(event.getName());
+        eventNameEvent.setText(event.getName());
+        artistNameEvent.setText(event.getArtists().toString());
+        descriptionEvent.setText(event.getDescription());
+        if (event.getEventType().toString().equals("SEATS")) {
+            eventTypeEvent.setText("yes");
+        } else {
+            eventTypeEvent.setText("no");
+        }
+    }
 
     private PerformanceDetailViewController performanceDetailViewController;
 
@@ -85,15 +100,7 @@ public class EventDetailViewController {
     }
 
     public void fill(EventDTO event) {
-        eventHeading.setText(event.getName());
-        eventNameEvent.setText(event.getName());
-        artistNameEvent.setText(event.getArtists().toString());
-        descriptionEvent.setText(event.getDescription());
-        if (event.getEventType().toString().equals("SEATS")) {
-            eventTypeEvent.setText("yes");
-        } else {
-            eventTypeEvent.setText("no");
-        }
+        this.event = event;
 
 
         //TODO: Get performances for table View
