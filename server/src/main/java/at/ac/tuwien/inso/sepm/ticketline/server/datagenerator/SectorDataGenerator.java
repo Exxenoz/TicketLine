@@ -8,15 +8,16 @@ import com.github.javafaker.Faker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 @Profile("generateData")
 @Component
-public class SectorDataGenerator {
+@Order(5)
+public class SectorDataGenerator implements DataGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final int NUMBER_OF_SECTORS_TO_GENERATE = 30;
@@ -31,8 +32,7 @@ public class SectorDataGenerator {
         faker = new Faker();
     }
 
-    @PostConstruct
-    private void generateSectors() {
+    public void generate() {
         if (sectorCategoryRepository.count() == 0) {
             LOGGER.info("Could not generate sectors, because there are no sector categories!");
         }

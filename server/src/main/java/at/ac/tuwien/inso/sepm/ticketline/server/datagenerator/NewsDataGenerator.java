@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -16,11 +15,10 @@ import java.util.concurrent.TimeUnit;
 
 @Profile("generateData")
 @Component
-public class NewsDataGenerator {
+public class NewsDataGenerator implements DataGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final int NUMBER_OF_NEWS_TO_GENERATE = 25;
-
     private final NewsRepository newsRepository;
     private final Faker faker;
 
@@ -29,8 +27,8 @@ public class NewsDataGenerator {
         faker = new Faker();
     }
 
-    @PostConstruct
-    private void generateNews() {
+    @Override
+    public void generate() {
         if (newsRepository.count() > 0) {
             LOGGER.info("news already generated");
         } else {

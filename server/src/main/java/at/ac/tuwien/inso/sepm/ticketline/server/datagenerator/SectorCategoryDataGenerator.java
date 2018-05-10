@@ -1,21 +1,21 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.datagenerator;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.SectorCategory;
-import at.ac.tuwien.inso.sepm.ticketline.server.repository.NewsRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.SectorCategoryRepository;
 import com.github.javafaker.Faker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 
 @Profile("generateData")
 @Component
-public class SectorCategoryDataGenerator {
+@Order(1)
+public class SectorCategoryDataGenerator implements DataGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final int NUMBER_OF_SECTOR_CATEGORIES_TO_GENERATE = 5;
@@ -28,8 +28,8 @@ public class SectorCategoryDataGenerator {
         faker = new Faker();
     }
 
-    @PostConstruct
-    private void generateSectorCategories() {
+    @Override
+    public void generate() {
         if (sectorCategoryRepository.count() > 0) {
             LOGGER.info("Sector categories already generated");
         } else {
