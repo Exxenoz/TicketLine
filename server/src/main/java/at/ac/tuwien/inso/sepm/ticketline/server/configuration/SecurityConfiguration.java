@@ -3,7 +3,6 @@ package at.ac.tuwien.inso.sepm.ticketline.server.configuration;
 import at.ac.tuwien.inso.sepm.ticketline.server.configuration.properties.H2ConsoleConfigurationProperties;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.UserDisabledException;
 import at.ac.tuwien.inso.sepm.ticketline.server.security.HeaderTokenAuthenticationFilter;
-import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.info.InfoEndpoint;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
@@ -18,9 +17,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
@@ -31,7 +27,6 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,12 +46,6 @@ public class SecurityConfiguration {
 
     @Autowired
     private DataSource dataSource;
-
-    @Autowired
-    private UserService userService;
-
-    private final static String ADMIN_ROLE = "ADMIN";
-    private final static String USER_ROLE = "USER";
 
     public SecurityConfiguration(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
@@ -82,39 +71,6 @@ public class SecurityConfiguration {
     public void configureGlobal(AuthenticationManagerBuilder auth, List<AuthenticationProvider> providerList) throws Exception {
         var mgr = new JdbcUserDetailsManager();
         mgr.setDataSource(dataSource);
-        if (!mgr.userExists("user")) {
-            var authorities = new ArrayList<GrantedAuthority>();
-            authorities.add(new SimpleGrantedAuthority(USER_ROLE));
-
-            User user = new User("user", passwordEncoder.encode("password"),
-                true, true, true, true, authorities);
-            mgr.createUser(user);
-            //Now add aditional information for this users
-            userService.initiateSecurityUser(user);
-        }
-
-        if (!mgr.userExists("gruntz")) {
-            var authorities = new ArrayList<GrantedAuthority>();
-            authorities.add(new SimpleGrantedAuthority(USER_ROLE));
-
-            User user = new User("gruntz", passwordEncoder.encode("password"),
-                false, true, true, true, authorities);
-            mgr.createUser(user);
-            //Now add aditional information for this users
-            userService.initiateSecurityUser(user);
-        }
-
-        if (!mgr.userExists("admin")) {
-            var authorities = new ArrayList<GrantedAuthority>();
-            authorities.add(new SimpleGrantedAuthority(USER_ROLE));
-            authorities.add(new SimpleGrantedAuthority(ADMIN_ROLE));
-
-            User user = new User("admin", passwordEncoder.encode("password"),
-                true, true, true, true, authorities);
-            mgr.createUser(user);
-            userService.initiateSecurityUser(user);
-        }
-
         auth
             .jdbcAuthentication()
             .dataSource(dataSource)
