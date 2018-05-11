@@ -21,7 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ActiveProfiles("integration-test")
 public abstract class BaseIT {
 
-    private static final String USER_USERNAME = "users";
+    private static final String USER_USERNAME = "user";
     private static final String USER_PASSWORD = "password";
     private static final String ADMIN_USERNAME = "admin";
     private static final String ADMIN_PASSWORD = "password";
