@@ -9,14 +9,14 @@ public interface AuthenticationInformationService {
     /**
      * Set the current authentication token.
      *
-     * @param currentAuthenticationToken representing the currently authenticated users authentication
+     * @param currentAuthenticationToken representing the currently authenticated user authentication
      */
     void setCurrentAuthenticationToken(String currentAuthenticationToken);
 
     /**
      * Set the current authentication token info.
      *
-     * @param currentAuthenticationTokenInfo representing the currently authenticated users
+     * @param currentAuthenticationTokenInfo representing the currently authenticated user
      */
     void setCurrentAuthenticationTokenInfo(AuthenticationTokenInfo currentAuthenticationTokenInfo);
 
@@ -56,7 +56,7 @@ public interface AuthenticationInformationService {
          * Gets called whenever the current authentication info changes.
          * E.g.: on login/logout
          *
-         * @param authenticationInfo epresenting the currently authenticated users
+         * @param authenticationInfo representing the currently authenticated user
          */
         void changed(AuthenticationTokenInfo authenticationInfo);
     }

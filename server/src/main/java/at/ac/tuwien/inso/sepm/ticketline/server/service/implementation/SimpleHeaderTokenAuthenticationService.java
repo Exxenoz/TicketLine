@@ -79,7 +79,7 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
                 new UsernamePasswordAuthenticationToken(username, password));
 
         } catch (AuthenticationException a) {
-            LOGGER.error(String.format("Failed to authenticate users with name: %s", username), a);
+            LOGGER.error(String.format("Failed to authenticate user with name: %s", username), a);
 
             if(userService.findUserByName(username) != null) {
                 boolean isDisabled = userService.increaseStrikes(userService.findUserByName(username));
