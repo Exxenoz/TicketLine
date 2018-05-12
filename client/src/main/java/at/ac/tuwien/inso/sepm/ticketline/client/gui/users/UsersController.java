@@ -18,7 +18,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
@@ -56,7 +59,7 @@ public class UsersController {
     @FXML
     private void initialize() {
         tabHeaderController.setIcon(USERS);
-        tabHeaderController.setTitle("Users");
+        tabHeaderController.setTitle(BundleManager.getBundle().getString("usertab.header"));
     }
 
     public void loadUsers() {
@@ -75,10 +78,10 @@ public class UsersController {
                 useraccountStatusCol.setCellValueFactory(cellData -> {
                     if (cellData.getValue().isEnabled()) {
                         return new SimpleStringProperty(BundleManager.getBundle().getString(
-                            "usertable.user_is_enabled.true"));
+                            "usertab.usertable.user_is_enabled.true"));
                     } else {
                         return new SimpleStringProperty(BundleManager.getBundle().getString(
-                            "usertable.user_is_enabled.false"));
+                            "usertab.usertable.user_is_enabled.false"));
                     }
                 });
                 userTable.setItems(FXCollections.observableArrayList(getValue()));
@@ -90,8 +93,15 @@ public class UsersController {
             @Override
             protected void failed() {
                 super.failed();
-                JavaFXUtils.createErrorDialog(getException().getMessage(),
-                    content.getScene().getWindow()).showAndWait();
+                if ((getException().getCause().getClass()) == HttpClientErrorException.class) {
+                    var httpErrorCode = ((HttpStatusCodeException) getException().getCause()).getStatusCode();
+                    if (httpErrorCode == HttpStatus.FORBIDDEN) {
+                        mainController.getTpContent().getTabs().get(2).setDisable(true);
+                    }
+                } else {
+                    JavaFXUtils.createExceptionDialog(getException(),
+                        content.getScene().getWindow()).showAndWait();
+                }
             }
         };
         task.runningProperty().addListener((observable, oldValue, running) ->

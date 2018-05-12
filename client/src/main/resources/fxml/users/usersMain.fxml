@@ -15,16 +15,17 @@
                            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0"
                            AnchorPane.topAnchor="510.0">
                     <buttons>
-                        <Button mnemonicParsing="false" onAction="#handleEnable" text="%user.enable"/>
+                        <Button mnemonicParsing="false" onAction="#handleEnable" text="%usertab.user.enable"/>
                     </buttons>
                 </ButtonBar>
                 <TableView fx:id="userTable" layoutX="200.0" layoutY="14.0" minHeight="-Infinity" minWidth="-Infinity"
                            prefHeight="400.0" prefWidth="1000.0" AnchorPane.bottomAnchor="50.0"
                            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
                     <columns>
-                        <TableColumn fx:id="usernameCol" prefWidth="166.4000244140625" text="%usertable.username"/>
+                        <TableColumn fx:id="usernameCol" prefWidth="166.4000244140625"
+                                     text="%usertab.usertable.username"/>
                         <TableColumn fx:id="useraccountStatusCol" minWidth="3.20001220703125" prefWidth="172.0"
-                                     text="%usertable.user_is_enabled"/>
+                                     text="%usertab.usertable.user_is_enabled"/>
                     </columns>
                 </TableView>
             </children>

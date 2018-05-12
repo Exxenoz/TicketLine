@@ -24,9 +24,7 @@ import org.springframework.stereotype.Component;
 import static javafx.application.Platform.runLater;
 import static javafx.stage.Modality.APPLICATION_MODAL;
 import static javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST;
-import static org.controlsfx.glyphfont.FontAwesome.Glyph.CALENDAR_ALT;
-import static org.controlsfx.glyphfont.FontAwesome.Glyph.NEWSPAPER_ALT;
-import static org.controlsfx.glyphfont.FontAwesome.Glyph.USERS;
+import static org.controlsfx.glyphfont.FontAwesome.Glyph.*;
 
 @Component
 public class MainController {
@@ -62,6 +60,10 @@ public class MainController {
         this.fontAwesome = fontAwesome;
         authenticationInformationService.addAuthenticationChangeListener(
             authenticationTokenInfo -> setAuthenticated(null != authenticationTokenInfo));
+    }
+
+    public TabPane getTpContent() {
+        return this.tpContent;
     }
 
     @FXML
@@ -128,6 +130,7 @@ public class MainController {
         usersGlyph.setColor(Color.WHITE);
         usersTab.setGraphic(usersGlyph);
         tpContent.getTabs().add(usersTab);
+
     }
 
     private void setAuthenticated(boolean authenticated) {
