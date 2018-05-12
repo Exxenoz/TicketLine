@@ -15,13 +15,14 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.sector.SectorCategoryDTO;
+import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
@@ -32,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -129,61 +129,29 @@ public class EventController {
     @FXML
     private TableColumn<PerformanceDTO, String> locationColumn;
 
-    // ---------- Top Ten Tab -----------
-
     @FXML
-    private ChoiceBox<String> monthChoiceBox;
+    private EventTop10Controller eventTop10Controller;
 
-    @FXML
-    public ChoiceBox categoryChoiceBox;
-
-    @FXML
-    private Button showTopTenButton;
-
-    @FXML
-    private BarChart<String, Integer> topTenBarChart;
-
-    @FXML
-    private ChoiceBox<String> topTenEventChoiceBox;
-
-    @FXML
-    private Button bookTopTenEventButton;
-
-    private EventService eventService;
-    private PerformanceService performanceService;
-    private ReservationService reservationService;
-    private SectorCategoryService sectorCategoryService;
-
-    private ObservableList<PerformanceDTO> performanceData = FXCollections.observableArrayList();
+    private final SpringFxmlLoader fxmlLoader;
+    private final PerformanceService performanceService;
+    private final PerformanceDetailViewController performanceDetailViewController;
 
     private List<PerformanceDTO> performances;
 
-    private PerformanceDetailViewController performanceDetailViewController;
-    private EventDetailViewController eventDetailViewController;
-
-    private List<SectorCategoryDTO> sectorCategories;
-    private List<EventDTO> currentEvents;
-
-    @FXML
-    private TabHeaderController tabHeaderController;
-
     private String activeFilters = "";
 
-    public EventController(EventService eventService, PerformanceService performanceService, ReservationService reservationService, SectorCategoryService sectorCategoryService, PerformanceDetailViewController performanceDetailViewController, EventDetailViewController eventDetailViewController) {
-        this.eventService = eventService;
+    public EventController(
+        SpringFxmlLoader fxmlLoader,
+        PerformanceService performanceService,
+        PerformanceDetailViewController performanceDetailViewController
+    ) {
+        this.fxmlLoader = fxmlLoader;
         this.performanceService = performanceService;
-        this.reservationService = reservationService;
-        this.sectorCategoryService = sectorCategoryService;
         this.performanceDetailViewController = performanceDetailViewController;
-        this.eventDetailViewController = eventDetailViewController;
-        sectorCategories = new ArrayList<>();
-        currentEvents = new ArrayList<>();
     }
 
     @FXML
     private void initialize() {
-        tabHeaderController.setIcon(CALENDAR_ALT);
-        tabHeaderController.setTitle("Top 10 Events");
 
         SpinnerValueFactory<Integer> beginTimeHoursFactory = buildSpinner(23);
         SpinnerValueFactory<Integer> beginTimeMinutesFactory = buildSpinner(59);
@@ -195,25 +163,6 @@ public class EventController {
 
         beginTimeHourSpinner.setValueFactory(beginTimeHoursFactory);
         beginTimeMinuteSpinner.setValueFactory(beginTimeMinutesFactory);
-
-        initMonthChoiceBox();
-    }
-
-    private void initMonthChoiceBox() {
-        monthChoiceBox.getItems().setAll(
-            BundleManager.getBundle().getString("events.main.january"),
-            BundleManager.getBundle().getString("events.main.february"),
-            BundleManager.getBundle().getString("events.main.march"),
-            BundleManager.getBundle().getString("events.main.april"),
-            BundleManager.getBundle().getString("events.main.may"),
-            BundleManager.getBundle().getString("events.main.june"),
-            BundleManager.getBundle().getString("events.main.july"),
-            BundleManager.getBundle().getString("events.main.august"),
-            BundleManager.getBundle().getString("events.main.september"),
-            BundleManager.getBundle().getString("events.main.october"),
-            BundleManager.getBundle().getString("events.main.november"),
-            BundleManager.getBundle().getString("events.main.december"));
-        monthChoiceBox.getSelectionModel().selectFirst();
     }
 
     public void loadData() {
@@ -223,28 +172,11 @@ public class EventController {
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch performances from server!", e);
         }
-
-        updateCategories();
-    }
-
-    public void updateCategories() {
-        categoryChoiceBox.getItems().clear();
-        categoryChoiceBox.getItems().add(BundleManager.getBundle().getString("events.main.all"));
-
-        try {
-            sectorCategories = sectorCategoryService.findAllOrderByBasePriceModAsc();
-            for(SectorCategoryDTO sectorCategory : sectorCategories) {
-                categoryChoiceBox.getItems().add(sectorCategory.getName());
-            }
-        } catch (DataAccessException e) {
-            LOGGER.error("Couldn't get sector categories: " + e.getMessage());
-            JavaFXUtils.createErrorDialog(e.getMessage(), categoryChoiceBox.getScene().getWindow()).showAndWait();
-        }
-        categoryChoiceBox.getSelectionModel().selectFirst();
+        eventTop10Controller.loadData();
     }
 
     private SpinnerValueFactory<Integer> buildSpinner(int maxValue) {
-        return new SpinnerValueFactory<Integer>() {
+        return new SpinnerValueFactory<>() {
             @Override
             public void decrement(int steps) {
                 Integer current = this.getValue();
@@ -273,30 +205,25 @@ public class EventController {
         startTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPerformanceStart().toString()));
         locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAddress().getCity()));
 
-        performanceData = FXCollections.observableArrayList(performances);
+        ObservableList<PerformanceDTO> performanceData = FXCollections.observableArrayList(performances);
         foundEventsTableView.setItems(performanceData);
     }
 
     @FXML
     private void bookPerformance(ActionEvent event) {
-        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/events/performanceDetailView.fxml"));
-        fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(performanceDetailViewController) ? performanceDetailViewController : null);
-
-        int row = foundEventsTableView.getSelectionModel().getFocusedIndex();
-        performanceDetailViewController.fill(performances.get(row), eventDetailViewController);
-
         Stage stage = new Stage();
-        try {
-            stage.setScene(new Scene(fxmlLoader.load()));
-            stage.setTitle("Performance Details");
+        int row = foundEventsTableView.getSelectionModel().getFocusedIndex();
+        performanceDetailViewController.fill(performances.get(row), stage);
 
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(bookButton.getScene().getWindow());
+        final var parent = fxmlLoader.<Parent>load("/fxml/events/performanceDetailView.fxml");
 
-            stage.showAndWait();
-        } catch (IOException e) {
-            LOGGER.error("Detail View Performance window couldn't be opened!");
-        }
+        stage.setScene(new Scene(parent));
+        stage.setTitle("Performance Details");
+
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(bookButton.getScene().getWindow());
+
+        stage.showAndWait();
     }
 
     @FXML
@@ -309,16 +236,16 @@ public class EventController {
         String eventName = eventNameTextField.getText();
         addToCurrentSearchParameters(eventName);
         EventTypeDTO eventType = null;
-        if(seatingYesButton.isSelected()){
+        if (seatingYesButton.isSelected()) {
             eventType = EventTypeDTO.SEAT;
             addToCurrentSearchParameters(eventType.toString());
-        } else if (seatingNoButton.isSelected()){
+        } else if (seatingNoButton.isSelected()) {
             eventType = EventTypeDTO.SECTOR;
             addToCurrentSearchParameters(eventType.toString());
         }
         String durationString = lengthInMinutesTextField.getText();
         Duration duration = null;
-        if(!durationString.equals("")){
+        if (!durationString.equals("")) {
             addToCurrentSearchParameters(durationString + " min");
             duration = Duration.ofMinutes(Integer.parseInt(durationString));
         }
@@ -370,13 +297,13 @@ public class EventController {
 
     }
 
-    private void addToCurrentSearchParameters(String searchParameter){
-        if(searchParameter!=null && !searchParameter.equals("")){
+    private void addToCurrentSearchParameters(String searchParameter) {
+        if (searchParameter != null && !searchParameter.equals("")) {
             activeFilters += searchParameter + ", ";
         }
     }
 
-    private void updateCurrentSearchParameters(){
+    private void updateCurrentSearchParameters() {
         activeFiltersListLabel.setText(activeFilters);
     }
 
@@ -410,102 +337,5 @@ public class EventController {
             LOGGER.error("Couldn't fetch performances from server!", e);
         }
 
-    }
-
-    @FXML
-    void showTopTenClicked(ActionEvent event) {
-        topTenEventChoiceBox.getItems().clear();
-
-        Integer month = monthChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? monthChoiceBox.getSelectionModel().getSelectedIndex() + 1 : 1;
-        Integer categorySelectionIndex = categoryChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? categoryChoiceBox.getSelectionModel().getSelectedIndex() - 1 : null;
-        Long categoryId = null;
-        if (categorySelectionIndex != null) {
-            categoryId = sectorCategories.get(categorySelectionIndex).getId();
-        }
-
-        LOGGER.info("Show Top 10 Events for month: " + monthChoiceBox.getSelectionModel().getSelectedItem() + " and categoryId: " + categoryId);
-
-        try {
-            List<EventDTO> events = eventService.findTop10ByPaidReservationCountByFilter(new EventFilterTopTenDTO(month, categoryId));
-            showTopTenEvents(events);
-        } catch (DataAccessException e) {
-            LOGGER.error("Couldn't fetch top 10 events from server for month: " + month + " " + e.getMessage());
-            JavaFXUtils.createErrorDialog(e.getMessage(), monthChoiceBox.getScene().getWindow()).showAndWait();
-        }
-    }
-
-    private void showTopTenEvents(List<EventDTO> events) {
-        topTenBarChart.getData().clear();
-
-        XYChart.Series<String, Integer> barSeries = new XYChart.Series();
-        barSeries.setName( monthChoiceBox.getSelectionModel().getSelectedItem());
-
-        for (EventDTO event : events) {
-            try {
-                Long ticketSaleCount = reservationService.getPaidReservationCountByFilter(new ReservationFilterTopTenDTO(monthChoiceBox.getSelectionModel().getSelectedIndex() + 1, event.getId()));
-                barSeries.getData().add(new XYChart.Data(event.getName(), ticketSaleCount));
-                currentEvents.add(event);
-                topTenEventChoiceBox.getItems().add(event.getName());
-            } catch (DataAccessException e) {
-                LOGGER.error("Couldn't fetch reservation of event: " + event + " " + e.getMessage());
-                JavaFXUtils.createErrorDialog(e.getMessage(), monthChoiceBox.getScene().getWindow()).showAndWait();
-            }
-        }
-
-        if (events.size() > 0) {
-            topTenBarChart.getData().add(barSeries);
-            topTenEventChoiceBox.getSelectionModel().selectFirst();
-            bookTopTenEventButton.setDisable(false);
-        } else {
-            bookTopTenEventButton.setDisable(true);
-        }
-
-        registerBarChartListener(barSeries);
-    }
-
-    private void registerBarChartListener(XYChart.Series<String, Integer> barSeries) {
-        for (final XYChart.Data<String, Integer> data : barSeries.getData()) {
-            Node node = data.getNode();
-
-            node.setOnMouseEntered(event -> {
-                node.getStyleClass().add("hover");
-            });
-
-            node.setOnMouseExited(event -> {
-                node.getStyleClass().remove("hover");
-                node.getStyleClass().remove("mouse-down");
-            });
-
-            node.setOnMousePressed(event -> {
-                node.getStyleClass().add("mouse-down");
-            });
-
-            node.setOnMouseClicked(event -> {
-                topTenEventChoiceBox.getSelectionModel().select(data.getXValue());
-                node.getStyleClass().remove("mouse-down");
-            });
-        }
-    }
-
-    @FXML
-    void bookTopTenEvent(ActionEvent event) {
-        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/events/eventDetailView.fxml"));
-        fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(eventDetailViewController) ? eventDetailViewController : null);
-
-        int selectedIndex = topTenEventChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? topTenEventChoiceBox.getSelectionModel().getSelectedIndex() : 0;
-        eventDetailViewController.fill(currentEvents.get(selectedIndex));
-
-        Stage stage = new Stage();
-        try {
-            stage.setScene(new Scene(fxmlLoader.load()));
-            stage.setTitle("Event Details");
-
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(bookButton.getScene().getWindow());
-
-            stage.showAndWait();
-        } catch (IOException e) {
-            LOGGER.error("Detail View Events window couldn't be opened!");
-        }
     }
 }

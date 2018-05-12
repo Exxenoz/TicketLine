@@ -1,19 +1,18 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
+import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
 @Component
@@ -42,16 +41,22 @@ public class PerformanceDetailViewController {
     @FXML
     private Button bookButtonPerformance;
 
-    private EventDetailViewController eventDetailViewController;
-
     private PerformanceDTO performance;
 
-    public PerformanceDetailViewController() {
+    private final SpringFxmlLoader fxmlLoader;
+    private final EventDetailViewController eventDetailViewController;
+    private Stage stage;
 
+    public PerformanceDetailViewController(
+        SpringFxmlLoader fxmlLoader,
+        EventDetailViewController eventDetailViewController
+    ) {
+        this.fxmlLoader = fxmlLoader;
+        this.eventDetailViewController = eventDetailViewController;
     }
 
     @FXML
-    private void initialize(){
+    private void initialize() {
         performanceHeader.setText(performance.getEvent().getName());
         locationName.setText(performance.getAddress().getLocationName() + ", " + performance.getAddress().getCity());
         startTime.setText(performance.getPerformanceStart().toString());
@@ -66,27 +71,16 @@ public class PerformanceDetailViewController {
 
     @FXML
     void changeToEventDetailView(ActionEvent event) {
-        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/events/performanceDetailView.fxml"));
-        fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(eventDetailViewController) ? eventDetailViewController : null);
-
-        Stage stage = new Stage();
-        try {
-            stage.setScene(new Scene(fxmlLoader.load()));
-            stage.setTitle("Event Details");
-
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(eventButtonPerformance.getScene().getWindow());
-
-            stage.showAndWait();
-        } catch (IOException e) {
-            LOGGER.error("Detail View Event window couldn't be opened!");
-        }
-
+        eventDetailViewController.fill(performance.getEvent(), stage);
+        final var parent = fxmlLoader.<Parent>load("/fxml/events/eventDetailView.fxml");
+        stage.setScene(new Scene(parent));
+        stage.setTitle("Event Details");
+        stage.centerOnScreen();
     }
 
-    public void fill(PerformanceDTO performance, EventDetailViewController eventDetailViewController) {
-       this.performance = performance;
-        this.eventDetailViewController = eventDetailViewController;
+    public void fill(PerformanceDTO performance, Stage stage) {
+        this.performance = performance;
+        this.stage = stage;
 
     }
 }
