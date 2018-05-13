@@ -3,20 +3,28 @@
 <?import java.net.URL?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.VBox?>
 
-<TabPane fx:id="eventTabPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0"
-         stylesheets="@/css/secondLevelTabs.css" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/9"
-         xmlns:fx="http://javafx.com/fxml/1"
-         fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventController">
-    <stylesheets>
-        <URL value="@/css/events.css" />
-    </stylesheets>
-    <tabs>
-        <Tab text="All Events">
-            <fx:include fx:id="eventTabSearch" source="eventTabSearch.fxml"/>
-        </Tab>
-        <Tab text="Top 10">
-            <fx:include fx:id="eventTop10" source="eventTabTop10.fxml"/>
-        </Tab>
-    </tabs>
-</TabPane>
+
+<?import javafx.scene.control.Separator?>
+<VBox xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" spacing="5.0"
+      fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventController">
+    <children>
+        <fx:include fx:id="tabHeader" source="../tabHeader.fxml"/>
+        <Separator/>
+        <TabPane fx:id="eventTabPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0"
+                 stylesheets="@/css/secondLevelTabs.css" tabClosingPolicy="UNAVAILABLE">
+            <stylesheets>
+                <URL value="@/css/events.css"/>
+            </stylesheets>
+            <tabs>
+                <Tab text="%events.main.tab1">
+                    <fx:include fx:id="eventTabSearch" source="eventTabSearch.fxml"/>
+                </Tab>
+                <Tab text="%events.main.tab2">
+                    <fx:include fx:id="eventTop10" source="eventTabTop10.fxml"/>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
+</VBox>

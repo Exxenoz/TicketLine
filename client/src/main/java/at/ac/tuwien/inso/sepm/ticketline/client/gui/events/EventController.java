@@ -53,8 +53,14 @@ public class EventController {
     @FXML
     private EventSearchController eventSearchController;
 
+    @FXML
+    private TabHeaderController tabHeaderController;
 
-
+    @FXML
+    private void initialize() {
+        tabHeaderController.setIcon(CALENDAR_ALT);
+        tabHeaderController.setTitle("Events");
+    }
 
     public void loadData() {
         eventSearchController.loadData();
