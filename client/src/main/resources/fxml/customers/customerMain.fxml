@@ -7,6 +7,7 @@
 
 <?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Pagination?>
 <VBox xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.customers.CustomerController" spacing="5.0">
     <children>
         <fx:include fx:id="tabHeader" source="/fxml/tabHeader.fxml" />
@@ -22,6 +23,7 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
         </TableView>
+        <Pagination fx:id="customerTablePagination" />
     </children>
     <padding>
         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
