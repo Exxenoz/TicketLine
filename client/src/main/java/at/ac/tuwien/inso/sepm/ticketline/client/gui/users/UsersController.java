@@ -1,12 +1,15 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.users;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.InvalidObjectDataException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.MainController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.UserService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
+import at.ac.tuwien.inso.sepm.ticketline.client.validation.UserValidator;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
@@ -36,6 +39,8 @@ public class UsersController {
     private static final int HEADER_ICON_SIZE = 25;
     private final MainController mainController;
     private final UserService userService;
+    @FXML
+    public TableColumn<UserDTO, Integer> userAuthTriesCol;
     @FXML
     private Label lblHeaderTitle;
     @FXML
@@ -74,7 +79,9 @@ public class UsersController {
             protected void succeeded() {
                 super.succeeded();
 
-                usernameCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUsername()));
+                usernameCol.setCellValueFactory(cellData -> new SimpleStringProperty(
+                    cellData.getValue().getUsername())
+                );
                 useraccountStatusCol.setCellValueFactory(cellData -> {
                     if (cellData.getValue().isEnabled()) {
                         return new SimpleStringProperty(BundleManager.getBundle().getString(
@@ -84,6 +91,9 @@ public class UsersController {
                             "usertab.usertable.user_is_enabled.false"));
                     }
                 });
+                userAuthTriesCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(
+                    cellData.getValue().getStrikes()).asObject()
+                );
                 userTable.setItems(FXCollections.observableArrayList(getValue()));
 
                 userTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -113,9 +123,18 @@ public class UsersController {
 
     public void handleEnable(javafx.event.ActionEvent actionEvent) {
         try {
-            userService.enableUser(userTable.getSelectionModel().getSelectedItem());
+            UserDTO userDTO = userTable.getSelectionModel().getSelectedItem();
+            if (!UserValidator.validateUser(userDTO)) {
+                throw new InvalidObjectDataException("Invalid Data in the UserDTO object");
+            } else {
+                userService.enableUser(userDTO);
+            }
         } catch (DataAccessException e) {
             JavaFXUtils.createErrorDialog(e.getMessage(),
+                content.getScene().getWindow()).showAndWait();
+        } catch (InvalidObjectDataException e) {
+            LOGGER.error("The Data of the UserDTO object was invalid");
+            JavaFXUtils.createErrorDialog(BundleManager.getExceptionBundle().getString("exception.no_selected_user"),
                 content.getScene().getWindow()).showAndWait();
         }
         this.loadUsers();

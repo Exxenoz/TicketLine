@@ -26,6 +26,8 @@
                                      text="%usertab.usertable.username"/>
                         <TableColumn fx:id="useraccountStatusCol" minWidth="3.20001220703125" prefWidth="172.0"
                                      text="%usertab.usertable.user_is_enabled"/>
+                        <TableColumn fx:id="userAuthTriesCol" minWidth="3.20001220703125" prefWidth="172.0"
+                                     text="%usertab.usertable.user_auth_tries"/>
                     </columns>
                 </TableView>
             </children>

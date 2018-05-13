@@ -23,7 +23,7 @@ public class User {
     @Column(nullable = false)
     private boolean enabled = true;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private Integer strikes = 0;
 
     public long getId() {

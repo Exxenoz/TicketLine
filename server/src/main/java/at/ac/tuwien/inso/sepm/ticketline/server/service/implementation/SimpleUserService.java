@@ -25,6 +25,7 @@ public class SimpleUserService implements UserService {
     public void enableUser(User user) {
         LOGGER.info("Enabling user: {}", user.getUsername());
         user.setEnabled(true);
+        user.setStrikes(0);
         usersRepository.save(user);
     }
 
