@@ -30,7 +30,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 import static javafx.scene.control.ProgressIndicator.INDETERMINATE_PROGRESS;
-import static org.controlsfx.glyphfont.FontAwesome.Glyph.USERS;
+import static org.controlsfx.glyphfont.FontAwesome.Glyph.LOCK;
 
 @Component
 public class UsersController {
@@ -63,7 +63,7 @@ public class UsersController {
 
     @FXML
     private void initialize() {
-        tabHeaderController.setIcon(USERS);
+        tabHeaderController.setIcon(LOCK);
         tabHeaderController.setTitle(BundleManager.getBundle().getString("usertab.header"));
     }
 
