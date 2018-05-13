@@ -2,7 +2,9 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationToken;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationTokenInfo;
+import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.server.configuration.properties.AuthenticationConfigurationProperties;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidRequestException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.UserDisabledException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.HeaderTokenAuthenticationService;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
@@ -82,7 +84,12 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
             LOGGER.error(String.format("Failed to authenticate user with name: %s", username), a);
 
             if(userService.findUserByName(username) != null) {
-                boolean isDisabled = userService.increaseStrikes(userService.findUserByName(username));
+                boolean isDisabled = false;
+                try {
+                    isDisabled = userService.increaseStrikes(userService.findUserByName(username));
+                } catch (UserValidatorException e) {
+                    throw new InvalidRequestException();
+                }
                 if (!isDisabled) {
                     throw new BadCredentialsException("Wrong password.");
                 } else {

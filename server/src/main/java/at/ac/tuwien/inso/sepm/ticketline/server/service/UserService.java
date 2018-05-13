@@ -1,5 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public interface UserService {
      * Enabling a user again, in order to allow him to authenticate
      * @param user The user that is enabled again
      */
-    void enableUser(User user);
+    void enableUser(User user) throws UserValidatorException;
 
     /**
      * Finds all user entries
@@ -30,7 +31,7 @@ public interface UserService {
      * @param user The user that earns a strike
      * @return Boolean that indicates whether or not the users is disabled
      */
-    boolean increaseStrikes(User user);
+    boolean increaseStrikes(User user) throws UserValidatorException;
 
     /**
      * Searching for a user by name

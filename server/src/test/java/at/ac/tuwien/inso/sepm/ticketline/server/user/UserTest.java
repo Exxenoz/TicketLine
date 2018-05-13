@@ -1,5 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.user;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import org.junit.After;
 import org.junit.Assert;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -31,12 +34,13 @@ public class UserTest {
     private DataSource dataSource;
 
     private JdbcUserDetailsManager mgr;
+    private PasswordEncoder passwordEncoder;
 
     @Before
     public void setUp() {
         mgr = new JdbcUserDetailsManager();
         mgr.setDataSource(dataSource);
-
+        passwordEncoder = new BCryptPasswordEncoder(10);
     }
 
     @After
@@ -46,14 +50,14 @@ public class UserTest {
     private void setTestUserEnabled(boolean enabled) {
         var authorities = new ArrayList<GrantedAuthority>();
         authorities.add(new SimpleGrantedAuthority("USER"));
-        var user = new org.springframework.security.core.userdetails.User(TEST_USERNAME, TEST_PASSWORD,
+        var user = new org.springframework.security.core.userdetails.User(TEST_USERNAME, passwordEncoder.encode(TEST_PASSWORD),
             enabled, true, true, true, authorities);
         mgr.updateUser(user);
         userService.initiateSecurityUser(user);
     }
 
     @Test
-    public void enableUserTest() {
+    public void enableUserTest() throws UserValidatorException {
         setTestUserEnabled(false);
 
         var user = userService.findUserByName(TEST_USERNAME);

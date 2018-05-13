@@ -60,6 +60,8 @@ public class RestClient extends RestTemplate {
             message = BundleManager.getExceptionBundle().getString("exception.http_forbidden");
         } else if(httpStatus == HttpStatus.NOT_FOUND) {
             message = BundleManager.getExceptionBundle().getString("exception.http_not_found");
+        } else if (httpStatus == HttpStatus.BAD_REQUEST) {
+            message = BundleManager.getExceptionBundle().getString("exception.http_bad_request");
         }
 
         return message;

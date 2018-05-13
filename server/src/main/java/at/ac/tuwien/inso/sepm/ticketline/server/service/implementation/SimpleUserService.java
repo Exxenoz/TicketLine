@@ -1,6 +1,10 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.NotFoundException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.UsersRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import org.slf4j.Logger;
@@ -22,7 +26,15 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public void enableUser(User user) {
+    public void enableUser(User user) throws UserValidatorException {
+        UserValidator.validateUser(UserDTO.builder()
+            .id(user.getId())
+            .username(user.getUsername())
+            .password(user.getPassword())
+            .enabled(user.isEnabled())
+            .strikes(user.getStrikes())
+            .build()
+        );
         LOGGER.info("Enabling user: {}", user.getUsername());
         user.setEnabled(true);
         user.setStrikes(0);
@@ -42,7 +54,16 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public boolean increaseStrikes(User user) {
+    public boolean increaseStrikes(User user) throws UserValidatorException {
+        UserValidator.validateUser(UserDTO.builder()
+            .id(user.getId())
+            .username(user.getUsername())
+            .password(user.getPassword())
+            .enabled(user.isEnabled())
+            .strikes(user.getStrikes())
+            .build()
+        );
+
         if(!user.isEnabled()) {
             return true;
         }
@@ -53,9 +74,7 @@ public class SimpleUserService implements UserService {
         LOGGER.info(String.format("Increasing strikes for user: %s to amount: %d", user.getUsername(), user.getStrikes()));
 
         if(strike >= 5) {
-            user.setEnabled(false);
-            LOGGER.info(String.format("User: %s has been disabled", user.getUsername(), user.getStrikes()));
-            usersRepository.save(user);
+            this.disableUser(user);
             return true;
         }
 
@@ -65,7 +84,11 @@ public class SimpleUserService implements UserService {
 
     @Override
     public User findUserByName(String name) {
-        return usersRepository.findByUsername(name);
+        User user = usersRepository.findByUsername(name);
+        if (user == null) {
+            throw new NotFoundException();
+        }
+        return user;
     }
 
     @Override

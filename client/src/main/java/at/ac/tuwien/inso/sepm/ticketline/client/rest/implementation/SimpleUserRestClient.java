@@ -3,7 +3,9 @@ package at.ac.tuwien.inso.sepm.ticketline.client.rest.implementation;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.UserRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
+import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
@@ -24,18 +26,21 @@ public class SimpleUserRestClient implements UserRestClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private final RestClient restClient;
-    private final URI userUri;
+    private final URI getUsersUri;
+    private final URI enableUserUri;
 
     public SimpleUserRestClient(RestClient restClient) {
         this.restClient = restClient;
-        this.userUri = restClient.getServiceURI("/users");
+        this.getUsersUri = restClient.getServiceURI("/users");
+        this.enableUserUri = restClient.getServiceURI("/users/enable");
     }
 
     @Override
     public void enableUser(UserDTO user) throws DataAccessException {
         try {
-            LOGGER.info("Enable User {} on {}", user.getUsername(), userUri);
-            final var response = restClient.exchange(new RequestEntity<>(user, POST, userUri),
+            UserValidator.validateUser(user);
+            LOGGER.info("Enable User {} on {}", user.getUsername(), enableUserUri);
+            final var response = restClient.exchange(new RequestEntity<>(user, POST, enableUserUri),
                 new ParameterizedTypeReference<UserDTO>() {
                 });
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
@@ -43,14 +48,16 @@ public class SimpleUserRestClient implements UserRestClient {
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
             throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
+        } catch (UserValidatorException e) {
+            throw new DataAccessException(e.getMessage());
         }
     }
 
     @Override
     public List<UserDTO> findAll() throws DataAccessException {
         try {
-            LOGGER.info("Retrieving all Users from {}", userUri);
-            final var response = restClient.exchange(new RequestEntity<>(GET, userUri),
+            LOGGER.info("Retrieving all Users from {}", getUsersUri);
+            final var response = restClient.exchange(new RequestEntity<>(GET, getUsersUri),
                 new ParameterizedTypeReference<List<UserDTO>>() {
                 });
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());

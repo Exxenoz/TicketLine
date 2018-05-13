@@ -1,14 +1,14 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.users;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
-import at.ac.tuwien.inso.sepm.ticketline.client.exception.InvalidObjectDataException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.MainController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.UserService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
-import at.ac.tuwien.inso.sepm.ticketline.client.validation.UserValidator;
+import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -124,16 +124,13 @@ public class UsersController {
     public void handleEnable(javafx.event.ActionEvent actionEvent) {
         try {
             UserDTO userDTO = userTable.getSelectionModel().getSelectedItem();
-            if (!UserValidator.validateUser(userDTO)) {
-                throw new InvalidObjectDataException("Invalid Data in the UserDTO object");
-            } else {
-                userService.enableUser(userDTO);
-            }
+            UserValidator.validateUser(userDTO);
+            userService.enableUser(userDTO);
         } catch (DataAccessException e) {
             JavaFXUtils.createErrorDialog(e.getMessage(),
                 content.getScene().getWindow()).showAndWait();
-        } catch (InvalidObjectDataException e) {
-            LOGGER.error("The Data of the UserDTO object was invalid");
+        } catch (UserValidatorException e) {
+            LOGGER.error("No User was selected");
             JavaFXUtils.createErrorDialog(BundleManager.getExceptionBundle().getString("exception.no_selected_user"),
                 content.getScene().getWindow()).showAndWait();
         }

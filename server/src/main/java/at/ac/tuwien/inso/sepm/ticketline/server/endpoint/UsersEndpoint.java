@@ -1,10 +1,11 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.user.UserMapper;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.UserDataInvalidException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidRequestException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
-import at.ac.tuwien.inso.sepm.ticketline.server.validation.UserValidator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,13 +33,15 @@ public class UsersEndpoint {
         return userMapper.userListToUserDTOList(userService.findAll());
     }
 
-    @PostMapping
+    @PostMapping("enable")
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation("enable disabled User")
+    @ApiOperation("enable a disabled User")
     public void enableUser(@RequestBody UserDTO userDTO) {
-        if (!UserValidator.validateUser(userDTO)) {
-            throw new UserDataInvalidException();
+        try {
+            UserValidator.validateUser(userDTO);
+            userService.enableUser(userMapper.userDTOToUser(userDTO));
+        } catch (UserValidatorException e) {
+            throw new InvalidRequestException();
         }
-        userService.enableUser(userMapper.userDTOToUser(userDTO));
     }
 }
