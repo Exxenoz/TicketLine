@@ -19,12 +19,12 @@ public class Authority {
     @Column(nullable = false)
     private String authority;
 
-    public long getId() {
-        return id;
+    public static AuthorityBuilder builder() {
+        return new AuthorityBuilder();
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public String getUsername() {
@@ -41,6 +41,10 @@ public class Authority {
 
     public void setAuthority(String authority) {
         this.authority = authority;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public static final class AuthorityBuilder {

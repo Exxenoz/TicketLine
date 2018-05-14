@@ -8,7 +8,7 @@ import java.util.List;
 
 
 @Repository
-public interface UsersRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
      * Find a User with the username
@@ -18,5 +18,10 @@ public interface UsersRepository extends JpaRepository<User, Long> {
      */
     User findByUsername(String username);
 
+    /**
+     * Gets all users
+     *
+     * @return all users
+     */
     List<User> findAll();
 }

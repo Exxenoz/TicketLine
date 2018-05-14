@@ -4,6 +4,8 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.UserRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import org.slf4j.Logger;
@@ -27,10 +29,12 @@ public class SimpleUserRestClient implements UserRestClient {
 
     private final RestClient restClient;
     private final URI getUsersUri;
+    private final URI getAllUsersUri;
     private final URI enableUserUri;
 
     public SimpleUserRestClient(RestClient restClient) {
         this.restClient = restClient;
+        this.getAllUsersUri = restClient.getServiceURI("/users/all");
         this.getUsersUri = restClient.getServiceURI("/users");
         this.enableUserUri = restClient.getServiceURI("/users/enable");
     }
@@ -56,9 +60,25 @@ public class SimpleUserRestClient implements UserRestClient {
     @Override
     public List<UserDTO> findAll() throws DataAccessException {
         try {
-            LOGGER.info("Retrieving all Users from {}", getUsersUri);
-            final var response = restClient.exchange(new RequestEntity<>(GET, getUsersUri),
+            LOGGER.info("Retrieving all Users from {}", getAllUsersUri);
+            final var response = restClient.exchange(new RequestEntity<>(GET, getAllUsersUri),
                 new ParameterizedTypeReference<List<UserDTO>>() {
+                });
+            LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
+            return response.getBody();
+        } catch (HttpStatusCodeException e) {
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
+        } catch (RestClientException e) {
+            throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
+        }
+    }
+
+    @Override
+    public PageResponseDTO<UserDTO> findAll(PageRequestDTO request) throws DataAccessException {
+        try {
+            LOGGER.info("Retrieving all Users from {}", getUsersUri);
+            final var response = restClient.exchange(new RequestEntity<>(request, POST, getUsersUri),
+                new ParameterizedTypeReference<PageResponseDTO<UserDTO>>() {
                 });
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
             return response.getBody();

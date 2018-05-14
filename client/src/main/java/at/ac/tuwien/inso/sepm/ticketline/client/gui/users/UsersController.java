@@ -7,15 +7,20 @@ import at.ac.tuwien.inso.sepm.ticketline.client.service.UserService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.concurrent.Task;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.SelectionMode;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
@@ -27,9 +32,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.lang.invoke.MethodHandles;
-import java.util.List;
 
-import static javafx.scene.control.ProgressIndicator.INDETERMINATE_PROGRESS;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.USERS;
 
 @Component
@@ -37,6 +40,7 @@ public class UsersController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final int HEADER_ICON_SIZE = 25;
+    private static final int USERS_PER_PAGE = 30;
     private final MainController mainController;
     private final UserService userService;
     @FXML
@@ -56,9 +60,15 @@ public class UsersController {
     @FXML
     private TabHeaderController tabHeaderController;
 
+    private ObservableList<UserDTO> items;
+    private int page = 0;
+    private int totalPages = 0;
+
     public UsersController(MainController mainController, UserService userService) {
         this.mainController = mainController;
         this.userService = userService;
+        this.items = FXCollections.observableArrayList();
+
     }
 
     @FXML
@@ -67,59 +77,78 @@ public class UsersController {
         tabHeaderController.setTitle(BundleManager.getBundle().getString("usertab.header"));
     }
 
-    public void loadUsers() {
-        final var task = new Task<List<UserDTO>>() {
-            @Override
-            protected List<UserDTO> call() throws DataAccessException {
-                return userService.findAll();
-            }
+    private void scrolled(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        double value = newValue.doubleValue();
+        ScrollBar bar = getVerticalScrollbar(userTable);
+        if (value == bar.getMax() && page < totalPages) {
+            page++;
+            double targetValue = value * items.size();
+            loadUsers(page);
+            bar.setValue(targetValue / items.size());
+        }
+    }
 
+    public void loadUsers(int page) {
+        ScrollBar bar = getVerticalScrollbar(userTable);
+        bar.valueProperty().addListener(this::scrolled);
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-
-                usernameCol.setCellValueFactory(cellData -> new SimpleStringProperty(
-                    cellData.getValue().getUsername())
-                );
-                useraccountStatusCol.setCellValueFactory(cellData -> {
-                    if (cellData.getValue().isEnabled()) {
-                        return new SimpleStringProperty(BundleManager.getBundle().getString(
-                            "usertab.usertable.user_is_enabled.true"));
-                    } else {
-                        return new SimpleStringProperty(BundleManager.getBundle().getString(
-                            "usertab.usertable.user_is_enabled.false"));
-                    }
-                });
-                userAuthTriesCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(
-                    cellData.getValue().getStrikes()).asObject()
-                );
-                userTable.setItems(FXCollections.observableArrayList(getValue()));
-
-                userTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-            }
-
-
-            @Override
-            protected void failed() {
-                super.failed();
-                if ((getException().getCause().getClass()) == HttpClientErrorException.class) {
-                    var httpErrorCode = ((HttpStatusCodeException) getException().getCause()).getStatusCode();
-                    if (httpErrorCode == HttpStatus.FORBIDDEN) {
-                        mainController.getTpContent().getTabs().get(2).setDisable(true);
-                    }
+        try {
+            PageRequestDTO request = new PageRequestDTO(page, USERS_PER_PAGE, null, null);
+            PageResponseDTO<UserDTO> response = userService.findAll(request);
+            items.addAll(response.getContent());
+            totalPages = response.getTotalPages();
+        } catch (DataAccessException e) {
+            if ((e.getCause().getClass()) == HttpClientErrorException.class) {
+                var httpErrorCode = ((HttpStatusCodeException) e.getCause()).getStatusCode();
+                if (httpErrorCode == HttpStatus.FORBIDDEN) {
+                    mainController.getTpContent().getTabs().get(2).setDisable(true);
                 } else {
-                    JavaFXUtils.createExceptionDialog(getException(),
+                    JavaFXUtils.createExceptionDialog(e,
                         content.getScene().getWindow()).showAndWait();
                 }
+            } else {
+                JavaFXUtils.createExceptionDialog(e,
+                    content.getScene().getWindow()).showAndWait();
             }
-        };
-        task.runningProperty().addListener((observable, oldValue, running) ->
-            mainController.setProgressbarProgress(running ? INDETERMINATE_PROGRESS : 0)
-        );
-        new Thread(task).start();
+        }
 
+        usernameCol.setCellValueFactory(cellData -> new SimpleStringProperty(
+            cellData.getValue().getUsername())
+        );
+        useraccountStatusCol.setCellValueFactory(cellData -> {
+            if (cellData.getValue().isEnabled()) {
+                return new SimpleStringProperty(BundleManager.getBundle().getString(
+                    "usertab.usertable.user_is_enabled.true"));
+            } else {
+                return new SimpleStringProperty(BundleManager.getBundle().getString(
+                    "usertab.usertable.user_is_enabled.false"));
+            }
+        });
+        userAuthTriesCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(
+            cellData.getValue().getStrikes()).asObject()
+        );
+        userTable.setItems(items);
     }
+
+    private ScrollBar getVerticalScrollbar(TableView<?> table) {
+        ScrollBar result = null;
+        for (Node n : table.lookupAll(".scroll-bar")) {
+            if (n instanceof ScrollBar) {
+                ScrollBar bar = (ScrollBar) n;
+                if (bar.getOrientation().equals(Orientation.VERTICAL)) {
+                    result = bar;
+                }
+            }
+        }
+        return result;
+    }
+
+    private void clear() {
+        items = FXCollections.observableArrayList();
+        page = 0;
+        userTable.refresh();
+    }
+
 
     public void handleEnable(javafx.event.ActionEvent actionEvent) {
         try {
@@ -134,6 +163,6 @@ public class UsersController {
             JavaFXUtils.createErrorDialog(BundleManager.getExceptionBundle().getString("exception.no_selected_user"),
                 content.getScene().getWindow()).showAndWait();
         }
-        this.loadUsers();
+        userTable.refresh();
     }
 }

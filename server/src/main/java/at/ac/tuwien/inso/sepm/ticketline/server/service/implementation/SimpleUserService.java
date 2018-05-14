@@ -5,10 +5,12 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.NotFoundException;
-import at.ac.tuwien.inso.sepm.ticketline.server.repository.UsersRepository;
+import at.ac.tuwien.inso.sepm.ticketline.server.repository.UserRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
@@ -17,12 +19,12 @@ import java.util.List;
 @Service
 public class SimpleUserService implements UserService {
 
-    private UsersRepository usersRepository;
+    private UserRepository userRepository;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public SimpleUserService(UsersRepository usersRepository) {
-        this.usersRepository = usersRepository;
+    public SimpleUserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -38,19 +40,19 @@ public class SimpleUserService implements UserService {
         LOGGER.info("Enabling user: {}", user.getUsername());
         user.setEnabled(true);
         user.setStrikes(0);
-        usersRepository.save(user);
+        userRepository.save(user);
     }
 
     @Override
     public List<User> findAll() {
-        return usersRepository.findAll();
+        return userRepository.findAll();
     }
 
     @Override
     public void disableUser(User user) {
         LOGGER.info(String.format("Disabling user: %s", user.getUsername()));
         user.setEnabled(false);
-        usersRepository.save(user);
+        userRepository.save(user);
     }
 
     @Override
@@ -78,13 +80,13 @@ public class SimpleUserService implements UserService {
             return true;
         }
 
-        usersRepository.save(user);
+        userRepository.save(user);
         return false;
     }
 
     @Override
     public User findUserByName(String name) {
-        User user = usersRepository.findByUsername(name);
+        User user = userRepository.findByUsername(name);
         if (user == null) {
             throw new NotFoundException();
         }
@@ -100,6 +102,11 @@ public class SimpleUserService implements UserService {
         assimilatedUser.setStrikes(0);
         assimilatedUser.setEnabled(user.isEnabled());
 
-        usersRepository.save(assimilatedUser);
+        userRepository.save(assimilatedUser);
+    }
+
+    @Override
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 }

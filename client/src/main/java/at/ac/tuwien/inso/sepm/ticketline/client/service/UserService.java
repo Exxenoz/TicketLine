@@ -1,6 +1,8 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.service;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 
 import java.util.List;
@@ -14,6 +16,15 @@ public interface UserService {
      * @throws DataAccessException in case something went wrong
      */
     List<UserDTO> findAll() throws DataAccessException;
+
+    /**
+     * Finds a page of all users
+     *
+     * @param request object specifing the request
+     * @return a page of all users
+     * @throws DataAccessException in case something went wrong
+     */
+    PageResponseDTO<UserDTO> findAll(PageRequestDTO request) throws DataAccessException;
 
     /**
      * Enables the given user entry

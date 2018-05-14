@@ -2,6 +2,8 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -45,4 +47,12 @@ public interface UserService {
      * @param user The spring security User that will be processed
      */
     void initiateSecurityUser(org.springframework.security.core.userdetails.User user);
+
+    /**
+     * Gets a Page of all existing Users
+     *
+     * @param pageable the object specifing the page data
+     * @return a page of users
+     */
+    Page<User> findAll(Pageable pageable);
 }

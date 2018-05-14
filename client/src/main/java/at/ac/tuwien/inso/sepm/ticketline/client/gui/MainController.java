@@ -138,7 +138,7 @@ public class MainController {
             spMainContent.getChildren().remove(login);
             newsController.loadNews();
             eventController.loadData();
-            usersController.loadUsers();
+            usersController.loadUsers(0);
         } else {
             if (!spMainContent.getChildren().contains(login)) {
                 spMainContent.getChildren().add(login);

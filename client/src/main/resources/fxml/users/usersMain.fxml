@@ -2,25 +2,25 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="content" maxHeight="-Infinity" maxWidth="-Infinity"
-            xmlns="http://javafx.com/javafx/10"
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="content" maxHeight="1.7976931348623157E308"
+            maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/10"
             fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.users.UsersController">
     <children>
         <fx:include fx:id="tabHeader" source="../tabHeader.fxml" AnchorPane.leftAnchor="10.0"
                     AnchorPane.topAnchor="10.0"/>
         <Separator/>
-        <AnchorPane AnchorPane.leftAnchor="5.0">
+        <AnchorPane prefHeight="700.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
             <children>
                 <ButtonBar layoutX="200.0" layoutY="360.0" prefHeight="40.0" prefWidth="200.0"
-                           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0"
-                           AnchorPane.topAnchor="510.0">
+                           AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0"
+                           AnchorPane.topAnchor="680.0">
                     <buttons>
                         <Button mnemonicParsing="false" onAction="#handleEnable" text="%usertab.user.enable"/>
                     </buttons>
                 </ButtonBar>
-                <TableView fx:id="userTable" layoutX="200.0" layoutY="14.0" minHeight="-Infinity" minWidth="-Infinity"
-                           prefHeight="400.0" prefWidth="1000.0" AnchorPane.bottomAnchor="50.0"
-                           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+                <TableView fx:id="userTable" layoutY="49.0" minHeight="-Infinity" minWidth="-Infinity"
+                           prefHeight="499.0" prefWidth="1000.0" AnchorPane.bottomAnchor="50.0"
+                           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="49.0">
                     <columns>
                         <TableColumn fx:id="usernameCol" prefWidth="166.4000244140625"
                                      text="%usertab.usertable.username"/>

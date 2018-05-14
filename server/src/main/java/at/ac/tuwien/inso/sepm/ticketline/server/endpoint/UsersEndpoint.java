@@ -1,13 +1,17 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.user.UserMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidRequestException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,11 +30,21 @@ public class UsersEndpoint {
         this.userMapper = userMapper;
     }
 
-    @GetMapping
+    @GetMapping("all")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation("find all existing Users")
     public List<UserDTO> findAll() {
         return userMapper.userListToUserDTOList(userService.findAll());
+    }
+
+
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation("find all existing Users")
+    public PageResponseDTO<UserDTO> findAll(@RequestBody final PageRequestDTO pageRequestDTO) {
+        Page<User> userPage = (userService.findAll(pageRequestDTO.getPageable()));
+        List<UserDTO> customerDTOList = userMapper.userListToUserDTOList(userPage.getContent());
+        return new PageResponseDTO<>(customerDTOList, userPage.getTotalPages());
     }
 
     @PostMapping("enable")
