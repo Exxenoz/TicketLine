@@ -33,7 +33,12 @@ public class CustomerDataGenerator {
         } else {
             LOGGER.info("generating {} customer entries", NUMBER_OF_CUSTOMERS_TO_GENERATE);
             for (int i = 0; i < NUMBER_OF_CUSTOMERS_TO_GENERATE; i++) {
-                final var customer = new Customer(faker.name().firstName(), faker.name().lastName(), faker.phoneNumber().phoneNumber(), faker.internet().emailAddress());
+                final var customer = Customer.builder()
+                    .firstName(faker.name().firstName())
+                    .lastName(faker.name().lastName())
+                    .telephoneNumber(faker.phoneNumber().phoneNumber())
+                    .email(faker.internet().emailAddress())
+                    .build();
 
                 LOGGER.debug("saving customer {}", customer);
 

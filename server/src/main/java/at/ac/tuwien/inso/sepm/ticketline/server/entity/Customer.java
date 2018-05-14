@@ -30,17 +30,6 @@ public class Customer {
     @Size(max = 50)
     private String email;
 
-    public Customer() {
-
-    }
-
-    public Customer(@Size(min = 2, max = 50) String firstName, @Size(min = 2, max = 50) String lastName, @Size(max = 30) String telephoneNumber, @Size(max = 50) String email) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.telephoneNumber = telephoneNumber;
-        this.email = email;
-    }
-
     public Long getId() {
         return id;
     }
@@ -97,5 +86,52 @@ public class Customer {
     public int hashCode() {
 
         return Objects.hash(id, firstName, lastName, telephoneNumber, email);
+    }
+
+    public static CustomerBuilder builder() {
+        return new CustomerBuilder();
+    }
+
+    public static final class CustomerBuilder {
+        private Long id;
+        private String firstName;
+        private String lastName;
+        private String telephoneNumber;
+        private String email;
+
+        public CustomerBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public CustomerBuilder firstName(String firstName) {
+            this.firstName = firstName;
+            return this;
+        }
+
+        public CustomerBuilder lastName(String lastName) {
+            this.lastName = lastName;
+            return this;
+        }
+
+        public CustomerBuilder telephoneNumber(String telephoneNumber) {
+            this.telephoneNumber = telephoneNumber;
+            return this;
+        }
+
+        public CustomerBuilder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Customer build() {
+            Customer user = new Customer();
+            user.setId(id);
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setTelephoneNumber(telephoneNumber);
+            user.setEmail(email);
+            return user;
+        }
     }
 }

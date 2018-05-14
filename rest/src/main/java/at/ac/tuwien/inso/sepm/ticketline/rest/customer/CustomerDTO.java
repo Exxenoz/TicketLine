@@ -23,15 +23,12 @@ public class CustomerDTO {
     @ApiModelProperty(readOnly = true, name = "The email of the customer")
     private String email;
 
-    public CustomerDTO() {
-
+    public Long getId() {
+        return id;
     }
 
-    public CustomerDTO(String firstName, String lastName, String email, String telephoneNumber) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.telephoneNumber = telephoneNumber;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFirstName() {
