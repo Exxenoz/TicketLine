@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS Users (
   id       LONG PRIMARY KEY AUTO_INCREMENT,
-  username VARCHAR(32) NOT NULL UNIQUE,
+  username VARCHAR(64) NOT NULL UNIQUE,
   password VARCHAR(60) NOT NULL,
   enabled  BOOLEAN          DEFAULT TRUE,
   strikes  INTEGER          DEFAULT 0
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS Users (
 
 CREATE TABLE IF NOT EXISTS Authorities (
   id        LONG PRIMARY KEY AUTO_INCREMENT,
-  username  VARCHAR(32),
+  username  VARCHAR(64),
   authority VARCHAR(32),
 
   FOREIGN KEY (username) REFERENCES Users (username)
