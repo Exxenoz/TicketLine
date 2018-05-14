@@ -67,6 +67,17 @@ public class CustomerDTO {
     }
 
     @Override
+    public String toString() {
+        return "CustomerDTO{" +
+            "id=" + id +
+            ", firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
+            ", telephoneNumber='" + telephoneNumber + '\'' +
+            ", email='" + email + '\'' +
+            '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
