@@ -40,7 +40,7 @@ public class JavaFXUtils {
             alert.initModality(WINDOW_MODAL);
         }
         alert.setTitle(BundleManager.getExceptionBundle().getString("error"));
-        alert.setHeaderText(BundleManager.getExceptionBundle().getString("exception.unexpected"));
+        alert.setHeaderText(BundleManager.getExceptionBundle().getString("exception.internal"));
         alert.setContentText(throwable.getLocalizedMessage());
         Label label = new Label(BundleManager.getExceptionBundle().getString("exception.stacktrace"));
         TextArea textArea = new TextArea(stacktraceToString(throwable));
@@ -78,7 +78,7 @@ public class JavaFXUtils {
             alert.initModality(WINDOW_MODAL);
         }
         alert.setTitle(BundleManager.getExceptionBundle().getString("error"));
-        alert.setHeaderText(BundleManager.getExceptionBundle().getString("exception.unexpected"));
+        alert.setHeaderText(BundleManager.getExceptionBundle().getString("exception.internal"));
         alert.setContentText(contentText);
         alert.setHeight(300);
         alert.setWidth(400);

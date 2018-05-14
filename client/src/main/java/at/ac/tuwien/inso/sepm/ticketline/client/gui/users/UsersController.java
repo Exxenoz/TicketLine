@@ -82,6 +82,7 @@ public class UsersController {
         ScrollBar bar = getVerticalScrollbar(userTable);
         if (value == bar.getMax() && page < totalPages) {
             page++;
+            LOGGER.debug("Getting next Page: {}", page);
             double targetValue = value * items.size();
             loadUsers(page);
             bar.setValue(targetValue / items.size());
@@ -91,7 +92,7 @@ public class UsersController {
     public void loadUsers(int page) {
         ScrollBar bar = getVerticalScrollbar(userTable);
         bar.valueProperty().addListener(this::scrolled);
-
+        LOGGER.debug("Loading Users of page {}", page);
         try {
             PageRequestDTO request = new PageRequestDTO(page, USERS_PER_PAGE, null, null);
             PageResponseDTO<UserDTO> response = userService.findAll(request);
@@ -101,6 +102,7 @@ public class UsersController {
             if ((e.getCause().getClass()) == HttpClientErrorException.class) {
                 var httpErrorCode = ((HttpStatusCodeException) e.getCause()).getStatusCode();
                 if (httpErrorCode == HttpStatus.FORBIDDEN) {
+                    LOGGER.debug("The current user doesnt have the authorization to load the users-list");
                     mainController.getTpContent().getTabs().get(2).setDisable(true);
                 } else {
                     JavaFXUtils.createExceptionDialog(e,
@@ -127,6 +129,7 @@ public class UsersController {
         userAuthTriesCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(
             cellData.getValue().getStrikes()).asObject()
         );
+        LOGGER.debug("loading the page into the table");
         userTable.setItems(items);
     }
 
@@ -144,9 +147,10 @@ public class UsersController {
     }
 
     private void clear() {
+        LOGGER.debug("clearing the data");
         items = FXCollections.observableArrayList();
         page = 0;
-        userTable.refresh();
+        this.getVerticalScrollbar(userTable).setValue(0);
     }
 
 
@@ -154,7 +158,12 @@ public class UsersController {
         try {
             UserDTO userDTO = userTable.getSelectionModel().getSelectedItem();
             UserValidator.validateUser(userDTO);
-            userService.enableUser(userDTO);
+            if (!userDTO.isEnabled()) {
+                userService.enableUser(userDTO);
+            } else {
+                JavaFXUtils.createErrorDialog(BundleManager.getExceptionBundle().getString("exception.selected_user_is_enabled"),
+                    content.getScene().getWindow()).showAndWait();
+            }
         } catch (DataAccessException e) {
             JavaFXUtils.createErrorDialog(e.getMessage(),
                 content.getScene().getWindow()).showAndWait();
@@ -163,6 +172,8 @@ public class UsersController {
             JavaFXUtils.createErrorDialog(BundleManager.getExceptionBundle().getString("exception.no_selected_user"),
                 content.getScene().getWindow()).showAndWait();
         }
+        this.clear();
         userTable.refresh();
+        loadUsers(0);
     }
 }

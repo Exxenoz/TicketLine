@@ -27,10 +27,8 @@ public class AuthenticationEndpoint {
     @PostMapping
     @ApiOperation("Get an authentication token with your username and password")
     public AuthenticationToken authenticate(@RequestBody final AuthenticationRequest authenticationRequest) {
-
         AuthenticationToken token = authenticationService.authenticate(authenticationRequest.getUsername(),
             authenticationRequest.getPassword());
-
         return token;
     }
 

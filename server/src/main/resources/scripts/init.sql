@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS Users (
 
 CREATE TABLE IF NOT EXISTS Authorities (
   id        LONG PRIMARY KEY AUTO_INCREMENT,
-  username  VARCHAR(32),
+  username  VARCHAR(64),
   authority VARCHAR(32),
 
   FOREIGN KEY (username) REFERENCES Users (username)

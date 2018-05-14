@@ -17,7 +17,7 @@ public class UserDTO {
     private String password;
 
     @ApiModelProperty(required = true, readOnly = true, name = "Indicates whether the users is enabled or not")
-    private boolean enabled;
+    private boolean enabled = true;
 
     @ApiModelProperty(readOnly = true, name = "The number of tries the users had for authorization")
     private Integer strikes = 0;
