@@ -16,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -39,9 +40,10 @@ public class PerformanceServiceTests {
             "Vienna",
             "Austria",
             "1010");
-   /*     Performance p = new Performance(null,
+
+       Performance p = new Performance(null,
             "Zauberflöte",
-            20.0,
+            new BigDecimal(20),
             LocalDateTime.now().plusDays(5),
             LocalDateTime.now().plusDays(5).plusHours(2),
             address
@@ -56,7 +58,7 @@ public class PerformanceServiceTests {
             "1010");
         p = new Performance(null,
             "Vulfpeck Live",
-            15.0,
+            new BigDecimal(20),
             LocalDateTime.now().plusDays(20),
             LocalDateTime.now().plusDays(20).plusHours(3),
             address
@@ -71,12 +73,12 @@ public class PerformanceServiceTests {
             "1010");
         p = new Performance(null,
             "Avishai Cohen",
-            9.0,
+            new BigDecimal(20),
             LocalDateTime.now().plusDays(10),
             LocalDateTime.now().plusDays(10).plusHours(2),
             address
         );
-        repository.save(p); */
+        repository.save(p);
     }
 
     @Test
@@ -109,5 +111,14 @@ public class PerformanceServiceTests {
 
         List<Performance> performances = service.search(searchDTO);
         Assert.assertTrue(performances.size() == 0);
+    }
+
+    @Test
+    public void searchByArtistName() {
+        SearchDTO searchDTO = new SearchDTO();
+        searchDTO.setArtistFirstName("Vulfpeck");
+
+        List<Performance> performances = service.search(searchDTO);
+        Assert.assertTrue(performances.size() == 1);
     }
 }
