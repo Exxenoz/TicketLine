@@ -8,10 +8,15 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.control.Pagination;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import org.slf4j.Logger;
@@ -29,7 +34,7 @@ public class CustomerController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final int CUSTOMERS_PER_PAGE = 10;
+    private static final int CUSTOMERS_PER_PAGE = 20;
 
     @FXML
     private TabHeaderController tabHeaderController;
@@ -49,12 +54,11 @@ public class CustomerController {
     @FXML
     public TableColumn<CustomerDTO, String> customerTableColumnEMail;
 
-    @FXML
-    public Pagination customerTablePagination;
-
     private CustomerService customerService;
 
     private ObservableList<CustomerDTO> customerList = FXCollections.observableArrayList();
+
+    private int currentCustomerPage = 0;
 
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
@@ -75,17 +79,42 @@ public class CustomerController {
         customerTableColumnEMail.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEmail()));
 
         customerTable.setItems(customerList);
+    }
+
+    public void loadCustomers() {
+        // Setting event handler for sort policy property calls it automatically
         customerTable.sortPolicyProperty().set(t -> {
+            customerList.clear();
             loadCustomerTable(0);
             return true;
         });
 
-        customerTablePagination.setPageFactory(page -> {
-            loadCustomerTable(page);
-            return customerTable;
-        });
+        final ScrollBar scrollBar = getVerticalScrollbar(customerTable);
+        if (scrollBar != null) {
+            scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
+                double scrollValue = newValue.doubleValue();
+                if (scrollValue == scrollBar.getMax()) {
+                    double targetValue = scrollValue * customerList.size();
+                    loadCustomerTable(currentCustomerPage + 1);
+                    scrollBar.setValue(targetValue / customerList.size());
+                }
+            });
+        }
+    }
 
-        loadCustomerTable(0);
+    private ScrollBar getVerticalScrollbar(TableView<?> table) {
+        ScrollBar result = null;
+
+        for (Node n : table.lookupAll(".scroll-bar")) {
+            if (n instanceof ScrollBar) {
+                ScrollBar bar = (ScrollBar) n;
+                if (bar.getOrientation().equals(Orientation.VERTICAL)) {
+                    result = bar;
+                }
+            }
+        }
+
+        return result;
     }
 
     private String getColumnNameBy(TableColumn<CustomerDTO, ?> tableColumn) {
@@ -116,17 +145,12 @@ public class CustomerController {
             pageRequestDTO = new PageRequestDTO(page, CUSTOMERS_PER_PAGE, Sort.Direction.ASC, null);
         }
 
-        customerList.clear();
-
         try {
             PageResponseDTO<CustomerDTO> response = customerService.findAll(pageRequestDTO);
-            customerTablePagination.setPageCount(response.getTotalPages());
-            customerTablePagination.setCurrentPageIndex(page);
             customerList.addAll(response.getContent());
+            currentCustomerPage = page;
         } catch (DataAccessException e) {
             LOGGER.warn("Could not access customers!");
-            customerTablePagination.setPageCount(1);
-            customerTablePagination.setCurrentPageIndex(0);
         }
 
         customerTable.refresh();
