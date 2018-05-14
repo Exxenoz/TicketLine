@@ -3,11 +3,12 @@ package at.ac.tuwien.inso.sepm.ticketline.client.rest.implementation;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.CustomerRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -16,7 +17,7 @@ import org.springframework.web.client.RestClientException;
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
 
-import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 
 @Component
 public class SimpleCustomerRestClient implements CustomerRestClient {
@@ -32,13 +33,13 @@ public class SimpleCustomerRestClient implements CustomerRestClient {
     }
 
     @Override
-    public Page<CustomerDTO> findAll(Pageable pageable) throws DataAccessException {
+    public PageResponseDTO<CustomerDTO> findAll(PageRequestDTO pageRequestDTO) throws DataAccessException {
         try {
             LOGGER.debug("Retrieving all customers from {}", customerUri);
             final var customer =
                 restClient.exchange(
-                    new RequestEntity<>(pageable, GET, customerUri),
-                    new ParameterizedTypeReference<RestResponsePage<CustomerDTO>>() {
+                    new RequestEntity<>(pageRequestDTO, POST, customerUri),
+                    new ParameterizedTypeReference<PageResponseDTO<CustomerDTO>>() {
                     });
             LOGGER.debug("Result status was {} with content {}", customer.getStatusCode(), customer.getBody());
             return customer.getBody();

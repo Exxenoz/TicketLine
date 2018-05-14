@@ -5,6 +5,8 @@ import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.CustomerService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,8 +17,6 @@ import javafx.scene.control.TableView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
@@ -54,7 +54,7 @@ public class CustomerController {
 
     private CustomerService customerService;
 
-    private ObservableList<CustomerDTO> customerList = FXCollections.emptyObservableList();
+    private ObservableList<CustomerDTO> customerList = FXCollections.observableArrayList();
 
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
@@ -105,27 +105,30 @@ public class CustomerController {
         return "id";
     }
 
-    private void loadCustomerTable(int page) {
-        Pageable pageable = null;
+    public void loadCustomerTable(int page) {
+        PageRequestDTO pageRequestDTO = null;
         if (customerTable.getSortOrder().size() > 0) {
             TableColumn<CustomerDTO, ?> sortedColumn = customerTable.getSortOrder().get(0);
             Sort.Direction sortDirection = (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
-            pageable = PageRequest.of(page, CUSTOMERS_PER_PAGE, Sort.by(sortDirection, getColumnNameBy(sortedColumn)));
+            pageRequestDTO = new PageRequestDTO(page, CUSTOMERS_PER_PAGE, sortDirection, getColumnNameBy(sortedColumn));
         }
         else {
-            pageable = PageRequest.of(page, CUSTOMERS_PER_PAGE);
+            pageRequestDTO = new PageRequestDTO(page, CUSTOMERS_PER_PAGE, Sort.Direction.ASC, null);
         }
 
+        customerList.clear();
+
         try {
-            Page<CustomerDTO> customers = customerService.findAll(pageable);
-            customerTablePagination.setPageCount(customers.getTotalPages());
+            PageResponseDTO<CustomerDTO> response = customerService.findAll(pageRequestDTO);
+            customerTablePagination.setPageCount(response.getTotalPages());
             customerTablePagination.setCurrentPageIndex(page);
-            customerTable.setItems(customerList = FXCollections.observableList(customers.getContent()));
+            customerList.addAll(response.getContent());
         } catch (DataAccessException e) {
             LOGGER.warn("Could not access customers!");
             customerTablePagination.setPageCount(1);
             customerTablePagination.setCurrentPageIndex(0);
-            customerTable.setItems(customerList = FXCollections.emptyObservableList());
         }
+
+        customerTable.refresh();
     }
 }
