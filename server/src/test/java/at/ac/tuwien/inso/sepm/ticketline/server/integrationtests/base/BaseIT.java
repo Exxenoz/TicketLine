@@ -1,4 +1,4 @@
-package at.ac.tuwien.inso.sepm.ticketline.server.integrationtest.base;
+package at.ac.tuwien.inso.sepm.ticketline.server.integrationtests.base;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.configuration.JacksonConfiguration;
 import at.ac.tuwien.inso.sepm.ticketline.server.security.AuthenticationConstants;
