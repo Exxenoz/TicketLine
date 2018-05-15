@@ -19,7 +19,7 @@
             </stylesheets>
             <tabs>
                 <Tab text="%events.main.tab1">
-                    <fx:include fx:id="eventTabSearch" source="eventTabSearch.fxml"/>
+                    <fx:include fx:id="eventSearch" source="eventTabSearch.fxml"/>
                 </Tab>
                 <Tab text="%events.main.tab2">
                     <fx:include fx:id="eventTop10" source="eventTabTop10.fxml"/>
