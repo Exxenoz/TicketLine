@@ -2,6 +2,10 @@
 ### Environment ###
 ###################
 
+### intelliJ project files ###
+.idea
+*.iml
+
 ### PDF-Files ###
 *.pdf
 
