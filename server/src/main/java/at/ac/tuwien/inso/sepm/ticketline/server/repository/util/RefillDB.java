@@ -1,10 +1,9 @@
-package at.ac.tuwien.inso.sepm.ticketline.server;
+package at.ac.tuwien.inso.sepm.ticketline.server.repository.util;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.datagenerator.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
