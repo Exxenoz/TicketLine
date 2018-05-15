@@ -1,7 +1,7 @@
 .hover {
-    -fx-background-color: red;
+    -fx-background-color: #79a342;
 }
 
 .mouse-down {
-    -fx-background-color: peru !important;
+    -fx-background-color: #bece31;
 }
