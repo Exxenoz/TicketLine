@@ -2,7 +2,6 @@ package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -84,7 +83,6 @@ public class Event {
     @Override
     public String toString() {
         return "Event{" +
-            "artists=" + artists +
             ", name='" + name + '\'' +
             ", eventType=" + eventType +
             ", description='" + description + '\'' +
@@ -109,7 +107,6 @@ public class Event {
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(id, artists, name, eventType, description);
+        return Objects.hash(id, name, eventType, description);
     }
 }

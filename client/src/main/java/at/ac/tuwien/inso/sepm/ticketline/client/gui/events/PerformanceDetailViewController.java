@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.util.stream.Collectors;
 
 @Component
 public class PerformanceDetailViewController {
@@ -51,11 +52,16 @@ public class PerformanceDetailViewController {
     }
 
     @FXML
-    private void initialize(){
+    private void initialize() {
         performanceHeader.setText(performance.getEvent().getName());
         locationName.setText(performance.getAddress().getLocationName() + ", " + performance.getAddress().getCity());
         startTime.setText(performance.getPerformanceStart().toString());
-        artistNamePerformance.setText(performance.getEvent().getArtists().toString());
+
+        String artistList = performance.getEvent().getArtists()
+            .stream()
+            .map(artist -> artist.getFirstName() + " " + artist.getLastName())
+            .collect(Collectors.joining(", "));
+        artistNamePerformance.setText(artistList);
         performancePrice.setText(performance.getPrice().toString());
     }
 
@@ -85,7 +91,7 @@ public class PerformanceDetailViewController {
     }
 
     public void fill(PerformanceDTO performance, EventDetailViewController eventDetailViewController) {
-       this.performance = performance;
+        this.performance = performance;
         this.eventDetailViewController = eventDetailViewController;
 
     }
