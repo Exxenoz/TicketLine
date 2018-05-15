@@ -3,12 +3,17 @@ package at.ac.tuwien.inso.sepm.ticketline.server;
 import at.ac.tuwien.inso.sepm.ticketline.server.datagenerator.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.*;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-@SpringBootApplication
+@Configuration
+@EnableAutoConfiguration
+@ComponentScan
 public class RefillDB {
 
     public static void main(String[] args) {
