@@ -76,7 +76,7 @@ public class EventDetailViewController {
 
 
     @FXML
-    private void initilaize() {
+    private void initialize() {
         eventHeading.setText(event.getName());
         eventNameEvent.setText(event.getName());
         artistNameEvent.setText(event.getArtists().toString());

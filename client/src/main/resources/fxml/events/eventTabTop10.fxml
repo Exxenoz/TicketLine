@@ -19,7 +19,7 @@
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventTop10Controller">
     <children>
-        <GridPane hgap="10.0" vgap="10.0">
+        <GridPane hgap="10.0" vgap="10.0" VBox.vgrow="ALWAYS">
             <columnConstraints>
                 <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" minWidth="10.0"/>
                 <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" minWidth="10.0"/>
@@ -57,7 +57,7 @@
                 <NumberAxis fx:id="barAxisY" label="%events.main.ticket_sales" side="LEFT"/>
             </yAxis>
         </BarChart>
-        <HBox spacing="15.0">
+        <HBox spacing="15.0" VBox.vgrow="ALWAYS">
             <children>
                 <Label text="Event:">
                     <font>
