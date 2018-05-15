@@ -55,7 +55,7 @@ public class PerformanceDataGenerator implements DataGenerator {
                 LocalDateTime startTime = LocalDateTime.ofInstant(faker.date().between(Date.from(now().toInstant(ZoneOffset.UTC)), Date.from(now().plusYears(5).toInstant(ZoneOffset.UTC))).toInstant(), ZoneId.of("UTC"));
 
                 final var performance = new Performance(
-                    events.get(faker.number().numberBetween(0, Math.abs(events.size()) - 1)),
+                    events.get(faker.number().numberBetween(0, events.size() - 1)),
                     faker.esports().event(),
                     price,
                     startTime,
