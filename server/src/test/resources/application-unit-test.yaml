@@ -1,0 +1,17 @@
+logging:
+  file: ./log/ticketline.server-test.log
+  level.: INFO
+  level.at.ac.tuwien.inso.sepm.ticketline.server: ALL
+
+application:
+  authentication:
+    secret: jwtTestSecret
+
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:h2:mem:ticketline-unit;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver

@@ -1,6 +1,5 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.datagenerator;
 
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Seat;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Sector;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.SeatRepository;
@@ -9,15 +8,16 @@ import com.github.javafaker.Faker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 @Profile("generateData")
 @Component
-public class SeatDataGenerator {
+@Order(10)
+public class SeatDataGenerator implements DataGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final int NUMBER_OF_SEATS_TO_GENERATE = 300;
@@ -32,8 +32,8 @@ public class SeatDataGenerator {
         faker = new Faker();
     }
 
-    @PostConstruct
-    private void generateSeats() {
+    @Override
+    public void generate() {
         if (sectorRepository.count() == 0) {
             LOGGER.info("Could not generate seats, because there are no sectors!");
         }

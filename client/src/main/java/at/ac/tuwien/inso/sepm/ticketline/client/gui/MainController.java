@@ -97,7 +97,7 @@ public class MainController {
 
     private void initNewsTabPane() {
         SpringFxmlLoader.Wrapper<NewsController> wrapper =
-            springFxmlLoader.loadAndWrap("/fxml/news/newsComponent.fxml");
+            springFxmlLoader.loadAndWrap("/fxml/news/newsMain.fxml");
         newsController = wrapper.getController();
         final var newsTab = new Tab(null, wrapper.getLoadedObject());
         final var newsGlyph = fontAwesome.create(NEWSPAPER_ALT);

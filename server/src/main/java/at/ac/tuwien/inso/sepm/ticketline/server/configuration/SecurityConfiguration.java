@@ -111,7 +111,7 @@ public class SecurityConfiguration {
                     }
             }).and()
                 .authorizeRequests()
-                //.antMatchers("**").permitAll()
+                .antMatchers("**").permitAll()
                 .antMatchers(OPTIONS).permitAll()
                 .antMatchers(POST, "/authentication").permitAll()
                 .antMatchers(GET,

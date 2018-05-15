@@ -1,4 +1,4 @@
-package at.ac.tuwien.inso.sepm.ticketline.server.user;
+package at.ac.tuwien.inso.sepm.ticketline.server.unittests.user;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;

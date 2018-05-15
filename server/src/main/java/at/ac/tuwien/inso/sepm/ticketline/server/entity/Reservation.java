@@ -1,9 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
-import com.github.javafaker.Bool;
-
 import javax.persistence.*;
-
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -77,7 +74,7 @@ public class Reservation {
     public String toString() {
         return "Reservation{" +
             "id=" + id +
-            ", performance=" + performance +
+//            ", performance=" + performance +
             ", seat=" + seat +
             ", isPaid=" + isPaid +
             ", paidAt=" + paidAt +

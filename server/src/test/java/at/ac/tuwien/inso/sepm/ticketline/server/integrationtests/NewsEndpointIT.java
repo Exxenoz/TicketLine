@@ -1,9 +1,9 @@
-package at.ac.tuwien.inso.sepm.ticketline.server.integrationtest;
+package at.ac.tuwien.inso.sepm.ticketline.server.integrationtests;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.DetailedNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.SimpleNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.News;
-import at.ac.tuwien.inso.sepm.ticketline.server.integrationtest.base.BaseIT;
+import at.ac.tuwien.inso.sepm.ticketline.server.integrationtests.base.BaseIT;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.NewsRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;

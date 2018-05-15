@@ -5,7 +5,6 @@ import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.Set;
 
 import static javax.persistence.GenerationType.AUTO;
 
