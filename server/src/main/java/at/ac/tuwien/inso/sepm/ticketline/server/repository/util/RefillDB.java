@@ -25,7 +25,7 @@ public class RefillDB {
         SeatRepository seatRepository = context.getBean(SeatRepository.class);
         SectorCategoryRepository sectorCategoryRepository = context.getBean(SectorCategoryRepository.class);
         SectorRepository sectorRepository = context.getBean(SectorRepository.class);
-        UsersRepository usersRepository = context.getBean(UsersRepository.class);
+        UserRepository usersRepository = context.getBean(UserRepository.class);
 
         //conditional beans => not in context
         List<DataGenerator> generators = List.of(
