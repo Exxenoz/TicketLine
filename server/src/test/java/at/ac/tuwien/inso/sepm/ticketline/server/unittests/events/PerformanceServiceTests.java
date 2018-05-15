@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -22,6 +23,7 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("unit-test")
 public class PerformanceServiceTests {
 
     /**
@@ -29,6 +31,7 @@ public class PerformanceServiceTests {
      * so we have to use some dirty tricks
      */
     private boolean dataLoaded = false;
+
     @Autowired
     PerformanceService service;
 
