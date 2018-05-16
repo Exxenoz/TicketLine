@@ -1,5 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.address.AddressDTO;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
@@ -27,8 +29,12 @@ public class Customer {
     @Size(max = 30)
     private String telephoneNumber;
 
+    @Column(nullable = true)
     @Size(max = 50)
     private String email;
+
+    @Column(nullable = false)
+    private Address address;
 
     public Long getId() {
         return id;
@@ -70,6 +76,26 @@ public class Customer {
         this.email = email;
     }
 
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+            "id=" + id +
+            ", firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
+            ", telephoneNumber='" + telephoneNumber + '\'' +
+            ", email='" + email + '\'' +
+            ", address=" + address +
+            '}';
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -79,13 +105,14 @@ public class Customer {
             Objects.equals(firstName, customer.firstName) &&
             Objects.equals(lastName, customer.lastName) &&
             Objects.equals(telephoneNumber, customer.telephoneNumber) &&
-            Objects.equals(email, customer.email);
+            Objects.equals(email, customer.email) &&
+            Objects.equals(address, customer.address);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, firstName, lastName, telephoneNumber, email);
+        return Objects.hash(id, firstName, lastName, telephoneNumber, email, address);
     }
 
     public static CustomerBuilder builder() {
@@ -98,6 +125,7 @@ public class Customer {
         private String lastName;
         private String telephoneNumber;
         private String email;
+        private Address address;
 
         public CustomerBuilder id(Long id) {
             this.id = id;
@@ -124,6 +152,11 @@ public class Customer {
             return this;
         }
 
+        public CustomerBuilder address(Address address) {
+            this.address = address;
+            return this;
+        }
+
         public Customer build() {
             Customer user = new Customer();
             user.setId(id);
@@ -131,6 +164,7 @@ public class Customer {
             user.setLastName(lastName);
             user.setTelephoneNumber(telephoneNumber);
             user.setEmail(email);
+            user.setAddress(address);
             return user;
         }
     }

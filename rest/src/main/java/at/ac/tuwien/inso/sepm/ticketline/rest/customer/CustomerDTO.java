@@ -1,5 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.rest.customer;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.address.AddressDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -22,6 +23,9 @@ public class CustomerDTO {
 
     @ApiModelProperty(readOnly = true, name = "The email of the customer")
     private String email;
+
+    @ApiModelProperty(readOnly = true, name = "The address of the customer")
+    private AddressDTO address;
 
     public Long getId() {
         return id;
@@ -63,6 +67,14 @@ public class CustomerDTO {
         this.telephoneNumber = telephoneNumber;
     }
 
+    public AddressDTO getAddress() {
+        return address;
+    }
+
+    public void setAddress(AddressDTO address) {
+        this.address = address;
+    }
+
     @Override
     public String toString() {
         return "CustomerDTO{" +
@@ -71,6 +83,7 @@ public class CustomerDTO {
             ", lastName='" + lastName + '\'' +
             ", telephoneNumber='" + telephoneNumber + '\'' +
             ", email='" + email + '\'' +
+            ", address=" + address +
             '}';
     }
 
@@ -79,15 +92,17 @@ public class CustomerDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CustomerDTO that = (CustomerDTO) o;
-        return Objects.equals(firstName, that.firstName) &&
+        return Objects.equals(id, that.id) &&
+            Objects.equals(firstName, that.firstName) &&
             Objects.equals(lastName, that.lastName) &&
+            Objects.equals(telephoneNumber, that.telephoneNumber) &&
             Objects.equals(email, that.email) &&
-            Objects.equals(telephoneNumber, that.telephoneNumber);
+            Objects.equals(address, that.address);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(firstName, lastName, email, telephoneNumber);
+        return Objects.hash(id, firstName, lastName, telephoneNumber, email, address);
     }
 }
