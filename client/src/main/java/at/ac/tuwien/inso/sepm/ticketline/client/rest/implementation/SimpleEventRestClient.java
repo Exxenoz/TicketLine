@@ -54,21 +54,16 @@ public class SimpleEventRestClient implements EventRestClient {
     }
 
     @Override
-    public List<EventDTO> findByPerformance(PerformanceDTO perf) throws DataAccessException {
+    public EventDTO findByPerformanceID(Long performanceID) throws DataAccessException {
         try {
             LOGGER.debug("Retrieving event of a specific performance from {}", eventUri);
 
-            UriComponentsBuilder builder = UriComponentsBuilder.fromUri(restClient.getServiceURI("/event/findAll"))
-                .queryParam("event", perf.getEvent())
-                .queryParam("name", perf.getName())
-                .queryParam("performanceStart", perf.getPerformanceStart())
-                .queryParam("performanceEnd", perf.getPerformanceEnd())
-                .queryParam("address", perf.getAddress());
+            URI uri = restClient.getServiceURI("/event/findByPerformanceID" + performanceID);
 
             final var event =
                 restClient.exchange(
-                    new RequestEntity<>(GET, builder.build().toUri()),
-                    new ParameterizedTypeReference<List<EventDTO>>() {
+                    new RequestEntity<>(GET, uri),
+                    new ParameterizedTypeReference<EventDTO>() {
                     });
             LOGGER.debug("Result status was {} with content {}", event.getStatusCode(), event.getBody());
             return event.getBody();

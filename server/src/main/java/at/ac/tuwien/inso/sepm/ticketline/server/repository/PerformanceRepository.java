@@ -11,5 +11,5 @@ import java.util.List;
 @Repository
 public interface PerformanceRepository extends JpaRepository<Performance, Long>, QueryByExampleExecutor<Performance> {
 
-    List<Performance> findByEvent(Event event);
+    List<Performance> findByEventId(Long eventID);
 }

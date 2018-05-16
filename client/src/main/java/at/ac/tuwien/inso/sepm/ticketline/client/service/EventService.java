@@ -15,4 +15,6 @@ public interface EventService {
      * @throws DataAccessException in case something went wrong
      */
     List<EventDTO> findTop10ByPaidReservationCountByFilter(EventFilterTopTenDTO eventFilterTopTen) throws DataAccessException;
+
+    EventDTO findByPerformanceID(Long performanceId) throws DataAccessException;
 }

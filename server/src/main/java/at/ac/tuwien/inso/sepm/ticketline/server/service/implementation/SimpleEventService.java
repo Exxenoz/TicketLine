@@ -11,6 +11,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SimpleEventService implements EventService {
@@ -22,8 +23,8 @@ public class SimpleEventService implements EventService {
     }
 
     @Override
-    public List<Event> findByPerformance(Performance performance) {
-        return eventRepository.findByPerformance(performance);
+    public Event findByPerformanceID(Long performanceID) {
+        return eventRepository.findByPerformanceId(performanceID);
     }
 
     public List<Event> findAll() {

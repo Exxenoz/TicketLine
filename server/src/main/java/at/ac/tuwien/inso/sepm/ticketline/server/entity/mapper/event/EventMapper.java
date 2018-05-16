@@ -10,7 +10,11 @@ import java.util.List;
 
 public interface EventMapper {
 
-    List<EventDTO> eventToEventDTO(List<Event> all);
+    EventDTO eventToEventDTO(Event event);
 
-    List<Event> eventDTOToEvent(List<EventDTO> all);
+    List<EventDTO> eventsToEventsDTO(List<Event> all);
+
+    Event eventDTOToEvent(EventDTO eventDTO);
+
+    List<Event> eventsDTOtoEvents(List<Event> event);
 }

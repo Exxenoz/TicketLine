@@ -7,6 +7,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.performance.Perfor
 import at.ac.tuwien.inso.sepm.ticketline.server.service.PerformanceService;
 import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,9 +31,9 @@ public class PerformanceEndpoint {
         return performanceMapper.performanceToPerformanceDTO(performanceService.findAll());
     }
 
-    @GetMapping("event")
-    public List<PerformanceDTO> findByEvent(Event event) {
-        return performanceMapper.performanceToPerformanceDTO(performanceService.findByEvent(event));
+    @GetMapping("findByEventID/{eventID}")
+    public List<PerformanceDTO> findByEventID(@PathVariable("eventID") Long eventID) {
+        return performanceMapper.performanceToPerformanceDTO(performanceService.findByEventID(eventID));
     }
 
     @GetMapping("search")

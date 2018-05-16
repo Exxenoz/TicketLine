@@ -1,6 +1,7 @@
 package at.ac.tuwien.inso.springfx;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
+import com.google.common.base.Preconditions;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 
 /**
  * Bridge between Spring and JavaFX which allows to inject Spring beans in JavaFX controller.
@@ -35,7 +37,7 @@ public class SpringFxmlLoader {
      */
     private FXMLLoader generateFXMLLoader(String url) {
         FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(SpringFxmlLoader.class.getResource(url));
+        fxmlLoader.setLocation(getLocationForUrl(url));
         fxmlLoader.setResources(BundleManager.getBundle());
         fxmlLoader.setControllerFactory(clazz -> {
             LOGGER.debug("Trying to retrieve spring bean for type {}", clazz.getName());
@@ -62,6 +64,12 @@ public class SpringFxmlLoader {
             return bean;
         });
         return fxmlLoader;
+    }
+
+    private URL getLocationForUrl(String url) {
+        URL location = SpringFxmlLoader.class.getResource(url);
+        Preconditions.checkState(location != null, "Resource " + url + " not found.");
+        return location;
     }
 
     /**

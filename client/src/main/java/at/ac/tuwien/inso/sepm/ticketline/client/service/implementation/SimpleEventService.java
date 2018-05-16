@@ -27,4 +27,9 @@ public class SimpleEventService implements EventService {
     public List<EventDTO> findTop10ByPaidReservationCountByFilter(EventFilterTopTenDTO eventFilterTopTen) throws DataAccessException {
         return eventRestClient.findTop10ByPaidReservationCountByFilter(eventFilterTopTen);
     }
+
+    @Override
+    public EventDTO findByPerformanceID(Long performanceId) throws DataAccessException {
+        return eventRestClient.findByPerformanceID(performanceId);
+    }
 }

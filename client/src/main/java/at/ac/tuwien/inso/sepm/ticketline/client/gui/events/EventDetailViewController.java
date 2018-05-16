@@ -104,7 +104,7 @@ public class EventDetailViewController {
             eventTypeEvent.setText("no");
         }
         try {
-            performances = performanceService.findByEvent(event);
+            performances = performanceService.findByEventID(event.getId());
         } catch (DataAccessException e) {
             LOGGER.error("Access error while loading performances of event!", e);
         }

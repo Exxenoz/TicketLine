@@ -4,13 +4,14 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventFilterTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
+import org.w3c.dom.events.Event;
 
 import java.util.List;
 
 public interface EventRestClient {
     List<EventDTO> findAll() throws DataAccessException;
 
-    List<EventDTO> findByPerformance(PerformanceDTO performance) throws DataAccessException;
+    EventDTO findByPerformanceID(Long performanceID) throws DataAccessException;
 
     /**
      * Find top 10 events by ticket sale for a given month

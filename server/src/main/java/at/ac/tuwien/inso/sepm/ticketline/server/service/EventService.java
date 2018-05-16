@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface EventService {
 
-    List<Event> findByPerformance(Performance performance);
+    Event findByPerformanceID(Long performanceID);
 
     List<Event> findAll();
 

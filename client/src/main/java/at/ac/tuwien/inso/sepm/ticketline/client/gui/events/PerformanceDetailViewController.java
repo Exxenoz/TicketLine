@@ -1,5 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 
+import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.event.ActionEvent;
@@ -46,14 +47,17 @@ public class PerformanceDetailViewController {
 
     private final SpringFxmlLoader fxmlLoader;
     private final EventDetailViewController eventDetailViewController;
+    private final PerformanceService performanceService;
     private Stage stage;
 
     public PerformanceDetailViewController(
         SpringFxmlLoader fxmlLoader,
-        EventDetailViewController eventDetailViewController
+        EventDetailViewController eventDetailViewController,
+        PerformanceService performanceService
     ) {
         this.fxmlLoader = fxmlLoader;
         this.eventDetailViewController = eventDetailViewController;
+        this.performanceService = performanceService;
     }
 
     @FXML
@@ -77,8 +81,8 @@ public class PerformanceDetailViewController {
 
     @FXML
     void changeToEventDetailView(ActionEvent event) {
-        // eventDetailViewController.fill(performance.getEvent(), stage);
         final var parent = fxmlLoader.<Parent>load("/fxml/events/eventDetailView.fxml");
+        eventDetailViewController.fill(performanceService, performance.getEvent(), stage);
         stage.setScene(new Scene(parent));
         stage.setTitle("Event Details");
         stage.centerOnScreen();

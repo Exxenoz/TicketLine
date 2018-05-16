@@ -10,7 +10,7 @@ public interface PerformanceService {
 
     List<Performance> findAll();
 
-    List<Performance> findByEvent(Event event);
+    List<Performance> findByEventID(Long eventID);
 
     List<Performance> search(SearchDTO search);
 

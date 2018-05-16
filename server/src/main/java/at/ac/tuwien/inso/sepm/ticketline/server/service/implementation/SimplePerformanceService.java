@@ -28,8 +28,8 @@ public class SimplePerformanceService implements PerformanceService {
     }
 
     @Override
-    public List<Performance> findByEvent(Event event) {
-        return performanceRepository.findByEvent(event);
+    public List<Performance> findByEventID(Long eventID) {
+        return performanceRepository.findByEventId(eventID);
     }
 
     public List<Performance> search(SearchDTO search) {

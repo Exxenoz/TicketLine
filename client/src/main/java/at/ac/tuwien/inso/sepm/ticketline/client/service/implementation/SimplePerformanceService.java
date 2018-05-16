@@ -30,8 +30,8 @@ public class SimplePerformanceService implements PerformanceService {
     }
 
     @Override
-    public List<PerformanceDTO> findByEvent(EventDTO event) throws DataAccessException {
-        return performanceRestClient.findByEvent(event);
+    public List<PerformanceDTO> findByEventID(Long eventID) throws DataAccessException {
+        return performanceRestClient.findByEventID(eventID);
     }
 
     @Override
