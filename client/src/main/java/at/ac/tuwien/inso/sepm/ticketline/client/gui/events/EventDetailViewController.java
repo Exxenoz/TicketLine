@@ -1,5 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
@@ -77,15 +79,7 @@ public class EventDetailViewController {
 
     @FXML
     private void initialize() {
-        eventHeading.setText(event.getName());
-        eventNameEvent.setText(event.getName());
-        artistNameEvent.setText(event.getArtists().toString());
-        descriptionEvent.setText(event.getDescription());
-        if (event.getEventType().toString().equals("SEATS")) {
-            eventTypeEvent.setText("yes");
-        } else {
-            eventTypeEvent.setText("no");
-        }
+
     }
 
     @FXML
@@ -97,9 +91,24 @@ public class EventDetailViewController {
         stage.setTitle("Event Details");
     }
 
-    public void fill(EventDTO event, Stage stage) {
+    public void fill(PerformanceService performanceService, EventDTO event, Stage stage) {
         this.event = event;
         this.stage = stage;
+        eventHeading.setText(event.getName());
+        eventNameEvent.setText(event.getName());
+        artistNameEvent.setText(event.getArtists().toString());
+        descriptionEvent.setText(event.getDescription());
+        if (event.getEventType().toString().equals("SEATS")) {
+            eventTypeEvent.setText("yes");
+        } else {
+            eventTypeEvent.setText("no");
+        }
+        try {
+            performances = performanceService.findByEvent(event);
+        } catch (DataAccessException e) {
+            LOGGER.error("Access error while loading performances of event!", e);
+        }
+        intializeTableView();
     }
 
     private void intializeTableView() {
@@ -107,6 +116,7 @@ public class EventDetailViewController {
         endTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPerformanceEnd().toString()));
         locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAddress().getCity()));
 
+        //TODO: get performances for displaying in table view (bug?)
         performanceData = FXCollections.observableArrayList(performances);
         performanceDatesTableView.setItems(performanceData);
     }

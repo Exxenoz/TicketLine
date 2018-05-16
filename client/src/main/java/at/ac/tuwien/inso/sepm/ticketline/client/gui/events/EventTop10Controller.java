@@ -9,15 +9,9 @@ import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventFilterTopTenDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.sector.SectorCategoryDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -27,7 +21,6 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.SpinnerValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -35,11 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
-import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +61,7 @@ public class EventTop10Controller {
 
     private List<SectorCategoryDTO> sectorCategories;
     private List<EventDTO> currentEvents;
+    private PerformanceService performanceService;
 
 
     public EventTop10Controller(
@@ -80,13 +69,14 @@ public class EventTop10Controller {
         EventService eventService,
         ReservationService reservationService,
         SectorCategoryService sectorCategoryService,
-        EventDetailViewController eventDetailViewController
-    ) {
+        EventDetailViewController eventDetailViewController,
+        PerformanceService performanceService) {
         this.fxmlLoader = fxmlLoader;
         this.eventService = eventService;
         this.reservationService = reservationService;
         this.sectorCategoryService = sectorCategoryService;
         this.eventDetailViewController = eventDetailViewController;
+        this.performanceService = performanceService;
         sectorCategories = new ArrayList<>();
         currentEvents = new ArrayList<>();
     }
@@ -213,7 +203,7 @@ public class EventTop10Controller {
         final var parent = fxmlLoader.<Parent>load("/fxml/events/eventDetailView.fxml");
         int selectedIndex = topTenEventChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? topTenEventChoiceBox.getSelectionModel().getSelectedIndex() : 0;
         Stage stage = new Stage();
-        eventDetailViewController.fill(currentEvents.get(selectedIndex), stage);
+        eventDetailViewController.fill(performanceService, currentEvents.get(selectedIndex), stage);
         stage.setScene(new Scene(parent));
         stage.setTitle("Event Details");
         stage.initModality(Modality.WINDOW_MODAL);

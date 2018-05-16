@@ -77,7 +77,7 @@ public class PerformanceDetailViewController {
 
     @FXML
     void changeToEventDetailView(ActionEvent event) {
-        eventDetailViewController.fill(performance.getEvent(), stage);
+        // eventDetailViewController.fill(performance.getEvent(), stage);
         final var parent = fxmlLoader.<Parent>load("/fxml/events/eventDetailView.fxml");
         stage.setScene(new Scene(parent));
         stage.setTitle("Event Details");
