@@ -2,11 +2,18 @@ package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
 import java.util.Objects;
 
-public class EventFilterTop10 {
+public class EventRequestTopTen {
 
     private Integer month;
-
     private Long categoryId;
+
+    public EventRequestTopTen() {
+    }
+
+    public EventRequestTopTen(Integer month, Long categoryId) {
+        this.month = month;
+        this.categoryId = categoryId;
+    }
 
     public Integer getMonth() {
         return month;
@@ -26,7 +33,7 @@ public class EventFilterTop10 {
 
     @Override
     public String toString() {
-        return "EventFilterTop10{" +
+        return "EventRequestTopTen{" +
             "month=" + month +
             ", categoryId=" + categoryId +
             '}';
@@ -36,9 +43,7 @@ public class EventFilterTop10 {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
-        EventFilterTop10 that = (EventFilterTop10) o;
-
+        EventRequestTopTen that = (EventRequestTopTen) o;
         return Objects.equals(month, that.month) &&
             Objects.equals(categoryId, that.categoryId);
     }

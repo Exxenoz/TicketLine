@@ -33,7 +33,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.lang.invoke.MethodHandles;
 
-import static org.controlsfx.glyphfont.FontAwesome.Glyph.USERS;
+import static org.controlsfx.glyphfont.FontAwesome.Glyph.LOCK;
 
 @Component
 public class UsersController {
@@ -73,7 +73,7 @@ public class UsersController {
 
     @FXML
     private void initialize() {
-        tabHeaderController.setIcon(USERS);
+        tabHeaderController.setIcon(LOCK);
         tabHeaderController.setTitle(BundleManager.getBundle().getString("usertab.header"));
     }
 

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Pagination?>
+<VBox xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.customers.CustomerController" spacing="5.0">
+    <children>
+        <fx:include fx:id="tabHeader" source="/fxml/tabHeader.fxml" />
+        <Separator />
+        <TableView fx:id="customerTable" layoutX="200.0" layoutY="14.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="1000.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+            <columns>
+                <TableColumn fx:id="customerTableColumnFirstName" text="%customers.main.table.column.first_name" />
+                <TableColumn fx:id="customerTableColumnLastName" text="%customers.main.table.column.last_name" />
+                <TableColumn fx:id="customerTableColumnTelephoneNumber" text="%customers.main.table.column.telephone_number" />
+                <TableColumn fx:id="customerTableColumnEMail" text="%customers.main.table.column.email" />
+            </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+        </TableView>
+    </children>
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+    </padding>
+</VBox>

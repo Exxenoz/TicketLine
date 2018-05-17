@@ -3,7 +3,8 @@ package at.ac.tuwien.inso.sepm.ticketline.client.rest.implementation;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.EventRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventFilterTopTenDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventRequestTopTenDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventResponseTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,13 +76,13 @@ public class SimpleEventRestClient implements EventRestClient {
     }
 
     @Override
-    public List<EventDTO> findTop10ByPaidReservationCountByFilter(EventFilterTopTenDTO eventFilterTopTen) throws DataAccessException {
+    public List<EventResponseTopTenDTO> findTopTenByMonthAndCategory(EventRequestTopTenDTO eventRequestTopTen) throws DataAccessException {
         try {
             LOGGER.debug("Retrieving top 10 events by sales from month: {}", topTenUri);
             final var event =
                 restClient.exchange(
-                    new RequestEntity<>(eventFilterTopTen, POST, topTenUri),
-                    new ParameterizedTypeReference<List<EventDTO>>() {
+                    new RequestEntity<>(eventRequestTopTen, POST, topTenUri),
+                    new ParameterizedTypeReference<List<EventResponseTopTenDTO>>() {
                     });
             LOGGER.debug("Result status was {} with content {}", event.getStatusCode(), event.getBody());
             return event.getBody();

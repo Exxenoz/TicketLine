@@ -4,7 +4,8 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.EventRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.EventService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventFilterTopTenDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventRequestTopTenDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventResponseTopTenDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -24,8 +25,8 @@ public class SimpleEventService implements EventService {
     }
 
     @Override
-    public List<EventDTO> findTop10ByPaidReservationCountByFilter(EventFilterTopTenDTO eventFilterTopTen) throws DataAccessException {
-        return eventRestClient.findTop10ByPaidReservationCountByFilter(eventFilterTopTen);
+    public List<EventResponseTopTenDTO> findTopTenByMonthAndCategory(EventRequestTopTenDTO eventRequestTopTen) throws DataAccessException {
+        return eventRestClient.findTopTenByMonthAndCategory(eventRequestTopTen);
     }
 
     @Override

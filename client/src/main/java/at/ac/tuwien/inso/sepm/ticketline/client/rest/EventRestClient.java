@@ -2,7 +2,8 @@ package at.ac.tuwien.inso.sepm.ticketline.client.rest;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventFilterTopTenDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventRequestTopTenDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventResponseTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import org.w3c.dom.events.Event;
 
@@ -15,9 +16,10 @@ public interface EventRestClient {
 
     /**
      * Find top 10 events by ticket sale for a given month
-     * @param eventFilterTopTen filter by month and categoryId
+     *
+     * @param eventRequestTopTen filter by month and categoryId
      * @return list of top 10 events
      * @throws DataAccessException in case something went wrong
      */
-    List<EventDTO> findTop10ByPaidReservationCountByFilter(EventFilterTopTenDTO eventFilterTopTen) throws DataAccessException;
+    List<EventResponseTopTenDTO> findTopTenByMonthAndCategory(EventRequestTopTenDTO eventRequestTopTen) throws DataAccessException;
 }

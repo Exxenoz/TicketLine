@@ -1,5 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui;
 
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.customers.CustomerController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.news.NewsController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.users.UsersController;
@@ -50,6 +51,7 @@ public class MainController {
     private NewsController newsController;
     private EventController eventController;
     private UsersController usersController;
+    private CustomerController customerController;
 
     public MainController(
         SpringFxmlLoader springFxmlLoader,
@@ -75,6 +77,7 @@ public class MainController {
         initNewsTabPane();
         initEventsTabPane();
         initUserManageTabPane();
+        initCustomersTabPane();
     }
 
     @FXML
@@ -125,12 +128,23 @@ public class MainController {
             springFxmlLoader.loadAndWrap("/fxml/users/usersMain.fxml");
         usersController = wrapper.getController();
         final var usersTab = new Tab(null, wrapper.getLoadedObject());
-        final var usersGlyph = fontAwesome.create(USERS);
+        final var usersGlyph = fontAwesome.create(LOCK);
         usersGlyph.setFontSize(TAB_ICON_FONT_SIZE);
         usersGlyph.setColor(Color.WHITE);
         usersTab.setGraphic(usersGlyph);
         tpContent.getTabs().add(usersTab);
+    }
 
+    private void initCustomersTabPane() {
+        SpringFxmlLoader.Wrapper<CustomerController> wrapperEvents =
+            springFxmlLoader.loadAndWrap("/fxml/customers/customerMain.fxml");
+        customerController = wrapperEvents.getController();
+        final var eventsTab = new Tab(null, wrapperEvents.getLoadedObject());
+        final var eventsGlyph = fontAwesome.create(USERS);
+        eventsGlyph.setFontSize(TAB_ICON_FONT_SIZE);
+        eventsGlyph.setColor(Color.WHITE);
+        eventsTab.setGraphic(eventsGlyph);
+        tpContent.getTabs().add(eventsTab);
     }
 
     private void setAuthenticated(boolean authenticated) {
@@ -139,6 +153,7 @@ public class MainController {
             newsController.loadNews();
             eventController.loadData();
             usersController.loadUsers(0);
+            customerController.loadCustomers();
         } else {
             if (!spMainContent.getChildren().contains(login)) {
                 spMainContent.getChildren().add(login);

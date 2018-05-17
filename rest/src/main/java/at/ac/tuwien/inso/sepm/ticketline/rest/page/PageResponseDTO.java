@@ -8,8 +8,10 @@ import java.util.Objects;
 
 @ApiModel(value = "PageResponseDTO", description = "DTO for page responses via rest")
 public class PageResponseDTO<T> {
+
     @ApiModelProperty(required = true, readOnly = true, name = "The content of the page response")
     private List<T> content;
+
     @ApiModelProperty(required = true, readOnly = true, name = "The total pages of the page response")
     private int totalPages;
 
@@ -49,13 +51,16 @@ public class PageResponseDTO<T> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         PageResponseDTO<?> that = (PageResponseDTO<?>) o;
+
         return totalPages == that.totalPages &&
             Objects.equals(content, that.content);
     }
 
     @Override
     public int hashCode() {
+
         return Objects.hash(content, totalPages);
     }
 }
