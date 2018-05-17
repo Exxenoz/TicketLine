@@ -17,6 +17,11 @@ public class SimpleCustomerService implements CustomerService {
     }
 
     @Override
+    public Customer save(Customer customer) {
+        return customerRepository.save(customer);
+    }
+
+    @Override
     public Page<Customer> findAll(Pageable pageable) {
         return customerRepository.findAll(pageable);
     }

@@ -33,6 +33,13 @@ public class CustomerEndpoint {
         this.customerMapper = customerMapper;
     }
 
+    @PostMapping
+    @ApiOperation("Add new or edit existing customer")
+    public CustomerDTO save(@RequestBody final CustomerDTO customerDTO) {
+        var customer = customerMapper.customerDTOToCustomer(customerDTO);
+        return customerMapper.customerToCustomerDTO(customerService.save(customer));
+    }
+
     @PostMapping()
     @ApiOperation("Get page of customer entries")
     public PageResponseDTO<CustomerDTO> findAll(@RequestBody final PageRequestDTO pageRequestDTO) {

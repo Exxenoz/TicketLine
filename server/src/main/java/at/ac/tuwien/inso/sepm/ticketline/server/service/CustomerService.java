@@ -9,6 +9,13 @@ import java.util.List;
 public interface CustomerService {
 
     /**
+     * Create or update a customer
+     * @param customer customer to add or update
+     * @return customer with its id
+     */
+    Customer save(Customer customer);
+
+    /**
      * Find all customer entries
      *
      * @param pageable page filter

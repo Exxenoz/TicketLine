@@ -33,7 +33,7 @@ public class Customer {
     @Size(max = 50)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Address address;
 
     public Long getId() {
