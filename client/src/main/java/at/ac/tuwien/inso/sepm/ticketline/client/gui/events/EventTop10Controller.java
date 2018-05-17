@@ -8,7 +8,8 @@ import at.ac.tuwien.inso.sepm.ticketline.client.service.SectorCategoryService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventFilterTopTenDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventRequestTopTenDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventResponseTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.sector.SectorCategoryDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
@@ -137,7 +138,7 @@ public class EventTop10Controller {
         LOGGER.info("Show Top 10 Events for month: " + monthChoiceBox.getSelectionModel().getSelectedItem() + " and categoryId: " + categoryId);
 
         try {
-            List<EventDTO> events = eventService.findTop10ByPaidReservationCountByFilter(new EventFilterTopTenDTO(month, categoryId));
+            List<EventResponseTopTenDTO> events = eventService.findTopTenByMonthAndCategory(new EventRequestTopTenDTO(month, categoryId));
             showTopTenEvents(events);
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch top 10 events from server for month: " + month + " " + e.getMessage());
@@ -145,25 +146,20 @@ public class EventTop10Controller {
         }
     }
 
-    private void showTopTenEvents(List<EventDTO> events) {
+    private void showTopTenEvents(List<EventResponseTopTenDTO> response) {
         topTenBarChart.getData().clear();
 
         XYChart.Series<String, Integer> barSeries = new XYChart.Series();
         barSeries.setName(monthChoiceBox.getSelectionModel().getSelectedItem());
 
-        for (EventDTO event : events) {
-            try {
-                Long ticketSaleCount = reservationService.getPaidReservationCountByFilter(new ReservationFilterTopTenDTO(monthChoiceBox.getSelectionModel().getSelectedIndex() + 1, event.getId()));
-                barSeries.getData().add(new XYChart.Data(event.getName(), ticketSaleCount));
-                currentEvents.add(event);
-                topTenEventChoiceBox.getItems().add(event.getName());
-            } catch (DataAccessException e) {
-                LOGGER.error("Couldn't fetch reservation of event: " + event + " " + e.getMessage());
-                JavaFXUtils.createErrorDialog(e.getMessage(), monthChoiceBox.getScene().getWindow()).showAndWait();
-            }
+        for (EventResponseTopTenDTO eventResponse : response) {
+            EventDTO eventDTO = eventResponse.getEvent();
+            barSeries.getData().add(new XYChart.Data(eventDTO.getName(), eventResponse.getSales()));
+            currentEvents.add(eventDTO);
+            topTenEventChoiceBox.getItems().add(eventDTO.getName());
         }
 
-        if (events.size() > 0) {
+        if (response.size() > 0) {
             topTenBarChart.getData().add(barSeries);
             topTenEventChoiceBox.getSelectionModel().selectFirst();
             bookTopTenEventButton.setDisable(false);
