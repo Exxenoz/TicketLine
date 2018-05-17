@@ -7,18 +7,23 @@ import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
+import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -27,6 +32,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
 
+import static javafx.stage.Modality.APPLICATION_MODAL;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.USERS;
 
 @Component
@@ -54,13 +60,16 @@ public class CustomerController {
     @FXML
     public TableColumn<CustomerDTO, String> customerTableColumnEMail;
 
+    private final SpringFxmlLoader springFxmlLoader;
+
     private CustomerService customerService;
 
     private ObservableList<CustomerDTO> customerList = FXCollections.observableArrayList();
 
     private int currentCustomerPage = 0;
 
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(SpringFxmlLoader springFxmlLoader, CustomerService customerService) {
+        this.springFxmlLoader = springFxmlLoader;
         this.customerService = customerService;
     }
 
@@ -154,5 +163,17 @@ public class CustomerController {
         }
 
         customerTable.refresh();
+    }
+
+    public void onClickCreateCustomerButton(ActionEvent actionEvent) {
+        final var stage = (Stage) customerTable.getScene().getWindow();
+        final var dialog = new Stage();
+        dialog.getIcons().add(new Image(CustomerController.class.getResourceAsStream("/image/ticketlineIcon.png")));
+        dialog.setResizable(false);
+        dialog.initModality(APPLICATION_MODAL);
+        dialog.initOwner(stage);
+        dialog.setScene(new Scene(springFxmlLoader.load("/fxml/customers/customerEditDialog.fxml")));
+        dialog.setTitle(BundleManager.getBundle().getString("customers.dialog.create.title"));
+        dialog.showAndWait();
     }
 }
