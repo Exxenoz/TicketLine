@@ -119,7 +119,7 @@
                   <Insets bottom="8.0" />
                </VBox.margin>
             </VBox>
-            <Button mnemonicParsing="false" prefWidth="300.0" text="%customers.dialog.create.button.save">
+            <Button mnemonicParsing="false" onAction="#onClickSaveCustomerButton" prefWidth="300.0" text="%customers.dialog.create.button.save">
                <VBox.margin>
                   <Insets bottom="8.0" />
                </VBox.margin></Button>

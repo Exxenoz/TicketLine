@@ -4,7 +4,6 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
-import org.springframework.data.domain.Page;
 
 public interface CustomerService {
 
@@ -16,4 +15,13 @@ public interface CustomerService {
      * @throws DataAccessException in case something went wrong
      */
     PageResponseDTO<CustomerDTO> findAll(PageRequestDTO pageRequestDTO) throws DataAccessException;
+
+    /**
+     * Create a customer with the specified data transfer object.
+     *
+     * @param customerDTO the customer to create
+     * @return the created customer
+     * @throws DataAccessException in case something went wrong
+     */
+    CustomerDTO create(CustomerDTO customerDTO) throws DataAccessException;
 }

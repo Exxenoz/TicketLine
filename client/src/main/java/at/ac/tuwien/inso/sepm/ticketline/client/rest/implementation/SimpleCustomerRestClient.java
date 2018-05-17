@@ -26,10 +26,12 @@ public class SimpleCustomerRestClient implements CustomerRestClient {
 
     private final RestClient restClient;
     private final URI customerUri;
+    private final URI customerCreateUri;
 
     public SimpleCustomerRestClient(RestClient restClient) {
         this.restClient = restClient;
         this.customerUri = restClient.getServiceURI("/customer");
+        this.customerCreateUri = restClient.getServiceURI("/customer/create");
     }
 
     @Override
@@ -45,6 +47,24 @@ public class SimpleCustomerRestClient implements CustomerRestClient {
             return customer.getBody();
         } catch (HttpStatusCodeException e) {
             throw new DataAccessException("Failed retrieve customers with status code " + e.getStatusCode().toString());
+        } catch (RestClientException e) {
+            throw new DataAccessException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public CustomerDTO create(CustomerDTO customerDTO) throws DataAccessException {
+        try {
+            LOGGER.debug("Creating a customer with {}", customerCreateUri);
+            final var customer =
+                restClient.exchange(
+                    new RequestEntity<>(customerDTO, POST, customerCreateUri),
+                    new ParameterizedTypeReference<CustomerDTO>() {
+                    });
+            LOGGER.debug("Result status was {} with content {}", customer.getStatusCode(), customer.getBody());
+            return customer.getBody();
+        } catch (HttpStatusCodeException e) {
+            throw new DataAccessException("Failed to create customer with status code " + e.getStatusCode().toString());
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }
