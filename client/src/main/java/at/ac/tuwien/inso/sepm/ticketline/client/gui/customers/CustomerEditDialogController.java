@@ -115,7 +115,7 @@ public class CustomerEditDialogController {
             return;
         }
 
-        // ToDo: Refresh customer table
+        customerController.loadCustomerTable(CustomerController.FIRST_CUSTOMER_TABLE_PAGE);
 
         LOGGER.debug("Customer creation successfully completed!");
 

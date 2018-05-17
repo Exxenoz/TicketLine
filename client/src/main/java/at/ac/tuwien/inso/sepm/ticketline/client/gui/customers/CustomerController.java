@@ -9,8 +9,6 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,7 +16,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Pagination;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -26,7 +23,6 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
@@ -40,7 +36,8 @@ public class CustomerController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final int CUSTOMERS_PER_PAGE = 20;
+    public static final int CUSTOMERS_PER_PAGE = 20;
+    public static final int FIRST_CUSTOMER_TABLE_PAGE = 0;
 
     @FXML
     private TabHeaderController tabHeaderController;
@@ -66,7 +63,8 @@ public class CustomerController {
 
     private ObservableList<CustomerDTO> customerList = FXCollections.observableArrayList();
 
-    private int currentCustomerPage = 0;
+    private int customerTablePage = 0;
+    private int customerTablePageCount = 1;
 
     public CustomerController(SpringFxmlLoader springFxmlLoader, CustomerService customerService) {
         this.springFxmlLoader = springFxmlLoader;
@@ -94,7 +92,7 @@ public class CustomerController {
         // Setting event handler for sort policy property calls it automatically
         customerTable.sortPolicyProperty().set(t -> {
             customerList.clear();
-            loadCustomerTable(0);
+            loadCustomerTable(FIRST_CUSTOMER_TABLE_PAGE);
             return true;
         });
 
@@ -102,9 +100,9 @@ public class CustomerController {
         if (scrollBar != null) {
             scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
                 double scrollValue = newValue.doubleValue();
-                if (scrollValue == scrollBar.getMax()) {
+                if (scrollValue == scrollBar.getMax() && (customerTablePage + 1) < customerTablePageCount) {
                     double targetValue = scrollValue * customerList.size();
-                    loadCustomerTable(currentCustomerPage + 1);
+                    loadCustomerTable(customerTablePage + 1);
                     scrollBar.setValue(targetValue / customerList.size());
                 }
             });
@@ -144,6 +142,11 @@ public class CustomerController {
     }
 
     public void loadCustomerTable(int page) {
+        if (page < 0 || page >= customerTablePageCount) {
+            LOGGER.error("Could not load customer table page, because page parameter is invalid!");
+            return;
+        }
+
         PageRequestDTO pageRequestDTO = null;
         if (customerTable.getSortOrder().size() > 0) {
             TableColumn<CustomerDTO, ?> sortedColumn = customerTable.getSortOrder().get(0);
@@ -154,10 +157,12 @@ public class CustomerController {
             pageRequestDTO = new PageRequestDTO(page, CUSTOMERS_PER_PAGE, Sort.Direction.ASC, null);
         }
 
+        customerTablePage = page;
+        customerTablePageCount = pageRequestDTO.getSize() > 0 ? pageRequestDTO.getSize() : 1;
+
         try {
             PageResponseDTO<CustomerDTO> response = customerService.findAll(pageRequestDTO);
             customerList.addAll(response.getContent());
-            currentCustomerPage = page;
         } catch (DataAccessException e) {
             LOGGER.warn("Could not access customers!");
         }
