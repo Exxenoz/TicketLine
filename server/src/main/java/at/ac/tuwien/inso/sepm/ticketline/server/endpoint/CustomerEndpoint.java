@@ -33,7 +33,7 @@ public class CustomerEndpoint {
         this.customerMapper = customerMapper;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @ApiOperation("Add new or edit existing customer")
     public CustomerDTO save(@RequestBody final CustomerDTO customerDTO) {
         var customer = customerMapper.customerDTOToCustomer(customerDTO);
