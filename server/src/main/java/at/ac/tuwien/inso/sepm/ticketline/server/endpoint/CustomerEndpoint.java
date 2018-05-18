@@ -1,10 +1,12 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.exception.CustomerValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Customer;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidRequestException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.CustomerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,25 +28,24 @@ public class CustomerEndpoint {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private final CustomerService customerService;
-    private final CustomerMapper customerMapper;
 
-    public CustomerEndpoint(CustomerService customerService, CustomerMapper customerMapper) {
+    public CustomerEndpoint(CustomerService customerService) {
         this.customerService = customerService;
-        this.customerMapper = customerMapper;
     }
 
     @PostMapping("/create")
-    @ApiOperation("Add new or edit existing customer")
+    @ApiOperation("Add new customer")
     public CustomerDTO save(@RequestBody final CustomerDTO customerDTO) {
-        var customer = customerMapper.customerDTOToCustomer(customerDTO);
-        return customerMapper.customerToCustomerDTO(customerService.save(customer));
+        try {
+            return customerService.save(customerDTO);
+        } catch (CustomerValidationException e) {
+            throw new InvalidRequestException();
+        }
     }
 
     @PostMapping()
     @ApiOperation("Get page of customer entries")
     public PageResponseDTO<CustomerDTO> findAll(@RequestBody final PageRequestDTO pageRequestDTO) {
-        Page<Customer> customerPage = customerService.findAll(pageRequestDTO.getPageable());
-        List<CustomerDTO> customerDTOList = customerMapper.customerToCustomerDTO(customerPage.getContent());
-        return new PageResponseDTO<>(customerDTOList, customerPage.getTotalPages());
+        return customerService.findAll(pageRequestDTO.getPageable());
     }
 }

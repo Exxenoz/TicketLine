@@ -1,25 +1,25 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service;
 
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Customer;
-import org.springframework.data.domain.Page;
+import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.exception.CustomerValidationException;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 
 public interface CustomerService {
 
     /**
-     * Create or update a customer
-     * @param customer customer to add or update
+     * Create a new customer
+     * @param customerDTO customer to create
      * @return customer with its id
+     * @throws CustomerValidationException in case customer was invalid
      */
-    Customer save(Customer customer);
+    CustomerDTO save(CustomerDTO customerDTO) throws CustomerValidationException;
 
     /**
      * Find all customer entries
-     *
      * @param pageable page filter
-     * @return page of customers
+     * @return page response of customers
      */
-    Page<Customer> findAll(Pageable pageable);
+    PageResponseDTO<CustomerDTO> findAll(Pageable pageable);
 }
