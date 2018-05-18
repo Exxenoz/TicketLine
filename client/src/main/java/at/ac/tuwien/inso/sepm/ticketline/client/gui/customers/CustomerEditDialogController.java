@@ -6,6 +6,10 @@ import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.address.AddressDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.exception.AddressValidationException;
+import at.ac.tuwien.inso.sepm.ticketline.rest.exception.CustomerValidationException;
+import at.ac.tuwien.inso.sepm.ticketline.rest.validator.AddressValidator;
+import at.ac.tuwien.inso.sepm.ticketline.rest.validator.CustomerValidator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -98,7 +102,91 @@ public class CustomerEditDialogController {
 
         customerDTO.setAddress(addressDTO);
 
-        // ToDo: Validation
+        boolean valid = true;
+
+        try {
+            CustomerValidator.validateFirstName(customerDTO);
+            firstNameErrorLabel.setText("");
+        }
+        catch (CustomerValidationException e) {
+            valid = false;
+            LOGGER.debug("Customer validation failed: " + e.getMessage());
+            firstNameErrorLabel.setText(e.getMessage());
+        }
+
+        try {
+            CustomerValidator.validateLastName(customerDTO);
+            lastNameErrorLabel.setText("");
+        }
+        catch (CustomerValidationException e) {
+            valid = false;
+            LOGGER.debug("Customer validation failed: " + e.getMessage());
+            lastNameErrorLabel.setText(e.getMessage());
+        }
+
+        try {
+            CustomerValidator.validateTelephoneNumber(customerDTO);
+            telephoneNumberErrorLabel.setText("");
+        }
+        catch (CustomerValidationException e) {
+            valid = false;
+            LOGGER.debug("Customer validation failed: " + e.getMessage());
+            telephoneNumberErrorLabel.setText(e.getMessage());
+        }
+
+        try {
+            CustomerValidator.validateEmail(customerDTO);
+            emailErrorLabel.setText("");
+        }
+        catch (CustomerValidationException e) {
+            valid = false;
+            LOGGER.debug("Customer validation failed: " + e.getMessage());
+            emailErrorLabel.setText(e.getMessage());
+        }
+
+        try {
+            AddressValidator.validateStreet(addressDTO);
+            streetErrorLabel.setText("");
+        }
+        catch (AddressValidationException e) {
+            valid = false;
+            LOGGER.debug("Customer validation failed: " + e.getMessage());
+            streetErrorLabel.setText(e.getMessage());
+        }
+
+        try {
+            AddressValidator.validatePostalCode(addressDTO);
+            postalCodeErrorLabel.setText("");
+        }
+        catch (AddressValidationException e) {
+            valid = false;
+            LOGGER.debug("Customer validation failed: " + e.getMessage());
+            postalCodeErrorLabel.setText(e.getMessage());
+        }
+
+        try {
+            AddressValidator.validateCity(addressDTO);
+            cityErrorLabel.setText("");
+        }
+        catch (AddressValidationException e) {
+            valid = false;
+            LOGGER.debug("Customer validation failed: " + e.getMessage());
+            cityErrorLabel.setText(e.getMessage());
+        }
+
+        try {
+            AddressValidator.validateCountry(addressDTO);
+            countryErrorLabel.setText("");
+        }
+        catch (AddressValidationException e) {
+            valid = false;
+            LOGGER.debug("Customer validation failed: " + e.getMessage());
+            countryErrorLabel.setText(e.getMessage());
+        }
+
+        if (!valid) {
+            return;
+        }
 
         try {
             customerService.create(customerDTO);
