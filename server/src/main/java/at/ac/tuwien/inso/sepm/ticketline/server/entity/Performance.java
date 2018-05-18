@@ -106,7 +106,6 @@ public class Performance {
     @Override
     public String toString() {
         return "Performance{" +
-            "event=" + event +
             ", name='" + name + '\'' +
             ", price=" + price +
             ", performanceStart=" + performanceStart +
@@ -125,7 +124,6 @@ public class Performance {
         }
         Performance that = (Performance) o;
         return Objects.equals(id, that.id) &&
-            Objects.equals(event, that.event) &&
             Objects.equals(name, that.name) &&
             Objects.equals(price, that.price) &&
             Objects.equals(performanceStart, that.performanceStart) &&
