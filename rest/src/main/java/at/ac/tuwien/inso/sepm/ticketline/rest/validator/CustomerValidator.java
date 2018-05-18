@@ -30,7 +30,7 @@ public class CustomerValidator {
     public static void validateDTO(CustomerDTO customerDTO) throws CustomerValidationException {
         if(customerDTO == null) {
             throw new CustomerValidationException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.customer.null")
+                RestBundleManager.getExceptionBundle().getString("exception.validator.customer.is_null")
             );
         }
     }
@@ -48,7 +48,7 @@ public class CustomerValidator {
         validateDTO(customerDTO);
         if(customerDTO.getFirstName() == null) {
             throw new CustomerValidationException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.customer.firstname.null")
+                RestBundleManager.getExceptionBundle().getString("exception.validator.customer.firstname.is_null")
             );
         }
 
@@ -75,7 +75,7 @@ public class CustomerValidator {
         validateDTO(customerDTO);
         if(customerDTO.getLastName() == null) {
             throw new CustomerValidationException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.customer.lastname.null")
+                RestBundleManager.getExceptionBundle().getString("exception.validator.customer.lastname.is_null")
             );
         }
 
@@ -102,7 +102,7 @@ public class CustomerValidator {
         validateDTO(customerDTO);
         if (customerDTO.getTelephoneNumber() == null) {
             throw new CustomerValidationException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.customer.telephone_number.null")
+                RestBundleManager.getExceptionBundle().getString("exception.validator.customer.telephone_number.is_null")
             );
         }
 
