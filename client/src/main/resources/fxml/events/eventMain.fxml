@@ -8,11 +8,10 @@
 
 <?import javafx.geometry.Insets?>
 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+      styleClass="vbox"
       xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" spacing="5.0"
       fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventController">
     <children>
-        <fx:include fx:id="tabHeader" source="../tabHeader.fxml"/>
-        <Separator/>
         <TabPane fx:id="eventTabPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0"
                  stylesheets="@/css/secondLevelTabs.css" tabClosingPolicy="UNAVAILABLE">
             <stylesheets>

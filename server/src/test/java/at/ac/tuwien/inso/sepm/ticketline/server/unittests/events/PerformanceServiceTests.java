@@ -11,12 +11,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,11 +29,7 @@ import java.util.List;
 @ActiveProfiles("unit-test")
 public class PerformanceServiceTests {
 
-    /**
-     * @BeforeClass does not work with @Autowired and static members
-     * so we have to use some dirty tricks
-     */
-    private boolean dataLoaded = false;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
     PerformanceService service;
@@ -40,8 +39,7 @@ public class PerformanceServiceTests {
 
     @Before
     public void setup() {
-        if(!dataLoaded) {
-            dataLoaded = true;
+
             //Setup some performances
             //First performance
             Address address = new Address("Staatsoper",
@@ -65,6 +63,7 @@ public class PerformanceServiceTests {
                 "Vienna",
                 "Austria",
                 "1010");
+
             p = new Performance(null,
                 "Vulfpeck Live",
                 new BigDecimal(20),
@@ -80,6 +79,7 @@ public class PerformanceServiceTests {
                 "Vienna",
                 "Austria",
                 "1010");
+
             p = new Performance(null,
                 "Avishai Cohen",
                 new BigDecimal(20),
@@ -88,7 +88,7 @@ public class PerformanceServiceTests {
                 address
             );
             repository.save(p);
-        }
+            LOGGER.debug("Repository size:" + repository.findAll().size());
     }
 
     @Test

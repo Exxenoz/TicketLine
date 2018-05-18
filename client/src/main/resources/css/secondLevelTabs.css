@@ -6,15 +6,18 @@
     -fx-background-color: #1E90FF;
     -fx-text-fill: #FFFFFF;
     -fx-min-height: 50px;
+    -fx-padding: 0 5 0 5;
     -fx-min-width: 50px;
 }
 
 .tab-pane .tab:selected {
     -fx-background-color: derive(#ececec, 26.4%);
     -fx-text-fill: #000000;
+    -fx-padding: 0 5 0 5;
 }
 
 .tab-pane {
+    -fx-background-color: derive(#ececec, 26.4%);
     -fx-tab-min-height: 30px;
     -fx-tab-min-width: 70px;
 }

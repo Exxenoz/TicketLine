@@ -91,6 +91,7 @@
 }
 
 .tab-pane {
+
     -fx-tab-min-height: 50px;
     -fx-tab-min-width: 50px;
 }
@@ -98,4 +99,8 @@
 .tab, .tab-pane, .tab-header-background, .tab-pane *.tab-header-area {
     -fx-background-insets: 0;
     -fx-padding: 0.0em 0.0em 0.0em 0.0em;
+}
+
+.vbox {
+    -fx-background-color: derive(#3c3f41, 25%);;
 }
