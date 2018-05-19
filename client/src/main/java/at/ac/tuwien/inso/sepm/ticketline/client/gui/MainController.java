@@ -152,7 +152,7 @@ public class MainController {
             spMainContent.getChildren().remove(login);
             newsController.loadNews();
             eventController.loadData();
-            usersController.loadUsers(0);
+            usersController.loadUsers();
             customerController.loadCustomers();
         } else {
             if (!spMainContent.getChildren().contains(login)) {
