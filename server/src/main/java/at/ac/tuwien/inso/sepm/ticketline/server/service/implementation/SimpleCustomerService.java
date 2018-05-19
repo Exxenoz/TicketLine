@@ -20,4 +20,9 @@ public class SimpleCustomerService implements CustomerService {
     public Page<Customer> findAll(Pageable pageable) {
         return customerRepository.findAll(pageable);
     }
+
+    @Override
+    public Customer findOneById(Long id) {
+        return customerRepository.getOne(id);
+    }
 }

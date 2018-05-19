@@ -1,5 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.Customer;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationFilterTopTen;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
@@ -25,6 +26,16 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
+    public Reservation findOneNotPaidReservationById(Long reservationId) {
+        return reservationRepository.getOne(reservationId);
+    }
+
+    @Override
+    public List<Reservation> findAllNotPaidReservationsByCustomerName(Customer customer) {
+        return null;
+    }
+
+    @Override
     public Long getPaidReservationCountByEventId(Long eventId) {
         return reservationRepository.getPaidReservationCountByEventId(eventId);
     }
@@ -36,5 +47,10 @@ public class SimpleReservationService implements ReservationService {
         Timestamp startOfTheMonth = Timestamp.valueOf(startOfTheMonthDateTime);
         Timestamp endOfTheMonth = Timestamp.valueOf(endOfTheMonthDateTime);
         return reservationRepository.getPaidReservationCountByEventIdAndTimeFrame(reservationFilterTopTen.getEventId(), startOfTheMonth, endOfTheMonth);
+    }
+
+    @Override
+    public void purchaseReservation(Reservation reservation) {
+
     }
 }
