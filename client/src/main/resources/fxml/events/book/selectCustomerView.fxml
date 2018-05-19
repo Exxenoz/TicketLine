@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="content" prefHeight="400.0" prefWidth="600.0"
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="content" prefHeight="400.0" prefWidth="890.0"
             xmlns="http://javafx.com/javafx/10"
             fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.book.SelectCustomerController">
     <children>
@@ -32,13 +31,14 @@
                 <TableView fx:id="customerTable" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0"
                            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
-                        <TableColumn fx:id="customerTableColumnFirstName" editable="false" prefWidth="75.0"
-                                     text="%customers.main.table.column.first_name"/>
-                        <TableColumn fx:id="customerTableColumnLastName" editable="false" prefWidth="75.0"
-                                     text="%customers.main.table.column.last_name"/>
-                        <TableColumn fx:id="customerTableColumnTelephoneNumber" editable="false" prefWidth="75.0"
+                        <TableColumn fx:id="customerTableColumnFirstName" editable="false"
+                                     prefWidth="191.99997234344482" text="%customers.main.table.column.first_name"/>
+                        <TableColumn fx:id="customerTableColumnLastName" editable="false" minWidth="0.0"
+                                     prefWidth="223.2000274658203" text="%customers.main.table.column.last_name"/>
+                        <TableColumn fx:id="customerTableColumnTelephoneNumber" editable="false" minWidth="0.0"
+                                     prefWidth="249.5999755859375"
                                      text="%customers.main.table.column.telephone_number"/>
-                        <TableColumn fx:id="customerTableColumnEMail" editable="false" prefWidth="75.0"
+                        <TableColumn fx:id="customerTableColumnEMail" editable="false" prefWidth="212.00006103515625"
                                      text="%customers.main.table.column.email"/>
                     </columns>
                 </TableView>
