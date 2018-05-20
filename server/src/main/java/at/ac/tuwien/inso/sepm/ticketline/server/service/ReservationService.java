@@ -1,5 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Customer;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationFilterTopTen;
@@ -35,6 +36,9 @@ public interface ReservationService {
      * @return count of paid reservation entries with the passed event id and time frame
      */
     Long getPaidReservationCountByFilter(ReservationFilterTopTen reservationFilterTopTen);
+
+    Reservation createReservation(Reservation reservation);
+
 
     void purchaseReservation(Reservation reservation);
 }

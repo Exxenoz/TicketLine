@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
 import javax.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static javax.persistence.GenerationType.AUTO;
@@ -82,5 +83,27 @@ public class Seat {
     public int hashCode() {
 
         return Objects.hash(id, positionX, positionY, sector);
+    }
+
+    public static Seat.SeatBuilder builder() {
+        return new Seat.SeatBuilder();
+    }
+
+    public static final class SeatBuilder {
+        private Long id;
+
+        private SeatBuilder() {
+        }
+
+        public Seat.SeatBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Seat build() {
+            Seat seat = new Seat();
+            seat.setId(id);
+            return seat;
+        }
     }
 }

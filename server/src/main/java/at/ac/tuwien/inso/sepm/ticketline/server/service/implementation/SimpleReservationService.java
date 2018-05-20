@@ -3,21 +3,31 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Customer;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationFilterTopTen;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.Seat;
+import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
+import at.ac.tuwien.inso.sepm.ticketline.server.repository.SeatRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
 public class SimpleReservationService implements ReservationService {
 
     private final ReservationRepository reservationRepository;
+    private final SeatRepository seatRepository;
 
-    public SimpleReservationService(ReservationRepository reservationRepository) {
+    @Autowired
+    private PerformanceRepository repo;
+
+    public SimpleReservationService(ReservationRepository reservationRepository, SeatRepository seatRepository) {
         this.reservationRepository = reservationRepository;
+        this.seatRepository = seatRepository;
     }
 
     @Override
@@ -52,5 +62,20 @@ public class SimpleReservationService implements ReservationService {
     @Override
     public void purchaseReservation(Reservation reservation) {
 
+    }
+
+    @Override
+    public Reservation createReservation(Reservation reservation) {
+        List<Long> seatIDs = new LinkedList<>();
+        for (Seat seat: reservation.getSeats()) {
+            seatIDs.add(seat.getId());
+        }
+
+        List<Seat> seatsForReservation = seatRepository.findAllById(seatIDs);
+
+        Reservation createdReservation = reservationRepository.save(reservation);
+        createdReservation.setSeats(seatsForReservation);
+
+        return createdReservation;
     }
 }

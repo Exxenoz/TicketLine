@@ -1,6 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,18 +22,23 @@ public class Performance {
 
     @Column(nullable = false)
     @Size(max = 100)
+    @NotNull
     private String name;
 
     @Column(nullable = false)
+    @NotNull
     private BigDecimal price;
 
     @Column(nullable = false)
+    @NotNull
     private LocalDateTime performanceStart;
 
     @Column(nullable = false)
+    @NotNull
     private LocalDateTime performanceEnd;
 
     @Column(nullable = false)
+    @NotNull
     private Address address;
 
     public Performance() {

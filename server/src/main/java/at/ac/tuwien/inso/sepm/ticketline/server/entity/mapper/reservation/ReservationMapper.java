@@ -1,15 +1,33 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.SeatIdsToSeatsMapper.SeatIdToSeat;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = SeatIdsToSeatsMapper.class)
 public interface ReservationMapper {
 
-    List<ReservationDTO> reservationToReservationDTO(List<Reservation> all);
+    List<ReservationDTO> reservationToReservationDTO(List<Reservation> reservations);
 
-    List<Reservation> reservationDTOToReservation(List<ReservationDTO> all);
+    ReservationDTO reservationToReservationDTO(Reservation reservation);
+
+    List<Reservation> reservationDTOToReservation(List<ReservationDTO> reservations);
+
+    Reservation reservationDTOToReservation(ReservationDTO reservation);
+
+    @Mappings({
+        @Mapping(target = "performance.id", source = "performanceID"),
+        @Mapping(target = "paid", source = "paid"),
+        @Mapping(target = "seats", source = "seatIDs", qualifiedBy = SeatIdToSeat.class),
+        @Mapping(target = "paidAt", ignore = true),
+        @Mapping(target = "id", ignore = true),
+    })
+    Reservation createReservationDTOToReservation (CreateReservationDTO createReservationDTO);
 }
