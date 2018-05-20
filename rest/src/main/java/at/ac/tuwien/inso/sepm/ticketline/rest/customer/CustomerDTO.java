@@ -75,6 +75,15 @@ public class CustomerDTO {
         this.address = address;
     }
 
+    public void update(CustomerDTO customerDTO) {
+        id = customerDTO.id;
+        firstName = customerDTO.firstName;
+        lastName = customerDTO.lastName;
+        telephoneNumber = customerDTO.telephoneNumber;
+        email = customerDTO.email;
+        address.update(customerDTO.address);
+    }
+
     @Override
     public String toString() {
         return "CustomerDTO{" +

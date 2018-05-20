@@ -77,9 +77,44 @@ public class CustomerEditDialogController {
     private final CustomerController customerController;
     private final CustomerService customerService;
 
+    private CustomerDTO customerToEdit;
+
     public CustomerEditDialogController(CustomerController customerController, CustomerService customerService) {
         this.customerController = customerController;
         this.customerService = customerService;
+    }
+
+    public void SetCustomerToEdit(CustomerDTO customerToEdit) {
+        this.customerToEdit = customerToEdit;
+
+        if (customerToEdit != null) {
+            firstNameTextfield.setText(customerToEdit.getFirstName());
+            lastNameTextfield.setText(customerToEdit.getLastName());
+            telephoneNumberTextfield.setText(customerToEdit.getTelephoneNumber());
+            emailTextfield.setText(customerToEdit.getEmail());
+            if (customerToEdit.getAddress() != null) {
+                streetTextfield.setText(customerToEdit.getAddress().getStreet());
+                postalCodeTextfield.setText(customerToEdit.getAddress().getPostalCode());
+                cityTextfield.setText(customerToEdit.getAddress().getCity());
+                countryTextfield.setText(customerToEdit.getAddress().getCountry());
+            }
+            else {
+                streetTextfield.setText("");
+                postalCodeTextfield.setText("");
+                cityTextfield.setText("");
+                countryTextfield.setText("");
+            }
+        }
+        else {
+            firstNameTextfield.setText("");
+            lastNameTextfield.setText("");
+            telephoneNumberTextfield.setText("");
+            emailTextfield.setText("");
+            streetTextfield.setText("");
+            postalCodeTextfield.setText("");
+            cityTextfield.setText("");
+            countryTextfield.setText("");
+        }
     }
 
     @FXML
@@ -88,6 +123,9 @@ public class CustomerEditDialogController {
 
         CustomerDTO customerDTO = new CustomerDTO();
 
+        if (customerToEdit != null) {
+            customerDTO.setId(customerToEdit.getId());
+        }
         customerDTO.setFirstName(firstNameTextfield.getText());
         customerDTO.setLastName(lastNameTextfield.getText());
         customerDTO.setTelephoneNumber(telephoneNumberTextfield.getText());
@@ -188,31 +226,60 @@ public class CustomerEditDialogController {
             return;
         }
 
-        try {
-            customerService.create(customerDTO);
-        } catch (DataAccessException e) {
-            LOGGER.error("Customer creation failed: " + e.getMessage());
+        if (customerToEdit == null) { // Create customer
+            try {
+                customerService.create(customerDTO);
+            } catch (DataAccessException e) {
+                LOGGER.error("Customer creation failed: " + e.getMessage());
 
-            JavaFXUtils.createErrorDialog(
-                BundleManager.getBundle().getString("customers.dialog.create.dialog.error.title"),
-                BundleManager.getBundle().getString("customers.dialog.create.dialog.error.header_text"),
-                BundleManager.getBundle().getString("customers.dialog.create.dialog.error.content_text"),
+                JavaFXUtils.createErrorDialog(
+                    BundleManager.getBundle().getString("customers.dialog.create.dialog.error.title"),
+                    BundleManager.getBundle().getString("customers.dialog.create.dialog.error.header_text"),
+                    BundleManager.getBundle().getString("customers.dialog.create.dialog.error.content_text"),
+                    firstNameTextfield.getScene().getWindow()
+                ).showAndWait();
+
+                return;
+            }
+
+            customerController.loadCustomerTable(CustomerController.FIRST_CUSTOMER_TABLE_PAGE);
+
+            LOGGER.debug("Customer creation successfully completed!");
+
+            JavaFXUtils.createInformationDialog(
+                BundleManager.getBundle().getString("customers.dialog.create.dialog.success.title"),
+                BundleManager.getBundle().getString("customers.dialog.create.dialog.success.header_text"),
+                BundleManager.getBundle().getString("customers.dialog.create.dialog.success.content_text"),
                 firstNameTextfield.getScene().getWindow()
             ).showAndWait();
-
-            return;
         }
+        else { // Edit customer
+            try {
+                customerToEdit.update(customerService.update(customerDTO));
+            } catch (DataAccessException e) {
+                LOGGER.error("Customer editing failed: " + e.getMessage());
 
-        customerController.loadCustomerTable(CustomerController.FIRST_CUSTOMER_TABLE_PAGE);
+                JavaFXUtils.createErrorDialog(
+                    BundleManager.getBundle().getString("customers.dialog.edit.dialog.error.title"),
+                    BundleManager.getBundle().getString("customers.dialog.edit.dialog.error.header_text"),
+                    BundleManager.getBundle().getString("customers.dialog.edit.dialog.error.content_text"),
+                    firstNameTextfield.getScene().getWindow()
+                ).showAndWait();
 
-        LOGGER.debug("Customer creation successfully completed!");
+                return;
+            }
 
-        JavaFXUtils.createInformationDialog(
-            BundleManager.getBundle().getString("customers.dialog.create.dialog.success.title"),
-            BundleManager.getBundle().getString("customers.dialog.create.dialog.success.header_text"),
-            BundleManager.getBundle().getString("customers.dialog.create.dialog.success.content_text"),
-            firstNameTextfield.getScene().getWindow()
-        ).showAndWait();
+            customerController.refreshCustomerTable();
+
+            LOGGER.debug("Customer editing successfully completed!");
+
+            JavaFXUtils.createInformationDialog(
+                BundleManager.getBundle().getString("customers.dialog.edit.dialog.success.title"),
+                BundleManager.getBundle().getString("customers.dialog.edit.dialog.success.header_text"),
+                BundleManager.getBundle().getString("customers.dialog.edit.dialog.success.content_text"),
+                firstNameTextfield.getScene().getWindow()
+            ).showAndWait();
+        }
 
         ((Stage)firstNameTextfield.getScene().getWindow()).close();
     }

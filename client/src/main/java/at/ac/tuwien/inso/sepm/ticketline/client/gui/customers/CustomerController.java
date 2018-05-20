@@ -9,13 +9,18 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -26,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
 import static javafx.stage.Modality.APPLICATION_MODAL;
@@ -57,6 +63,9 @@ public class CustomerController {
     @FXML
     public TableColumn<CustomerDTO, String> customerTableColumnEMail;
 
+    @FXML
+    public Button customerEditButton;
+
     private final SpringFxmlLoader springFxmlLoader;
 
     private CustomerService customerService;
@@ -86,6 +95,10 @@ public class CustomerController {
         customerTableColumnEMail.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEmail()));
 
         customerTable.setItems(customerList);
+
+        customerTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            customerEditButton.setDisable(newValue == null);
+        });
     }
 
     public void loadCustomers() {
@@ -170,15 +183,48 @@ public class CustomerController {
         customerTable.refresh();
     }
 
+    public void refreshCustomerTable() {
+        customerTable.refresh();
+    }
+
     public void onClickCreateCustomerButton(ActionEvent actionEvent) {
+        LOGGER.debug("Clicked create customer button");
+
         final var stage = (Stage) customerTable.getScene().getWindow();
         final var dialog = new Stage();
+
         dialog.getIcons().add(new Image(CustomerController.class.getResourceAsStream("/image/ticketlineIcon.png")));
         dialog.setResizable(false);
         dialog.initModality(APPLICATION_MODAL);
         dialog.initOwner(stage);
         dialog.setScene(new Scene(springFxmlLoader.load("/fxml/customers/customerEditDialog.fxml")));
         dialog.setTitle(BundleManager.getBundle().getString("customers.dialog.create.title"));
+        dialog.showAndWait();
+    }
+
+    public void onClickEditCustomerButton(ActionEvent actionEvent) {
+        LOGGER.debug("Clicked edit customer button");
+
+        CustomerDTO selectedCustomerDTO = customerTable.getSelectionModel().getSelectedItem();
+
+        if (selectedCustomerDTO == null) {
+            LOGGER.warn("Could not edit customer, because no customer is selected!");
+            return;
+        }
+
+        var wrap = springFxmlLoader.loadAndWrap("/fxml/customers/customerEditDialog.fxml");
+        final CustomerEditDialogController controller = (CustomerEditDialogController) wrap.getController();
+        final var stage = (Stage) customerTable.getScene().getWindow();
+        final var dialog = new Stage();
+
+        controller.SetCustomerToEdit(selectedCustomerDTO);
+
+        dialog.getIcons().add(new Image(CustomerController.class.getResourceAsStream("/image/ticketlineIcon.png")));
+        dialog.setResizable(false);
+        dialog.initModality(APPLICATION_MODAL);
+        dialog.initOwner(stage);
+        dialog.setScene(new Scene((Parent)wrap.getLoadedObject()));
+        dialog.setTitle(BundleManager.getBundle().getString("customers.dialog.edit.title"));
         dialog.showAndWait();
     }
 }

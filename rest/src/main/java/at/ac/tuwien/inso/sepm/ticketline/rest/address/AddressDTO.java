@@ -61,6 +61,14 @@ public class AddressDTO {
         this.postalCode = postalCode;
     }
 
+    public void update(AddressDTO addressDTO) {
+        locationName = addressDTO.locationName;
+        street = addressDTO.street;
+        postalCode = addressDTO.postalCode;
+        city = addressDTO.city;
+        country = addressDTO.country;
+    }
+
     @Override
     public String toString() {
         return "AddressDTO{" +

@@ -33,4 +33,9 @@ public class SimpleCustomerService implements CustomerService {
     public CustomerDTO create(CustomerDTO customerDTO) throws DataAccessException {
         return customerRestClient.create(customerDTO);
     }
+
+    @Override
+    public CustomerDTO update(CustomerDTO customerDTO) throws DataAccessException {
+        return customerRestClient.update(customerDTO);
+    }
 }

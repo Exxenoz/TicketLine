@@ -26,7 +26,11 @@
         </TableView>
       <HBox alignment="TOP_RIGHT">
          <children>
-            <Button mnemonicParsing="false" onAction="#onClickCreateCustomerButton" text="%customers.main.button.create" />
+             <Button fx:id="customerEditButton" disable="true" mnemonicParsing="false" onAction="#onClickEditCustomerButton" text="%customers.main.button.edit">
+               <HBox.margin>
+                  <Insets right="16.0" />
+               </HBox.margin></Button>
+             <Button mnemonicParsing="false" onAction="#onClickCreateCustomerButton" text="%customers.main.button.create" />
          </children>
       </HBox>
     </children>
