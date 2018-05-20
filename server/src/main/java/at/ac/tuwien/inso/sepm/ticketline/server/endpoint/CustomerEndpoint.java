@@ -43,6 +43,16 @@ public class CustomerEndpoint {
         }
     }
 
+    @PostMapping("/update")
+    @ApiOperation("Add new customer")
+    public CustomerDTO update(@RequestBody final CustomerDTO customerDTO) {
+        try {
+            return customerService.update(customerDTO);
+        } catch (CustomerValidationException e) {
+            throw new InvalidRequestException();
+        }
+    }
+
     @PostMapping()
     @ApiOperation("Get page of customer entries")
     public PageResponseDTO<CustomerDTO> findAll(@RequestBody final PageRequestDTO pageRequestDTO) {

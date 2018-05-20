@@ -106,7 +106,7 @@ public class CustomerValidator {
             );
         }
 
-        if(!customerDTO.getTelephoneNumber().matches("^[\\d\\/\\\\\\s+-]{7,25}$")) {
+        if(!customerDTO.getTelephoneNumber().matches("^[\\d\\/\\s+-]{7,25}$")) {
             throw new CustomerValidationException(
                 RestBundleManager.getExceptionBundle().getString("exception.validator.customer.telephone_number.invalid")
             );
@@ -116,7 +116,7 @@ public class CustomerValidator {
     public static void validateEmail(CustomerDTO customerDTO) throws CustomerValidationException {
         validateDTO(customerDTO);
 
-        if(customerDTO.getEmail() != null) {
+        if(customerDTO.getEmail() != null && !customerDTO.getEmail().isEmpty()) {
             //source: https://stackoverflow.com/a/8204716
             Pattern emailRegex =
                 Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);

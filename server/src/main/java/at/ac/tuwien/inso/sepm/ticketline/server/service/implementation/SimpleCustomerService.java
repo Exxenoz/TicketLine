@@ -27,8 +27,14 @@ public class SimpleCustomerService implements CustomerService {
 
     @Override
     public CustomerDTO save(CustomerDTO customerDTO) throws CustomerValidationException {
-        //TODO: validate
         CustomerValidator.validateNewCustomer(customerDTO);
+        var customer = customerMapper.customerDTOToCustomer(customerDTO);
+        return customerMapper.customerToCustomerDTO(customerRepository.save(customer));
+    }
+
+    @Override
+    public CustomerDTO update(CustomerDTO customerDTO) throws CustomerValidationException {
+        CustomerValidator.validateExistingCustomer(customerDTO);
         var customer = customerMapper.customerDTOToCustomer(customerDTO);
         return customerMapper.customerToCustomerDTO(customerRepository.save(customer));
     }
