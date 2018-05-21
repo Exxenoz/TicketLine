@@ -34,8 +34,8 @@ public class RefillDB {
             new SectorDataGenerator(sectorRepository, sectorCategoryRepository),
             new SeatDataGenerator(seatRepository, sectorRepository),
             new ArtistDataGenerator(artistRepository),
-            new EventDataGenerator(eventRepository, artistRepository),
-            new PerformanceDataGenerator(performanceRepository, eventRepository),
+            new EventDataGenerator(eventRepository),
+            new PerformanceDataGenerator(performanceRepository, eventRepository, artistRepository),
             new NewsDataGenerator(newsRepository),
             new ReservationDataGenerator(reservationRepository, seatRepository, performanceRepository)
         );

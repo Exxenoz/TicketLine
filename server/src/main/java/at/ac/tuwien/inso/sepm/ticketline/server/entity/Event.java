@@ -16,8 +16,6 @@ public class Event {
     @SequenceGenerator(name = "seq_event_id", sequenceName = "seq_event_id")
     private Long id;
 
-    @ManyToMany
-    private Set<Artist> artists = new HashSet<>();
 
     @Column(nullable = false)
     @Size(max = 100)
@@ -33,8 +31,7 @@ public class Event {
     public Event() {
     }
 
-    public Event(Set<Artist> artists, @Size(max = 100) String name, EventType eventType, @Size(max = 1000) String description) {
-        this.artists = artists;
+    public Event(@Size(max = 100) String name, EventType eventType, @Size(max = 1000) String description) {
         this.name = name;
         this.eventType = eventType;
         this.description = description;
@@ -46,14 +43,6 @@ public class Event {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Set<Artist> getArtists() {
-        return artists;
-    }
-
-    public void setArtists(Set<Artist> artists) {
-        this.artists = artists;
     }
 
     public String getName() {
@@ -83,9 +72,9 @@ public class Event {
     @Override
     public String toString() {
         return "Event{" +
-            ", name='" + name + '\'' +
+            " name='" + name +
             ", eventType=" + eventType +
-            ", description='" + description + '\'' +
+            ", description='" + description +
             '}';
     }
 
@@ -99,7 +88,6 @@ public class Event {
         }
         Event event = (Event) o;
         return Objects.equals(id, event.id) &&
-            Objects.equals(artists, event.artists) &&
             Objects.equals(name, event.name) &&
             Objects.equals(eventType, event.eventType) &&
             Objects.equals(description, event.description);

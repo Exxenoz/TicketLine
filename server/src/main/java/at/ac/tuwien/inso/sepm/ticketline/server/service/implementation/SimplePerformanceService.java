@@ -55,16 +55,16 @@ public class SimplePerformanceService implements PerformanceService {
         performance.setPerformanceEnd(performanceEnd);
         performance.setPrice(search.getPrice());
 
+        Artist artist = new Artist(search.getArtistFirstName(), search.getArtistLastName());
+        Set<Artist> artists = new HashSet<>();
+        artists.add(artist);
+
         Event event = new Event();
         event.setName(search.getEventName());
 
         if (search.getEventType() != null) {
             event.setEventType(EventType.valueOf(search.getEventType().toString()));
         }
-
-        Artist artist = new Artist(search.getArtistFirstName(), search.getArtistLastName());
-        Set<Artist> artists = new HashSet<>();
-        artists.add(artist);
 
         Address address = new Address();
         address.setLocationName(search.getLocationName());
@@ -73,8 +73,8 @@ public class SimplePerformanceService implements PerformanceService {
         address.setCountry(search.getCountry());
         address.setPostalCode(search.getPostalCode());
 
-        event.setArtists(artists);
         performance.setEvent(event);
+        performance.setArtists(artists);
         performance.setAddress(address);
 
         //adding special checks - no case sensitivity, allow searching for parts of names

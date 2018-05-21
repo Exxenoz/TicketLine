@@ -64,11 +64,11 @@ public class AddressDTO {
     @Override
     public String toString() {
         return "AddressDTO{" +
-            ", locationName='" + locationName + '\'' +
-            ", street='" + street + '\'' +
-            ", city='" + city + '\'' +
-            ", country='" + country + '\'' +
-            ", postalCode=" + postalCode +
+            "locationName= " + locationName +
+            ", street= " + street +
+            ", city= " + city +
+            ", country= " + country +
+            ", postalCode= " + postalCode +
             '}';
     }
 

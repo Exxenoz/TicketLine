@@ -10,16 +10,14 @@ public class EventDTO {
 
     private Long id;
     private String name;
-    private Set<ArtistDTO> artists = new HashSet<>();
     private EventTypeDTO eventType;
     private String description;
 
     public EventDTO() {
     }
 
-    public EventDTO(String name, Set<ArtistDTO> artists, EventTypeDTO eventType, String description) {
+    public EventDTO(String name, EventTypeDTO eventType, String description) {
         this.name = name;
-        this.artists = artists;
         this.eventType = eventType;
         this.description = description;
     }
@@ -34,14 +32,6 @@ public class EventDTO {
 
     public String getName() {
         return name;
-    }
-
-    public Set<ArtistDTO> getArtists() {
-        return artists;
-    }
-
-    public void setArtists(Set<ArtistDTO> artists) {
-        this.artists = artists;
     }
 
     public void setName(String name) {
@@ -67,10 +57,9 @@ public class EventDTO {
     @Override
     public String toString() {
         return "EventDTO{" +
-            " name='" + name + '\'' +
-            ", eventType=" + eventType +
-            ", description='" + description + '\'' +
-            ", artist=" + artists + '\'' +
+            "name= " + name +
+            ", eventType= " + eventType +
+            ", description= " + description +
             '}';
     }
 
@@ -86,14 +75,13 @@ public class EventDTO {
         return Objects.equals(id, eventDTO.id) &&
             Objects.equals(name, eventDTO.name) &&
             Objects.equals(eventType, eventDTO.eventType) &&
-            Objects.equals(description, eventDTO.description) &&
-            Objects.equals(artists, eventDTO.artists)
+            Objects.equals(description, eventDTO.description)
             ;
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, name, eventType, description, artists);
+        return Objects.hash(id, name, eventType, description);
     }
 }

@@ -1,4 +1,4 @@
-package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.book;
+package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.CustomerService;
@@ -166,7 +166,7 @@ public class SelectCustomerController {
     public void goBack(ActionEvent actionEvent) {
         //go back to previous dialog scene
         /*
-        final var wrapper=fxmlLoader.loadAndWrap("/fxml/events/book/selectCustomerView.fxml");
+        final var wrapper=fxmlLoader.loadAndWrap("/fxml/events/booking/selectCustomerView.fxml");
         final var controller = (SelectCustomerController) wrapper.getController();
         final var next=(Parent)wrapper.getLoadedObject();
         controller.loadCustomers();
@@ -177,7 +177,7 @@ public class SelectCustomerController {
     public void goNextWithCustomer(ActionEvent actionEvent) {
         //go to the next dialog scene with a selected Customer
         /*
-        final var wrapper=fxmlLoader.loadAndWrap("/fxml/events/book/selectCustomerView.fxml");
+        final var wrapper=fxmlLoader.loadAndWrap("/fxml/events/booking/selectCustomerView.fxml");
         final var controller = (SelectCustomerController) wrapper.getController();
         final var next=(Parent)wrapper.getLoadedObject();
         controller.loadCustomers();
@@ -188,7 +188,7 @@ public class SelectCustomerController {
     public void goNextWithoutCustomer(ActionEvent actionEvent) {
         //go to the next dialog scene without a selected customer
          /*
-         final var wrapper=fxmlLoader.loadAndWrap("/fxml/events/book/selectCustomerView.fxml");
+         final var wrapper=fxmlLoader.loadAndWrap("/fxml/events/booking/selectCustomerView.fxml");
         final var controller = (SelectCustomerController) wrapper.getController();
         final var next=(Parent)wrapper.getLoadedObject();
         controller.loadCustomers();

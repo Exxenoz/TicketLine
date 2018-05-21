@@ -1,5 +1,7 @@
-package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
+package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking;
 
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventDetailViewController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
@@ -66,7 +68,7 @@ public class PerformanceDetailViewController {
         locationName.setText(performance.getAddress().getLocationName() + ", " + performance.getAddress().getCity());
         startTime.setText(performance.getPerformanceStart().toString());
 
-        String artistList = performance.getEvent().getArtists()
+        String artistList = performance.getArtists()
             .stream()
             .map(artist -> artist.getFirstName() + " " + artist.getLastName())
             .collect(Collectors.joining(", "));
@@ -80,11 +82,11 @@ public class PerformanceDetailViewController {
     }
 
     @FXML
-    void changeToEventDetailView(ActionEvent event) {
+    void changeToEventDetailView(ActionEvent event) throws DataAccessException {
         final var parent = fxmlLoader.<Parent>load("/fxml/events/eventDetailView.fxml");
         eventDetailViewController.fill(performanceService, performance.getEvent(), stage);
         stage.setScene(new Scene(parent));
-        stage.setTitle("Event Details");
+        stage.setTitle("Performance Details");
         stage.centerOnScreen();
     }
 

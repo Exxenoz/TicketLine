@@ -8,6 +8,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.SectorCategoryService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
+import at.ac.tuwien.inso.sepm.ticketline.rest.artist.ArtistDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventRequestTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventResponseTopTenDTO;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Component;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.CALENDAR_ALT;
 
@@ -209,7 +211,11 @@ public class EventTop10Controller {
         final var parent = fxmlLoader.<Parent>load("/fxml/events/eventDetailView.fxml");
         int selectedIndex = topTenEventChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? topTenEventChoiceBox.getSelectionModel().getSelectedIndex() : 0;
         Stage stage = new Stage();
-        eventDetailViewController.fill(performanceService, currentEvents.get(selectedIndex), stage);
+        try {
+            eventDetailViewController.fill(performanceService, currentEvents.get(selectedIndex), stage);
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+        }
         stage.setScene(new Scene(parent));
         stage.setTitle("Event Details");
         stage.initModality(Modality.WINDOW_MODAL);

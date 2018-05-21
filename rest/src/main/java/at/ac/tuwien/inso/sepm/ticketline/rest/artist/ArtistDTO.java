@@ -43,9 +43,8 @@ public class ArtistDTO {
     @Override
     public String toString() {
         return "ArtistDTO{" +
-            "id=" + id +
-            ", firstName='" + firstName + '\'' +
-            ", lastName='" + lastName + '\'' +
+            "firstName= " + firstName +
+            ", lastName= " + lastName +
             '}';
     }
 
