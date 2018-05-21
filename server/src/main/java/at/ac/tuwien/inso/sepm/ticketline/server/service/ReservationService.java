@@ -1,6 +1,5 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service;
 
-import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Customer;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationFilterTopTen;
@@ -17,9 +16,9 @@ public interface ReservationService {
      */
     List<Reservation> findAllByEventId(Long eventId);
 
-    Reservation findOneNotPaidReservationById(Long reservationId);
+    Reservation findOneByPaidFalseById(Long reservationId);
 
-    List<Reservation> findAllNotPaidReservationsByCustomerName(Customer customer);
+    List<Reservation> findAllByPaidFalseByCustomerName(Customer customer);
 
     /**
      * Get paid reservation count by event id.
@@ -39,6 +38,7 @@ public interface ReservationService {
 
     Reservation createReservation(Reservation reservation);
 
+    Reservation purchaseReservation(Reservation reservation);
 
-    void purchaseReservation(Reservation reservation);
+    void deleteReservation(Reservation reservation);
 }

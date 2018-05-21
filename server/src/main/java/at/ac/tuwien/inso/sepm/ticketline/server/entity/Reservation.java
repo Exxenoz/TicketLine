@@ -18,9 +18,9 @@ public class Reservation {
     @SequenceGenerator(name = "seq_reservation_id", sequenceName = "seq_reservation_id")
     private Long id;
 
-    // ToDo: Add customer
-    //@ManyToOne
-    //private Customer customer;
+
+    @ManyToOne
+    private Customer customer;
 
     @ManyToOne
     private Performance performance;
@@ -66,6 +66,10 @@ public class Reservation {
         this.paid = paid;
     }
 
+    public Boolean getPaid() {
+        return paid;
+    }
+
     public LocalDateTime getPaidAt() {
         return paidAt;
     }
@@ -74,10 +78,19 @@ public class Reservation {
         this.paidAt = paidAt;
     }
 
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
     @Override
     public String toString() {
         return "Reservation{" +
             "id=" + id +
+            ", customer=" + customer +
             ", performance=" + performance +
             ", seats=" + seats +
             ", paid=" + paid +
@@ -89,10 +102,9 @@ public class Reservation {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Reservation that = (Reservation) o;
-
         return Objects.equals(id, that.id) &&
+            Objects.equals(customer, that.customer) &&
             Objects.equals(performance, that.performance) &&
             Objects.equals(seats, that.seats) &&
             Objects.equals(paid, that.paid) &&
@@ -102,6 +114,6 @@ public class Reservation {
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, performance, seats, paid, paidAt);
+        return Objects.hash(id, customer, performance, seats, paid, paidAt);
     }
 }

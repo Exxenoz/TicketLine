@@ -16,8 +16,7 @@ import java.lang.invoke.MethodHandles;
 
 @Profile("generateData")
 @Component
-public class UserDataGenerator {
-
+public class UserDataGenerator implements DataGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final int NUMBER_OF_USERS_TO_GENERATE = 50;
@@ -33,7 +32,8 @@ public class UserDataGenerator {
     }
 
     @PostConstruct
-    private void generateUsers() {
+    @Override
+    public void generate() {
         if (userRepository.count() > 4) {
             LOGGER.info("users already generated");
         } else {

@@ -1,13 +1,11 @@
-package at.ac.tuwien.inso.sepm.ticketline.server.integrationtest;
+package at.ac.tuwien.inso.sepm.ticketline.server.integrationtests;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Address;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Seat;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationMapper;
-import at.ac.tuwien.inso.sepm.ticketline.server.integrationtest.base.BaseIT;
+import at.ac.tuwien.inso.sepm.ticketline.server.integrationtests.base.BaseIT;
+import at.ac.tuwien.inso.sepm.ticketline.server.repository.CustomerRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.SeatRepository;
@@ -39,6 +37,8 @@ public class ReservationIT extends BaseIT {
     private ReservationRepository reservationRepository;
     @Autowired
     private ReservationMapper reservationMapper;
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @Test
     @Transactional
@@ -46,12 +46,15 @@ public class ReservationIT extends BaseIT {
         // GIVEN
         Performance performance = performanceRepository.save(newPerformance());
         Seat seat = seatRepository.save(newSeat());
+        Customer customer = customerRepository.save(newCustomer());
         performanceRepository.flush();
         seatRepository.flush();
+        customerRepository.flush();
 
         CreateReservationDTO createReservationDTO = new CreateReservationDTO();
         createReservationDTO.setSeatIDs(singletonList(seat.getId()));
         createReservationDTO.setPerformanceID(performance.getId());
+        createReservationDTO.setCustomerID(customer.getId());
         createReservationDTO.setPaid(true);
 
         Reservation reservation = reservationMapper.createReservationDTOToReservation(createReservationDTO);
@@ -105,5 +108,26 @@ public class ReservationIT extends BaseIT {
         seat.setPositionY(2);
         return seat;
     }
+
+    private Customer newCustomer() {
+        Customer customer = new Customer();
+        customer.setFirstName("first name");
+        customer.setLastName("last name");
+        customer.setEmail("email@mail.com");
+        customer.setTelephoneNumber("0123456789");
+
+
+        Address address = new Address();
+        address.setCity("city");
+        address.setCountry("country");
+        address.setLocationName("locationName");
+        address.setStreet("street");
+        address.setPostalCode("postalCode");
+        customer.setAddress(address);
+
+        return customer;
+    }
+
+
 
 }

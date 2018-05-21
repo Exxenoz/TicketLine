@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -27,6 +28,7 @@ public class NewsDataGenerator implements DataGenerator {
         faker = new Faker();
     }
 
+    @PostConstruct
     @Override
     public void generate() {
         if (newsRepository.count() > 0) {

@@ -22,6 +22,7 @@ import static org.junit.Assert.assertThat;
 public class ReservationMapperTest {
 
     private static final long PERFORMANCE_ID = 2L;
+    private static final long CUSTOMER_ID = 3L;
     private static final Seat SEAT_1 = Seat.builder().id(1L).build();
     private static final Seat SEAT_2 = Seat.builder().id(2L).build();
     private static final Seat SEAT_3 = Seat.builder().id(3L).build();
@@ -42,6 +43,7 @@ public class ReservationMapperTest {
         CreateReservationDTO createReservationDTO = new CreateReservationDTO();
         createReservationDTO.setPaid(true);
         createReservationDTO.setPerformanceID(PERFORMANCE_ID);
+        createReservationDTO.setCustomerID(CUSTOMER_ID);
         createReservationDTO.setSeatIDs(List.of(SEAT_1.getId(), SEAT_2.getId(), SEAT_3.getId()));
 
         // WHEN
@@ -52,6 +54,7 @@ public class ReservationMapperTest {
         assertThat(reservation.isPaid(), is(true));
         assertThat(reservation.getPerformance(), is(notNullValue()));
         assertThat(reservation.getPerformance().getId(), is(PERFORMANCE_ID));
+        assertThat(reservation.getCustomer().getId(), is(CUSTOMER_ID));
         assertThat(reservation.getSeats(), is(notNullValue()));
         assertThat(reservation.getSeats(), hasItems(SEAT_1, SEAT_2, SEAT_3));
     }
