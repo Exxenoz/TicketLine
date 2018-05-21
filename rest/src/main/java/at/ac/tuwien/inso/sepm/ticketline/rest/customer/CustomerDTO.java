@@ -28,6 +28,18 @@ public class CustomerDTO {
     @ApiModelProperty(readOnly = true, name = "The address of the customer")
     private BaseAddressDTO address;
 
+    public CustomerDTO() {
+
+    }
+
+    public CustomerDTO(String firstName, String lastName, String telephoneNumber, String email, BaseAddressDTO address) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.telephoneNumber = telephoneNumber;
+        this.email = email;
+        this.address = address;
+    }
+
     public Long getId() {
         return id;
     }

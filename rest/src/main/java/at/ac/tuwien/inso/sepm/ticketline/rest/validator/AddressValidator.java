@@ -13,6 +13,8 @@ public class AddressValidator {
            validateCity(baseAddressDTO);
            validateCountry(baseAddressDTO);
            validatePostalCode(baseAddressDTO);
+       } else {
+           throw new AddressValidationException("Address not found");
        }
     }
 

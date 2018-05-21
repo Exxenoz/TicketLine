@@ -79,19 +79,19 @@ public class CustomerValidator {
             );
         }
 
-        if(customerDTO.getFirstName().length() < 2) {
+        if(customerDTO.getLastName().length() < 2) {
             throw new CustomerValidationException(
                 RestBundleManager.getExceptionBundle().getString("exception.validator.customer.lastname.too_short")
             );
         }
 
-        if(customerDTO.getFirstName().length() > 50) {
+        if(customerDTO.getLastName().length() > 50) {
             throw new CustomerValidationException(
                 RestBundleManager.getExceptionBundle().getString("exception.validator.customer.lastname.too_long")
             );
         }
 
-        if(!customerDTO.getFirstName().matches(letterRegex)) {
+        if(!customerDTO.getLastName().matches(letterRegex)) {
             throw new CustomerValidationException(
                 RestBundleManager.getExceptionBundle().getString("exception.validator.customer.lastname.invalid_characters")
             );

@@ -34,6 +34,18 @@ public class Customer {
     @Column(nullable = true)
     private BaseAddress baseAddress;
 
+    public Customer() {
+
+    }
+
+    public Customer(@Size(min = 2, max = 50) String firstName, @Size(min = 2, max = 50) String lastName, @Size(max = 30) String telephoneNumber, @Size(max = 50) String email, BaseAddress baseAddress) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.telephoneNumber = telephoneNumber;
+        this.email = email;
+        this.baseAddress = baseAddress;
+    }
+
     public Long getId() {
         return id;
     }
