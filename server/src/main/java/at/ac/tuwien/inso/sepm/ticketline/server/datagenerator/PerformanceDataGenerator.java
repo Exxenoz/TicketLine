@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -47,7 +46,6 @@ public class PerformanceDataGenerator implements DataGenerator {
         faker = new Faker();
     }
 
-    @PostConstruct
     @Override
     public void generate() {
         if (performanceRepository.count() > 0) {

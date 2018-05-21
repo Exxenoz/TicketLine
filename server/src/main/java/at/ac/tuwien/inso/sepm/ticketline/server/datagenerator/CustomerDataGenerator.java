@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
 
 @Profile("generateData")
@@ -26,7 +25,6 @@ public class CustomerDataGenerator implements DataGenerator {
         this.faker = new Faker();
     }
 
-    @PostConstruct
     @Override
     public void generate() {
         if (customerRepository.count() > 0) {

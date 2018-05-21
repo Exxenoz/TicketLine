@@ -1,9 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.datagenerator;
 
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Artist;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Event;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.EventType;
-import at.ac.tuwien.inso.sepm.ticketline.server.repository.ArtistRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.EventRepository;
 import com.github.javafaker.Faker;
 import org.slf4j.Logger;
@@ -12,12 +10,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Profile("generateData")
 @Component
@@ -36,7 +29,6 @@ public class EventDataGenerator implements DataGenerator {
         faker = new Faker();
     }
 
-    @PostConstruct
     @Override
     public void generate() {
         if (eventRepository.count() > 0) {
