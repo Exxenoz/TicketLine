@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="content" prefHeight="400.0" prefWidth="890.0"
+            xmlns="http://javafx.com/javafx/10"
+            fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.book.SelectCustomerController">
+    <children>
+        <AnchorPane layoutX="4.199999809265137" layoutY="360.0" AnchorPane.bottomAnchor="0.0"
+                    AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <children>
+                <ButtonBar layoutX="0.8000001907348633" prefHeight="40.0" prefWidth="200.0"
+                           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                    <buttons>
+                        <Button mnemonicParsing="false" onAction="#goBack" text="%dialog.back"/>
+                        <Button mnemonicParsing="false" onAction="#goNextWithCustomer"
+                                text="%dialog.select_customer.selected"/>
+                        <Button mnemonicParsing="false" onAction="#goNextWithoutCustomer"
+                                text="%dialog.select_customer.anonymous"/>
+                        <Button mnemonicParsing="false" onAction="#createNewCustomer"
+                                text="%dialog.select_customer.new"/>
+                    </buttons>
+                </ButtonBar>
+                <Separator prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
+            </children>
+        </AnchorPane>
+        <AnchorPane layoutX="10.0" prefHeight="359.0" prefWidth="590.0" AnchorPane.leftAnchor="0.0"
+                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <TableView fx:id="customerTable" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0"
+                           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columns>
+                        <TableColumn fx:id="customerTableColumnFirstName" editable="false"
+                                     prefWidth="191.99997234344482" text="%customers.main.table.column.first_name"/>
+                        <TableColumn fx:id="customerTableColumnLastName" editable="false" minWidth="0.0"
+                                     prefWidth="223.2000274658203" text="%customers.main.table.column.last_name"/>
+                        <TableColumn fx:id="customerTableColumnTelephoneNumber" editable="false" minWidth="0.0"
+                                     prefWidth="249.5999755859375"
+                                     text="%customers.main.table.column.telephone_number"/>
+                        <TableColumn fx:id="customerTableColumnEMail" editable="false" prefWidth="212.00006103515625"
+                                     text="%customers.main.table.column.email"/>
+                    </columns>
+                </TableView>
+            </children>
+        </AnchorPane>
+    </children>
+    <padding>
+        <Insets left="5.0" right="5.0"/>
+    </padding>
+</AnchorPane>

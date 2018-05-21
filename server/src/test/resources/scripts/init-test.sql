@@ -35,9 +35,9 @@ KEY (username, authority)
 VALUES ('admin', 'ADMIN');
 
 -- test user
-MERGE INTO Users (username, password)
+MERGE INTO Users (username, password, enabled, strikes)
 KEY (username)
-VALUES ('test', '$2a$10$iZMUIt.55RRIthu4/ELV0.lRcaE7hZRbimJIUiA9/LXWKyzSvCq5e');
+VALUES ('test', '$2a$10$iZMUIt.55RRIthu4/ELV0.lRcaE7hZRbimJIUiA9/LXWKyzSvCq5e', TRUE, 0);
 MERGE INTO Authorities (username, authority)
 KEY (username, authority)
 VALUES ('test', 'USER');

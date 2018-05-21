@@ -1,13 +1,16 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Event;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.EventFilterTop10;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.EventRequestTopTen;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.EventResponseTopTen;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.EventRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.EventService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,11 +35,10 @@ public class SimpleEventService implements EventService {
     }
 
     @Override
-    public List<Event> findTop10ByPaidReservationCountByFilter(EventFilterTop10 eventFilterTop10) {
-        LocalDateTime startOfTheMonthDateTime = LocalDateTime.of(LocalDateTime.now().getYear(), eventFilterTop10.getMonth(), 1, 0, 0);
-        LocalDateTime endOfTheMonthDateTime = LocalDateTime.of(startOfTheMonthDateTime.getYear(), eventFilterTop10.getMonth(), startOfTheMonthDateTime.toLocalDate().lengthOfMonth(), 23, 59, 59);
-        Timestamp startOfTheMonth = Timestamp.valueOf(startOfTheMonthDateTime);
-        Timestamp endOfTheMonth = Timestamp.valueOf(endOfTheMonthDateTime);
-        return eventRepository.findTop10ByPaidReservationCountByFilter(startOfTheMonth, endOfTheMonth, eventFilterTop10.getCategoryId());
+    public List<EventResponseTopTen> findTopTenByMonthAndCategory(EventRequestTopTen eventRequestTopTen) {
+        LocalDateTime startOfTheMonth = LocalDateTime.of(LocalDateTime.now().getYear(), eventRequestTopTen.getMonth(), 1, 0, 0);
+        LocalDateTime endOfTheMonth = LocalDateTime.of(startOfTheMonth.getYear(), eventRequestTopTen.getMonth(), startOfTheMonth.toLocalDate().lengthOfMonth(), 23, 59, 59);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "cnt"));
+        return eventRepository.findTopTenByMonthAndCategory(startOfTheMonth, endOfTheMonth, eventRequestTopTen.getCategoryId(), pageable);
     }
 }

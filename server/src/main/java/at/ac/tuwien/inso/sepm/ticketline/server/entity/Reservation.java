@@ -1,7 +1,11 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
+import com.github.javafaker.Bool;
+
 import javax.persistence.*;
+
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 import static javax.persistence.GenerationType.AUTO;
@@ -21,11 +25,11 @@ public class Reservation {
     @ManyToOne
     private Performance performance;
 
-    @ManyToOne
-    private Seat seat;
+    @ManyToMany
+    private List<Seat> seats;
 
     @Column(nullable = false)
-    private Boolean isPaid;
+    private Boolean paid;
 
     @Column(nullable = true, name = "paid_at")
     private LocalDateTime paidAt;
@@ -46,20 +50,20 @@ public class Reservation {
         this.performance = performance;
     }
 
-    public Seat getSeat() {
-        return seat;
+    public List<Seat> getSeats() {
+        return seats;
     }
 
-    public void setSeat(Seat seat) {
-        this.seat = seat;
+    public void setSeats(List<Seat> seats) {
+        this.seats = seats;
     }
 
     public Boolean isPaid() {
-        return isPaid;
+        return paid;
     }
 
     public void setPaid(Boolean paid) {
-        isPaid = paid;
+        this.paid = paid;
     }
 
     public LocalDateTime getPaidAt() {
@@ -74,9 +78,9 @@ public class Reservation {
     public String toString() {
         return "Reservation{" +
             "id=" + id +
-//            ", performance=" + performance +
-            ", seat=" + seat +
-            ", isPaid=" + isPaid +
+            ", performance=" + performance +
+            ", seats=" + seats +
+            ", paid=" + paid +
             ", paidAt=" + paidAt +
             '}';
     }
@@ -90,14 +94,14 @@ public class Reservation {
 
         return Objects.equals(id, that.id) &&
             Objects.equals(performance, that.performance) &&
-            Objects.equals(seat, that.seat) &&
-            Objects.equals(isPaid, that.isPaid) &&
+            Objects.equals(seats, that.seats) &&
+            Objects.equals(paid, that.paid) &&
             Objects.equals(paidAt, that.paidAt);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, performance, seat, isPaid, paidAt);
+        return Objects.hash(id, performance, seats, paid, paidAt);
     }
 }

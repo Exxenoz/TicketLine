@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @ApiModel(value = "ReservationDTO", description = "The reservation DTO for reservation entries via rest")
@@ -22,7 +23,7 @@ public class ReservationDTO {
     private PerformanceDTO performance;
 
     @ApiModelProperty(required = true, readOnly = true, name = "The seat of the reservation")
-    private SeatDTO seat;
+    private List<SeatDTO> seats;
 
     @ApiModelProperty(required = true, readOnly = true, name = "The pay state of the reservation")
     private Boolean isPaid;
@@ -46,12 +47,12 @@ public class ReservationDTO {
         this.performance = performance;
     }
 
-    public SeatDTO getSeat() {
-        return seat;
+    public List<SeatDTO> getSeats() {
+        return seats;
     }
 
-    public void setSeat(SeatDTO seat) {
-        this.seat = seat;
+    public void setSeats(List<SeatDTO> seats) {
+        this.seats = seats;
     }
 
     public Boolean isPaid() {
@@ -75,7 +76,7 @@ public class ReservationDTO {
         return "ReservationDTO{" +
             "id=" + id +
             ", performance=" + performance +
-            ", seat=" + seat +
+            ", seat=" + seats +
             ", isPaid=" + isPaid +
             ", paidAt=" + paidAt +
             '}';
@@ -90,7 +91,7 @@ public class ReservationDTO {
 
         return Objects.equals(id, that.id) &&
             Objects.equals(performance, that.performance) &&
-            Objects.equals(seat, that.seat) &&
+            Objects.equals(seats, that.seats) &&
             Objects.equals(isPaid, that.isPaid) &&
             Objects.equals(paidAt, that.paidAt);
     }
@@ -98,6 +99,6 @@ public class ReservationDTO {
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, performance, seat, isPaid, paidAt);
+        return Objects.hash(id, performance, seats, isPaid, paidAt);
     }
 }

@@ -1,7 +1,10 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationFilterTopTen;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationFilterTopTenMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationMapper;
@@ -10,6 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @RestController
@@ -21,7 +25,10 @@ public class ReservationEndpoint {
     private final ReservationMapper reservationMapper;
     private final ReservationFilterTopTenMapper reservationFilterTopTenMapper;
 
-    public ReservationEndpoint(ReservationService reservationService, ReservationMapper reservationMapper, ReservationFilterTopTenMapper reservationFilterTopTenMapper) {
+    public ReservationEndpoint(ReservationService reservationService,
+                               ReservationMapper reservationMapper,
+                               ReservationFilterTopTenMapper reservationFilterTopTenMapper
+    ) {
         this.reservationService = reservationService;
         this.reservationMapper = reservationMapper;
         this.reservationFilterTopTenMapper = reservationFilterTopTenMapper;
@@ -42,7 +49,17 @@ public class ReservationEndpoint {
     @PostMapping("/top_ten")
     @ApiOperation("Get count of paid reservation entries by top ten filter")
     public Long getPaidReservationCountByFilter(@RequestBody final ReservationFilterTopTenDTO reservationFilterTopTenDTO) {
-        ReservationFilterTopTen reservationFilterTopTen = reservationFilterTopTenMapper.reservationFilterTopTenDTOToReservationFilterTopTen(reservationFilterTopTenDTO);
+        ReservationFilterTopTen reservationFilterTopTen =
+            reservationFilterTopTenMapper.reservationFilterTopTenDTOToReservationFilterTopTen(reservationFilterTopTenDTO);
         return reservationService.getPaidReservationCountByFilter(reservationFilterTopTen);
+    }
+
+    @PostMapping
+    @ApiOperation("Create a new Reservation for Seats in a Performance")
+    @Transactional
+    public ReservationDTO createNewReservation(CreateReservationDTO createReservationDTO) {
+        final var reservationToCreate = reservationMapper.createReservationDTOToReservation(createReservationDTO);
+        final var createdReservation = reservationService.createReservation(reservationToCreate);
+        return reservationMapper.reservationToReservationDTO(createdReservation);
     }
 }

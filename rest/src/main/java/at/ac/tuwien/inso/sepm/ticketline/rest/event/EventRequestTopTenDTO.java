@@ -1,20 +1,25 @@
 package at.ac.tuwien.inso.sepm.ticketline.rest.event;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Objects;
 
-@ApiModel(value = "EventFilterTopTenDTO", description = "The event filter top ten DTO for filtered event entries via rest")
-public class EventFilterTopTenDTO {
+@ApiModel(value = "EventRequestTopTenDTO", description = "The event request DTO for top ten event entries via rest")
+public class EventRequestTopTenDTO {
 
+    @ApiModelProperty(required = true, readOnly = true, name = "The month of the top ten 10 entries")
     private Integer month;
+
+    @ApiModelProperty(required = true, readOnly = true, name = "The category id of the top 10 entries")
     private Long categoryId;
 
-    public EventFilterTopTenDTO() {
-
+    public EventRequestTopTenDTO() {
     }
 
-    public EventFilterTopTenDTO(Integer month, Long categoryId) {
+    public EventRequestTopTenDTO(Integer month, Long categoryId) {
         this.month = month;
         this.categoryId = categoryId;
     }
@@ -37,7 +42,7 @@ public class EventFilterTopTenDTO {
 
     @Override
     public String toString() {
-        return "EventFilterTopTenDTO{" +
+        return "EventRequestTopTenDTO{" +
             "month=" + month +
             ", categoryId=" + categoryId +
             '}';
@@ -47,13 +52,14 @@ public class EventFilterTopTenDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        EventFilterTopTenDTO that = (EventFilterTopTenDTO) o;
+        EventRequestTopTenDTO that = (EventRequestTopTenDTO) o;
         return Objects.equals(month, that.month) &&
             Objects.equals(categoryId, that.categoryId);
     }
 
     @Override
     public int hashCode() {
+
         return Objects.hash(month, categoryId);
     }
 }

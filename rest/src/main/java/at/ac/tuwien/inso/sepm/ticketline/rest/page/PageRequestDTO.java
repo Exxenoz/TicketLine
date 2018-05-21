@@ -10,6 +10,7 @@ import java.util.Objects;
 
 @ApiModel(value = "PageRequestDTO", description = "DTO for page requests via rest")
 public class PageRequestDTO {
+
     @ApiModelProperty(required = true, readOnly = true, name = "The page of the page request")
     private int page;
     @ApiModelProperty(required = true, readOnly = true, name = "The size of the page request")
@@ -75,7 +76,9 @@ public class PageRequestDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         PageRequestDTO that = (PageRequestDTO) o;
+
         return page == that.page &&
             size == that.size &&
             sortDirection == that.sortDirection &&
@@ -84,6 +87,7 @@ public class PageRequestDTO {
 
     @Override
     public int hashCode() {
+
         return Objects.hash(page, size, sortDirection, sortColumnName);
     }
 

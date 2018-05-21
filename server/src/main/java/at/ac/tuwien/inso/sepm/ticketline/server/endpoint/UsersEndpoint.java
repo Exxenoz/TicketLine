@@ -52,7 +52,7 @@ public class UsersEndpoint {
     @ApiOperation("enable a disabled User")
     public void enableUser(@RequestBody UserDTO userDTO) {
         try {
-            UserValidator.validateUser(userDTO);
+            UserValidator.validateExistingUser(userDTO);
             userService.enableUser(userMapper.userDTOToUser(userDTO));
         } catch (UserValidatorException e) {
             throw new InvalidRequestException();
