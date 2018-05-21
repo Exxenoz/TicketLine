@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollBar?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Text id="event" fx:id="eventTitleText" layoutX="243.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Event" textAlignment="CENTER" textOrigin="CENTER" wrappingWidth="100.52490234375">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Text>
+      <Text id="event" fx:id="eventDateText" layoutX="243.0" layoutY="73.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Date" textAlignment="CENTER" textOrigin="CENTER" wrappingWidth="100.52490234375" />
+      <Separator layoutX="68.0" layoutY="92.0" prefHeight="24.0" prefWidth="451.0" />
+      <Label layoutX="109.0" layoutY="108.0" text="Sector" />
+      <Label layoutX="278.0" layoutY="108.0" text="Price" />
+      <Label layoutX="436.0" layoutY="108.0" text="Amount" />
+      <VBox fx:id="sectorDetailVBox" layoutX="74.0" layoutY="136.0" prefHeight="200.0" prefWidth="451.0" />
+      <ScrollBar fx:id="sectorDetailsScrollBar" layoutX="525.0" layoutY="136.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="17.0" />
+   </children>
+</AnchorPane>
