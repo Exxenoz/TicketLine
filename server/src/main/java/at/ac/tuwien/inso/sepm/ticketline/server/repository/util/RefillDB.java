@@ -52,7 +52,7 @@ public class RefillDB {
         usersRepository.deleteAll();
 
         //CompositeDataGenerator
-//        compositeDataGenerator.generate();
+        compositeDataGenerator.generate();
         System.exit(0);
     }
 }
