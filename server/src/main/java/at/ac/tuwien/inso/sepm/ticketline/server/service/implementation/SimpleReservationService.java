@@ -36,13 +36,13 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
-    public Reservation findOneNotPaidReservationById(Long reservationId) {
-        return reservationRepository.getOne(reservationId);
+    public Reservation findOneByPaidFalseById(Long reservationId) {
+        return reservationRepository.findByPaidFalseAndId(reservationId);
     }
 
     @Override
-    public List<Reservation> findAllNotPaidReservationsByCustomerName(Customer customer) {
-        return null;
+    public List<Reservation> findAllByPaidFalseByCustomerName(Customer customer) {
+        return reservationRepository.findAllByPaidFalseAndCustomerFirstnameAndCustomerLastname(customer.getFirstName(), customer.getLastName());
     }
 
     @Override
@@ -60,8 +60,15 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
-    public void purchaseReservation(Reservation reservation) {
+    public Reservation purchaseReservation(Reservation reservation) {
+        reservation.setPaid(true);
+        reservation = reservationRepository.save(reservation);
+        return reservation;
+    }
 
+    @Override
+    public void deleteReservation(Reservation reservation) {
+        reservationRepository.delete(reservation);
     }
 
     @Override

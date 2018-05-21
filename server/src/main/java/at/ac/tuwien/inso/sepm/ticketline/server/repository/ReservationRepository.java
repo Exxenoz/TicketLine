@@ -47,4 +47,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
         " WHERE p.id = r.performance_id AND p.event_id = :eventId" +
         " AND r.is_paid = true AND r.paid_at >= :startTime AND r.paid_at <= :endTime", nativeQuery = true)
     Long getPaidReservationCountByEventIdAndTimeFrame(@Param("eventId")Long eventId, @Param("startTime")Timestamp startTime, @Param("endTime")Timestamp endTime);
+
+    Reservation findByPaidFalseAndId(Long reservationId);
+
+    @Query(value = "SELECT r.* " +
+        "FROM reservation AS r, customer AS c " +
+        "WHERE c.id = r.customer_id AND r.paid = false " +
+        "AND c.firstname = :firstName AND c.lastname = :lastName", nativeQuery = true)
+    List<Reservation> findAllByPaidFalseAndCustomerFirstnameAndCustomerLastname(@Param("firstName") String firstName, @Param("firstName") String lastName);
 }

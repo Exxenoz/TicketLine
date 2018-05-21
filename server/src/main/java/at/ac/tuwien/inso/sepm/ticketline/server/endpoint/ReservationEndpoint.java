@@ -54,7 +54,7 @@ public class ReservationEndpoint {
         return reservationService.getPaidReservationCountByFilter(reservationFilterTopTen);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @ApiOperation("Create a new Reservation for Seats in a Performance")
     @Transactional
     public ReservationDTO createNewReservation(CreateReservationDTO createReservationDTO) {

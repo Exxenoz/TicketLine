@@ -1,5 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.rest.reservation;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import io.swagger.annotations.ApiModel;
@@ -15,9 +16,8 @@ public class ReservationDTO {
     @ApiModelProperty(readOnly = true, name = "The automatically generated database id")
     private Long id;
 
-    // ToDo: Add customer DTO
-    //@ApiModelProperty(required = true, readOnly = true, name = "The customer of the reservation")
-    //private CustomerDTO customer;
+    @ApiModelProperty(required = true, readOnly = true, name = "The customer of the reservation")
+    private CustomerDTO customer;
 
     @ApiModelProperty(required = true, readOnly = true, name = "The performance of the reservation")
     private PerformanceDTO performance;

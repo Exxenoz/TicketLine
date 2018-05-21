@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,7 +23,7 @@ import static java.util.Collections.singletonList;
 
 @Profile("generateData")
 @Component
-public class ReservationDataGenerator implements DataGenerator{
+public class ReservationDataGenerator implements DataGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final int NUMBER_OF_RESERVATIONS_PER_PERFORMANCE_TO_GENERATE = 100;
