@@ -13,7 +13,7 @@ import java.lang.invoke.MethodHandles;
 
 @Profile("generateData")
 @Component
-public class CustomerDataGenerator {
+public class CustomerDataGenerator implements DataGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     public static final int NUMBER_OF_CUSTOMERS_TO_GENERATE = 50;
@@ -27,6 +27,7 @@ public class CustomerDataGenerator {
     }
 
     @PostConstruct
+    @Override
     private void generatePerformance() {
         if (customerRepository.count() > 0) {
             LOGGER.info("customers already generated");

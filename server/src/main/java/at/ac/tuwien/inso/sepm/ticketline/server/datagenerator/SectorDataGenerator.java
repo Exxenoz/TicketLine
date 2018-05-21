@@ -32,6 +32,7 @@ public class SectorDataGenerator implements DataGenerator {
         faker = new Faker();
     }
 
+    @Override
     public void generate() {
         if (sectorCategoryRepository.count() == 0) {
             LOGGER.info("Could not generate sectors, because there are no sector categories!");
