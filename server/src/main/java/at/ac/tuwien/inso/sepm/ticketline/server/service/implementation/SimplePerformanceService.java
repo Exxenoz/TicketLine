@@ -4,6 +4,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.PerformanceService;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class SimplePerformanceService implements PerformanceService {
         return performanceRepository.findByEventId(eventID);
     }
 
+    @Override
     public List<Performance> search(SearchDTO search) {
         Example<Performance> example = getPerformanceExample(search);
 

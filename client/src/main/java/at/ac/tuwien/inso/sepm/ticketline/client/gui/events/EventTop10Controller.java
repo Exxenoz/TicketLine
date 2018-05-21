@@ -1,6 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.EventService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
@@ -32,6 +33,8 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.controlsfx.glyphfont.FontAwesome.Glyph.CALENDAR_ALT;
+
 @Component
 public class EventTop10Controller {
 
@@ -53,6 +56,9 @@ public class EventTop10Controller {
 
     @FXML
     private Button bookTopTenEventButton;
+
+    @FXML
+    private TabHeaderController tabHeaderController;
 
     private final SpringFxmlLoader fxmlLoader;
     private final EventService eventService;
@@ -85,6 +91,10 @@ public class EventTop10Controller {
     @FXML
     private void initialize() {
         initMonthChoiceBox();
+
+        //Initialize tab header
+        tabHeaderController.setIcon(CALENDAR_ALT);
+        tabHeaderController.setTitle("Events");
     }
 
     private void initMonthChoiceBox() {
