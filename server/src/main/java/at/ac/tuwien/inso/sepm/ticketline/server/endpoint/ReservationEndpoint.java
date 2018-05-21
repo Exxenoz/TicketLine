@@ -1,11 +1,12 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 
-import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationFilterTopTen;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapperImpl;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationFilterTopTenMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
@@ -24,14 +25,17 @@ public class ReservationEndpoint {
     private final ReservationService reservationService;
     private final ReservationMapper reservationMapper;
     private final ReservationFilterTopTenMapper reservationFilterTopTenMapper;
+    private final CustomerMapperImpl customerMapper;
 
     public ReservationEndpoint(ReservationService reservationService,
                                ReservationMapper reservationMapper,
-                               ReservationFilterTopTenMapper reservationFilterTopTenMapper
+                               ReservationFilterTopTenMapper reservationFilterTopTenMapper,
+                               CustomerMapperImpl customerMapper
     ) {
         this.reservationService = reservationService;
         this.reservationMapper = reservationMapper;
         this.reservationFilterTopTenMapper = reservationFilterTopTenMapper;
+        this.customerMapper = customerMapper;
     }
 
     @GetMapping("/event/{eventId}")
@@ -61,5 +65,36 @@ public class ReservationEndpoint {
         final var reservationToCreate = reservationMapper.createReservationDTOToReservation(createReservationDTO);
         final var createdReservation = reservationService.createReservation(reservationToCreate);
         return reservationMapper.reservationToReservationDTO(createdReservation);
+    }
+
+    @GetMapping("/find/{reservationId}")
+    @ApiOperation("Finds a Reservation which wasn't purchased yet with the given id")
+    @Transactional
+    public ReservationDTO findOneByPaidFalseById(@PathVariable Long reservationId) {
+        final var reservation = reservationService.findOneByPaidFalseById(reservationId);
+        return reservationMapper.reservationToReservationDTO(reservation);
+    }
+
+    @GetMapping("/findNotPaid")
+    @ApiOperation("Finds a Reservation which wasn't purchased yet with the given customer")
+    public List<ReservationDTO> findAllByPaidFalseByCustomerName(@RequestBody CustomerDTO customerDTO) {
+        var customer = customerMapper.customerDTOToCustomer(customerDTO);
+        var reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
+        return reservationMapper.reservationToReservationDTO(reservations);
+    }
+
+    @PostMapping("/purchase")
+    @ApiOperation("Purchases the given Reservation")
+    @Transactional
+    public ReservationDTO purchaseReservation(Reservation reservation) {
+        reservation = reservationService.purchaseReservation(reservation);
+        return reservationMapper.reservationToReservationDTO(reservation);
+    }
+
+    @PostMapping("/delete")
+    @ApiOperation("Delete given Reservation")
+    @Transactional
+    public void deleteReservation(Reservation reservation) {
+        reservationService.deleteReservation(reservation);
     }
 }
