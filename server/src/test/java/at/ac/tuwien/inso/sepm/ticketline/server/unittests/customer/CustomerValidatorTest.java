@@ -86,7 +86,7 @@ public class CustomerValidatorTest {
 
     // TELEPHONE NUMBER
 
-    @Test
+    @Test(expected = CustomerValidationException.class)
     public void validateMalformedTelephoneNumberShouldThrowException() throws CustomerValidationException {
         CustomerDTO customerDTO = new CustomerDTO();
         customerDTO.setTelephoneNumber("Florian");
@@ -103,7 +103,7 @@ public class CustomerValidatorTest {
 
     // EMAIL
 
-    @Test
+    @Test(expected = CustomerValidationException.class)
     public void validateMalformedEmailShouldThrowException() throws CustomerValidationException {
         CustomerDTO customerDTO = new CustomerDTO();
         customerDTO.setEmail("Florian");
