@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,7 +36,7 @@ public class EventDataGenerator implements DataGenerator {
         faker = new Faker();
     }
 
-
+    @PostConstruct
     @Override
     public void generate() {
         if (eventRepository.count() > 0) {

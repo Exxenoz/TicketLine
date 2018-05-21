@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 
@@ -28,6 +29,7 @@ public class SectorCategoryDataGenerator implements DataGenerator {
         faker = new Faker();
     }
 
+    @PostConstruct
     @Override
     public void generate() {
         if (sectorCategoryRepository.count() > 0) {

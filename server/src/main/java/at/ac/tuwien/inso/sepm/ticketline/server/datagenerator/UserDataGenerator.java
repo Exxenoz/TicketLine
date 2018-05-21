@@ -33,7 +33,7 @@ public class UserDataGenerator implements DataGenerator {
 
     @PostConstruct
     @Override
-    private void generate() {
+    public void generate() {
         if (userRepository.count() > 4) {
             LOGGER.info("users already generated");
         } else {

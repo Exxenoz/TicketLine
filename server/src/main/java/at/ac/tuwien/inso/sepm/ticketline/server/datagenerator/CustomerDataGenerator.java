@@ -28,7 +28,7 @@ public class CustomerDataGenerator implements DataGenerator {
 
     @PostConstruct
     @Override
-    private void generatePerformance() {
+    public void generate() {
         if (customerRepository.count() > 0) {
             LOGGER.info("customers already generated");
         } else {

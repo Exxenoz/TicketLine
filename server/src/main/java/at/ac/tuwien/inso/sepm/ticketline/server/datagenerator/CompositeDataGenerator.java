@@ -17,6 +17,7 @@ public class CompositeDataGenerator implements DataGenerator {
     }
 
     @PostConstruct
+    @Override
     public void generate() {
         generators.forEach(DataGenerator::generate);
     }
