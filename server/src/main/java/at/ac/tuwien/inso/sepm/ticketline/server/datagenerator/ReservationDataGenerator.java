@@ -3,36 +3,27 @@ package at.ac.tuwien.inso.sepm.ticketline.server.datagenerator;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Seat;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.SectorCategory;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.SeatRepository;
-import at.ac.tuwien.inso.sepm.ticketline.server.repository.SectorCategoryRepository;
 import com.github.javafaker.Faker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.Collections.singletonList;
-import static org.springframework.boot.context.properties.bind.Bindable.listOf;
 
 @Profile("generateData")
 @Component
-public class ReservationDataGenerator {
+public class ReservationDataGenerator implements DataGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final int NUMBER_OF_RESERVATIONS_PER_PERFORMANCE_TO_GENERATE = 100;
@@ -56,8 +47,8 @@ public class ReservationDataGenerator {
         return LocalDate.ofEpochDay(randomDay);
     }
 
-    @PostConstruct
-    private void generateReservations() {
+    @Override
+    public void generate() {
         if (performanceRepository.count() == 0) {
             LOGGER.info("Could not generate reservations, because there are no performances!");
         }

@@ -1,9 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
-import com.github.javafaker.Bool;
-
 import javax.persistence.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -19,8 +16,8 @@ public class Reservation {
     private Long id;
 
     // ToDo: Add customer
-    //@ManyToOne
-    //private Customer customer;
+    @ManyToOne(cascade = CascadeType.DETACH)
+    private Customer customer;
 
     @ManyToOne
     private Performance performance;
