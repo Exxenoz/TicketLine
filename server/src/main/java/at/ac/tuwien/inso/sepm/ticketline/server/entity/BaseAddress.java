@@ -2,15 +2,13 @@ package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Embeddable
-public class Address {
-
-    @Column(nullable = false)
-    @Size(max = 100)
-    private String locationName;
+@MappedSuperclass
+public class BaseAddress {
 
     @Column(nullable = false)
     @Size(max = 100)
@@ -27,28 +25,19 @@ public class Address {
     @Column(nullable = false)
     private String postalCode;
 
-    public Address() {
+    public BaseAddress() {
     }
 
-    public Address(@Size(max = 100) String locationName,
-                   @Size(max = 100) String street,
-                   @Size(max = 100) String city,
-                   @Size(max = 100) String country,
-                   String postalCode) {
-        this.locationName = locationName;
+    public BaseAddress(@Size(max = 100) String street,
+                       @Size(max = 100) String city,
+                       @Size(max = 100) String country,
+                       String postalCode) {
         this.street = street;
         this.city = city;
         this.country = country;
         this.postalCode = postalCode;
     }
 
-    public String getLocationName() {
-        return locationName;
-    }
-
-    public void setLocationName(String locationName) {
-        this.locationName = locationName;
-    }
 
     public String getStreet() {
         return street;
@@ -84,8 +73,7 @@ public class Address {
 
     @Override
     public String toString() {
-        return "Address{" +
-            "locationName='" + locationName + '\'' +
+        return "BaseAddress{" +
             ", street='" + street + '\'' +
             ", city='" + city + '\'' +
             ", country='" + country + '\'' +
@@ -101,16 +89,15 @@ public class Address {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Address address = (Address) o;
-        return postalCode.equals(address.postalCode) &&
-            Objects.equals(locationName, address.locationName) &&
-            Objects.equals(street, address.street) &&
-            Objects.equals(city, address.city) &&
-            Objects.equals(country, address.country);
+        BaseAddress baseAddress = (BaseAddress) o;
+        return postalCode.equals(baseAddress.postalCode) &&
+            Objects.equals(street, baseAddress.street) &&
+            Objects.equals(city, baseAddress.city) &&
+            Objects.equals(country, baseAddress.country);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(locationName, street, city, country, postalCode);
+        return Objects.hash(street, city, country, postalCode);
     }
 }

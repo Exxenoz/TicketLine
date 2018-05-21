@@ -1,32 +1,34 @@
 package at.ac.tuwien.inso.sepm.ticketline.rest.validator;
 
-import at.ac.tuwien.inso.sepm.ticketline.rest.address.AddressDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.address.BaseAddressDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.address.LocationAddressDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.AddressValidationException;
 
+// TODO: implement(and include location address)
 public class AddressValidator {
 
-    public static void validate(AddressDTO addressDTO) throws AddressValidationException {
-       if(addressDTO != null) {
-           validateStreet(addressDTO);
-           validateCity(addressDTO);
-           validateCountry(addressDTO);
-           validatePostalCode(addressDTO);
+    public static void validate(BaseAddressDTO baseAddressDTO) throws AddressValidationException {
+       if(baseAddressDTO != null) {
+           validateStreet(baseAddressDTO);
+           validateCity(baseAddressDTO);
+           validateCountry(baseAddressDTO);
+           validatePostalCode(baseAddressDTO);
        }
     }
 
-    public static void validateStreet(AddressDTO addressDTO) throws AddressValidationException {
+    public static void validateStreet(BaseAddressDTO baseAddressDTO) throws AddressValidationException {
         // TODO
     }
 
-    public static void validateCity(AddressDTO addressDTO) throws AddressValidationException {
+    public static void validateCity(BaseAddressDTO baseAddressDTO) throws AddressValidationException {
         // TODO
     }
 
-    public static void validateCountry(AddressDTO addressDTO) throws AddressValidationException {
+    public static void validateCountry(BaseAddressDTO baseAddressDTO) throws AddressValidationException {
         // TODO
     }
 
-    public static void validatePostalCode(AddressDTO addressDTO) throws AddressValidationException {
+    public static void validatePostalCode(BaseAddressDTO baseAddressDTO) throws AddressValidationException {
         // TODO
     }
 }

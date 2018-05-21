@@ -133,7 +133,7 @@ public class CustomerValidator {
     public static void validateAddress(CustomerDTO customerDTO) throws CustomerValidationException {
         validateDTO(customerDTO);
         try {
-            AddressValidator.validate(customerDTO.getAddress());
+            AddressValidator.validate(customerDTO.getBaseAddress());
         } catch (AddressValidationException e) {
             throw new CustomerValidationException(e.getMessage());
         }

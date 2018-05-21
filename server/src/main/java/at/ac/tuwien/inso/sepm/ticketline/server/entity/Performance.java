@@ -33,26 +33,26 @@ public class Performance {
     private LocalDateTime performanceEnd;
 
     @Column(nullable = false)
-    private Address address;
+    private LocationAddress locationAddress;
 
     public Performance() {
     }
 
-    public Performance(Event event, @Size(max = 100) String name, BigDecimal price, LocalDateTime performanceStart, LocalDateTime performanceEnd, Address address) {
+    public Performance(Event event, @Size(max = 100) String name, BigDecimal price, LocalDateTime performanceStart, LocalDateTime performanceEnd, LocationAddress locationAddress) {
         this.event = event;
         this.name = name;
         this.price = price;
         this.performanceStart = performanceStart;
         this.performanceEnd = performanceEnd;
-        this.address = address;
+        this.locationAddress = locationAddress;
     }
 
-    public Address getAddress() {
-        return address;
+    public LocationAddress getLocationAddress() {
+        return locationAddress;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setLocationAddress(LocationAddress locationAddress) {
+        this.locationAddress = locationAddress;
     }
 
     public Long getId() {
@@ -111,7 +111,7 @@ public class Performance {
             ", price=" + price +
             ", performanceStart=" + performanceStart +
             ", performanceEnd=" + performanceEnd +
-            ", address=" + address +
+            ", locationAddress=" + locationAddress +
             '}';
     }
 
@@ -130,12 +130,12 @@ public class Performance {
             Objects.equals(price, that.price) &&
             Objects.equals(performanceStart, that.performanceStart) &&
             Objects.equals(performanceEnd, that.performanceEnd) &&
-            Objects.equals(address, that.address);
+            Objects.equals(locationAddress, that.locationAddress);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, event, name, price, performanceStart, performanceEnd, address);
+        return Objects.hash(id, event, name, price, performanceStart, performanceEnd, locationAddress);
     }
 }

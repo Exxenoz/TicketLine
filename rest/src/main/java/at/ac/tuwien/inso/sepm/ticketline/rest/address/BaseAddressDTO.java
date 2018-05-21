@@ -2,31 +2,21 @@ package at.ac.tuwien.inso.sepm.ticketline.rest.address;
 
 import java.util.Objects;
 
-public class AddressDTO {
+public class BaseAddressDTO {
 
-    private String locationName;
     private String street;
     private String city;
     private String country;
     private String postalCode;
 
-    public AddressDTO() {
+    public BaseAddressDTO() {
     }
 
-    public AddressDTO(String locationName, String street, String city, String country, String postalCode) {
-        this.locationName = locationName;
+    public BaseAddressDTO(String street, String city, String country, String postalCode) {
         this.street = street;
         this.city = city;
         this.country = country;
         this.postalCode = postalCode;
-    }
-
-    public String getLocationName() {
-        return locationName;
-    }
-
-    public void setLocationName(String locationName) {
-        this.locationName = locationName;
     }
 
     public String getStreet() {
@@ -61,22 +51,20 @@ public class AddressDTO {
         this.postalCode = postalCode;
     }
 
-    public void update(AddressDTO addressDTO) {
-        locationName = addressDTO.locationName;
-        street = addressDTO.street;
-        postalCode = addressDTO.postalCode;
-        city = addressDTO.city;
-        country = addressDTO.country;
+    public void update(BaseAddressDTO baseAddressDTO) {
+        street = baseAddressDTO.street;
+        postalCode = baseAddressDTO.postalCode;
+        city = baseAddressDTO.city;
+        country = baseAddressDTO.country;
     }
 
     @Override
     public String toString() {
-        return "AddressDTO{" +
-            ", locationName='" + locationName + '\'' +
-            ", street='" + street + '\'' +
+        return "BaseAddressDTO{" +
+            "street='" + street + '\'' +
             ", city='" + city + '\'' +
             ", country='" + country + '\'' +
-            ", postalCode=" + postalCode +
+            ", postalCode='" + postalCode + '\'' +
             '}';
     }
 
@@ -88,9 +76,8 @@ public class AddressDTO {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        AddressDTO that = (AddressDTO) o;
+        BaseAddressDTO that = (BaseAddressDTO) o;
         return postalCode.equals(that.postalCode) &&
-            Objects.equals(locationName, that.locationName) &&
             Objects.equals(street, that.street) &&
             Objects.equals(city, that.city) &&
             Objects.equals(country, that.country);
@@ -99,6 +86,6 @@ public class AddressDTO {
     @Override
     public int hashCode() {
 
-        return Objects.hash(locationName, street, city, country, postalCode);
+        return Objects.hash(street, city, country, postalCode);
     }
 }

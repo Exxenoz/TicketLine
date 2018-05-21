@@ -64,16 +64,16 @@ public class SimplePerformanceService implements PerformanceService {
         Set<Artist> artists = new HashSet<>();
         artists.add(artist);
 
-        Address address = new Address();
-        address.setLocationName(search.getLocationName());
-        address.setStreet(search.getStreet());
-        address.setCity(search.getCity());
-        address.setCountry(search.getCountry());
-        address.setPostalCode(search.getPostalCode());
+        LocationAddress locationAddress = new LocationAddress();
+        locationAddress.setLocationName(search.getLocationName());
+        locationAddress.setStreet(search.getStreet());
+        locationAddress.setCity(search.getCity());
+        locationAddress.setCountry(search.getCountry());
+        locationAddress.setPostalCode(search.getPostalCode());
 
         event.setArtists(artists);
         performance.setEvent(event);
-        performance.setAddress(address);
+        performance.setLocationAddress(locationAddress);
 
         //adding special checks - no case sensitivity, allow searching for parts of names
         ExampleMatcher matcher = ExampleMatcher.matching()

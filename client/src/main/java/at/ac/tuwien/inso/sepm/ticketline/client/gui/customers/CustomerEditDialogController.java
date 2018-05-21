@@ -4,7 +4,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.CustomerService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
-import at.ac.tuwien.inso.sepm.ticketline.rest.address.AddressDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.address.LocationAddressDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.AddressValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.CustomerValidationException;
@@ -92,11 +92,11 @@ public class CustomerEditDialogController {
             lastNameTextfield.setText(customerToEdit.getLastName());
             telephoneNumberTextfield.setText(customerToEdit.getTelephoneNumber());
             emailTextfield.setText(customerToEdit.getEmail());
-            if (customerToEdit.getAddress() != null) {
-                streetTextfield.setText(customerToEdit.getAddress().getStreet());
-                postalCodeTextfield.setText(customerToEdit.getAddress().getPostalCode());
-                cityTextfield.setText(customerToEdit.getAddress().getCity());
-                countryTextfield.setText(customerToEdit.getAddress().getCountry());
+            if (customerToEdit.getBaseAddress() != null) {
+                streetTextfield.setText(customerToEdit.getBaseAddress().getStreet());
+                postalCodeTextfield.setText(customerToEdit.getBaseAddress().getPostalCode());
+                cityTextfield.setText(customerToEdit.getBaseAddress().getCity());
+                countryTextfield.setText(customerToEdit.getBaseAddress().getCountry());
             }
             else {
                 streetTextfield.setText("");
@@ -131,14 +131,14 @@ public class CustomerEditDialogController {
         customerDTO.setTelephoneNumber(telephoneNumberTextfield.getText());
         customerDTO.setEmail(emailTextfield.getText());
 
-        AddressDTO addressDTO = new AddressDTO();
+        LocationAddressDTO locationAddressDTO = new LocationAddressDTO();
 
-        addressDTO.setStreet(streetTextfield.getText());
-        addressDTO.setPostalCode(postalCodeTextfield.getText());
-        addressDTO.setCity(cityTextfield.getText());
-        addressDTO.setCountry(countryTextfield.getText());
+        locationAddressDTO.setStreet(streetTextfield.getText());
+        locationAddressDTO.setPostalCode(postalCodeTextfield.getText());
+        locationAddressDTO.setCity(cityTextfield.getText());
+        locationAddressDTO.setCountry(countryTextfield.getText());
 
-        customerDTO.setAddress(addressDTO);
+        customerDTO.setBaseAddress(locationAddressDTO);
 
         boolean valid = true;
 
@@ -183,7 +183,7 @@ public class CustomerEditDialogController {
         }
 
         try {
-            AddressValidator.validateStreet(addressDTO);
+            AddressValidator.validateStreet(locationAddressDTO);
             streetErrorLabel.setText("");
         }
         catch (AddressValidationException e) {
@@ -193,7 +193,7 @@ public class CustomerEditDialogController {
         }
 
         try {
-            AddressValidator.validatePostalCode(addressDTO);
+            AddressValidator.validatePostalCode(locationAddressDTO);
             postalCodeErrorLabel.setText("");
         }
         catch (AddressValidationException e) {
@@ -203,7 +203,7 @@ public class CustomerEditDialogController {
         }
 
         try {
-            AddressValidator.validateCity(addressDTO);
+            AddressValidator.validateCity(locationAddressDTO);
             cityErrorLabel.setText("");
         }
         catch (AddressValidationException e) {
@@ -213,7 +213,7 @@ public class CustomerEditDialogController {
         }
 
         try {
-            AddressValidator.validateCountry(addressDTO);
+            AddressValidator.validateCountry(locationAddressDTO);
             countryErrorLabel.setText("");
         }
         catch (AddressValidationException e) {

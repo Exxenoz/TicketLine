@@ -1,6 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.rest.customer;
 
-import at.ac.tuwien.inso.sepm.ticketline.rest.address.AddressDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.address.BaseAddressDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.address.LocationAddressDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -25,7 +26,7 @@ public class CustomerDTO {
     private String email;
 
     @ApiModelProperty(readOnly = true, name = "The address of the customer")
-    private AddressDTO address;
+    private BaseAddressDTO address;
 
     public Long getId() {
         return id;
@@ -67,11 +68,11 @@ public class CustomerDTO {
         this.telephoneNumber = telephoneNumber;
     }
 
-    public AddressDTO getAddress() {
+    public BaseAddressDTO getBaseAddress() {
         return address;
     }
 
-    public void setAddress(AddressDTO address) {
+    public void setBaseAddress(BaseAddressDTO address) {
         this.address = address;
     }
 

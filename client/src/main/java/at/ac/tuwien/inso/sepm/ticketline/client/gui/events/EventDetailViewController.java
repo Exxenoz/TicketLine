@@ -18,13 +18,10 @@ import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
-
-import static javafx.stage.Modality.WINDOW_MODAL;
 
 @Component
 public class EventDetailViewController {
@@ -114,7 +111,7 @@ public class EventDetailViewController {
     private void intializeTableView() {
         startTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPerformanceStart().toString()));
         endTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPerformanceEnd().toString()));
-        locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAddress().getCity()));
+        locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLocationAddress().getCity()));
 
         //TODO: get performances for displaying in table view (bug?)
         performanceData = FXCollections.observableArrayList(performances);
