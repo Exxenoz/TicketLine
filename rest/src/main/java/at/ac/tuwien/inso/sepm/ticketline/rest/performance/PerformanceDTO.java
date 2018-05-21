@@ -1,14 +1,11 @@
 package at.ac.tuwien.inso.sepm.ticketline.rest.performance;
 
-import at.ac.tuwien.inso.sepm.ticketline.rest.address.AddressDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.address.LocationAddressDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
-import io.swagger.annotations.ApiModelProperty;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 
 public class PerformanceDTO {
@@ -21,12 +18,12 @@ public class PerformanceDTO {
     private LocalDateTime performanceStart;
     @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime performanceEnd;
-    private AddressDTO address;
+    private LocationAddressDTO address;
 
     public PerformanceDTO() {
     }
 
-    public PerformanceDTO(EventDTO event, String name, BigDecimal price, LocalDateTime performanceStart, LocalDateTime performanceEnd, AddressDTO address) {
+    public PerformanceDTO(EventDTO event, String name, BigDecimal price, LocalDateTime performanceStart, LocalDateTime performanceEnd, LocationAddressDTO address) {
         this.event = event;
         this.name = name;
         this.price = price;
@@ -83,11 +80,11 @@ public class PerformanceDTO {
         this.performanceEnd = performanceEnd;
     }
 
-    public AddressDTO getAddress() {
+    public LocationAddressDTO getLocationAddress() {
         return address;
     }
 
-    public void setAddress(AddressDTO address) {
+    public void setLocationAddress(LocationAddressDTO address) {
         this.address = address;
     }
 

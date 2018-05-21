@@ -16,4 +16,22 @@ public interface CustomerRestClient {
      * @throws DataAccessException in case something went wrong
      */
     PageResponseDTO<CustomerDTO> findAll(PageRequestDTO pageRequestDTO) throws DataAccessException;
+
+    /**
+     * Create a customer with the specified data transfer object.
+     *
+     * @param customerDTO the customer to create
+     * @return the created customer
+     * @throws DataAccessException in case something went wrong
+     */
+    CustomerDTO create(CustomerDTO customerDTO) throws DataAccessException;
+
+    /**
+     * Update a customer with the specified data transfer object.
+     *
+     * @param customerDTO the customer to update
+     * @return the updated customer
+     * @throws DataAccessException in case something went wrong
+     */
+    CustomerDTO update(CustomerDTO customerDTO) throws DataAccessException;
 }

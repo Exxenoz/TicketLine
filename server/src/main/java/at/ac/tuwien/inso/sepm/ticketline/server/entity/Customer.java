@@ -1,7 +1,5 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
-import at.ac.tuwien.inso.sepm.ticketline.rest.address.AddressDTO;
-
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
@@ -33,8 +31,20 @@ public class Customer {
     @Size(max = 50)
     private String email;
 
-    @Column(nullable = false)
-    private Address address;
+    @Column(nullable = true)
+    private BaseAddress baseAddress;
+
+    public Customer() {
+
+    }
+
+    public Customer(@Size(min = 2, max = 50) String firstName, @Size(min = 2, max = 50) String lastName, @Size(max = 30) String telephoneNumber, @Size(max = 50) String email, BaseAddress baseAddress) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.telephoneNumber = telephoneNumber;
+        this.email = email;
+        this.baseAddress = baseAddress;
+    }
 
     public Long getId() {
         return id;
@@ -76,12 +86,12 @@ public class Customer {
         this.email = email;
     }
 
-    public Address getAddress() {
-        return address;
+    public BaseAddress getBaseAddress() {
+        return baseAddress;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setBaseAddress(BaseAddress baseAddress) {
+        this.baseAddress = baseAddress;
     }
 
     @Override
@@ -92,7 +102,7 @@ public class Customer {
             ", lastName='" + lastName + '\'' +
             ", telephoneNumber='" + telephoneNumber + '\'' +
             ", email='" + email + '\'' +
-            ", address=" + address +
+            ", baseAddress=" + baseAddress +
             '}';
     }
 
@@ -106,13 +116,13 @@ public class Customer {
             Objects.equals(lastName, customer.lastName) &&
             Objects.equals(telephoneNumber, customer.telephoneNumber) &&
             Objects.equals(email, customer.email) &&
-            Objects.equals(address, customer.address);
+            Objects.equals(baseAddress, customer.baseAddress);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, firstName, lastName, telephoneNumber, email, address);
+        return Objects.hash(id, firstName, lastName, telephoneNumber, email, baseAddress);
     }
 
     public static CustomerBuilder builder() {
@@ -125,7 +135,7 @@ public class Customer {
         private String lastName;
         private String telephoneNumber;
         private String email;
-        private Address address;
+        private BaseAddress baseAddress;
 
         public CustomerBuilder id(Long id) {
             this.id = id;
@@ -152,8 +162,8 @@ public class Customer {
             return this;
         }
 
-        public CustomerBuilder address(Address address) {
-            this.address = address;
+        public CustomerBuilder address(BaseAddress baseAddress) {
+            this.baseAddress = baseAddress;
             return this;
         }
 
@@ -164,7 +174,7 @@ public class Customer {
             user.setLastName(lastName);
             user.setTelephoneNumber(telephoneNumber);
             user.setEmail(email);
-            user.setAddress(address);
+            user.setBaseAddress(baseAddress);
             return user;
         }
     }

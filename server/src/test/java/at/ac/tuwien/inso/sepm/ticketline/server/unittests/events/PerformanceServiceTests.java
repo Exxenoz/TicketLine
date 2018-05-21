@@ -1,20 +1,19 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.unittests.events;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Address;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.BaseAddress;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.LocationAddress;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.PerformanceService;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
@@ -44,7 +43,7 @@ public class PerformanceServiceTests {
             dataLoaded = true;
             //Setup some performances
             //First performance
-            Address address = new Address("Staatsoper",
+            LocationAddress locationAddress = new LocationAddress("Staatsoper",
                 "Herbert-Karajan-Platz",
                 "Vienna",
                 "Austria",
@@ -55,12 +54,12 @@ public class PerformanceServiceTests {
                 new BigDecimal(20),
                 LocalDateTime.now().plusDays(5),
                 LocalDateTime.now().plusDays(5).plusHours(2),
-                address
+                locationAddress
             );
             repository.save(p);
 
             //Second performance
-            address = new Address("Konzerthaus",
+            locationAddress = new LocationAddress("Konzerthaus",
                 "Ring",
                 "Vienna",
                 "Austria",
@@ -70,12 +69,12 @@ public class PerformanceServiceTests {
                 new BigDecimal(20),
                 LocalDateTime.now().plusDays(20),
                 LocalDateTime.now().plusDays(20).plusHours(3),
-                address
+                locationAddress
             );
             repository.save(p);
 
             //Third performance
-            address = new Address("Konzerthaus",
+            locationAddress = new LocationAddress("Konzerthaus",
                 "Ring",
                 "Vienna",
                 "Austria",
@@ -85,7 +84,7 @@ public class PerformanceServiceTests {
                 new BigDecimal(20),
                 LocalDateTime.now().plusDays(10),
                 LocalDateTime.now().plusDays(10).plusHours(2),
-                address
+                locationAddress
             );
             repository.save(p);
         }
@@ -110,7 +109,7 @@ public class PerformanceServiceTests {
         Assert.assertTrue(performances.size() == 3);
 
         for(Performance p: performances) {
-            Assert.assertTrue(p.getAddress().getCity().equals("Vienna"));
+            Assert.assertTrue(p.getLocationAddress().getCity().equals("Vienna"));
         }
     }
 

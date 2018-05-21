@@ -1,7 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.datagenerator;
 
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Address;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Event;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.LocationAddress;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.EventRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
@@ -49,7 +49,7 @@ public class PerformanceDataGenerator implements DataGenerator {
             for (int i = 0; i < NUMBER_OF_PERFORMANCES_TO_GENERATE; i++) {
 
                 final List<Event> events = eventRepository.findAll();
-                final var address = new Address(faker.lordOfTheRings().location(), faker.address().streetName(), faker.address().city(), faker.address().country(), faker.address().zipCode());
+                final var address = new LocationAddress(faker.lordOfTheRings().location(), faker.address().streetName(), faker.address().city(), faker.address().country(), faker.address().zipCode());
 
                 BigDecimal price = new BigDecimal(2.2);
                 LocalDateTime startTime = LocalDateTime.ofInstant(faker.date().between(Date.from(now().toInstant(ZoneOffset.UTC)), Date.from(now().plusYears(5).toInstant(ZoneOffset.UTC))).toInstant(), ZoneId.of("UTC"));
