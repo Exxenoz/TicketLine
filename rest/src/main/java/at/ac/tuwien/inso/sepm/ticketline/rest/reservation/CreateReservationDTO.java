@@ -34,4 +34,12 @@ public class CreateReservationDTO {
     public void setPaid(boolean paid) {
         this.paid = paid;
     }
+
+    public long getCustomerID() {
+        return customerID;
+    }
+
+    public void setCustomerID(long customerID) {
+        this.customerID = customerID;
+    }
 }

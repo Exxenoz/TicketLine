@@ -8,11 +8,10 @@ import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import java.util.List;
+
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
-import static java.util.stream.Collectors.toList;
 
 
 @Component
