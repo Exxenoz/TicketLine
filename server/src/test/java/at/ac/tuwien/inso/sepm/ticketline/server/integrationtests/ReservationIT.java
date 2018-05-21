@@ -12,6 +12,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.repository.SeatRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -39,6 +40,46 @@ public class ReservationIT extends BaseIT {
     private ReservationMapper reservationMapper;
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Test
+    public void purchaseReservationAsUser() {
+        /*ReservationDTO reservationDTO = reservationMapper.reservationToReservationDTO(
+            reservationRepository.findByPaidFalseAndId(RESERVATION_PURCHASE_TEST_ID)
+        );*/
+
+        Performance performance = performanceRepository.save(newPerformance());
+        Seat seat = seatRepository.save(newSeat());
+        Customer customer = customerRepository.save(newCustomer());
+        performanceRepository.flush();
+        seatRepository.flush();
+        customerRepository.flush();
+
+        CreateReservationDTO createReservationDTO = new CreateReservationDTO();
+        createReservationDTO.setSeatIDs(singletonList(seat.getId()));
+        createReservationDTO.setPerformanceID(performance.getId());
+        createReservationDTO.setCustomerID(customer.getId());
+        createReservationDTO.setPaid(false);
+
+        Reservation reservation = reservationMapper.createReservationDTOToReservation(createReservationDTO);
+        reservation = reservationRepository.save(reservation);
+
+        reservationRepository.findByPaidFalseAndId(reservation.getId());
+
+        ReservationDTO reservationDTO = reservationMapper.reservationToReservationDTO(reservation);
+        Assert.assertNotNull(reservationDTO);
+
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .body(reservationDTO)
+            .when().post(RESERVATION_ENDPOINT + "/purchase")
+            .then().extract().response();
+        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+        var result = response.getBody().as(ReservationDTO.class);
+        Assert.assertEquals(true, result.isPaid());
+    }
+
 
     @Test
     @Transactional

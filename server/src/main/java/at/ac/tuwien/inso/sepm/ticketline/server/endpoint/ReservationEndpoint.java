@@ -6,7 +6,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationFilterTopTen;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapperImpl;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationFilterTopTenMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
@@ -25,12 +25,12 @@ public class ReservationEndpoint {
     private final ReservationService reservationService;
     private final ReservationMapper reservationMapper;
     private final ReservationFilterTopTenMapper reservationFilterTopTenMapper;
-    private final CustomerMapperImpl customerMapper;
+    private final CustomerMapper customerMapper;
 
     public ReservationEndpoint(ReservationService reservationService,
                                ReservationMapper reservationMapper,
                                ReservationFilterTopTenMapper reservationFilterTopTenMapper,
-                               CustomerMapperImpl customerMapper
+                               CustomerMapper customerMapper
     ) {
         this.reservationService = reservationService;
         this.reservationMapper = reservationMapper;
