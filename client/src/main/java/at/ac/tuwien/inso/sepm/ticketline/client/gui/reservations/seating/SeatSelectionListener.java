@@ -1,4 +1,4 @@
-package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating;
+package at.ac.tuwien.inso.sepm.ticketline.client.gui.reservations.seating;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 

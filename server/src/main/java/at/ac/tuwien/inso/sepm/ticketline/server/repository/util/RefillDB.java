@@ -28,18 +28,18 @@ public class RefillDB {
         SectorRepository sectorRepository = context.getBean(SectorRepository.class);
         UserRepository usersRepository = context.getBean(UserRepository.class);
 
-        //conditional beans => not in context
-        List<DataGenerator> generators = List.of(
-            new SectorCategoryDataGenerator(sectorCategoryRepository),
-            new SectorDataGenerator(sectorRepository, sectorCategoryRepository),
-            new SeatDataGenerator(seatRepository, sectorRepository),
-            new ArtistDataGenerator(artistRepository),
-            new EventDataGenerator(eventRepository, artistRepository),
-            new PerformanceDataGenerator(performanceRepository, eventRepository),
-            new NewsDataGenerator(newsRepository),
-            new ReservationDataGenerator(reservationRepository, seatRepository, performanceRepository)
-        );
-        CompositeDataGenerator compositeDataGenerator = new CompositeDataGenerator(generators);
+//        //conditional beans => not in context
+//        List<DataGenerator> generators = List.of(
+//            new SectorCategoryDataGenerator(sectorCategoryRepository),
+//            new SectorDataGenerator(sectorRepository, sectorCategoryRepository),
+//            new SeatDataGenerator(seatRepository, sectorRepository),
+//            new ArtistDataGenerator(artistRepository),
+//            new EventDataGenerator(eventRepository, artistRepository),
+//            new PerformanceDataGenerator(performanceRepository, eventRepository),
+//            new NewsDataGenerator(newsRepository),
+//            new ReservationDataGenerator(reservationRepository, seatRepository, performanceRepository)
+//        );
+//        CompositeDataGenerator compositeDataGenerator = new CompositeDataGenerator(generators);
 
         reservationRepository.deleteAll();
         seatRepository.deleteAll();
@@ -52,7 +52,7 @@ public class RefillDB {
         usersRepository.deleteAll();
 
         //CompositeDataGenerator
-        compositeDataGenerator.generate();
+//        compositeDataGenerator.generate();
         System.exit(0);
     }
 }
