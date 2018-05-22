@@ -26,6 +26,7 @@ public abstract class BaseIT {
     private static final String ADMIN_USERNAME = "admin";
     private static final String ADMIN_PASSWORD = "password";
 
+
     @Value("${server.servlet.context-path:/}")
     private String contextPath;
 

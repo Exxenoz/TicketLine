@@ -62,8 +62,8 @@ public class SimpleReservationService implements ReservationService {
     @Override
     public Reservation purchaseReservation(Reservation reservation) {
         reservation.setPaid(true);
-        reservation = reservationRepository.save(reservation);
-        return reservation;
+        reservation.setPaidAt(LocalDateTime.now());
+        return reservationRepository.save(reservation);
     }
 
     @Override
