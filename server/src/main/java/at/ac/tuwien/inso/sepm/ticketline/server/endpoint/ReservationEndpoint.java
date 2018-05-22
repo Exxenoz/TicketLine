@@ -4,7 +4,6 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationFilterTopTen;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationFilterTopTenMapper;
@@ -61,7 +60,7 @@ public class ReservationEndpoint {
     @PostMapping("/create")
     @ApiOperation("Create a new Reservation for Seats in a Performance")
     @Transactional
-    public ReservationDTO createNewReservation(CreateReservationDTO createReservationDTO) {
+    public ReservationDTO createNewReservation(@RequestBody CreateReservationDTO createReservationDTO) {
         final var reservationToCreate = reservationMapper.createReservationDTOToReservation(createReservationDTO);
         final var createdReservation = reservationService.createReservation(reservationToCreate);
         return reservationMapper.reservationToReservationDTO(createdReservation);
@@ -86,15 +85,16 @@ public class ReservationEndpoint {
     @PostMapping("/purchase")
     @ApiOperation("Purchases the given Reservation")
     @Transactional
-    public ReservationDTO purchaseReservation(Reservation reservation) {
-        reservation = reservationService.purchaseReservation(reservation);
+    public ReservationDTO purchaseReservation(@RequestBody ReservationDTO reservationDTO) {
+        var reservation = reservationService.purchaseReservation(reservationMapper.reservationDTOToReservation(reservationDTO));
         return reservationMapper.reservationToReservationDTO(reservation);
     }
 
     @PostMapping("/delete")
     @ApiOperation("Delete given Reservation")
     @Transactional
-    public void deleteReservation(Reservation reservation) {
+    public void deleteReservation(@RequestBody ReservationDTO reservationDTO) {
+        var reservation = reservationMapper.reservationDTOToReservation(reservationDTO);
         reservationService.deleteReservation(reservation);
     }
 }

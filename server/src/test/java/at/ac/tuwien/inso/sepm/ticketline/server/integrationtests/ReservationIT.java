@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.integrationtests;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.integrationtests.base.BaseIT;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.CustomerRepository;
@@ -20,6 +21,7 @@ import org.springframework.http.HttpStatus;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static java.math.BigDecimal.ONE;
 import static java.util.Collections.singletonList;
@@ -40,13 +42,12 @@ public class ReservationIT extends BaseIT {
     private ReservationMapper reservationMapper;
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private CustomerMapper customerMapper;
+
 
     @Test
     public void purchaseReservationAsUser() {
-        /*ReservationDTO reservationDTO = reservationMapper.reservationToReservationDTO(
-            reservationRepository.findByPaidFalseAndId(RESERVATION_PURCHASE_TEST_ID)
-        );*/
-
         Performance performance = performanceRepository.save(newPerformance());
         Seat seat = seatRepository.save(newSeat());
         Customer customer = customerRepository.save(newCustomer());
@@ -54,19 +55,20 @@ public class ReservationIT extends BaseIT {
         seatRepository.flush();
         customerRepository.flush();
 
-        CreateReservationDTO createReservationDTO = new CreateReservationDTO();
-        createReservationDTO.setSeatIDs(singletonList(seat.getId()));
-        createReservationDTO.setPerformanceID(performance.getId());
-        createReservationDTO.setCustomerID(customer.getId());
-        createReservationDTO.setPaid(false);
+        var reservation = Reservation.Builder.aReservation()
+            .withCustomer(customer)
+            .withPerformance(performance)
+            .withSeats(singletonList(seat))
+            .withPaid(false)
+            .build();
 
-        Reservation reservation = reservationMapper.createReservationDTOToReservation(createReservationDTO);
         reservation = reservationRepository.save(reservation);
 
         reservationRepository.findByPaidFalseAndId(reservation.getId());
 
         ReservationDTO reservationDTO = reservationMapper.reservationToReservationDTO(reservation);
         Assert.assertNotNull(reservationDTO);
+        Assert.assertNull(reservationDTO.getPaidAt());
 
         Response response = RestAssured
             .given()
@@ -77,7 +79,9 @@ public class ReservationIT extends BaseIT {
             .then().extract().response();
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         var result = response.getBody().as(ReservationDTO.class);
+        Assert.assertNotNull(result.getId());
         Assert.assertEquals(true, result.isPaid());
+        Assert.assertNotNull(result.getPaidAt());
     }
 
 
@@ -102,20 +106,18 @@ public class ReservationIT extends BaseIT {
         Reservation save = reservationRepository.save(reservation);
         reservationRepository.flush();
 
-        Reservation save2 = reservationRepository.findById(reservation.getId()).orElse(null);
+        Reservation save2 = reservationRepository.findById(reservation.getId()).get();
 
         System.out.println(save);
         System.out.println(save2);
-
         // WHEN
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .body(createReservationDTO)
-            .when().post(RESERVATION_ENDPOINT)
+            .body(CreateReservationDTO.CreateReservationDTOBuilder.aCreateReservationDTO().withCustomerID(1).withPaid(false).withPerformanceID(2).withSeatIDs(List.of(2L, 3L, 4L)).build())
+            .when().post(RESERVATION_ENDPOINT + "/create")
             .then().extract().response();
-
         // THEN
         assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         ReservationDTO reservationDTO = response.as(ReservationDTO.class);

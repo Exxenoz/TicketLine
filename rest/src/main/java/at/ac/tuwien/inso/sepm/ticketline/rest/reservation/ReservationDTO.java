@@ -1,8 +1,8 @@
 package at.ac.tuwien.inso.sepm.ticketline.rest.reservation;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -100,5 +100,74 @@ public class ReservationDTO {
     public int hashCode() {
 
         return Objects.hash(id, performance, seats, isPaid, paidAt);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public CustomerDTO getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(CustomerDTO customer) {
+        this.customer = customer;
+    }
+
+    public static final class Builder {
+        private Long id;
+        private CustomerDTO customer;
+        private PerformanceDTO performance;
+        private List<SeatDTO> seats;
+        private Boolean isPaid;
+        private LocalDateTime paidAt;
+
+        private Builder() {
+        }
+
+        public static Builder aReservationDTO() {
+            return new Builder();
+        }
+
+        public Builder withId(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder withCustomer(CustomerDTO customer) {
+            this.customer = customer;
+            return this;
+        }
+
+        public Builder withPerformance(PerformanceDTO performance) {
+            this.performance = performance;
+            return this;
+        }
+
+        public Builder withSeats(List<SeatDTO> seats) {
+            this.seats = seats;
+            return this;
+        }
+
+        public Builder withIsPaid(Boolean isPaid) {
+            this.isPaid = isPaid;
+            return this;
+        }
+
+        public Builder withPaidAt(LocalDateTime paidAt) {
+            this.paidAt = paidAt;
+            return this;
+        }
+
+        public ReservationDTO build() {
+            ReservationDTO reservationDTO = new ReservationDTO();
+            reservationDTO.setId(id);
+            reservationDTO.setPerformance(performance);
+            reservationDTO.setSeats(seats);
+            reservationDTO.setPaidAt(paidAt);
+            reservationDTO.customer = this.customer;
+            reservationDTO.isPaid = this.isPaid;
+            return reservationDTO;
+        }
     }
 }
