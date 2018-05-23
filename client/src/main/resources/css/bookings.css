@@ -1,0 +1,7 @@
+.hover {
+    -fx-background-color: #79a342;
+}
+
+.mouse-down {
+    -fx-background-color: #bece31;
+}

@@ -1,28 +1,26 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.EventService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
-import at.ac.tuwien.inso.sepm.ticketline.rest.artist.ArtistDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,19 +58,28 @@ public class EventDetailViewController {
 
     private List<PerformanceDTO> performances;
 
-    private EventDTO event;
-
     private ObservableList<PerformanceDTO> performanceData = FXCollections.observableArrayList();
 
     private final SpringFxmlLoader fxmlLoader;
+    private final PerformanceDetailViewController performanceDetailViewController;
+    private final EventService eventService;
     private Stage stage;
 
+    private PerformanceDTO chosenPerformance;
+
     public EventDetailViewController(
-        SpringFxmlLoader fxmlLoader
+        SpringFxmlLoader fxmlLoader,
+
+        @Lazy
+            PerformanceDetailViewController performanceDetailViewController,
+        EventService eventService
     ) {
         this.fxmlLoader = fxmlLoader;
+        this.performanceDetailViewController = performanceDetailViewController;
+        this.eventService = eventService;
     }
 
+    public Button performanceButtonEvent;
     @FXML
     private Button bookButtonEvent;
 
@@ -83,40 +90,43 @@ public class EventDetailViewController {
     }
 
     @FXML
-    private void changeToPerformanceDetailView() {
-        // TODO change to selected performance
-        // performanceDetailViewController.fill(, stage);
-        Parent parent = fxmlLoader.load("/fxml/bookings/performanceDetailView.fxml");
+    public void changeToPerformanceDetailView(ActionEvent event) {
+
+        if (chosenPerformance == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("You need to choose a specific performance.");
+            alert.showAndWait();
+            return;
+        }
+
+        performanceDetailViewController.fill(chosenPerformance, stage);
+        Parent parent = fxmlLoader.load("/fxml/events/performanceDetailView.fxml");
         stage.setScene(new Scene(parent));
-        stage.setTitle("Event Details");
+        stage.setTitle("Performance Details");
+        stage.centerOnScreen();
+    }
+
+    public void backButton(ActionEvent event) {
+        Stage stage = (Stage) eventHeading.getScene().getWindow();
+        stage.close();
     }
 
     public void fill(PerformanceService performanceService, EventDTO event, Stage stage) throws DataAccessException {
-        this.event = event;
         this.stage = stage;
         eventHeading.setText(event.getName());
         eventNameEvent.setText(event.getName());
 
-        //TODO: finish this
         //find all performances for the given event
         List<PerformanceDTO> performancesOfEvent = performanceService.findByEventID(event.getId());
 
-        //create a list of all artists that take part of this event - every performance might have different artists
-        List<ArtistDTO> allArtists = new ArrayList<>();
+        final var artistString = performancesOfEvent.stream()
+            .flatMap(performance -> performance.getArtists().stream())
+            .map(artist -> artist.getFirstName() + " " + artist.getLastName())
+            .distinct()
+            .collect(Collectors.joining(", "));
 
-        for(PerformanceDTO p: performancesOfEvent){
-            allArtists.addAll(p.getArtists());
-        }
-
-        //make sure it is a list of distinct values
-        List<String> uniqueArtistList = new ArrayList<>();
-        for(ArtistDTO a: allArtists){
-            if(!uniqueArtistList.contains(a.getFirstName())){
-                uniqueArtistList.add(a.getFirstName() + " " + a.getLastName() + ", ");
-            }
-        }
-
-        artistNameEvent.setText(uniqueArtistList.toString());
+        artistNameEvent.setText(artistString);
         descriptionEvent.setText(event.getDescription());
         if (event.getEventType().toString().equals("SEATS")) {
             eventTypeEvent.setText("yes");
@@ -137,6 +147,12 @@ public class EventDetailViewController {
         locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAddress().getCity()));
         performanceData = FXCollections.observableArrayList(performances);
         performanceDatesTableView.setItems(performanceData);
+
+        performanceDatesTableView.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+            if (newValue != null) {
+                chosenPerformance = newValue;
+            }
+        });
     }
 
 }

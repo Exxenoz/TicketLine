@@ -2,7 +2,6 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
-import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking.PerformanceDetailViewController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
@@ -203,7 +202,7 @@ public class EventSearchController {
         int row = foundEventsTableView.getSelectionModel().getFocusedIndex();
         performanceDetailViewController.fill(performances.get(row), stage);
 
-        final var parent = fxmlLoader.<Parent>load("/fxml/bookings/performanceDetailView.fxml");
+        final var parent = fxmlLoader.<Parent>load("/fxml/events/performanceDetailView.fxml");
 
         stage.setScene(new Scene(parent));
         stage.setTitle("Performance Details");
