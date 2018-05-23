@@ -43,20 +43,19 @@ public class Performance {
     private LocalDateTime performanceEnd;
 
     @Column(nullable = false)
-    @NotNull
-    private Address address;
+    private LocationAddress locationAddress;
 
     public Performance() {
     }
 
-    public Performance(Event event, Set<Artist> artists, @Size(max = 100) String name, BigDecimal price, LocalDateTime performanceStart, LocalDateTime performanceEnd, Address address) {
+    public Performance(Event event, Set<Artist> artists, @Size(max = 100) String name, BigDecimal price, LocalDateTime performanceStart, LocalDateTime performanceEnd, LocationAddress locationAddress) {
         this.event = event;
         this.artists = artists;
         this.name = name;
         this.price = price;
         this.performanceStart = performanceStart;
         this.performanceEnd = performanceEnd;
-        this.address = address;
+        this.locationAddress = locationAddress;
     }
 
     public Set<Artist> getArtists() {
@@ -67,12 +66,12 @@ public class Performance {
         this.artists = artists;
     }
 
-    public Address getAddress() {
-        return address;
+    public LocationAddress getLocationAddress() {
+        return locationAddress;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setLocationAddress(LocationAddress locationAddress) {
+        this.locationAddress = locationAddress;
     }
 
     public Long getId() {

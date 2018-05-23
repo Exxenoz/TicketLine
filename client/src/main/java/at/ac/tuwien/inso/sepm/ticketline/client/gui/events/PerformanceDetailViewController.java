@@ -62,7 +62,7 @@ public class PerformanceDetailViewController {
     @FXML
     private void initialize() {
         performanceHeader.setText(performance.getEvent().getName());
-        locationName.setText(performance.getAddress().getLocationName() + ", " + performance.getAddress().getCity());
+        locationName.setText(performance.getLocationAddress().getLocationName() + ", " + performance.getLocationAddress().getCity());
         startTime.setText(performance.getPerformanceStart().toString());
 
         String artistList = performance.getArtists()

@@ -37,7 +37,7 @@ public class CustomerDataGenerator implements DataGenerator {
                     .lastName(faker.name().lastName())
                     .telephoneNumber(faker.phoneNumber().phoneNumber())
                     .email(faker.internet().emailAddress())
-                    .address(new Address(faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(4, 5)))
+                    .address(new BaseAddress(faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(4, 5)))
                     .build();
 
                 LOGGER.debug("saving customer {}", customer);

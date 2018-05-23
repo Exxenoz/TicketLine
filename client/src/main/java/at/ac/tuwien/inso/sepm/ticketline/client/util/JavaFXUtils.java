@@ -11,6 +11,7 @@ import java.io.StringWriter;
 
 import static java.lang.Double.MAX_VALUE;
 import static javafx.scene.control.Alert.AlertType.ERROR;
+import static javafx.scene.control.Alert.AlertType.INFORMATION;
 import static javafx.scene.layout.Priority.ALWAYS;
 import static javafx.stage.Modality.WINDOW_MODAL;
 
@@ -72,13 +73,54 @@ public class JavaFXUtils {
      * @return the dialog which shows the error
      */
     public static Alert createErrorDialog(String contentText, Window parentWindow) {
+        return createErrorDialog(
+            BundleManager.getExceptionBundle().getString("error"),
+            BundleManager.getExceptionBundle().getString("exception.internal"),
+            contentText,
+            parentWindow
+        );
+    }
+
+    /**
+     * Creates a standard error dialog.
+     *
+     * @param title of the error dialog
+     * @param headerText of the error dialog
+     * @param contentText  of the error dialog
+     * @param parentWindow or null if not modal
+     * @return the dialog which shows the error
+     */
+    public static Alert createErrorDialog(String title, String headerText, String contentText, Window parentWindow) {
         Alert alert = new Alert(ERROR);
         if (parentWindow != null) {
             alert.initOwner(parentWindow);
             alert.initModality(WINDOW_MODAL);
         }
-        alert.setTitle(BundleManager.getExceptionBundle().getString("error"));
-        alert.setHeaderText(BundleManager.getExceptionBundle().getString("exception.internal"));
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(contentText);
+        alert.setHeight(300);
+        alert.setWidth(400);
+        return alert;
+    }
+
+    /**
+     * Creates a standard information dialog.
+     *
+     * @param title of the information dialog
+     * @param headerText of the information dialog
+     * @param contentText  of the information dialog
+     * @param parentWindow or null if not modal
+     * @return the dialog which shows the information
+     */
+    public static Alert createInformationDialog(String title, String headerText, String contentText, Window parentWindow) {
+        Alert alert = new Alert(INFORMATION);
+        if (parentWindow != null) {
+            alert.initOwner(parentWindow);
+            alert.initModality(WINDOW_MODAL);
+        }
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
         alert.setContentText(contentText);
         alert.setHeight(300);
         alert.setWidth(400);

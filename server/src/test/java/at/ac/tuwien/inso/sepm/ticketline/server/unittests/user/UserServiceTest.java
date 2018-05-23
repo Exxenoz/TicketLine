@@ -36,8 +36,8 @@ import java.util.ArrayList;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("integration-test")
-public class UserTest {
+@ActiveProfiles("unit-test")
+public class UserServiceTest {
     private static final String TEST_USERNAME = "test";
     private static final String TEST_PASSWORD = "test";
 
