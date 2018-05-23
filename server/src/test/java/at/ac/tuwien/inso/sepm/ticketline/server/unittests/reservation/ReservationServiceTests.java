@@ -85,7 +85,6 @@ public class ReservationServiceTests {
     }
 
     @Test
-    @Transactional
     public void deleteReservationWithCustomer() {
         var customer = customerService.findOneById(CUSTOMER_TEST_ID);
         var reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
@@ -99,7 +98,6 @@ public class ReservationServiceTests {
     }
 
     @Test
-    @Transactional
     public void purchaseReservationWithCostumer() {
         var customer = customerService.findOneById(CUSTOMER_TEST_ID);
         var reservations = reservationService.findAllByPaidFalseByCustomerName(customer);

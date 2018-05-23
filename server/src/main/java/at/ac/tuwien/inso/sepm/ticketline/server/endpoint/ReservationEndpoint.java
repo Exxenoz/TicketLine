@@ -8,12 +8,12 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationFilterTopTen;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationFilterTopTenMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationMapper;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @RestController
@@ -57,10 +57,9 @@ public class ReservationEndpoint {
         return reservationService.getPaidReservationCountByFilter(reservationFilterTopTen);
     }
 
-    @PostMapping("/create")
+    @PostMapping
     @ApiOperation("Create a new Reservation for Seats in a Performance")
-    @Transactional
-    public ReservationDTO createNewReservation(@RequestBody CreateReservationDTO createReservationDTO) {
+    public ReservationDTO createNewReservation(@RequestBody CreateReservationDTO createReservationDTO) throws InvalidReservationException {
         final var reservationToCreate = reservationMapper.createReservationDTOToReservation(createReservationDTO);
         final var createdReservation = reservationService.createReservation(reservationToCreate);
         return reservationMapper.reservationToReservationDTO(createdReservation);
@@ -68,7 +67,6 @@ public class ReservationEndpoint {
 
     @GetMapping("/find/{reservationId}")
     @ApiOperation("Finds a Reservation which wasn't purchased yet with the given id")
-    @Transactional
     public ReservationDTO findOneByPaidFalseById(@PathVariable Long reservationId) {
         final var reservation = reservationService.findOneByPaidFalseById(reservationId);
         return reservationMapper.reservationToReservationDTO(reservation);
@@ -84,7 +82,6 @@ public class ReservationEndpoint {
 
     @PostMapping("/purchase")
     @ApiOperation("Purchases the given Reservation")
-    @Transactional
     public ReservationDTO purchaseReservation(@RequestBody ReservationDTO reservationDTO) {
         var reservation = reservationService.purchaseReservation(reservationMapper.reservationDTOToReservation(reservationDTO));
         return reservationMapper.reservationToReservationDTO(reservation);
@@ -92,7 +89,6 @@ public class ReservationEndpoint {
 
     @PostMapping("/delete")
     @ApiOperation("Delete given Reservation")
-    @Transactional
     public void deleteReservation(@RequestBody ReservationDTO reservationDTO) {
         var reservation = reservationMapper.reservationDTOToReservation(reservationDTO);
         reservationService.deleteReservation(reservation);

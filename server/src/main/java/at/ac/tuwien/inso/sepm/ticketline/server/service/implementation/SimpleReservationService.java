@@ -1,9 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Customer;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationFilterTopTen;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Seat;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.SeatRepository;
@@ -71,17 +69,34 @@ public class SimpleReservationService implements ReservationService {
         reservationRepository.delete(reservation);
     }
 
+    private void checkIfAllSeatsAreFree(List<Seat> seatsToCheck) throws InvalidReservationException {
+        List<Reservation> allReservations = reservationRepository.findAll();
+        for (Reservation reservation : allReservations) {
+            for (Seat seat : seatsToCheck) {
+                if (reservation.getSeats().contains(seat)) {
+                    throw new InvalidReservationException("Seats are already reserved!");
+                }
+            }
+        }
+    }
+
     @Override
-    public Reservation createReservation(Reservation reservation) {
+    public Reservation createReservation(Reservation reservation) throws InvalidReservationException {
         List<Long> seatIDs = new LinkedList<>();
         for (Seat seat: reservation.getSeats()) {
             seatIDs.add(seat.getId());
         }
 
         List<Seat> seatsForReservation = seatRepository.findAllById(seatIDs);
+        checkIfAllSeatsAreFree(seatsForReservation);
+
+        Performance currentPerformance = repo.findById(reservation.getPerformance().getId()).get();
+
 
         Reservation createdReservation = reservationRepository.save(reservation);
+
         createdReservation.setSeats(seatsForReservation);
+        createdReservation.setPerformance(currentPerformance);
 
         return createdReservation;
     }
