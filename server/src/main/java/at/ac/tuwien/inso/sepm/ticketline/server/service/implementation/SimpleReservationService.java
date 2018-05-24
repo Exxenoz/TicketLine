@@ -69,6 +69,11 @@ public class SimpleReservationService implements ReservationService {
         reservationRepository.delete(reservation);
     }
 
+    @Override
+    public Reservation editReservation(Reservation reservation) {
+        return null;
+    }
+
     private void checkIfAllSeatsAreFree(List<Seat> seatsToCheck) throws InvalidReservationException {
         List<Reservation> allReservations = reservationRepository.findAll();
         for (Reservation reservation : allReservations) {

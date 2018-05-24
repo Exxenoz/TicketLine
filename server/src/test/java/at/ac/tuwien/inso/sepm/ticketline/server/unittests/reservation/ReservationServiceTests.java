@@ -20,6 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
+import java.util.List;
 
 import static java.math.BigDecimal.ONE;
 
@@ -65,6 +66,27 @@ public class ReservationServiceTests {
 
 
     @Test
+    @Transactional
+    public void removeSeatFromReservation() {
+        var reservation = reservationService.findOneByPaidFalseById(RESERVATION_TEST_ID);
+        Assert.assertNotNull(reservation);
+        Assert.assertEquals(false, reservation.isPaid());
+
+        List<Seat> seats = reservation.getSeats();
+        Assert.assertEquals(1, seats.size());
+        Seat seat = seats.get(0);
+        seats.remove(seat);
+
+        reservation.setSeats(seats);
+        reservation = reservationService.editReservation(reservation);
+
+        Assert.assertNotNull(reservation);
+        seats = reservation.getSeats();
+        Assert.assertEquals(0, seats.size());
+
+    }
+
+    @Test
     public void purchaseReservationWithId() {
         var reservation = reservationService.findOneByPaidFalseById(RESERVATION_TEST_ID);
         Assert.assertNotNull(reservation);
@@ -85,6 +107,7 @@ public class ReservationServiceTests {
     }
 
     @Test
+    @Transactional
     public void deleteReservationWithCustomer() {
         var customer = customerService.findOneById(CUSTOMER_TEST_ID);
         var reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
@@ -98,6 +121,7 @@ public class ReservationServiceTests {
     }
 
     @Test
+    @Transactional
     public void purchaseReservationWithCostumer() {
         var customer = customerService.findOneById(CUSTOMER_TEST_ID);
         var reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
@@ -107,6 +131,21 @@ public class ReservationServiceTests {
 
         reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
         Assert.assertEquals(0, reservations.size());
+    }
+
+    @Test
+    @Transactional
+    public void findReservationWithCustomer() {
+        var customer = customerService.findOneById(CUSTOMER_TEST_ID);
+        var reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
+
+        Assert.assertEquals(1, reservations.size());
+        var reservation = reservations.get(0);
+        var actualCustomer = reservation.getCustomer();
+        var actualReservationId = reservation.getId();
+        Assert.assertSame(customer, actualCustomer);
+        Assert.assertEquals(RESERVATION_TEST_ID, actualReservationId);
+
     }
 
     private Performance newPerformance() {

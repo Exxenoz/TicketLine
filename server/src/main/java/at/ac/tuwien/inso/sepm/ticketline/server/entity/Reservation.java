@@ -22,7 +22,7 @@ public class Reservation {
     @ManyToOne
     private Performance performance;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Seat> seats;
 
     @Column(nullable = false)

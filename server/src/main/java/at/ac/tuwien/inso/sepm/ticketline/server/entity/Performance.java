@@ -22,7 +22,7 @@ public class Performance {
     @ManyToOne
     private Event event;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Artist> artists = new HashSet<>();
 
     @Column(nullable = false)

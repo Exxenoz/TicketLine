@@ -42,4 +42,6 @@ public interface ReservationService {
     Reservation purchaseReservation(Reservation reservation);
 
     void deleteReservation(Reservation reservation);
+
+    Reservation editReservation(Reservation reservation);
 }

@@ -83,7 +83,18 @@ public class ReservationEndpoint {
     @PostMapping("/purchase")
     @ApiOperation("Purchases the given Reservation")
     public ReservationDTO purchaseReservation(@RequestBody ReservationDTO reservationDTO) {
-        var reservation = reservationService.purchaseReservation(reservationMapper.reservationDTOToReservation(reservationDTO));
+        var reservation = reservationService.purchaseReservation(
+            reservationMapper.reservationDTOToReservation(reservationDTO)
+        );
+        return reservationMapper.reservationToReservationDTO(reservation);
+    }
+
+    @PostMapping("/edit")
+    @ApiOperation("Edit an existing Reservation")
+    public ReservationDTO editReservation(@RequestBody ReservationDTO reservationDTO) {
+        var reservation = reservationService.editReservation(
+            reservationMapper.reservationDTOToReservation(reservationDTO)
+        );
         return reservationMapper.reservationToReservationDTO(reservation);
     }
 

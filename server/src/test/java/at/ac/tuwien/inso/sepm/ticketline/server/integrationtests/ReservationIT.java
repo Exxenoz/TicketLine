@@ -6,14 +6,12 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.integrationtests.base.BaseIT;
-import at.ac.tuwien.inso.sepm.ticketline.server.repository.CustomerRepository;
-import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
-import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
-import at.ac.tuwien.inso.sepm.ticketline.server.repository.SeatRepository;
+import at.ac.tuwien.inso.sepm.ticketline.server.repository.*;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -22,16 +20,17 @@ import org.springframework.http.HttpStatus;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
-
-import static java.util.Collections.singletonList;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class ReservationIT extends BaseIT {
 
     private static final String RESERVATION_ENDPOINT = "/reservation";
+    private static Long RESERVATION_TEST_ID = 1L;
 
     @Autowired
     private PerformanceRepository performanceRepository;
@@ -45,27 +44,42 @@ public class ReservationIT extends BaseIT {
     private CustomerRepository customerRepository;
     @Autowired
     private CustomerMapper customerMapper;
+    @Autowired
+    private ArtistRepository artistRepository;
 
 
-    @Test
-    public void purchaseReservationAsUser() {
-        Performance performance = performanceRepository.save(newPerformance());
+    @Before
+    public void setUp() {
+        Artist artist = Artist.Builder.anArtist()
+            .withFirstName("artFirstName")
+            .withLastName("artLastName")
+            .build();
+        artist = artistRepository.save(artist);
+        var artists = new HashSet<Artist>();
+        artists.add(artist);
+        Performance performance = newPerformance();
+        performance.setArtists(artists);
+        performance = performanceRepository.save(performance);
         Seat seat = seatRepository.save(newSeat());
         Customer customer = customerRepository.save(newCustomer());
-        performanceRepository.flush();
-        seatRepository.flush();
-        customerRepository.flush();
 
+        var seats = new LinkedList<Seat>();
+        seats.add(seat);
         var reservation = Reservation.Builder.aReservation()
             .withCustomer(customer)
             .withPerformance(performance)
-            .withSeats(singletonList(seat))
+            .withSeats(seats)
             .withPaid(false)
             .build();
 
         reservation = reservationRepository.save(reservation);
+        RESERVATION_TEST_ID = reservation.getId();
+    }
 
-        reservationRepository.findByPaidFalseAndId(reservation.getId());
+    @Test
+    public void purchaseReservationAsUser() {
+
+        var reservation = reservationRepository.findByPaidFalseAndId(RESERVATION_TEST_ID);
 
         ReservationDTO reservationDTO = reservationMapper.reservationToReservationDTO(reservation);
         Assert.assertNotNull(reservationDTO);
@@ -85,6 +99,31 @@ public class ReservationIT extends BaseIT {
         Assert.assertNotNull(result.getPaidAt());
     }
 
+    @Test
+    @Transactional
+    public void removeSeatFromReservation() {
+
+        var reservation = reservationRepository.findByPaidFalseAndId(RESERVATION_TEST_ID);
+
+        ReservationDTO reservationDTO = reservationMapper.reservationToReservationDTO(reservation);
+        Assert.assertNotNull(reservationDTO);
+        var seats = reservation.getSeats();
+        Assert.assertEquals(1, seats.size());
+
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .body(reservationDTO)
+            .when().post(RESERVATION_ENDPOINT + "/edit")
+            .then().extract().response();
+        Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+        var result = response.getBody().as(ReservationDTO.class);
+        Assert.assertNotNull(result.getId());
+        
+        seats = reservation.getSeats();
+        Assert.assertEquals(0, seats.size());
+    }
 
     @Test
     public void createReservationAsUser() {
@@ -130,6 +169,7 @@ public class ReservationIT extends BaseIT {
         address.setStreet("street");
         address.setPostalCode("postalCode");
         performance.setLocationAddress(address);
+
         return performance;
     }
 
