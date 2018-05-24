@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.CustomerValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.Customer;
 import org.springframework.data.domain.Pageable;
 
 
@@ -32,5 +33,5 @@ public interface CustomerService {
      */
     PageResponseDTO<CustomerDTO> findAll(Pageable pageable);
 
-    CustomerDTO findOneById(Long id);
+    Customer findOneById(Long id);
 }

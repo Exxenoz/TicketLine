@@ -123,13 +123,13 @@ public class ReservationIT extends BaseIT {
         performance.setPerformanceStart(LocalDateTime.now());
         performance.setPerformanceEnd(LocalDateTime.now());
 
-        Address address = new Address();
+        LocationAddress address = new LocationAddress();
         address.setCity("city");
         address.setCountry("country");
         address.setLocationName("locationName");
         address.setStreet("street");
         address.setPostalCode("postalCode");
-        performance.setAddress(address);
+        performance.setLocationAddress(address);
         return performance;
     }
 
@@ -148,13 +148,12 @@ public class ReservationIT extends BaseIT {
         customer.setTelephoneNumber("0123456789");
 
 
-        Address address = new Address();
+        BaseAddress address = new BaseAddress();
         address.setCity("city");
         address.setCountry("country");
-        address.setLocationName("locationName");
         address.setStreet("street");
         address.setPostalCode("postalCode");
-        customer.setAddress(address);
+        customer.setBaseAddress(address);
 
         return customer;
     }

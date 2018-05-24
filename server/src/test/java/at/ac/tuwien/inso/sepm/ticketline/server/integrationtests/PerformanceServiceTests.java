@@ -41,7 +41,7 @@ public class PerformanceServiceTests {
     private static final Set<Artist> ARTISTS_2 = new HashSet<>(Arrays.asList(artistArray_2));
 
 
-    private static final Address ADDRESS_1 = new Address("Staatsoper",
+    private static final LocationAddress ADDRESS_1 = new LocationAddress("Staatsoper",
         "Herbert-Karajan-Platz",
         "Vienna",
         "Austria",
@@ -55,7 +55,7 @@ public class PerformanceServiceTests {
         ADDRESS_1
     );
 
-    private static final Address ADDRESS_2 = new Address("Konzerthaus",
+    private static final LocationAddress ADDRESS_2 = new LocationAddress("Konzerthaus",
         "Ring",
         "Vienna",
         "Austria",
@@ -69,7 +69,7 @@ public class PerformanceServiceTests {
         ADDRESS_2
     );
 
-    private static final Address ADDRESS_3 = new Address("Konzerthaus",
+    private static final LocationAddress ADDRESS_3 = new LocationAddress("Konzerthaus",
         "Ring",
         "Vienna",
         "Austria",
