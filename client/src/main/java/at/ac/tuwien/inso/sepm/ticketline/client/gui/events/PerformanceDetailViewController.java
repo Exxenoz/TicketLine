@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +77,14 @@ public class PerformanceDetailViewController {
 
     @FXML
     void bookPerformance(ActionEvent event) {
+        Stage stage = new Stage();
 
+        final var parent = fxmlLoader.<Parent>load("/fxml/reservation/seatMapPicker.fxml");
+        stage.setScene(new Scene(parent));
+        stage.setTitle("");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(bookButtonPerformance.getScene().getWindow());
+        stage.showAndWait();
     }
 
     @FXML

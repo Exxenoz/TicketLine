@@ -21,7 +21,7 @@
       <Label layoutX="109.0" layoutY="108.0" text="Sector" />
       <Label layoutX="278.0" layoutY="108.0" text="Price" />
       <Label layoutX="436.0" layoutY="108.0" text="Amount" />
-      <VBox fx:id="sectorDetailVBox" layoutX="74.0" layoutY="136.0" prefHeight="200.0" prefWidth="451.0" />
+      <VBox fx:id="sectorDetailsVBox" layoutX="74.0" layoutY="136.0" prefHeight="200.0" prefWidth="451.0" />
       <ScrollBar fx:id="sectorDetailsScrollBar" layoutX="525.0" layoutY="136.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="17.0" />
    </children>
 </AnchorPane>
