@@ -4,11 +4,12 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.PerformanceService;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -55,6 +56,10 @@ public class SimplePerformanceService implements PerformanceService {
         performance.setPerformanceEnd(performanceEnd);
         performance.setPrice(search.getPrice());
 
+        Artist artist = new Artist(search.getArtistFirstName(), search.getArtistLastName());
+        Set<Artist> artists = new HashSet<>();
+        artists.add(artist);
+
         Event event = new Event();
         event.setName(search.getEventName());
 
@@ -62,20 +67,16 @@ public class SimplePerformanceService implements PerformanceService {
             event.setEventType(EventType.valueOf(search.getEventType().toString()));
         }
 
-        Artist artist = new Artist(search.getArtistFirstName(), search.getArtistLastName());
-        Set<Artist> artists = new HashSet<>();
-        artists.add(artist);
+        LocationAddress locationAddress = new LocationAddress();
+        locationAddress.setLocationName(search.getLocationName());
+        locationAddress.setStreet(search.getStreet());
+        locationAddress.setCity(search.getCity());
+        locationAddress.setCountry(search.getCountry());
+        locationAddress.setPostalCode(search.getPostalCode());
 
-        Address address = new Address();
-        address.setLocationName(search.getLocationName());
-        address.setStreet(search.getStreet());
-        address.setCity(search.getCity());
-        address.setCountry(search.getCountry());
-        address.setPostalCode(search.getPostalCode());
-
-        event.setArtists(artists);
         performance.setEvent(event);
-        performance.setAddress(address);
+        performance.setArtists(artists);
+        performance.setLocationAddress(locationAddress);
 
         //adding special checks - no case sensitivity, allow searching for parts of names
         ExampleMatcher matcher = ExampleMatcher.matching()

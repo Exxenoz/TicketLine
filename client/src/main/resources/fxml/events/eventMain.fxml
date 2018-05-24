@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Separator?>
 
 <?import javafx.geometry.Insets?>
 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"

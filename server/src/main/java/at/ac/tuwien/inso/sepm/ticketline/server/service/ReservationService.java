@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Customer;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationFilterTopTen;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 
 import java.util.List;
 
@@ -36,9 +37,11 @@ public interface ReservationService {
      */
     Long getPaidReservationCountByFilter(ReservationFilterTopTen reservationFilterTopTen);
 
-    Reservation createReservation(Reservation reservation);
+    Reservation createReservation(Reservation reservation) throws InvalidReservationException;
 
     Reservation purchaseReservation(Reservation reservation);
 
     void deleteReservation(Reservation reservation);
+
+    Reservation editReservation(Reservation reservation);
 }

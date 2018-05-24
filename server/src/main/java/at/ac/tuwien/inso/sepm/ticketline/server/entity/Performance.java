@@ -5,7 +5,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import static javax.persistence.GenerationType.AUTO;
 
@@ -19,6 +21,9 @@ public class Performance {
 
     @ManyToOne
     private Event event;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Artist> artists = new HashSet<>();
 
     @Column(nullable = false)
     @Size(max = 100)
@@ -38,27 +43,35 @@ public class Performance {
     private LocalDateTime performanceEnd;
 
     @Column(nullable = false)
-    @NotNull
-    private Address address;
+    private LocationAddress locationAddress;
 
     public Performance() {
     }
 
-    public Performance(Event event, @Size(max = 100) String name, BigDecimal price, LocalDateTime performanceStart, LocalDateTime performanceEnd, Address address) {
+    public Performance(Event event, Set<Artist> artists, @Size(max = 100) String name, BigDecimal price, LocalDateTime performanceStart, LocalDateTime performanceEnd, LocationAddress locationAddress) {
         this.event = event;
+        this.artists = artists;
         this.name = name;
         this.price = price;
         this.performanceStart = performanceStart;
         this.performanceEnd = performanceEnd;
-        this.address = address;
+        this.locationAddress = locationAddress;
     }
 
-    public Address getAddress() {
-        return address;
+    public Set<Artist> getArtists() {
+        return artists;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setArtists(Set<Artist> artists) {
+        this.artists = artists;
+    }
+
+    public LocationAddress getLocationAddress() {
+        return locationAddress;
+    }
+
+    public void setLocationAddress(LocationAddress locationAddress) {
+        this.locationAddress = locationAddress;
     }
 
     public Long getId() {
@@ -112,11 +125,10 @@ public class Performance {
     @Override
     public String toString() {
         return "Performance{" +
-            ", name='" + name + '\'' +
-            ", price=" + price +
-            ", performanceStart=" + performanceStart +
-            ", performanceEnd=" + performanceEnd +
-            ", address=" + address +
+            "name= " + name +
+            ", price= " + price +
+            ", performanceStart= " + performanceStart +
+            ", performanceEnd= " + performanceEnd +
             '}';
     }
 
@@ -133,13 +145,12 @@ public class Performance {
             Objects.equals(name, that.name) &&
             Objects.equals(price, that.price) &&
             Objects.equals(performanceStart, that.performanceStart) &&
-            Objects.equals(performanceEnd, that.performanceEnd) &&
-            Objects.equals(address, that.address);
+            Objects.equals(performanceEnd, that.performanceEnd);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, event, name, price, performanceStart, performanceEnd, address);
+        return Objects.hash(id, event, name, price, performanceStart, performanceEnd);
     }
 }

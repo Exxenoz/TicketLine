@@ -1,14 +1,14 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.datagenerator;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Profile("generateData")
 @Component
-public class CompositeDataGenerator implements DataGenerator {
+public class CompositeDataGenerator implements InitializingBean {
 
     private final List<DataGenerator> generators;
 
@@ -16,9 +16,9 @@ public class CompositeDataGenerator implements DataGenerator {
         this.generators = generators;
     }
 
-    @PostConstruct
+
     @Override
-    public void generate() {
+    public void afterPropertiesSet() {
         generators.forEach(DataGenerator::generate);
     }
 }

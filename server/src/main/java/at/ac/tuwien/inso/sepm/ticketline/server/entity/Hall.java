@@ -24,7 +24,7 @@ public class Hall {
     @JoinColumn(name = "hall_id")
     private List<Sector> sectors;
 
-    private Address address;
+    private LocationAddress address;
 
     public Long getId() {
         return id;
@@ -50,11 +50,11 @@ public class Hall {
         this.sectors = sectors;
     }
 
-    public Address getAddress() {
+    public LocationAddress getAddress() {
         return address;
     }
 
-    public void setAddress(Address address) {
+    public void setAddress(LocationAddress address) {
         this.address = address;
     }
 

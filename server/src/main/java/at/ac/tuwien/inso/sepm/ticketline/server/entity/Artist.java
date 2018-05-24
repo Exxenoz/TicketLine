@@ -57,9 +57,8 @@ public class Artist {
     @Override
     public String toString() {
         return "Artist{" +
-            "id=" + id +
-            ", firstName='" + firstName + '\'' +
-            ", lastName='" + lastName + '\'' +
+            "firstName= " + firstName +
+            ", lastName= " + lastName +
             '}';
     }
 
@@ -81,5 +80,41 @@ public class Artist {
     public int hashCode() {
 
         return Objects.hash(id, firstName, lastName);
+    }
+
+    public static final class Builder {
+        private Long id;
+        private String firstName;
+        private String lastName;
+
+        private Builder() {
+        }
+
+        public static Builder anArtist() {
+            return new Builder();
+        }
+
+        public Builder withId(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder withFirstName(String firstName) {
+            this.firstName = firstName;
+            return this;
+        }
+
+        public Builder withLastName(String lastName) {
+            this.lastName = lastName;
+            return this;
+        }
+
+        public Artist build() {
+            Artist artist = new Artist();
+            artist.setId(id);
+            artist.setFirstName(firstName);
+            artist.setLastName(lastName);
+            return artist;
+        }
     }
 }

@@ -18,5 +18,11 @@ public interface EventService {
      */
     List<EventResponseTopTenDTO> findTopTenByMonthAndCategory(EventRequestTopTenDTO eventRequestTopTen) throws DataAccessException;
 
+    /**
+     * Find the event to the given performance
+     * @param performanceId performance id
+     * @return return the event of the given performance
+     * @throws DataAccessException if something went wrong while trying to retrieve the event form the database
+     */
     EventDTO findByPerformanceID(Long performanceId) throws DataAccessException;
 }

@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
 
 @Profile("generateData")
@@ -26,7 +25,6 @@ public class CustomerDataGenerator implements DataGenerator {
         this.faker = new Faker();
     }
 
-    @PostConstruct
     @Override
     public void generate() {
         if (customerRepository.count() > 0) {
@@ -39,7 +37,7 @@ public class CustomerDataGenerator implements DataGenerator {
                     .lastName(faker.name().lastName())
                     .telephoneNumber(faker.phoneNumber().phoneNumber())
                     .email(faker.internet().emailAddress())
-                    .address(new Address(faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(4, 5)))
+                    .address(new BaseAddress(faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(4, 5)))
                     .build();
 
                 LOGGER.debug("saving customer {}", customer);

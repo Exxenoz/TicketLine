@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="711.0" prefWidth="733.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking.HallPlanController">
+   <children>
+      <SplitPane dividerPositions="0.304654442877292, 0.8067700987306065" layoutX="-3.0" orientation="VERTICAL" prefHeight="711.0" prefWidth="733.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="132.0" prefWidth="694.0">
+               <children>
+                  <Label fx:id="hallHeading" layoutX="265.0" layoutY="66.0" text="Choose Your Seats">
+                     <font>
+                        <Font name="System Bold" size="21.0" />
+                     </font>
+                  </Label>
+                  <Pane layoutX="91.0" layoutY="137.0" prefHeight="62.0" prefWidth="526.0">
+                     <children>
+                        <Label layoutY="44.0" text="Performance:" />
+                        <Label layoutX="1.0" text="Event:" />
+                        <Label layoutX="320.0" layoutY="45.0" text="Total Tickets:" />
+                        <Label fx:id="eventNameLabel" layoutX="99.0" layoutY="1.0" text="event name" />
+                        <Label fx:id="performanceNameLabel" layoutX="99.0" layoutY="44.0" text="performance name" />
+                        <Label fx:id="amountOfTicketsLabel" layoutX="415.0" layoutY="45.0" text="amount of tickets" />
+                     </children>
+                  </Pane>
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="293.0" prefWidth="706.0" />
+            <AnchorPane layoutX="10.0" layoutY="10.0" minHeight="0.0" minWidth="0.0" prefHeight="187.0" prefWidth="729.0">
+               <children>
+                  <HBox layoutX="89.0" layoutY="23.0" prefHeight="17.0" prefWidth="240.0">
+                     <children>
+                        <Label fx:id="seatsOrSectorsLabel" layoutX="24.0" layoutY="25.0" text="Chosen Seats:">
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="rowsSeatsOrSectorLabel" layoutX="124.0" layoutY="25.0" prefHeight="17.0" prefWidth="137.0" text=" row: 1 seats: 2-3 " />
+                     </children>
+                  </HBox>
+                  <HBox layoutX="373.0" layoutY="23.0" prefHeight="11.0" prefWidth="107.0">
+                     <children>
+                        <Label layoutX="409.0" layoutY="28.0" text="Price:  " />
+                        <Label fx:id="amountTickets" layoutX="452.0" layoutY="28.0" text="1" />
+                        <Label layoutX="468.0" layoutY="28.0" text="x" />
+                        <Label fx:id="pricePerTicket" layoutX="482.0" layoutY="28.0" text="€ 9,90" />
+                     </children>
+                  </HBox>
+                  <HBox layoutX="526.0" layoutY="20.0">
+                     <children>
+                        <Label fx:id="totalPrice" layoutX="572.0" layoutY="22.0" text="€ 9,90">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="632.0" layoutY="28.0" prefHeight="27.0" prefWidth="63.0" text=" inkl. USt." />
+                     </children>
+                  </HBox>
+                  <HBox layoutX="427.0" layoutY="67.0" spacing="15.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#backButton" text="Back" />
+                        <Button mnemonicParsing="false" text="Reserve" />
+                        <Button mnemonicParsing="false" onAction="#continueButton" text="Continue" />
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>

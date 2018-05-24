@@ -14,6 +14,11 @@ import java.util.List;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 
+    /**
+     * Find the associated event of a given performance id.
+     * @param performanceId performance id
+     * @return the associated event
+     */
     @Query(value = "SELECT e.* FROM event e, performance p WHERE e.id = p.event_id AND p.id = :performanceId", nativeQuery = true)
     Event findByPerformanceId(@Param("performanceId")Long performanceId);
 

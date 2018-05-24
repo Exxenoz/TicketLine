@@ -9,7 +9,13 @@ import java.util.List;
 
 public interface EventService {
 
+    /**
+     * Finds Event filtered by the given performance id.
+     * @param performanceID the performance id
+     * @return the associated event is returned
+     */
     Event findByPerformanceID(Long performanceID);
+
 
     List<Event> findAll();
 

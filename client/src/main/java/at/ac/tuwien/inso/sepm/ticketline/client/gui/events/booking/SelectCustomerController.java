@@ -1,10 +1,13 @@
-package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.book;
+package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.CustomerService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
+import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,11 +15,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
@@ -54,8 +60,13 @@ public class SelectCustomerController {
     private int currentPage = 0;
 
     private int totalPages = 0;
+    private final SpringFxmlLoader fxmlLoader;
+    private Stage stage;
+    private PerformanceDTO performance;
 
-    public SelectCustomerController(CustomerService customerService) {
+
+    public SelectCustomerController(SpringFxmlLoader fxmlLoader, CustomerService customerService) {
+        this.fxmlLoader = fxmlLoader;
         this.customerService = customerService;
     }
 
@@ -164,20 +175,21 @@ public class SelectCustomerController {
     }
 
     public void goBack(ActionEvent actionEvent) {
-        //go back to previous dialog scene
-        /*
-        final var wrapper=fxmlLoader.loadAndWrap("/fxml/events/book/selectCustomerView.fxml");
-        final var controller = (SelectCustomerController) wrapper.getController();
-        final var next=(Parent)wrapper.getLoadedObject();
-        controller.loadCustomers();
-        stage.setScene(new Scene(next));
-        */
+
+        Parent parent = fxmlLoader.load("/fxml/events/book/hallPlanView.fxml");
+        stage.setScene(new Scene(parent));
+        if(performance.getEvent().getEventType() == EventTypeDTO.SEAT){
+            stage.setTitle("Seat Selection");
+        } else {
+            stage.setTitle("Sector Selection");
+        }
+        stage.centerOnScreen();
     }
 
     public void goNextWithCustomer(ActionEvent actionEvent) {
         //go to the next dialog scene with a selected Customer
         /*
-        final var wrapper=fxmlLoader.loadAndWrap("/fxml/events/book/selectCustomerView.fxml");
+        final var wrapper=fxmlLoader.loadAndWrap("/fxml/events/booking/selectCustomerView.fxml");
         final var controller = (SelectCustomerController) wrapper.getController();
         final var next=(Parent)wrapper.getLoadedObject();
         controller.loadCustomers();
@@ -188,7 +200,7 @@ public class SelectCustomerController {
     public void goNextWithoutCustomer(ActionEvent actionEvent) {
         //go to the next dialog scene without a selected customer
          /*
-         final var wrapper=fxmlLoader.loadAndWrap("/fxml/events/book/selectCustomerView.fxml");
+         final var wrapper=fxmlLoader.loadAndWrap("/fxml/events/booking/selectCustomerView.fxml");
         final var controller = (SelectCustomerController) wrapper.getController();
         final var next=(Parent)wrapper.getLoadedObject();
         controller.loadCustomers();
@@ -200,4 +212,10 @@ public class SelectCustomerController {
     public void createNewCustomer(ActionEvent actionEvent) {
         //go to the create customer dialog scene
     }
+
+    public void fill(PerformanceDTO performance, Stage stage){
+        this.performance = performance;
+        this.stage = stage;
+    }
+
 }

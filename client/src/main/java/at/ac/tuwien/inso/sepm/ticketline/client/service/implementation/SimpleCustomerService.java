@@ -28,4 +28,14 @@ public class SimpleCustomerService implements CustomerService {
     public PageResponseDTO<CustomerDTO> findAll(PageRequestDTO pageRequestDTO) throws DataAccessException {
         return customerRestClient.findAll(pageRequestDTO);
     }
+
+    @Override
+    public CustomerDTO create(CustomerDTO customerDTO) throws DataAccessException {
+        return customerRestClient.create(customerDTO);
+    }
+
+    @Override
+    public CustomerDTO update(CustomerDTO customerDTO) throws DataAccessException {
+        return customerRestClient.update(customerDTO);
+    }
 }

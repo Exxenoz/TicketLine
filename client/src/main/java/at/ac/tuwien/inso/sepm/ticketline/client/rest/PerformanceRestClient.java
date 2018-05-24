@@ -9,16 +9,27 @@ import java.util.List;
 
 public interface PerformanceRestClient {
 
+    /**
+     * Returns a list of all performances currently in the database.
+     * @return return a list of all performances
+     * @throws DataAccessException in case something went wrong while trying to retrieve the performances from the database
+     */
     List<PerformanceDTO> findAllPerformances() throws DataAccessException;
 
     /**
-     * Find all performances of given event
+     * Find all performances of given event.
      * @param eventID of event of performances
      * @return list of performances
-     * @throws DataAccessException in case something went wrong
+     * @throws DataAccessException in case something went wrong while trying to retrieve the performances from the database
      */
     List<PerformanceDTO> findByEventID(Long eventID) throws DataAccessException;
 
+    /**
+     * Find a list of all performances that match the given search criteria .
+     * @param search a DTO which contains all the given search criteria
+     * @return a list of matching performances
+     * @throws DataAccessException in case something went wrong while trying to retrieve the performances from the database
+     */
     List<PerformanceDTO> search(SearchDTO search) throws DataAccessException;
 
 }

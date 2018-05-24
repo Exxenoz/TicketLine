@@ -1,19 +1,19 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 
-import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationFilterTopTen;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationFilterTopTenMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationMapper;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @RestController
@@ -24,14 +24,17 @@ public class ReservationEndpoint {
     private final ReservationService reservationService;
     private final ReservationMapper reservationMapper;
     private final ReservationFilterTopTenMapper reservationFilterTopTenMapper;
+    private final CustomerMapper customerMapper;
 
     public ReservationEndpoint(ReservationService reservationService,
                                ReservationMapper reservationMapper,
-                               ReservationFilterTopTenMapper reservationFilterTopTenMapper
+                               ReservationFilterTopTenMapper reservationFilterTopTenMapper,
+                               CustomerMapper customerMapper
     ) {
         this.reservationService = reservationService;
         this.reservationMapper = reservationMapper;
         this.reservationFilterTopTenMapper = reservationFilterTopTenMapper;
+        this.customerMapper = customerMapper;
     }
 
     @GetMapping("/event/{eventId}")
@@ -54,12 +57,51 @@ public class ReservationEndpoint {
         return reservationService.getPaidReservationCountByFilter(reservationFilterTopTen);
     }
 
-    @PostMapping("/create")
+    @PostMapping
     @ApiOperation("Create a new Reservation for Seats in a Performance")
-    @Transactional
-    public ReservationDTO createNewReservation(CreateReservationDTO createReservationDTO) {
+    public ReservationDTO createNewReservation(@RequestBody CreateReservationDTO createReservationDTO) throws InvalidReservationException {
         final var reservationToCreate = reservationMapper.createReservationDTOToReservation(createReservationDTO);
         final var createdReservation = reservationService.createReservation(reservationToCreate);
         return reservationMapper.reservationToReservationDTO(createdReservation);
+    }
+
+    @GetMapping("/find/{reservationId}")
+    @ApiOperation("Finds a Reservation which wasn't purchased yet with the given id")
+    public ReservationDTO findOneByPaidFalseById(@PathVariable Long reservationId) {
+        final var reservation = reservationService.findOneByPaidFalseById(reservationId);
+        return reservationMapper.reservationToReservationDTO(reservation);
+    }
+
+    @GetMapping("/findNotPaid")
+    @ApiOperation("Finds a Reservation which wasn't purchased yet with the given customer")
+    public List<ReservationDTO> findAllByPaidFalseByCustomerName(@RequestBody CustomerDTO customerDTO) {
+        var customer = customerMapper.customerDTOToCustomer(customerDTO);
+        var reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
+        return reservationMapper.reservationToReservationDTO(reservations);
+    }
+
+    @PostMapping("/purchase")
+    @ApiOperation("Purchases the given Reservation")
+    public ReservationDTO purchaseReservation(@RequestBody ReservationDTO reservationDTO) {
+        var reservation = reservationService.purchaseReservation(
+            reservationMapper.reservationDTOToReservation(reservationDTO)
+        );
+        return reservationMapper.reservationToReservationDTO(reservation);
+    }
+
+    @PostMapping("/edit")
+    @ApiOperation("Edit an existing Reservation")
+    public ReservationDTO editReservation(@RequestBody ReservationDTO reservationDTO) {
+        var reservation = reservationService.editReservation(
+            reservationMapper.reservationDTOToReservation(reservationDTO)
+        );
+        return reservationMapper.reservationToReservationDTO(reservation);
+    }
+
+    @PostMapping("/delete")
+    @ApiOperation("Delete given Reservation")
+    public void deleteReservation(@RequestBody ReservationDTO reservationDTO) {
+        var reservation = reservationMapper.reservationDTOToReservation(reservationDTO);
+        reservationService.deleteReservation(reservation);
     }
 }

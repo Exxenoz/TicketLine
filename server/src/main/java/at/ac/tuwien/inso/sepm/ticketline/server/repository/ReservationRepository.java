@@ -51,8 +51,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     Reservation findByPaidFalseAndId(Long reservationId);
 
     @Query(value = "SELECT r.* " +
-        "FROM reservation AS r, customer AS c " +
+        "FROM reservation r, customer c " +
         "WHERE c.id = r.customer_id AND r.paid = false " +
-        "AND c.firstname = :firstName AND c.lastname = :lastName", nativeQuery = true)
-    List<Reservation> findAllByPaidFalseAndCustomerFirstnameAndCustomerLastname(@Param("firstName") String firstName, @Param("firstName") String lastName);
+        "AND c.first_name = :firstName AND c.last_name = :lastName", nativeQuery = true)
+    List<Reservation> findAllByPaidFalseAndCustomerFirstnameAndCustomerLastname(@Param("firstName") String firstName, @Param("lastName") String lastName);
 }

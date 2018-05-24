@@ -1,9 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
-import com.github.javafaker.Bool;
-
 import javax.persistence.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -25,7 +22,7 @@ public class Reservation {
     @ManyToOne
     private Performance performance;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Seat> seats;
 
     @Column(nullable = false)
@@ -115,5 +112,62 @@ public class Reservation {
     public int hashCode() {
 
         return Objects.hash(id, customer, performance, seats, paid, paidAt);
+    }
+
+    public static final class Builder {
+        private Long id;
+        private Customer customer;
+        private Performance performance;
+        private List<Seat> seats;
+        private Boolean paid;
+        private LocalDateTime paidAt;
+
+        private Builder() {
+        }
+
+        public static Builder aReservation() {
+            return new Builder();
+        }
+
+        public Builder withId(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder withCustomer(Customer customer) {
+            this.customer = customer;
+            return this;
+        }
+
+        public Builder withPerformance(Performance performance) {
+            this.performance = performance;
+            return this;
+        }
+
+        public Builder withSeats(List<Seat> seats) {
+            this.seats = seats;
+            return this;
+        }
+
+        public Builder withPaid(Boolean paid) {
+            this.paid = paid;
+            return this;
+        }
+
+        public Builder withPaidAt(LocalDateTime paidAt) {
+            this.paidAt = paidAt;
+            return this;
+        }
+
+        public Reservation build() {
+            Reservation reservation = new Reservation();
+            reservation.setId(id);
+            reservation.setCustomer(customer);
+            reservation.setPerformance(performance);
+            reservation.setSeats(seats);
+            reservation.setPaid(paid);
+            reservation.setPaidAt(paidAt);
+            return reservation;
+        }
     }
 }
