@@ -242,6 +242,7 @@ public class CustomerEditDialogController {
                 return;
             }
 
+            customerController.clearCustomerList();
             customerController.loadCustomerTable(CustomerController.FIRST_CUSTOMER_TABLE_PAGE);
 
             LOGGER.debug("Customer creation successfully completed!");

@@ -187,6 +187,10 @@ public class CustomerController {
         customerTable.refresh();
     }
 
+    public void clearCustomerList() {
+        customerList.clear();
+    }
+
     public void onClickCreateCustomerButton(ActionEvent actionEvent) {
         LOGGER.debug("Clicked create customer button");
 
