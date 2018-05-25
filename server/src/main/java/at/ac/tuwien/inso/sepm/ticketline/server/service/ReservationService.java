@@ -42,4 +42,6 @@ public interface ReservationService {
     Reservation purchaseReservation(Reservation reservation);
 
     Reservation editReservation(Reservation reservation);
+
+    Reservation createAndPayReservation(Reservation reservation) throws InvalidReservationException;
 }

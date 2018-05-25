@@ -65,6 +65,12 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
+    public Reservation createAndPayReservation(Reservation reservation) throws InvalidReservationException {
+        createReservation(reservation);
+        return purchaseReservation(reservation);
+    }
+
+    @Override
     public Reservation editReservation(Reservation reservation) {
         return null;
     }
@@ -91,6 +97,7 @@ public class SimpleReservationService implements ReservationService {
         checkIfAllSeatsAreFree(seatsForReservation);
 
         Performance currentPerformance = repo.findById(reservation.getPerformance().getId()).get();
+        reservation.setPaid(false);
 
 
         Reservation createdReservation = reservationRepository.save(reservation);

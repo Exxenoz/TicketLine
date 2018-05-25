@@ -120,7 +120,7 @@ public class ReservationIT extends BaseIT {
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         var result = response.getBody().as(ReservationDTO.class);
         Assert.assertNotNull(result.getId());
-        
+
         seats = reservation.getSeats();
         Assert.assertEquals(0, seats.size());
     }
@@ -153,6 +153,38 @@ public class ReservationIT extends BaseIT {
         assertThat(reservationDTO.getSeats().get(0).getId(), is(seat.getId()));
         assertThat(reservationDTO.getSeats().get(0).getPositionX(), is(seat.getPositionX()));
         assertThat(reservationDTO.getSeats().get(0).getPositionY(), is(seat.getPositionY()));
+    }
+
+    @Test
+    public void createAndPayReservationAsUser() {
+        // GIVEN
+        Performance performance = performanceRepository.save(newPerformance());
+        Seat seat = seatRepository.save(newSeat());
+        Customer customer = customerRepository.save(newCustomer());
+
+        // WHEN
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .body(CreateReservationDTO.CreateReservationDTOBuilder.aCreateReservationDTO()
+                .withCustomerID(customer.getId())
+                .withPaid(false)
+                .withPerformanceID(performance.getId())
+                .withSeatIDs(List.of(seat.getId()))
+                .build())
+            .when().post(RESERVATION_ENDPOINT + "/createAndPay")
+            .then().extract().response();
+        // THEN
+
+        assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        ReservationDTO reservationDTO = response.as(ReservationDTO.class);
+        assertThat(reservationDTO.getPerformance().getId(), is(performance.getId()));
+        assertThat(reservationDTO.getPerformance().getPrice(), is(performance.getPrice()));
+        assertThat(reservationDTO.getSeats().get(0).getId(), is(seat.getId()));
+        assertThat(reservationDTO.getSeats().get(0).getPositionX(), is(seat.getPositionX()));
+        assertThat(reservationDTO.getSeats().get(0).getPositionY(), is(seat.getPositionY()));
+        assertThat(reservationDTO.isPaid(), is(true));
     }
 
     private Performance newPerformance() {

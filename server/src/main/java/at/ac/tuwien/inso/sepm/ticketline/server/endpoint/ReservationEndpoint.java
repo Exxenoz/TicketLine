@@ -97,4 +97,12 @@ public class ReservationEndpoint {
         );
         return reservationMapper.reservationToReservationDTO(reservation);
     }
+
+    @PostMapping("/createAndPay")
+    @ApiOperation("Create and pay new Reservation for Seats in a Performance")
+    public ReservationDTO createAndPayReservation(@RequestBody CreateReservationDTO createReservationDTO) throws InvalidReservationException {
+        final var reservationToCreate = reservationMapper.createReservationDTOToReservation(createReservationDTO);
+        final var createdReservation = reservationService.createAndPayReservation(reservationToCreate);
+        return reservationMapper.reservationToReservationDTO(createdReservation);
+    }
 }

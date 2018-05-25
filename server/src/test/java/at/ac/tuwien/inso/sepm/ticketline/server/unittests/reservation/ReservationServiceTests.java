@@ -1,7 +1,9 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.unittests.reservation;
 
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.CustomerRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
@@ -21,6 +23,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static java.math.BigDecimal.ONE;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -128,6 +133,58 @@ public class ReservationServiceTests {
         } else {
             Assert.fail("No customer with id " + CUSTOMER_TEST_ID + " found!");
         }
+
+    }
+
+    @Test
+    public void createReservation() {
+        Performance performance = performanceRepository.save(newPerformance());
+        Seat seat = seatRepository.save(newSeat());
+        Customer customer = customerRepository.save(newCustomer());
+
+        Reservation reservation = new Reservation();
+        reservation.setCustomer(customer);
+        reservation.setPerformance(performance);
+        reservation.setSeats(List.of(seat));
+
+        Reservation returned = null;
+        try {
+            returned = reservationService.createReservation(reservation);
+        } catch (InvalidReservationException e) {
+            fail();
+        }
+
+        assertThat(reservation.getId(), is(returned.getId()));
+        assertThat(reservation.getCustomer(), is(returned.getCustomer()));
+        assertThat(reservation.getSeats(), is(returned.getSeats()));
+        assertThat(reservation.getPerformance(), is(returned.getPerformance()));
+        assertThat(reservation.getPaid(), is(false));
+
+    }
+
+    @Test
+    public void createAndPay() {
+        Performance performance = performanceRepository.save(newPerformance());
+        Seat seat = seatRepository.save(newSeat());
+        Customer customer = customerRepository.save(newCustomer());
+
+        Reservation reservation = new Reservation();
+        reservation.setCustomer(customer);
+        reservation.setPerformance(performance);
+        reservation.setSeats(List.of(seat));
+
+        Reservation returned = null;
+        try {
+            returned = reservationService.createAndPayReservation(reservation);
+        } catch (InvalidReservationException e) {
+            fail();
+        }
+
+        assertThat(reservation.getId(), is(returned.getId()));
+        assertThat(reservation.getCustomer(), is(returned.getCustomer()));
+        assertThat(reservation.getSeats(), is(returned.getSeats()));
+        assertThat(reservation.getPerformance(), is(returned.getPerformance()));
+        assertThat(reservation.getPaid(), is(true));
 
     }
 
