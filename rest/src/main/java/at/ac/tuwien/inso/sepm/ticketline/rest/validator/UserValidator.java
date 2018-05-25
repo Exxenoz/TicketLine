@@ -7,14 +7,6 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.util.RestBundleManager;
 
 public abstract class UserValidator {
 
-    //validates existing user
-    public static void validateExistingUser(UserDTO userDTO) throws UserValidatorException {
-        validateID(userDTO);
-        validateUsername(userDTO);
-        validateEncryptedPassword(userDTO);
-        validateStrikes(userDTO);
-        validateRoles(userDTO);
-    }
 
     //validates newly created user
     public static void validateNewUser(UserDTO userDTO) throws UserValidatorException {
@@ -22,6 +14,12 @@ public abstract class UserValidator {
         validateEncryptedPassword(userDTO);
         validateStrikes(userDTO);
         validateRoles(userDTO);
+    }
+
+    //validates existing user
+    public static void validateExistingUser(UserDTO userDTO) throws UserValidatorException {
+        validateID(userDTO);
+        validateNewUser(userDTO);
     }
 
     public static void validateDTO(UserDTO userDTO) throws UserValidatorException {
@@ -58,6 +56,8 @@ public abstract class UserValidator {
                 throw new UserValidatorException(
                     RestBundleManager.getExceptionBundle().getString("exception.validator.user.username.too_short")
                 );
+            } else  if (userDTO.getUsername().length() > 30) {
+                throw new UserValidatorException("username validation failed");
             }
         }
     }

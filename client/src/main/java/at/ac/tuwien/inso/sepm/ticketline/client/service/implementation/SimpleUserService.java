@@ -34,4 +34,9 @@ public class SimpleUserService implements UserService {
     public void enableUser(UserDTO userDTO) throws DataAccessException {
         userRestClient.enableUser(userDTO);
     }
+
+    @Override
+    public UserDTO create(UserDTO userDTO) throws DataAccessException {
+        return userRestClient.create(userDTO);
+    }
 }

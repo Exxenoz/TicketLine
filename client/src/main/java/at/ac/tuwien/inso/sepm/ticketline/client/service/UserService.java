@@ -33,4 +33,13 @@ public interface UserService {
      * @throws DataAccessException in case something went wrong
      */
     void enableUser(UserDTO userDTO) throws DataAccessException;
+
+    /**
+     * Create a user with the specified data transfer object.
+     *
+     * @param userDTO the user to create
+     * @return the created user
+     * @throws DataAccessException in case something went wrong
+     */
+    UserDTO create(UserDTO userDTO) throws DataAccessException;
 }

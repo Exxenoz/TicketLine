@@ -1,8 +1,11 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.users;
 
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.UserValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.UserService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
+import at.ac.tuwien.inso.sepm.ticketline.client.validator.UserValidator;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,7 +20,9 @@ import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class UserCreateDialog {
@@ -37,7 +42,7 @@ public class UserCreateDialog {
     public ChoiceBox roleChoiceBox;
 
     @FXML
-    public Label nameErrorLabel;
+    public Label usernameErrorLabel;
 
     @FXML
     public Label passwordErrorLabel;
@@ -67,16 +72,10 @@ public class UserCreateDialog {
     public void onClickCreateUserButton(ActionEvent actionEvent) {
         LOGGER.debug("Clicked create user button");
 
-        UserDTO user = new UserDTO();
-        user.setUsername(usernameTextField.getText());
-        user.setPassword(passwordField.getText());
-        user.setAuthorities(getRoles());
-
-        validateUser(user);
     }
 
-    private List<String> getRoles() {
-        List<String> roles = new ArrayList<>();
+    private Set<String> getRoles() {
+        Set<String> roles = new HashSet<>();
         String selectedRole = String.valueOf(roleChoiceBox.getSelectionModel().getSelectedItem());
 
         // user role is implicit
@@ -86,22 +85,50 @@ public class UserCreateDialog {
         return roles;
     }
 
-    private void validateUser(UserDTO user) {
+    private void validateUser() {
         boolean valid = true;
+        UserDTO userDTO = new UserDTO();
 
-        if(!passwordRepeatField.getText().equals(user.getPassword())) {
+        try {
+            String username = UserValidator.validateUsername(usernameTextField);
+            userDTO.setUsername(username);
+            usernameErrorLabel.setText("");
+        } catch (UserValidationException e) {
             valid = false;
-            LOGGER.debug("User validation failed: Password does not match");
-            passwordRepeatErrorLabel.setText(BundleManager.getExceptionBundle().getString("exception.password_does_not_match"));
-        } else {
-            passwordRepeatErrorLabel.setText("");
+            LOGGER.debug("User validation failed: " + e.getMessage());
+            passwordRepeatErrorLabel.setText(e.getMessage());
         }
+
+        try {
+            String encryptedPassword = UserValidator.validatePassword(passwordField, passwordRepeatField);
+            userDTO.setPassword(encryptedPassword);
+            passwordRepeatErrorLabel.setText("");
+        } catch (UserValidationException e) {
+            valid = false;
+            LOGGER.debug("User validation failed: " + e.getMessage());
+            passwordRepeatErrorLabel.setText(e.getMessage());
+        }
+
+        userDTO.setRoles(getRoles());
 
         if (!valid) {
             return;
         }
 
-        // TODO: service.create()
+        try {
+            userService.create(userDTO);
+        } catch (DataAccessException e) {
+            LOGGER.error("User creation failed: " + e.getMessage());
+
+            JavaFXUtils.createErrorDialog(
+                BundleManager.getBundle().getString("users.dialog.create.dialog.error.title"),
+                BundleManager.getBundle().getString("users.dialog.create.dialog.error.header_text"),
+                BundleManager.getBundle().getString("users.dialog.create.dialog.error.content_text"),
+                usernameTextField.getScene().getWindow()
+            ).showAndWait();
+
+            return;
+        }
 
         LOGGER.debug("User creation successfully completed!");
 
