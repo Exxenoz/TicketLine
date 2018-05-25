@@ -3,6 +3,8 @@ package at.ac.tuwien.inso.sepm.ticketline.rest.user;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.List;
+
 @ApiModel(value = "UserDTO", description = "A User DTO")
 public class UserDTO {
 
@@ -21,6 +23,9 @@ public class UserDTO {
 
     @ApiModelProperty(readOnly = true, name = "The number of tries the users had for authorization")
     private Integer strikes = 0;
+
+    @ApiModelProperty(readOnly = true, name = "A list of authority strings for the user")
+    private List<String> authorities;
 
     public static UserDTOBuilder builder() {
         return new UserDTOBuilder();
@@ -66,21 +71,33 @@ public class UserDTO {
         this.strikes = strikes;
     }
 
+    public List<String> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(List<String> authorities) {
+        this.authorities = authorities;
+    }
+
     @Override
     public String toString() {
-        return "User{"
-            + "id=" + id
-            + ", username='" + username + '\''
-            + ", isEnabled=" + enabled
-            + ", strikes=" + strikes +
-            "}";
+        return "UserDTO{" +
+            "id=" + id +
+            ", username='" + username + '\'' +
+            ", password='" + password + '\'' +
+            ", enabled=" + enabled +
+            ", strikes=" + strikes +
+            ", authorities=" + authorities +
+            '}';
     }
+
     public static final class UserDTOBuilder {
         private Long id;
         private String username;
         private String password;
         private boolean enabled;
         private Integer strikes;
+        private List<String> authorities;
 
         public UserDTOBuilder id(Long id) {
             this.id = id;
@@ -107,14 +124,19 @@ public class UserDTO {
             return this;
         }
 
-        public UserDTO build() {
+        public UserDTOBuilder authorities(List<String> authorities) {
+            this.authorities = authorities;
+            return this;
+        }
 
+        public UserDTO build() {
             UserDTO userDTO = new UserDTO();
             userDTO.setId(id);
             userDTO.setUsername(username);
             userDTO.setPassword(password);
             userDTO.setEnabled(enabled);
             userDTO.setStrikes(strikes);
+            userDTO.setAuthorities(authorities);
             return userDTO;
         }
     }
