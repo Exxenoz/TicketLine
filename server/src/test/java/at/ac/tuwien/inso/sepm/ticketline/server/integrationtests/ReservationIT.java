@@ -10,6 +10,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.repository.*;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +32,7 @@ public class ReservationIT extends BaseIT {
 
     private static final String RESERVATION_ENDPOINT = "/reservation";
     private static Long RESERVATION_TEST_ID = 1L;
+    private static Long CUSTOMER_TEST_ID = 1L;
 
     @Autowired
     private PerformanceRepository performanceRepository;
@@ -62,6 +64,7 @@ public class ReservationIT extends BaseIT {
         performance = performanceRepository.save(performance);
         Seat seat = seatRepository.save(newSeat());
         Customer customer = customerRepository.save(newCustomer());
+        CUSTOMER_TEST_ID = customer.getId();
 
         var seats = new LinkedList<Seat>();
         seats.add(seat);
@@ -74,6 +77,15 @@ public class ReservationIT extends BaseIT {
 
         reservation = reservationRepository.save(reservation);
         RESERVATION_TEST_ID = reservation.getId();
+    }
+
+    @After
+    public void tearDown() {
+        reservationRepository.deleteAll();
+        performanceRepository.deleteAll();
+        artistRepository.deleteAll();
+        customerRepository.deleteAll();
+        seatRepository.deleteAll();
     }
 
     @Test
@@ -100,8 +112,34 @@ public class ReservationIT extends BaseIT {
     }
 
     @Test
+    public void findReservationWithCustomerNameAsUser() {
+        var customerOpt = customerRepository.findById(CUSTOMER_TEST_ID);
+        if (customerOpt.isPresent()) {
+            var customerDTO = customerMapper.customerToCustomerDTO(customerOpt.get());
+            Assert.assertNotNull(customerDTO);
+            Response response = RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+                .body(customerDTO)
+                .when().post(RESERVATION_ENDPOINT + "/findNotPaid")
+                .then().extract().response();
+            Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+            var resultList = List.of(response.getBody().as(ReservationDTO[].class));
+
+            Assert.assertEquals(1, resultList.size());
+            var result = resultList.get(0);
+            Assert.assertEquals(ReservationDTO.class, result.getClass());
+            Assert.assertNotNull(result.getId());
+            Assert.assertFalse(result.isPaid());
+        } else {
+            Assert.fail("Customer with the id " + CUSTOMER_TEST_ID + " was not found!");
+        }
+    }
+
+    @Test
     @Transactional
-    public void removeSeatFromReservation() {
+    public void removeSeatFromReservationAsUser() {
 
         var reservation = reservationRepository.findByPaidFalseAndId(RESERVATION_TEST_ID);
 

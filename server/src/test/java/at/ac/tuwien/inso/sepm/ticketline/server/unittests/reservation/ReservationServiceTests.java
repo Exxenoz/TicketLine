@@ -8,6 +8,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.SeatRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,6 +65,15 @@ public class ReservationServiceTests {
 
         reservation = reservationRepository.save(reservation);
         RESERVATION_TEST_ID = reservation.getId();
+    }
+
+
+    @After
+    public void tearDown() {
+        reservationRepository.deleteAll();
+        performanceRepository.deleteAll();
+        customerRepository.deleteAll();
+        seatRepository.deleteAll();
     }
 
 
