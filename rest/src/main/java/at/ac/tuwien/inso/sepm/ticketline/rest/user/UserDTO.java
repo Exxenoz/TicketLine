@@ -3,7 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.rest.user;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.util.List;
+import java.util.Set;
 
 @ApiModel(value = "UserDTO", description = "A User DTO")
 public class UserDTO {
@@ -24,8 +24,8 @@ public class UserDTO {
     @ApiModelProperty(readOnly = true, name = "The number of tries the users had for authorization")
     private Integer strikes = 0;
 
-    @ApiModelProperty(readOnly = true, name = "A list of authority strings for the user")
-    private List<String> authorities;
+    @ApiModelProperty(readOnly = true, name = "A set of roles for the user")
+    private Set<String> roles;
 
     public static UserDTOBuilder builder() {
         return new UserDTOBuilder();
@@ -71,12 +71,12 @@ public class UserDTO {
         this.strikes = strikes;
     }
 
-    public List<String> getAuthorities() {
-        return authorities;
+    public Set<String> getRoles() {
+        return roles;
     }
 
-    public void setAuthorities(List<String> authorities) {
-        this.authorities = authorities;
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
 
     @Override
@@ -87,7 +87,7 @@ public class UserDTO {
             ", password='" + password + '\'' +
             ", enabled=" + enabled +
             ", strikes=" + strikes +
-            ", authorities=" + authorities +
+            ", roles=" + roles +
             '}';
     }
 
@@ -97,7 +97,7 @@ public class UserDTO {
         private String password;
         private boolean enabled;
         private Integer strikes;
-        private List<String> authorities;
+        private Set<String> roles;
 
         public UserDTOBuilder id(Long id) {
             this.id = id;
@@ -124,8 +124,8 @@ public class UserDTO {
             return this;
         }
 
-        public UserDTOBuilder authorities(List<String> authorities) {
-            this.authorities = authorities;
+        public UserDTOBuilder roles(Set<String> roles) {
+            this.roles = roles;
             return this;
         }
 
@@ -136,7 +136,7 @@ public class UserDTO {
             userDTO.setPassword(password);
             userDTO.setEnabled(enabled);
             userDTO.setStrikes(strikes);
-            userDTO.setAuthorities(authorities);
+            userDTO.setRoles(roles);
             return userDTO;
         }
     }
