@@ -1,7 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.unittests.reservation;
 
 
-import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.CustomerRepository;
@@ -36,6 +35,7 @@ public class ReservationServiceTests {
 
     private static Long RESERVATION_TEST_ID = 1L;
     private static Long CUSTOMER_TEST_ID = 1L;
+    private static Long SEAT_TEST_ID = 1L;
     @Autowired
     private PerformanceRepository performanceRepository;
     @Autowired
@@ -49,6 +49,8 @@ public class ReservationServiceTests {
     public void setUp() {
         Performance performance = performanceRepository.save(newPerformance());
         Seat seat = seatRepository.save(newSeat());
+        SEAT_TEST_ID = seat.getId();
+
         LinkedList<Seat> seats = new LinkedList<>();
         seats.add(seat);
         Customer customer = customerRepository.save(newCustomer());
@@ -83,6 +85,9 @@ public class ReservationServiceTests {
         seats = reservation.getSeats();
         Assert.assertEquals(0, seats.size());
 
+        var seatOpt = seatRepository.findById(SEAT_TEST_ID);
+        Assert.assertTrue(seatOpt.isPresent());
+        Assert.assertEquals(seat, seatOpt.get());
     }
 
     @Test

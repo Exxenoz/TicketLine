@@ -72,7 +72,7 @@ public class SimpleReservationService implements ReservationService {
 
     @Override
     public Reservation editReservation(Reservation reservation) {
-        return null;
+        return reservationRepository.save(reservation);
     }
 
     private void checkIfAllSeatsAreFree(List<Seat> seatsToCheck) throws InvalidReservationException {
