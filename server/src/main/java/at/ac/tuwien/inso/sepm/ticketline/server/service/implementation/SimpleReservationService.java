@@ -70,6 +70,12 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
+    public Reservation createAndPayReservation(Reservation reservation) throws InvalidReservationException {
+        createReservation(reservation);
+        return purchaseReservation(reservation);
+    }
+
+    @Override
     public Reservation editReservation(Reservation reservation) {
         return null;
     }

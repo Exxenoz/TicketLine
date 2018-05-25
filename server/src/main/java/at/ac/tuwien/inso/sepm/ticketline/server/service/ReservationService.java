@@ -44,4 +44,6 @@ public interface ReservationService {
     void deleteReservation(Reservation reservation);
 
     Reservation editReservation(Reservation reservation);
+
+    Reservation createAndPayReservation(Reservation reservation) throws InvalidReservationException;
 }
