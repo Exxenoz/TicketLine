@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -138,15 +137,16 @@ public class ReservationIT extends BaseIT {
     }
 
     @Test
-    @Transactional
     public void removeSeatFromReservationAsUser() {
 
         var reservation = reservationRepository.findByPaidFalseAndId(RESERVATION_TEST_ID);
 
         ReservationDTO reservationDTO = reservationMapper.reservationToReservationDTO(reservation);
         Assert.assertNotNull(reservationDTO);
-        var seats = reservation.getSeats();
-        Assert.assertEquals(1, seats.size());
+        var seatDTOs = reservationDTO.getSeats();
+        Assert.assertEquals(1, seatDTOs.size());
+        seatDTOs.remove(0);
+        reservationDTO.setSeats(seatDTOs);
 
         Response response = RestAssured
             .given()
@@ -159,8 +159,8 @@ public class ReservationIT extends BaseIT {
         var result = response.getBody().as(ReservationDTO.class);
         Assert.assertNotNull(result.getId());
 
-        seats = reservation.getSeats();
-        Assert.assertEquals(0, seats.size());
+        var resultSeatDTOs = result.getSeats();
+        Assert.assertEquals(0, resultSeatDTOs.size());
     }
 
     @Test
