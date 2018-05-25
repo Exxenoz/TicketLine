@@ -1,14 +1,14 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity(name = "Users")
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -25,6 +25,13 @@ public class User {
 
     @Column(nullable = false)
     private Integer strikes = 0;
+
+    @ElementCollection
+    @JoinTable(name = "authorities", joinColumns = {
+        @JoinColumn(name = "username", referencedColumnName = "username")
+    })
+    @Column(name = "authority", nullable = false)
+    private Set<String> roles;
 
     public Long getId() {
         return id;
@@ -66,6 +73,14 @@ public class User {
         this.strikes = strikes;
     }
 
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
+    }
+
     public static UserBuilder builder() {
         return new UserBuilder();
     }
@@ -76,6 +91,7 @@ public class User {
         private String password;
         private boolean enabled;
         private int strikes;
+        private Set<String> roles = new HashSet<>();
 
         public UserBuilder id(Long id) {
             this.id = id;
@@ -102,6 +118,11 @@ public class User {
             return this;
         }
 
+        public UserBuilder roles(Set<String> roles) {
+            this.roles = roles;
+            return this;
+        }
+
         public User build() {
             User user = new User();
             user.setId(id);
@@ -109,6 +130,7 @@ public class User {
             user.setPassword(password);
             user.setEnabled(enabled);
             user.setStrikes(strikes);
+            user.setRoles(new HashSet<>(roles));
             return user;
         }
     }
