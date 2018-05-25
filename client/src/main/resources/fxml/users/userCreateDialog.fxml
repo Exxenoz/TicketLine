@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="5.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.users.UserCreateDialog">
+    <children>
+        <VBox>
+            <children>
+                <HBox>
+                    <children>
+                        <Label text="Name" />
+                        <Label text="*" textFill="#cc0000" />
+                    </children></HBox>
+                <TextField fx:id="usernameTextField" />
+                <Label fx:id="usernameErrorLabel" textFill="#cc0000" />
+            </children>
+            <VBox.margin>
+                <Insets bottom="8.0" />
+            </VBox.margin>
+        </VBox>
+        <VBox layoutX="10.0" layoutY="10.0">
+            <children>
+                <HBox>
+                    <children>
+                        <Label text="%users.dialog.create.password" />
+                        <Label text="*" textFill="#cc0000" />
+                    </children></HBox>
+                <PasswordField fx:id="passwordField" />
+                <Label fx:id="passwordErrorLabel" textFill="#cc0000" />
+            </children>
+            <VBox.margin>
+                <Insets bottom="8.0" />
+            </VBox.margin>
+        </VBox>
+        <VBox layoutX="10.0" layoutY="83.0">
+            <children>
+                <HBox>
+                    <children>
+                        <Label text="%users.dialog.create.password_repeat" />
+                        <Label text="*" textFill="#cc0000" />
+                    </children></HBox>
+                <PasswordField fx:id="passwordRepeatField" />
+                <Label fx:id="passwordRepeatErrorLabel" textFill="#cc0000" />
+            </children>
+            <VBox.margin>
+                <Insets bottom="8.0" />
+            </VBox.margin>
+        </VBox>
+        <VBox layoutX="10.0" layoutY="156.0">
+            <children>
+                <Label text="%users.dialog.create.role" />
+                <ChoiceBox fx:id="roleChoiceBox" prefHeight="25.0" prefWidth="218.0">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="USER" />
+                        <String fx:value="ADMIN" />
+                    </FXCollections>
+                </items>
+                </ChoiceBox>
+                <Label fx:id="roleErrorLabel" textFill="#cc0000" />
+            </children>
+            <VBox.margin>
+                <Insets bottom="8.0" />
+            </VBox.margin>
+        </VBox>
+        <HBox>
+            <children>
+                <Label text="*" textFill="#cc0000">
+                    <HBox.margin>
+                        <Insets right="4.0" />
+                    </HBox.margin>
+                </Label>
+                <Label text="%users.dialog.create.required_field" />
+            </children>
+        </HBox>
+    <Button fx:id="createButton" mnemonicParsing="false" onAction="#onClickCreateUserButton" prefHeight="25.0" prefWidth="221.0" text="%usertab.user.create" />
+    </children>
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+    </padding>
+</VBox>

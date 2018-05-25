@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <VBox spacing="5.0" xmlns:fx="http://javafx.com/fxml/1" fx:id="content" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/10"
-      fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.users.UsersController">
+      fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.users.UserController">
     <children>
         <fx:include fx:id="tabHeader" source="../tabHeader.fxml"/>
         <Separator/>
@@ -20,6 +20,11 @@
         </TableView>
         <ButtonBar prefHeight="40.0" prefWidth="200.0">
             <buttons>
+                <Button mnemonicParsing="false" onAction="#onClickCreateUserButton" text="%usertab.user.create">
+                    <HBox.margin>
+                        <Insets right="16.0"/>
+                    </HBox.margin>
+                </Button>
                 <Button mnemonicParsing="false" onAction="#handleEnable" text="%usertab.user.enable"/>
             </buttons>
         </ButtonBar>

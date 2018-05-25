@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.users;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.MainController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.customers.CustomerController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.UserService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
@@ -11,20 +12,25 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
+import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -34,10 +40,11 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.lang.invoke.MethodHandles;
 
+import static javafx.stage.Modality.APPLICATION_MODAL;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.LOCK;
 
 @Component
-public class UsersController {
+public class UserController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -59,14 +66,17 @@ public class UsersController {
     @FXML
     private TabHeaderController tabHeaderController;
 
-    private static final int USERS_PER_PAGE = 30;
+    private final SpringFxmlLoader springFxmlLoader;
     private final MainController mainController;
     private final UserService userService;
+
+    private static final int USERS_PER_PAGE = 30;
     private ObservableList<UserDTO> items;
     private int page = 0;
     private int totalPages = 0;
 
-    public UsersController(MainController mainController, UserService userService) {
+    public UserController(SpringFxmlLoader springFxmlLoader, MainController mainController, UserService userService) {
+        this.springFxmlLoader = springFxmlLoader;
         this.mainController = mainController;
         this.userService = userService;
         this.items = FXCollections.observableArrayList();
@@ -76,7 +86,6 @@ public class UsersController {
     private void initialize() {
         tabHeaderController.setIcon(LOCK);
         tabHeaderController.setTitle(BundleManager.getBundle().getString("usertab.header"));
-        userTable.refresh();
     }
 
     private void scrolled(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -177,5 +186,20 @@ public class UsersController {
         this.clear();
         userTable.refresh();
         loadUsers(0);
+    }
+
+    public void onClickCreateUserButton(ActionEvent actionEvent) {
+        LOGGER.debug("Clicked create user button");
+
+        final var stage = (Stage) userTable.getScene().getWindow();
+        final var dialog = new Stage();
+
+        dialog.getIcons().add(new Image(UserController.class.getResourceAsStream("/image/ticketlineIcon.png")));
+        dialog.setResizable(false);
+        dialog.initModality(APPLICATION_MODAL);
+        dialog.initOwner(stage);
+        dialog.setScene(new Scene(springFxmlLoader.load("/fxml/users/userCreateDialog.fxml")));
+        dialog.setTitle(BundleManager.getBundle().getString("usertab.user.create"));
+        dialog.showAndWait();
     }
 }

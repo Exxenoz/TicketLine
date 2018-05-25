@@ -3,7 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.customers.CustomerController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.news.NewsController;
-import at.ac.tuwien.inso.sepm.ticketline.client.gui.users.UsersController;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.users.UserController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationInformationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
@@ -50,7 +50,7 @@ public class MainController {
     private final FontAwesome fontAwesome;
     private NewsController newsController;
     private EventController eventController;
-    private UsersController usersController;
+    private UserController userController;
     private CustomerController customerController;
 
     public MainController(
@@ -124,9 +124,9 @@ public class MainController {
     }
 
     private void initUserManageTabPane() {
-        SpringFxmlLoader.Wrapper<UsersController> wrapper =
+        SpringFxmlLoader.Wrapper<UserController> wrapper =
             springFxmlLoader.loadAndWrap("/fxml/users/usersMain.fxml");
-        usersController = wrapper.getController();
+        userController = wrapper.getController();
         final var usersTab = new Tab(null, wrapper.getLoadedObject());
         final var usersGlyph = fontAwesome.create(LOCK);
         usersGlyph.setFontSize(TAB_ICON_FONT_SIZE);
@@ -152,7 +152,7 @@ public class MainController {
             spMainContent.getChildren().remove(login);
             newsController.loadNews();
             eventController.loadData();
-            usersController.loadUsers(0);
+            userController.loadUsers(0);
             customerController.loadCustomers();
         } else {
             if (!spMainContent.getChildren().contains(login)) {
