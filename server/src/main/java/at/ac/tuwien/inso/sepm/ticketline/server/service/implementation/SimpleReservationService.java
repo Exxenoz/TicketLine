@@ -102,6 +102,7 @@ public class SimpleReservationService implements ReservationService {
         checkIfAllSeatsAreFree(seatsForReservation);
 
         Performance currentPerformance = repo.findById(reservation.getPerformance().getId()).get();
+        reservation.setPaid(false);
 
 
         Reservation createdReservation = reservationRepository.save(reservation);
