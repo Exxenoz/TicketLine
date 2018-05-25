@@ -97,7 +97,6 @@ public class EventDetailViewController {
             alert.setTitle("Error");
             alert.setHeaderText("You need to choose a specific performance.");
             alert.showAndWait();
-            return;
         }
 
         performanceDetailViewController.fill(chosenPerformance, stage);

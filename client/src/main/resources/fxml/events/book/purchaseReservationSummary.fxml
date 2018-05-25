@@ -42,8 +42,8 @@
         <Label layoutX="410.0" layoutY="327.0" text="Total Price:" />
         <HBox layoutX="415.0" layoutY="379.0" spacing="15.0">
             <children>
-            <Button fx:id="backButtonPRS" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Back" onAction="#back"/>
-                <Button fx:id="cancelButtonPRS" mnemonicParsing="false" text="Cancel" onAction="#cancel" />
+            <Button fx:id="backButtonPRS" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Back" onAction="#backButton"/>
+                <Button fx:id="cancelButtonPRS" mnemonicParsing="false" text="Cancel" onAction="#cancelButton" />
                 <Button fx:id="buyButtonPRS" mnemonicParsing="false" text="Buy" onAction="#buyTickets" />
             </children>
         </HBox>

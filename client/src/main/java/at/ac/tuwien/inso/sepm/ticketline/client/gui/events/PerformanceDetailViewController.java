@@ -5,6 +5,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking.HallPlanContr
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -46,6 +47,7 @@ public class PerformanceDetailViewController {
     private final PerformanceService performanceService;
     private final HallPlanController hallPlanController;
     private Stage stage;
+    private ReservationDTO reservation = new ReservationDTO();
 
     public PerformanceDetailViewController(
         SpringFxmlLoader fxmlLoader,
@@ -75,16 +77,17 @@ public class PerformanceDetailViewController {
 
     @FXML
     void continueButton(ActionEvent event) {
-     hallPlanController.fill(performance, stage);
-     Parent parent = fxmlLoader.load("/fxml/events/book/hallPlanView.fxml");
-     stage.setScene(new Scene(parent));
+        reservation.setPerformance(performance);
+        hallPlanController.fill(reservation, stage);
+        Parent parent = fxmlLoader.load("/fxml/events/book/hallPlanView.fxml");
+        stage.setScene(new Scene(parent));
 
-     if(performance.getEvent().getEventType() == EventTypeDTO.SEAT){
-         stage.setTitle("Seat Selection");
-     } else {
-         stage.setTitle("Sector Selection");
-     }
-     stage.centerOnScreen();
+        if (performance.getEvent().getEventType() == EventTypeDTO.SEAT) {
+            stage.setTitle("Seat Selection");
+        } else {
+            stage.setTitle("Sector Selection");
+        }
+        stage.centerOnScreen();
     }
 
     @FXML
@@ -97,7 +100,7 @@ public class PerformanceDetailViewController {
     }
 
     @FXML
-    void backButton(ActionEvent event){
+    void backButton(ActionEvent event) {
         Stage stage = (Stage) performanceHeader.getScene().getWindow();
         stage.close();
     }
