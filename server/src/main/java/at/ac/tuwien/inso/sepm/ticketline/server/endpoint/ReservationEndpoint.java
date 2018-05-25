@@ -97,11 +97,4 @@ public class ReservationEndpoint {
         );
         return reservationMapper.reservationToReservationDTO(reservation);
     }
-
-    @PostMapping("/delete")
-    @ApiOperation("Delete given Reservation")
-    public void deleteReservation(@RequestBody ReservationDTO reservationDTO) {
-        var reservation = reservationMapper.reservationDTOToReservation(reservationDTO);
-        reservationService.deleteReservation(reservation);
-    }
 }

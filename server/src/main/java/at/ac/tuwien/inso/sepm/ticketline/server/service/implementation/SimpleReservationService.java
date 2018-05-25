@@ -65,11 +65,6 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
-    public void deleteReservation(Reservation reservation) {
-        reservationRepository.delete(reservation);
-    }
-
-    @Override
     public Reservation editReservation(Reservation reservation) {
         return null;
     }

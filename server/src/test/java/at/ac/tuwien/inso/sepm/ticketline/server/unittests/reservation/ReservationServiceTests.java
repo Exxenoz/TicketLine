@@ -6,7 +6,6 @@ import at.ac.tuwien.inso.sepm.ticketline.server.repository.CustomerRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.SeatRepository;
-import at.ac.tuwien.inso.sepm.ticketline.server.service.CustomerService;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,9 +28,6 @@ import static java.math.BigDecimal.ONE;
 public class ReservationServiceTests {
     @Autowired
     private ReservationService reservationService;
-
-    @Autowired
-    private CustomerService customerService;
 
     private static Long RESERVATION_TEST_ID = 1L;
     private static Long CUSTOMER_TEST_ID = 1L;
@@ -66,7 +61,6 @@ public class ReservationServiceTests {
 
 
     @Test
-    @Transactional
     public void removeSeatFromReservation() {
         var reservation = reservationService.findOneByPaidFalseById(RESERVATION_TEST_ID);
         Assert.assertNotNull(reservation);
@@ -98,53 +92,42 @@ public class ReservationServiceTests {
     }
 
     @Test
-    public void deleteReservationWithId() {
-        var reservation = reservationService.findOneByPaidFalseById(RESERVATION_TEST_ID);
-        Assert.assertNotNull(reservation);
-        reservationService.deleteReservation(reservation);
-
-        Assert.assertNull(reservationService.findOneByPaidFalseById(RESERVATION_TEST_ID));
-    }
-
-    @Test
-    @Transactional
-    public void deleteReservationWithCustomer() {
-        var customer = customerService.findOneById(CUSTOMER_TEST_ID);
-        var reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
-        for (Reservation reservation : reservations) {
-            Assert.assertNotNull(reservation);
-            reservationService.deleteReservation(reservation);
-        }
-
-        reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
-        Assert.assertEquals(0, reservations.size());
-    }
-
-    @Test
-    @Transactional
     public void purchaseReservationWithCostumer() {
-        var customer = customerService.findOneById(CUSTOMER_TEST_ID);
-        var reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
-        for (Reservation reservation : reservations) {
-            reservationService.purchaseReservation(reservation);
-        }
+        var customerOpt = customerRepository.findById(CUSTOMER_TEST_ID);
+        Customer customer;
+        if (customerOpt.isPresent()) {
+            customer = customerOpt.get();
 
-        reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
-        Assert.assertEquals(0, reservations.size());
+            var reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
+            for (Reservation reservation : reservations) {
+                reservationService.purchaseReservation(reservation);
+            }
+
+            reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
+            Assert.assertEquals(0, reservations.size());
+        } else {
+            Assert.fail("No customer with id " + CUSTOMER_TEST_ID + " found!");
+        }
     }
 
     @Test
-    @Transactional
     public void findReservationWithCustomer() {
-        var customer = customerService.findOneById(CUSTOMER_TEST_ID);
-        var reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
+        var customerOpt = customerRepository.findById(CUSTOMER_TEST_ID);
+        Customer customer;
+        if (customerOpt.isPresent()) {
+            customer = customerOpt.get();
 
-        Assert.assertEquals(1, reservations.size());
-        var reservation = reservations.get(0);
-        var actualCustomer = reservation.getCustomer();
-        var actualReservationId = reservation.getId();
-        Assert.assertSame(customer, actualCustomer);
-        Assert.assertEquals(RESERVATION_TEST_ID, actualReservationId);
+            var reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
+
+            Assert.assertEquals(1, reservations.size());
+            var reservation = reservations.get(0);
+            var actualCustomer = reservation.getCustomer();
+            var actualReservationId = reservation.getId();
+            Assert.assertEquals(customer, actualCustomer);
+            Assert.assertEquals(RESERVATION_TEST_ID, actualReservationId);
+        } else {
+            Assert.fail("No customer with id " + CUSTOMER_TEST_ID + " found!");
+        }
 
     }
 
