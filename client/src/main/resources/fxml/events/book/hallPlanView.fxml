@@ -62,7 +62,7 @@
                   <HBox layoutX="427.0" layoutY="67.0" spacing="15.0">
                      <children>
                         <Button mnemonicParsing="false" onAction="#backButton" text="Back" />
-                        <Button mnemonicParsing="false" text="Reserve" />
+                        <Button mnemonicParsing="false" onAction="#reserveButton" text="Reserve" />
                         <Button mnemonicParsing="false" onAction="#continueButton" text="Continue" />
                      </children>
                   </HBox>
