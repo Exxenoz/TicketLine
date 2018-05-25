@@ -24,6 +24,7 @@ import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -39,27 +40,28 @@ import static org.controlsfx.glyphfont.FontAwesome.Glyph.LOCK;
 public class UsersController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private static final int HEADER_ICON_SIZE = 25;
-    private static final int USERS_PER_PAGE = 30;
-    private final MainController mainController;
-    private final UserService userService;
+
     @FXML
     public TableColumn<UserDTO, Integer> userAuthTriesCol;
+
     @FXML
-    private Label lblHeaderTitle;
-    @FXML
-    private Label lblHeaderIcon;
-    @FXML
-    private AnchorPane content;
+    private VBox content;
+
     @FXML
     private TableView<UserDTO> userTable;
+
     @FXML
     private TableColumn<UserDTO, String> usernameCol;
+
     @FXML
     private TableColumn<UserDTO, String> useraccountStatusCol;
+
     @FXML
     private TabHeaderController tabHeaderController;
 
+    private static final int USERS_PER_PAGE = 30;
+    private final MainController mainController;
+    private final UserService userService;
     private ObservableList<UserDTO> items;
     private int page = 0;
     private int totalPages = 0;
@@ -68,13 +70,13 @@ public class UsersController {
         this.mainController = mainController;
         this.userService = userService;
         this.items = FXCollections.observableArrayList();
-
     }
 
     @FXML
     private void initialize() {
         tabHeaderController.setIcon(LOCK);
         tabHeaderController.setTitle(BundleManager.getBundle().getString("usertab.header"));
+        userTable.refresh();
     }
 
     private void scrolled(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
