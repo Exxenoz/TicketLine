@@ -4,6 +4,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.user.UserMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.NotFoundException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.UserRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
@@ -20,11 +21,13 @@ import java.util.List;
 public class SimpleUserService implements UserService {
 
     private UserRepository userRepository;
+    private UserMapper userMapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public SimpleUserService(UserRepository userRepository) {
+    public SimpleUserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -108,5 +111,12 @@ public class SimpleUserService implements UserService {
     @Override
     public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
+    }
+
+    @Override
+    public UserDTO save(UserDTO userDTO) throws UserValidatorException {
+        UserValidator.validateNewUser(userDTO);
+        var user = userMapper.userDTOToUser(userDTO);
+        return userMapper.userToUserDTO(userRepository.save(user));
     }
 }

@@ -58,4 +58,15 @@ public class UsersEndpoint {
             throw new InvalidRequestException();
         }
     }
+
+    @PostMapping("/create")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation("Create a new user")
+    public UserDTO save(@RequestBody UserDTO userDTO) {
+        try {
+            return userService.save(userDTO);
+        } catch (UserValidatorException e) {
+            throw new InvalidRequestException();
+        }
+    }
 }

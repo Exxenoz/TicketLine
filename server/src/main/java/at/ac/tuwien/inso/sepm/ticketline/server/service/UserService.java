@@ -1,6 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,4 +56,13 @@ public interface UserService {
      * @return a page of users
      */
     Page<User> findAll(Pageable pageable);
+
+    /**
+     * Creates a new user
+     *
+     * @param userDTO user to create
+     * @return created user
+     * @throws UserValidatorException in case user was invalid
+     */
+    UserDTO save(UserDTO userDTO) throws UserValidatorException;
 }
