@@ -72,20 +72,6 @@ public class UserCreateDialog {
     public void onClickCreateUserButton(ActionEvent actionEvent) {
         LOGGER.debug("Clicked create user button");
 
-    }
-
-    private Set<String> getRoles() {
-        Set<String> roles = new HashSet<>();
-        String selectedRole = String.valueOf(roleChoiceBox.getSelectionModel().getSelectedItem());
-
-        // user role is implicit
-        if(!selectedRole.equals("USER")) {
-            roles.add(selectedRole);
-        }
-        return roles;
-    }
-
-    private void validateUser() {
         boolean valid = true;
         UserDTO userDTO = new UserDTO();
 
@@ -140,5 +126,15 @@ public class UserCreateDialog {
         ).showAndWait();
 
         ((Stage) usernameTextField.getScene().getWindow()).close();
+    }
+
+    private Set<String> getRoles() {
+        Set<String> roles = new HashSet<>();
+        String selectedRole = String.valueOf(roleChoiceBox.getSelectionModel().getSelectedItem());
+
+        roles.add("USER");
+        roles.add(selectedRole);
+
+        return roles;
     }
 }
