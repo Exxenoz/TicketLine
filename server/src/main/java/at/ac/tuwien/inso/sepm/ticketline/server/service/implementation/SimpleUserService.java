@@ -116,6 +116,11 @@ public class SimpleUserService implements UserService {
     @Override
     public UserDTO save(UserDTO userDTO) throws UserValidatorException {
         UserValidator.validateNewUser(userDTO);
+
+        if (userRepository.findByUsername(userDTO.getUsername()) != null) {
+            throw new UserValidatorException("User validation failed, because username is already used!");
+        }
+
         var user = userMapper.userDTOToUser(userDTO);
         return userMapper.userToUserDTO(userRepository.save(user));
     }
