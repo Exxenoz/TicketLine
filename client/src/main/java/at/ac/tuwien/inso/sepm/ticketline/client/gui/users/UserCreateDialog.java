@@ -109,7 +109,7 @@ public class UserCreateDialog {
             JavaFXUtils.createErrorDialog(
                 BundleManager.getBundle().getString("users.dialog.create.dialog.error.title"),
                 BundleManager.getBundle().getString("users.dialog.create.dialog.error.header_text"),
-                BundleManager.getBundle().getString("users.dialog.create.dialog.error.content_text"),
+                e.getMessage(),
                 usernameTextField.getScene().getWindow()
             ).showAndWait();
 

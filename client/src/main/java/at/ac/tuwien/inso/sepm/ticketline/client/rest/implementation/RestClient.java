@@ -54,14 +54,16 @@ public class RestClient extends RestTemplate {
     public String getMessageFromHttpStatusCode(HttpStatus httpStatus) {
         String message = String.format("%s %s", BundleManager.getExceptionBundle().getString("exception.unknown"), httpStatus.value());
 
-        if(httpStatus == HttpStatus.UNAUTHORIZED) {
+        if (httpStatus == HttpStatus.UNAUTHORIZED) {
             message = BundleManager.getExceptionBundle().getString("exception.http_unauthorized");
-        } else if(httpStatus == HttpStatus.FORBIDDEN) {
+        } else if (httpStatus == HttpStatus.FORBIDDEN) {
             message = BundleManager.getExceptionBundle().getString("exception.http_forbidden");
-        } else if(httpStatus == HttpStatus.NOT_FOUND) {
+        } else if (httpStatus == HttpStatus.NOT_FOUND) {
             message = BundleManager.getExceptionBundle().getString("exception.http_not_found");
         } else if (httpStatus == HttpStatus.BAD_REQUEST) {
             message = BundleManager.getExceptionBundle().getString("exception.http_bad_request");
+        } else if (httpStatus == HttpStatus.CONFLICT) {
+            message = BundleManager.getExceptionBundle().getString("exception.http_conflict");
         }
 
         return message;

@@ -103,7 +103,7 @@ public class SimpleUserRestClient implements UserRestClient {
             LOGGER.debug("Result status was {} with content {}", user.getStatusCode(), user.getBody());
             return user.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed to create user with status code " + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }

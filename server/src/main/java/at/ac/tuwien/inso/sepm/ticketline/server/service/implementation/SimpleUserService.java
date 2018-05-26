@@ -7,6 +7,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.user.UserMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.NotFoundException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.UserRepository;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.UsernameAlreadyTakenException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,11 +115,11 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public UserDTO save(UserDTO userDTO) throws UserValidatorException {
+    public UserDTO save(UserDTO userDTO) throws UserValidatorException, UsernameAlreadyTakenException {
         UserValidator.validateNewUser(userDTO);
 
         if (userRepository.findByUsername(userDTO.getUsername()) != null) {
-            throw new UserValidatorException("User validation failed, because username is already used!");
+            throw new UsernameAlreadyTakenException("User validation failed, because username is already taken!");
         }
 
         var user = userMapper.userDTOToUser(userDTO);

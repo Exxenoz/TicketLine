@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service;
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.UsernameAlreadyTakenException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -63,6 +64,7 @@ public interface UserService {
      * @param userDTO user to create
      * @return created user
      * @throws UserValidatorException in case user was invalid
+     * @throws UsernameAlreadyTakenException in case the username is already taken
      */
-    UserDTO save(UserDTO userDTO) throws UserValidatorException;
+    UserDTO save(UserDTO userDTO) throws UserValidatorException, UsernameAlreadyTakenException;
 }
