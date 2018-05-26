@@ -198,7 +198,16 @@ public class UserController {
                 userService.enableUser(userDTO);
             }
         } catch (DataAccessException e) {
-            JavaFXUtils.createErrorDialog(e.getMessage(),
+            String errorMessage = e.getMessage();
+            if ((e.getCause().getClass()) == HttpClientErrorException.class) {
+                var httpErrorCode = ((HttpStatusCodeException) e.getCause()).getStatusCode();
+                if (httpErrorCode == HttpStatus.FORBIDDEN) {
+                    LOGGER.debug("Cannot disable own account");
+                    errorMessage = BundleManager.getExceptionBundle().getString("exception.user.disable_self");
+                }
+            }
+
+            JavaFXUtils.createErrorDialog(errorMessage,
                 content.getScene().getWindow()).showAndWait();
         } catch (UserValidatorException e) {
             LOGGER.error("No User was selected");
