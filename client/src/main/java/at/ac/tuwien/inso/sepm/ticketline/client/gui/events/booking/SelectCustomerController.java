@@ -63,7 +63,7 @@ public class SelectCustomerController {
     private Stage stage;
     private boolean isReservation;
     private ReservationDTO reservation;
-    private CustomerDTO chosenCustomer = new CustomerDTO();
+    private CustomerDTO chosenCustomer;
     private PurchaseReservationSummaryController PRSController;
 
 
@@ -81,6 +81,7 @@ public class SelectCustomerController {
     }
 
     private void initTable() {
+        chosenCustomer = new CustomerDTO();
         customerTableColumnFirstName.setCellValueFactory(cellData -> new SimpleStringProperty(
             cellData.getValue().getFirstName()
         ));

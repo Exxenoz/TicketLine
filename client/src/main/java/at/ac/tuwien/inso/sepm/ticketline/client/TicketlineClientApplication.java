@@ -33,7 +33,7 @@ public class TicketlineClientApplication extends SpringFxApplication {
         stage.setTitle(javaFxConfigurationProperties.getTitle());
      /*   stage.setMinHeight(1100);
         stage.setMinWidth(1100);*/
-        javaFxConfigurationProperties.setInitialHeight(740);
+        javaFxConfigurationProperties.setInitialHeight(800);
         javaFxConfigurationProperties.setInitialWidth(1100);
         stage.setScene(new Scene(
             loadParent("/fxml/mainWindow.fxml"),

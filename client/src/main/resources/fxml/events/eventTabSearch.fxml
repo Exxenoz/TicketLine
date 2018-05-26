@@ -26,7 +26,7 @@
         <HBox>
             <children>
                 <Label contentDisplay="TOP" prefHeight="25.0" prefWidth="89.0" text="%events.main.activefilters"/>
-                <Label fx:id="activeFiltersListLabel" prefHeight="27.0" prefWidth="150.0"
+                <Label fx:id="activeFiltersListLabel" prefHeight="27.0" prefWidth="840"
                        text="Criteria 1, Criteria 2,...."/>
                 <Button fx:id="clearButton" alignment="TOP_CENTER" mnemonicParsing="false"
                         onAction="#showAllPerformances" text="%events.main.button.clear"/>

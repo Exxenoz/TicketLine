@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.service;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
 
@@ -32,4 +33,21 @@ public interface ReservationService {
      * @throws DataAccessException in case something went wrong
      */
     Long getPaidReservationCountByFilter(ReservationFilterTopTenDTO reservationFilterTopTen) throws DataAccessException;
+
+    /**
+     * Create a reservation with the given values within the createReservationDTO
+     * @param createReservationDTO contains chosen values for the attributes of the reservation
+     * @return a reservationDTO which includes the id
+     * @throws DataAccessException in case something goes wrong while trying to create the reservation in the db
+     */
+    ReservationDTO createNewReservation(CreateReservationDTO createReservationDTO) throws DataAccessException;
+
+    /**
+     * Create a reservation which is paid immediately with the given values within the createReservationDTO
+     * @param createReservationDTO contains chosen values for the attributes of the reservation
+     * @returna reservationDTO which includes the id
+     * @throws DataAccessException in case something goes wrong while trying to create and set the reservation to paid in the db
+     */
+    ReservationDTO createAndPayReservation(CreateReservationDTO createReservationDTO) throws DataAccessException;
+
 }

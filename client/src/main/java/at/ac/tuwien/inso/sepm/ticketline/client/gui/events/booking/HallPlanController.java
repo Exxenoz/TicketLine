@@ -40,7 +40,7 @@ public class HallPlanController {
     private Stage stage;
     private boolean isReservation = false;
     private ReservationDTO reservation;
-    private List<SeatDTO> seats = new LinkedList<>();
+    private List<SeatDTO> seats;
 
 
     public HallPlanController(SpringFxmlLoader fxmlLoader, SelectCustomerController selectCustomerController, @Lazy PerformanceDetailViewController performanceDetailViewController){
@@ -50,6 +50,7 @@ public class HallPlanController {
 
     @FXML
     private void initialize(){
+        seats = new LinkedList<>();
         eventNameLabel.setText(reservation.getPerformance().getEvent().getName());
         performanceNameLabel.setText(reservation.getPerformance().getName());
         amountOfTicketsLabel.setText("0");

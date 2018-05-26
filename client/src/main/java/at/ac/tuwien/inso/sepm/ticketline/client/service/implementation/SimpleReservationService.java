@@ -4,6 +4,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.ReservationRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
 import org.slf4j.Logger;
@@ -49,5 +50,15 @@ public class SimpleReservationService implements ReservationService {
         }
 
         return reservationRestClient.getPaidReservationCountByFilter(reservationFilterTopTen);
+    }
+
+    @Override
+    public ReservationDTO createNewReservation(CreateReservationDTO createReservationDTO) throws DataAccessException {
+        return reservationRestClient.createNewReservation(createReservationDTO);
+    }
+
+    @Override
+    public ReservationDTO createAndPayReservation(CreateReservationDTO createReservationDTO) throws DataAccessException {
+        return reservationRestClient.createAndPayReservation(createReservationDTO);
     }
 }

@@ -47,7 +47,7 @@ public class PerformanceDetailViewController {
     private final PerformanceService performanceService;
     private final HallPlanController hallPlanController;
     private Stage stage;
-    private ReservationDTO reservation = new ReservationDTO();
+    private ReservationDTO reservation;
 
     public PerformanceDetailViewController(
         SpringFxmlLoader fxmlLoader,
@@ -63,6 +63,7 @@ public class PerformanceDetailViewController {
 
     @FXML
     private void initialize() {
+        reservation = new ReservationDTO();
         performanceHeader.setText(performance.getEvent().getName());
         locationName.setText(performance.getLocationAddress().getLocationName() + ", " + performance.getLocationAddress().getCity());
         startTime.setText(performance.getPerformanceStart().toString());
