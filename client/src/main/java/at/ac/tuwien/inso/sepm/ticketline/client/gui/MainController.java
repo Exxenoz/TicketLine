@@ -76,8 +76,8 @@ public class MainController {
         spMainContent.getChildren().add(login);
         initNewsTabPane();
         initEventsTabPane();
-        initUserManageTabPane();
         initCustomersTabPane();
+        initUserManagementTabPane();
     }
 
     @FXML
@@ -123,18 +123,6 @@ public class MainController {
         tpContent.getTabs().add(eventsTab);
     }
 
-    private void initUserManageTabPane() {
-        SpringFxmlLoader.Wrapper<UserController> wrapper =
-            springFxmlLoader.loadAndWrap("/fxml/users/usersMain.fxml");
-        userController = wrapper.getController();
-        final var usersTab = new Tab(null, wrapper.getLoadedObject());
-        final var usersGlyph = fontAwesome.create(LOCK);
-        usersGlyph.setFontSize(TAB_ICON_FONT_SIZE);
-        usersGlyph.setColor(Color.WHITE);
-        usersTab.setGraphic(usersGlyph);
-        tpContent.getTabs().add(usersTab);
-    }
-
     private void initCustomersTabPane() {
         SpringFxmlLoader.Wrapper<CustomerController> wrapperEvents =
             springFxmlLoader.loadAndWrap("/fxml/customers/customerMain.fxml");
@@ -145,6 +133,18 @@ public class MainController {
         eventsGlyph.setColor(Color.WHITE);
         eventsTab.setGraphic(eventsGlyph);
         tpContent.getTabs().add(eventsTab);
+    }
+
+    private void initUserManagementTabPane() {
+        SpringFxmlLoader.Wrapper<UserController> wrapper =
+            springFxmlLoader.loadAndWrap("/fxml/users/usersMain.fxml");
+        userController = wrapper.getController();
+        final var usersTab = new Tab(null, wrapper.getLoadedObject());
+        final var usersGlyph = fontAwesome.create(LOCK);
+        usersGlyph.setFontSize(TAB_ICON_FONT_SIZE);
+        usersGlyph.setColor(Color.WHITE);
+        usersTab.setGraphic(usersGlyph);
+        tpContent.getTabs().add(usersTab);
     }
 
     private void setAuthenticated(boolean authenticated) {
