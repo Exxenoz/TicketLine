@@ -15,7 +15,6 @@ public class Reservation {
     @SequenceGenerator(name = "seq_reservation_id", sequenceName = "seq_reservation_id")
     private Long id;
 
-
     @ManyToOne
     private Customer customer;
 

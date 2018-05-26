@@ -1,5 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.rest.performance;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.Hall.HallDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.address.LocationAddressDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.artist.ArtistDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
@@ -24,6 +25,7 @@ public class PerformanceDTO {
     @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime performanceEnd;
     private LocationAddressDTO address;
+    private HallDTO hall;
 
     public PerformanceDTO() {
     }
@@ -100,6 +102,22 @@ public class PerformanceDTO {
 
     public void setLocationAddress(LocationAddressDTO address) {
         this.address = address;
+    }
+
+    public LocationAddressDTO getAddress() {
+        return address;
+    }
+
+    public void setAddress(LocationAddressDTO address) {
+        this.address = address;
+    }
+
+    public HallDTO getHall() {
+        return hall;
+    }
+
+    public void setHall(HallDTO hall) {
+        this.hall = hall;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.rest.sector;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -16,12 +17,67 @@ public class SectorDTO {
     @ApiModelProperty(required = true, readOnly = true, name = "The category of the sector")
     private SectorCategoryDTO category;
 
+    @ApiModelProperty(required = false, readOnly = true, name="The grid start x position of this sector. Starting at top left corner.")
+    private int startPositionX;
+
+    @ApiModelProperty(required = false, readOnly = true, name="The grid start y position of this sector. Starting at top left corner.")
+    private int startPositionY;
+
+    @ApiModelProperty(required = false, readOnly = true, name="The number of seats per row")
+    private int seatsPerRow;
+
+    @ApiModelProperty(required = false, readOnly = true, name="The number of rows")
+    private int rows;
+
+    @ApiModelProperty
+    private List<SeatDTO> seats;
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public int getStartPositionX() {
+        return startPositionX;
+    }
+
+    public void setStartPositionX(int startPositionX) {
+        this.startPositionX = startPositionX;
+    }
+
+    public int getStartPositionY() {
+        return startPositionY;
+    }
+
+    public void setStartPositionY(int startPositionY) {
+        this.startPositionY = startPositionY;
+    }
+
+    public int getSeatsPerRow() {
+        return seatsPerRow;
+    }
+
+    public void setSeatsPerRow(int seatsPerRow) {
+        this.seatsPerRow = seatsPerRow;
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public void setRows(int rows) {
+        this.rows = rows;
+    }
+
+    public List<SeatDTO> getSeats() {
+        return seats;
+    }
+
+    public void setSeats(List<SeatDTO> seats) {
+        this.seats = seats;
     }
 
     public SectorCategoryDTO getCategory() {
