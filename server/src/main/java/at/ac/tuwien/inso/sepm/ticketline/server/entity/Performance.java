@@ -45,6 +45,9 @@ public class Performance {
     @Column(nullable = false)
     private LocationAddress locationAddress;
 
+    @Column(nullable = false)
+    private Hall hall;
+
     public Performance() {
     }
 
@@ -122,35 +125,48 @@ public class Performance {
         this.performanceEnd = performanceEnd;
     }
 
+    public Hall getHall() {
+        return hall;
+    }
+
+    public void setHall(Hall hall) {
+        this.hall = hall;
+    }
+
     @Override
     public String toString() {
         return "Performance{" +
-            "name= " + name +
-            ", price= " + price +
-            ", performanceStart= " + performanceStart +
-            ", performanceEnd= " + performanceEnd +
+            "id=" + id +
+            ", event=" + event +
+            ", artists=" + artists +
+            ", name='" + name + '\'' +
+            ", price=" + price +
+            ", performanceStart=" + performanceStart +
+            ", performanceEnd=" + performanceEnd +
+            ", locationAddress=" + locationAddress +
+            ", hall=" + hall +
             '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof Performance)) return false;
         Performance that = (Performance) o;
-        return Objects.equals(id, that.id) &&
-            Objects.equals(name, that.name) &&
-            Objects.equals(price, that.price) &&
-            Objects.equals(performanceStart, that.performanceStart) &&
-            Objects.equals(performanceEnd, that.performanceEnd);
+        return Objects.equals(getId(), that.getId()) &&
+            Objects.equals(getEvent(), that.getEvent()) &&
+            Objects.equals(getArtists(), that.getArtists()) &&
+            Objects.equals(getName(), that.getName()) &&
+            Objects.equals(getPrice(), that.getPrice()) &&
+            Objects.equals(getPerformanceStart(), that.getPerformanceStart()) &&
+            Objects.equals(getPerformanceEnd(), that.getPerformanceEnd()) &&
+            Objects.equals(getLocationAddress(), that.getLocationAddress()) &&
+            Objects.equals(getHall(), that.getHall());
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, event, name, price, performanceStart, performanceEnd);
+        return Objects.hash(getId(), getEvent(), getArtists(), getName(), getPrice(), getPerformanceStart(), getPerformanceEnd(), getLocationAddress(), getHall());
     }
 }

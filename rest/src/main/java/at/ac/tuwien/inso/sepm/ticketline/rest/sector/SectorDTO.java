@@ -17,16 +17,16 @@ public class SectorDTO {
     @ApiModelProperty(required = true, readOnly = true, name = "The category of the sector")
     private SectorCategoryDTO category;
 
-    @ApiModelProperty(required = false, readOnly = true, name="The grid start x position of this sector. Starting at top left corner.")
+    @ApiModelProperty(readOnly = true, name= "The grid start x position of this sector. Starting at top left corner.")
     private int startPositionX;
 
-    @ApiModelProperty(required = false, readOnly = true, name="The grid start y position of this sector. Starting at top left corner.")
+    @ApiModelProperty(readOnly = true, name= "The grid start y position of this sector. Starting at top left corner.")
     private int startPositionY;
 
-    @ApiModelProperty(required = false, readOnly = true, name="The number of seats per row")
+    @ApiModelProperty(readOnly = true, name= "The number of seats per row")
     private int seatsPerRow;
 
-    @ApiModelProperty(required = false, readOnly = true, name="The number of rows")
+    @ApiModelProperty(readOnly = true, name= "The number of rows")
     private int rows;
 
     @ApiModelProperty

@@ -1,6 +1,8 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Size;
 
 import java.util.Objects;
 import java.util.Set;
@@ -18,6 +20,20 @@ public class Sector {
     @ManyToOne
     private SectorCategory category;
 
+    @Column(name = "start_position_x")
+    private int startPositionX;
+
+    @Column(name = "start_position_y")
+    private int startPositionY;
+
+    @Column(name = "seats_per_row")
+    @Max(30)
+    private int seatsPerRow;
+
+    @Column
+    @Max(30)
+    private int rows;
+
     public Long getId() {
         return id;
     }
@@ -34,28 +50,66 @@ public class Sector {
         this.category = category;
     }
 
-    @Override
-    public String toString() {
-        return "Sector{" +
-            "id=" + id +
-            ", category=" + category +
-            '}';
+    public int getStartPositionX() {
+        return startPositionX;
+    }
+
+    public void setStartPositionX(int startPositionX) {
+        this.startPositionX = startPositionX;
+    }
+
+    public int getStartPositionY() {
+        return startPositionY;
+    }
+
+    public void setStartPositionY(int startPositionY) {
+        this.startPositionY = startPositionY;
+    }
+
+    public int getSeatsPerRow() {
+        return seatsPerRow;
+    }
+
+    public void setSeatsPerRow(int seatsPerRow) {
+        this.seatsPerRow = seatsPerRow;
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public void setRows(int rows) {
+        this.rows = rows;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (!(o instanceof Sector)) return false;
         Sector sector = (Sector) o;
-
-        return Objects.equals(id, sector.id) &&
-            Objects.equals(category, sector.category);
+        return getStartPositionX() == sector.getStartPositionX() &&
+            getStartPositionY() == sector.getStartPositionY() &&
+            getSeatsPerRow() == sector.getSeatsPerRow() &&
+            getRows() == sector.getRows() &&
+            Objects.equals(getId(), sector.getId()) &&
+            Objects.equals(getCategory(), sector.getCategory());
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, category);
+        return Objects.hash(getId(), getCategory(), getStartPositionX(), getStartPositionY(), getSeatsPerRow(), getRows());
+    }
+
+    @Override
+    public String toString() {
+        return "Sector{" +
+            "id=" + id +
+            ", category=" + category +
+            ", startPositionX=" + startPositionX +
+            ", startPositionY=" + startPositionY +
+            ", seatsPerRow=" + seatsPerRow +
+            ", rows=" + rows +
+            '}';
     }
 }

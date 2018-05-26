@@ -24,6 +24,7 @@ public class PerformanceDTO {
     private LocalDateTime performanceStart;
     @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime performanceEnd;
+
     private LocationAddressDTO address;
     private HallDTO hall;
 
