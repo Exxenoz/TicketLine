@@ -17,6 +17,8 @@ CREATE TABLE IF NOT EXISTS authorities (
 MERGE INTO users (username, password)
 KEY (username)
 VALUES ('user', '$2a$10$hXJx1IBhxH2fcTa/NR2ZMetAKy.4w3SoWeJm7FiEjK6XjOOtyRQmO');
+INSERT INTO authorities (username, authority)
+VALUES ('user', 'USER');
 
 -- admin
 MERGE INTO users (username, password)
@@ -29,6 +31,8 @@ VALUES ('admin', 'ADMIN');
 MERGE INTO users (username, password, enabled)
 KEY (username)
 VALUES ('hgruntz', '$2a$10$hXJx1IBhxH2fcTa/NR2ZMetAKy.4w3SoWeJm7FiEjK6XjOOtyRQmO', FALSE);
+INSERT INTO authorities (username, authority)
+VALUES ('hgruntz', 'USER');
 
 -- Ursel Zahnweh
 MERGE INTO users (username, password)
