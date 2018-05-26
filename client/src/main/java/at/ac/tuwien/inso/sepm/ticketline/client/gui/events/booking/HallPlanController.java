@@ -3,6 +3,8 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.PerformanceDetailViewController;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,6 +17,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
+import java.util.LinkedList;
+import java.util.List;
 
 @Component
 public class HallPlanController {
@@ -33,29 +37,30 @@ public class HallPlanController {
 
     private final SpringFxmlLoader fxmlLoader;
     private final SelectCustomerController selectCustomerController;
-    private final PerformanceDetailViewController performanceDetailViewController;
-    private PerformanceDTO performance;
     private Stage stage;
+    private boolean isReservation = false;
+    private ReservationDTO reservation;
+    private List<SeatDTO> seats;
+
 
     public HallPlanController(SpringFxmlLoader fxmlLoader, SelectCustomerController selectCustomerController, @Lazy PerformanceDetailViewController performanceDetailViewController){
         this.fxmlLoader = fxmlLoader;
         this.selectCustomerController = selectCustomerController;
-        this.performanceDetailViewController = performanceDetailViewController;
     }
 
     @FXML
     private void initialize(){
-        eventNameLabel.setText(performance.getEvent().getName());
-        performanceNameLabel.setText(performance.getName());
-        //TODO: amountOfTicketsLabel should change with amount of chosen seats
+        seats = new LinkedList<>();
+        eventNameLabel.setText(reservation.getPerformance().getEvent().getName());
+        performanceNameLabel.setText(reservation.getPerformance().getName());
         amountOfTicketsLabel.setText("0");
-        if(performance.getEvent().getEventType() == EventTypeDTO.SECTOR){
+        if(reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SECTOR){
            seatsOrSectorsLabel.setText("Chosen Sector: ");
            hallHeading.setText("Choose your Sector");
         }
+        //TODO: amountOfTicketsLabel should change with amount of chosen seats
         //TODO: Connect display of chosen seats/sectors with hallplan (rowsSeatsOrSectorsLabel)
         //TODO: pricePerTicket & totalPrice
-
     }
 
     @FXML
@@ -68,22 +73,29 @@ public class HallPlanController {
 
     @FXML
     public void continueButton(ActionEvent event){
-        selectCustomerController.fill(performance, stage);
-        Parent parent = fxmlLoader.load("/fxml/events/book/selectCustomerView.fxml");
-        stage.setScene(new Scene(parent));
-        stage.setTitle("Customer Details");
-        stage.centerOnScreen();
-
-        //TODO: save chosen seats/sectors to event
+        continueOrReserve();
     }
 
     @FXML
     public void reserveButton(){
-
+        isReservation = true;
+        continueOrReserve();
     }
 
-    public void fill(PerformanceDTO performance, Stage stage){
-        this.performance = performance;
+    private void continueOrReserve() {
+        reservation.setSeats(seats);
+        //saving isReservation here because boolean isPaid will be set at the very end
+        selectCustomerController.fill(reservation, isReservation, stage);
+        Parent parent = fxmlLoader.load("/fxml/events/book/selectCustomerView.fxml");
+        selectCustomerController.loadCustomers();
+        stage.setScene(new Scene(parent));
+        stage.setTitle("Customer Details");
+        stage.centerOnScreen();
+    }
+
+
+    public void fill(ReservationDTO reservation, Stage stage){
+        this.reservation = reservation;
         this.stage = stage;
     }
 }

@@ -5,9 +5,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="711.0" prefWidth="733.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking.HallPlanController">
+<AnchorPane prefHeight="749.0" prefWidth="733.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking.HallPlanController">
    <children>
-      <SplitPane dividerPositions="0.304654442877292, 0.8067700987306065" layoutX="-3.0" orientation="VERTICAL" prefHeight="711.0" prefWidth="733.0">
+      <SplitPane dividerPositions="0.304654442877292, 0.8067700987306065" layoutX="-3.0" orientation="VERTICAL" prefHeight="749.0" prefWidth="740.0">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="132.0" prefWidth="694.0">
                <children>
@@ -29,7 +29,7 @@
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="293.0" prefWidth="706.0" />
-            <AnchorPane layoutX="10.0" layoutY="10.0" minHeight="0.0" minWidth="0.0" prefHeight="187.0" prefWidth="729.0">
+            <AnchorPane layoutX="10.0" layoutY="10.0" minHeight="0.0" minWidth="0.0" prefHeight="156.0" prefWidth="731.0">
                <children>
                   <HBox layoutX="89.0" layoutY="23.0" prefHeight="17.0" prefWidth="240.0">
                      <children>
@@ -59,10 +59,10 @@
                         <Label layoutX="632.0" layoutY="28.0" prefHeight="27.0" prefWidth="63.0" text=" inkl. USt." />
                      </children>
                   </HBox>
-                  <HBox layoutX="427.0" layoutY="67.0" spacing="15.0">
+                  <HBox layoutX="427.0" layoutY="86.0" spacing="15.0">
                      <children>
                         <Button mnemonicParsing="false" onAction="#backButton" text="Back" />
-                        <Button mnemonicParsing="false" text="Reserve" />
+                        <Button mnemonicParsing="false" onAction="#reserveButton" text="Reserve" />
                         <Button mnemonicParsing="false" onAction="#continueButton" text="Continue" />
                      </children>
                   </HBox>

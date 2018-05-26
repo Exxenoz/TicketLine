@@ -7,8 +7,10 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -17,10 +19,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ScrollBar;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -62,12 +61,18 @@ public class SelectCustomerController {
     private int totalPages = 0;
     private final SpringFxmlLoader fxmlLoader;
     private Stage stage;
-    private PerformanceDTO performance;
+    private boolean isReservation;
+    private ReservationDTO reservation;
+    private CustomerDTO chosenCustomer;
+    private PurchaseReservationSummaryController PRSController;
 
 
-    public SelectCustomerController(SpringFxmlLoader fxmlLoader, CustomerService customerService) {
+    public SelectCustomerController(SpringFxmlLoader fxmlLoader,
+                                    CustomerService customerService,
+                                    PurchaseReservationSummaryController PRSController) {
         this.fxmlLoader = fxmlLoader;
         this.customerService = customerService;
+        this.PRSController = PRSController;
     }
 
     @FXML
@@ -76,6 +81,7 @@ public class SelectCustomerController {
     }
 
     private void initTable() {
+        chosenCustomer = new CustomerDTO();
         customerTableColumnFirstName.setCellValueFactory(cellData -> new SimpleStringProperty(
             cellData.getValue().getFirstName()
         ));
@@ -93,6 +99,12 @@ public class SelectCustomerController {
 
         LOGGER.debug("loading the page into the table");
         customerTable.setItems(items);
+
+        customerTable.getSelectionModel().selectedItemProperty().addListener((ObservableValue, oldValue, newValue) -> {
+            if (newValue != null) {
+                chosenCustomer = newValue;
+            }
+        });
     }
 
     private ScrollBar getVerticalScrollbar(TableView<?> table) {
@@ -175,10 +187,9 @@ public class SelectCustomerController {
     }
 
     public void goBack(ActionEvent actionEvent) {
-
         Parent parent = fxmlLoader.load("/fxml/events/book/hallPlanView.fxml");
         stage.setScene(new Scene(parent));
-        if(performance.getEvent().getEventType() == EventTypeDTO.SEAT){
+        if (reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SEAT) {
             stage.setTitle("Seat Selection");
         } else {
             stage.setTitle("Sector Selection");
@@ -186,35 +197,46 @@ public class SelectCustomerController {
         stage.centerOnScreen();
     }
 
-    public void goNextWithCustomer(ActionEvent actionEvent) {
-        //go to the next dialog scene with a selected Customer
-        /*
-        final var wrapper=fxmlLoader.loadAndWrap("/fxml/events/booking/selectCustomerView.fxml");
-        final var controller = (SelectCustomerController) wrapper.getController();
-        final var next=(Parent)wrapper.getLoadedObject();
-        controller.loadCustomers();
-        stage.setScene(new Scene(next));
-        */
+    public void goNextWithCustomer(ActionEvent event) {
+        if (chosenCustomer.getId() == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("You need to choose a specific customer for this option.");
+            alert.showAndWait();
+            return;
+        }
+        reservation.setCustomer(chosenCustomer);
+        continueOrReserve();
     }
 
     public void goNextWithoutCustomer(ActionEvent actionEvent) {
-        //go to the next dialog scene without a selected customer
-         /*
-         final var wrapper=fxmlLoader.loadAndWrap("/fxml/events/booking/selectCustomerView.fxml");
-        final var controller = (SelectCustomerController) wrapper.getController();
-        final var next=(Parent)wrapper.getLoadedObject();
-        controller.loadCustomers();
-        stage.setScene(new Scene(next));
+        chosenCustomer.setFirstName("Anonymous");
+        reservation.setCustomer(chosenCustomer);
+        continueOrReserve();
+    }
 
-        */
+    private void continueOrReserve(){
+        PRSController.fill(reservation, isReservation, stage);
+        Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
+        stage.setScene(new Scene(parent));
+
+        if (isReservation) {
+            stage.setTitle("Reservation Details");
+        } else {
+            stage.setTitle("Purchase Details");
+        }
+        stage.centerOnScreen();
     }
 
     public void createNewCustomer(ActionEvent actionEvent) {
-        //go to the create customer dialog scene
+        Parent parent = fxmlLoader.load("/fxml/customers/customerEditDialog.fxml");
+        stage.setScene(new Scene(parent));
+        stage.centerOnScreen();
     }
 
-    public void fill(PerformanceDTO performance, Stage stage){
-        this.performance = performance;
+    public void fill(ReservationDTO reservation, boolean isReservation, Stage stage) {
+        this.reservation = reservation;
+        this.isReservation = isReservation;
         this.stage = stage;
     }
 

@@ -10,6 +10,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.repository.*;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -31,6 +31,7 @@ public class ReservationIT extends BaseIT {
 
     private static final String RESERVATION_ENDPOINT = "/reservation";
     private static Long RESERVATION_TEST_ID = 1L;
+    private static Long CUSTOMER_TEST_ID = 1L;
 
     @Autowired
     private PerformanceRepository performanceRepository;
@@ -62,6 +63,7 @@ public class ReservationIT extends BaseIT {
         performance = performanceRepository.save(performance);
         Seat seat = seatRepository.save(newSeat());
         Customer customer = customerRepository.save(newCustomer());
+        CUSTOMER_TEST_ID = customer.getId();
 
         var seats = new LinkedList<Seat>();
         seats.add(seat);
@@ -74,6 +76,15 @@ public class ReservationIT extends BaseIT {
 
         reservation = reservationRepository.save(reservation);
         RESERVATION_TEST_ID = reservation.getId();
+    }
+
+    @After
+    public void tearDown() {
+        reservationRepository.deleteAll();
+        performanceRepository.deleteAll();
+        artistRepository.deleteAll();
+        customerRepository.deleteAll();
+        seatRepository.deleteAll();
     }
 
     @Test
@@ -100,15 +111,42 @@ public class ReservationIT extends BaseIT {
     }
 
     @Test
-    @Transactional
-    public void removeSeatFromReservation() {
+    public void findReservationWithCustomerNameAsUser() {
+        var customerOpt = customerRepository.findById(CUSTOMER_TEST_ID);
+        if (customerOpt.isPresent()) {
+            var customerDTO = customerMapper.customerToCustomerDTO(customerOpt.get());
+            Assert.assertNotNull(customerDTO);
+            Response response = RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+                .body(customerDTO)
+                .when().post(RESERVATION_ENDPOINT + "/findNotPaid")
+                .then().extract().response();
+            Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+            var resultList = List.of(response.getBody().as(ReservationDTO[].class));
+
+            Assert.assertEquals(1, resultList.size());
+            var result = resultList.get(0);
+            Assert.assertEquals(ReservationDTO.class, result.getClass());
+            Assert.assertNotNull(result.getId());
+            Assert.assertFalse(result.isPaid());
+        } else {
+            Assert.fail("Customer with the id " + CUSTOMER_TEST_ID + " was not found!");
+        }
+    }
+
+    @Test
+    public void removeSeatFromReservationAsUser() {
 
         var reservation = reservationRepository.findByPaidFalseAndId(RESERVATION_TEST_ID);
 
         ReservationDTO reservationDTO = reservationMapper.reservationToReservationDTO(reservation);
         Assert.assertNotNull(reservationDTO);
-        var seats = reservation.getSeats();
-        Assert.assertEquals(1, seats.size());
+        var seatDTOs = reservationDTO.getSeats();
+        Assert.assertEquals(1, seatDTOs.size());
+        seatDTOs.remove(0);
+        reservationDTO.setSeats(seatDTOs);
 
         Response response = RestAssured
             .given()
@@ -120,9 +158,9 @@ public class ReservationIT extends BaseIT {
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         var result = response.getBody().as(ReservationDTO.class);
         Assert.assertNotNull(result.getId());
-        
-        seats = reservation.getSeats();
-        Assert.assertEquals(0, seats.size());
+
+        var resultSeatDTOs = result.getSeats();
+        Assert.assertEquals(0, resultSeatDTOs.size());
     }
 
     @Test
@@ -153,6 +191,38 @@ public class ReservationIT extends BaseIT {
         assertThat(reservationDTO.getSeats().get(0).getId(), is(seat.getId()));
         assertThat(reservationDTO.getSeats().get(0).getPositionX(), is(seat.getPositionX()));
         assertThat(reservationDTO.getSeats().get(0).getPositionY(), is(seat.getPositionY()));
+    }
+
+    @Test
+    public void createAndPayReservationAsUser() {
+        // GIVEN
+        Performance performance = performanceRepository.save(newPerformance());
+        Seat seat = seatRepository.save(newSeat());
+        Customer customer = customerRepository.save(newCustomer());
+
+        // WHEN
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .body(CreateReservationDTO.CreateReservationDTOBuilder.aCreateReservationDTO()
+                .withCustomerID(customer.getId())
+                .withPaid(false)
+                .withPerformanceID(performance.getId())
+                .withSeatIDs(List.of(seat.getId()))
+                .build())
+            .when().post(RESERVATION_ENDPOINT + "/createAndPay")
+            .then().extract().response();
+        // THEN
+
+        assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        ReservationDTO reservationDTO = response.as(ReservationDTO.class);
+        assertThat(reservationDTO.getPerformance().getId(), is(performance.getId()));
+        assertThat(reservationDTO.getPerformance().getPrice(), is(performance.getPrice()));
+        assertThat(reservationDTO.getSeats().get(0).getId(), is(seat.getId()));
+        assertThat(reservationDTO.getSeats().get(0).getPositionX(), is(seat.getPositionX()));
+        assertThat(reservationDTO.getSeats().get(0).getPositionY(), is(seat.getPositionY()));
+        assertThat(reservationDTO.isPaid(), is(true));
     }
 
     private Performance newPerformance() {

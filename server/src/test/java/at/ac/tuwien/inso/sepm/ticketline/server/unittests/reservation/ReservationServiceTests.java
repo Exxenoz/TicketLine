@@ -2,12 +2,13 @@ package at.ac.tuwien.inso.sepm.ticketline.server.unittests.reservation;
 
 
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.CustomerRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.SeatRepository;
-import at.ac.tuwien.inso.sepm.ticketline.server.service.CustomerService;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,12 +18,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
 import static java.math.BigDecimal.ONE;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -31,11 +34,9 @@ public class ReservationServiceTests {
     @Autowired
     private ReservationService reservationService;
 
-    @Autowired
-    private CustomerService customerService;
-
     private static Long RESERVATION_TEST_ID = 1L;
     private static Long CUSTOMER_TEST_ID = 1L;
+    private static Long SEAT_TEST_ID = 1L;
     @Autowired
     private PerformanceRepository performanceRepository;
     @Autowired
@@ -49,6 +50,8 @@ public class ReservationServiceTests {
     public void setUp() {
         Performance performance = performanceRepository.save(newPerformance());
         Seat seat = seatRepository.save(newSeat());
+        SEAT_TEST_ID = seat.getId();
+
         LinkedList<Seat> seats = new LinkedList<>();
         seats.add(seat);
         Customer customer = customerRepository.save(newCustomer());
@@ -65,8 +68,16 @@ public class ReservationServiceTests {
     }
 
 
+    @After
+    public void tearDown() {
+        reservationRepository.deleteAll();
+        performanceRepository.deleteAll();
+        customerRepository.deleteAll();
+        seatRepository.deleteAll();
+    }
+
+
     @Test
-    @Transactional
     public void removeSeatFromReservation() {
         var reservation = reservationService.findOneByPaidFalseById(RESERVATION_TEST_ID);
         Assert.assertNotNull(reservation);
@@ -84,6 +95,9 @@ public class ReservationServiceTests {
         seats = reservation.getSeats();
         Assert.assertEquals(0, seats.size());
 
+        var seatOpt = seatRepository.findById(SEAT_TEST_ID);
+        Assert.assertTrue(seatOpt.isPresent());
+        Assert.assertEquals(seat, seatOpt.get());
     }
 
     @Test
@@ -98,53 +112,94 @@ public class ReservationServiceTests {
     }
 
     @Test
-    public void deleteReservationWithId() {
-        var reservation = reservationService.findOneByPaidFalseById(RESERVATION_TEST_ID);
-        Assert.assertNotNull(reservation);
-        reservationService.deleteReservation(reservation);
-
-        Assert.assertNull(reservationService.findOneByPaidFalseById(RESERVATION_TEST_ID));
-    }
-
-    @Test
-    @Transactional
-    public void deleteReservationWithCustomer() {
-        var customer = customerService.findOneById(CUSTOMER_TEST_ID);
-        var reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
-        for (Reservation reservation : reservations) {
-            Assert.assertNotNull(reservation);
-            reservationService.deleteReservation(reservation);
-        }
-
-        reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
-        Assert.assertEquals(0, reservations.size());
-    }
-
-    @Test
-    @Transactional
     public void purchaseReservationWithCostumer() {
-        var customer = customerService.findOneById(CUSTOMER_TEST_ID);
-        var reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
-        for (Reservation reservation : reservations) {
-            reservationService.purchaseReservation(reservation);
-        }
+        var customerOpt = customerRepository.findById(CUSTOMER_TEST_ID);
+        Customer customer;
+        if (customerOpt.isPresent()) {
+            customer = customerOpt.get();
 
-        reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
-        Assert.assertEquals(0, reservations.size());
+            var reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
+            for (Reservation reservation : reservations) {
+                reservationService.purchaseReservation(reservation);
+            }
+
+            reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
+            Assert.assertEquals(0, reservations.size());
+        } else {
+            Assert.fail("No customer with id " + CUSTOMER_TEST_ID + " found!");
+        }
     }
 
     @Test
-    @Transactional
     public void findReservationWithCustomer() {
-        var customer = customerService.findOneById(CUSTOMER_TEST_ID);
-        var reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
+        var customerOpt = customerRepository.findById(CUSTOMER_TEST_ID);
+        Customer customer;
+        if (customerOpt.isPresent()) {
+            customer = customerOpt.get();
 
-        Assert.assertEquals(1, reservations.size());
-        var reservation = reservations.get(0);
-        var actualCustomer = reservation.getCustomer();
-        var actualReservationId = reservation.getId();
-        Assert.assertSame(customer, actualCustomer);
-        Assert.assertEquals(RESERVATION_TEST_ID, actualReservationId);
+            var reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
+
+            Assert.assertEquals(1, reservations.size());
+            var reservation = reservations.get(0);
+            var actualCustomer = reservation.getCustomer();
+            var actualReservationId = reservation.getId();
+            Assert.assertEquals(customer, actualCustomer);
+            Assert.assertEquals(RESERVATION_TEST_ID, actualReservationId);
+        } else {
+            Assert.fail("No customer with id " + CUSTOMER_TEST_ID + " found!");
+        }
+
+    }
+
+    @Test
+    public void createReservation() {
+        Performance performance = performanceRepository.save(newPerformance());
+        Seat seat = seatRepository.save(newSeat());
+        Customer customer = customerRepository.save(newCustomer());
+
+        Reservation reservation = new Reservation();
+        reservation.setCustomer(customer);
+        reservation.setPerformance(performance);
+        reservation.setSeats(List.of(seat));
+
+        Reservation returned = null;
+        try {
+            returned = reservationService.createReservation(reservation);
+        } catch (InvalidReservationException e) {
+            fail();
+        }
+
+        assertThat(reservation.getId(), is(returned.getId()));
+        assertThat(reservation.getCustomer(), is(returned.getCustomer()));
+        assertThat(reservation.getSeats(), is(returned.getSeats()));
+        assertThat(reservation.getPerformance(), is(returned.getPerformance()));
+        assertThat(reservation.getPaid(), is(false));
+
+    }
+
+    @Test
+    public void createAndPay() {
+        Performance performance = performanceRepository.save(newPerformance());
+        Seat seat = seatRepository.save(newSeat());
+        Customer customer = customerRepository.save(newCustomer());
+
+        Reservation reservation = new Reservation();
+        reservation.setCustomer(customer);
+        reservation.setPerformance(performance);
+        reservation.setSeats(List.of(seat));
+
+        Reservation returned = null;
+        try {
+            returned = reservationService.createAndPayReservation(reservation);
+        } catch (InvalidReservationException e) {
+            fail();
+        }
+
+        assertThat(reservation.getId(), is(returned.getId()));
+        assertThat(reservation.getCustomer(), is(returned.getCustomer()));
+        assertThat(reservation.getSeats(), is(returned.getSeats()));
+        assertThat(reservation.getPerformance(), is(returned.getPerformance()));
+        assertThat(reservation.getPaid(), is(true));
 
     }
 
