@@ -31,6 +31,7 @@ public class SimpleUserRestClient implements UserRestClient {
     private final URI getUsersUri;
     private final URI getAllUsersUri;
     private final URI enableUserUri;
+    private final URI disableUserUri;
     private final URI createUserUri;
 
     public SimpleUserRestClient(RestClient restClient) {
@@ -38,6 +39,7 @@ public class SimpleUserRestClient implements UserRestClient {
         this.getAllUsersUri = restClient.getServiceURI("/users/all");
         this.getUsersUri = restClient.getServiceURI("/users");
         this.enableUserUri = restClient.getServiceURI("/users/enable");
+        this.disableUserUri = restClient.getServiceURI("/users/disable");
         this.createUserUri = restClient.getServiceURI("/users/create");
     }
 
@@ -47,6 +49,24 @@ public class SimpleUserRestClient implements UserRestClient {
             UserValidator.validateExistingUser(user);
             LOGGER.info("Enable User {} on {}", user.getUsername(), enableUserUri);
             final var response = restClient.exchange(new RequestEntity<>(user, POST, enableUserUri),
+                new ParameterizedTypeReference<UserDTO>() {
+                });
+            LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
+        } catch (HttpStatusCodeException e) {
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
+        } catch (RestClientException e) {
+            throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
+        } catch (UserValidatorException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void disableUser(UserDTO user) throws DataAccessException {
+        try {
+            UserValidator.validateExistingUser(user);
+            LOGGER.info("Disable User {} on {}", user.getUsername(), disableUserUri);
+            final var response = restClient.exchange(new RequestEntity<>(user, POST, disableUserUri),
                 new ParameterizedTypeReference<UserDTO>() {
                 });
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());

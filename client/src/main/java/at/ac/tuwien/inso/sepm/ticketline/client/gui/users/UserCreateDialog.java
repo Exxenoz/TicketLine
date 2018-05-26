@@ -56,8 +56,6 @@ public class UserCreateDialog {
     private final UserController userController;
     private final UserService userService;
 
-    private UserDTO userDTO;
-
     public UserCreateDialog(UserController userController, UserService userService) {
         this.userController = userController;
         this.userService = userService;

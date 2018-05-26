@@ -8,6 +8,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import java.util.List;
 
 public interface UserRestClient {
+
     /**
      * Enables the given user entry
      *
@@ -15,6 +16,14 @@ public interface UserRestClient {
      * @throws DataAccessException in case something went wrong
      */
     void enableUser(UserDTO user) throws DataAccessException;
+
+    /**
+     * Disables the given user entry
+     *
+     * @param user the user entry to be disabled
+     * @throws DataAccessException in case something went wrong
+     */
+    void disableUser(UserDTO user) throws DataAccessException;
 
     /**
      * Find all user entries

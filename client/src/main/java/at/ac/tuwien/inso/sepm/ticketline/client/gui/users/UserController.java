@@ -23,10 +23,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollBar;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -64,7 +61,11 @@ public class UserController {
     private TableColumn<UserDTO, String> useraccountStatusCol;
 
     @FXML
+    public Button toggleEnableButton;
+
+    @FXML
     private TabHeaderController tabHeaderController;
+
 
     private final SpringFxmlLoader springFxmlLoader;
     private final MainController mainController;
@@ -86,6 +87,26 @@ public class UserController {
     private void initialize() {
         tabHeaderController.setIcon(LOCK);
         tabHeaderController.setTitle(BundleManager.getBundle().getString("usertab.header"));
+        registerTableSelectionListener();
+    }
+
+    private void registerTableSelectionListener() {
+        userTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if(newSelection != null) {
+                // update button text according to enabled status of selected user
+                String toggleEnableButtonText = "";
+                if (newSelection.isEnabled()) {
+                    toggleEnableButtonText = BundleManager.getBundle().getString("usertab.user.disable");
+                } else {
+                    toggleEnableButtonText = BundleManager.getBundle().getString("usertab.user.enable");
+                }
+                toggleEnableButton.setText(toggleEnableButtonText);
+                toggleEnableButton.setDisable(false);
+            } else {
+                // no selection, disable toogle button
+                toggleEnableButton.setDisable(true);
+            }
+        });
     }
 
     private void scrolled(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -164,16 +185,17 @@ public class UserController {
         this.getVerticalScrollbar(userTable).setValue(0);
     }
 
-
-    public void handleEnable(javafx.event.ActionEvent actionEvent) {
+    public void toggleEnable(javafx.event.ActionEvent actionEvent) {
+        LOGGER.debug("Clicked toggle user button");
         try {
             UserDTO userDTO = userTable.getSelectionModel().getSelectedItem();
             UserValidator.validateExistingUser(userDTO);
-            if (!userDTO.isEnabled()) {
-                userService.enableUser(userDTO);
+            if (userDTO.isEnabled()) {
+                LOGGER.debug("Trying to disable user");
+                userService.disableUser(userDTO);
             } else {
-                JavaFXUtils.createErrorDialog(BundleManager.getExceptionBundle().getString("exception.selected_user_is_enabled"),
-                    content.getScene().getWindow()).showAndWait();
+                LOGGER.debug("Trying to enable user");
+                userService.enableUser(userDTO);
             }
         } catch (DataAccessException e) {
             JavaFXUtils.createErrorDialog(e.getMessage(),

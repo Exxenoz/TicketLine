@@ -25,7 +25,7 @@
                         <Insets right="16.0"/>
                     </HBox.margin>
                 </Button>
-                <Button mnemonicParsing="false" onAction="#handleEnable" text="%usertab.user.enable"/>
+                <Button fx:id="toggleEnableButton"  disable="true" mnemonicParsing="false" onAction="#toggleEnable" text="%usertab.user.enable"/>
             </buttons>
         </ButtonBar>
     </children>

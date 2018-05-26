@@ -35,6 +35,14 @@ public interface UserService {
     void enableUser(UserDTO userDTO) throws DataAccessException;
 
     /**
+     * Disables the given user entry
+     *
+     * @param userDTO the user entry to be disabled
+     * @throws DataAccessException in case something went wrong
+     */
+    void disableUser(UserDTO userDTO) throws DataAccessException;
+
+    /**
      * Create a user with the specified data transfer object.
      *
      * @param userDTO the user to create
