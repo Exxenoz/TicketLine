@@ -10,15 +10,16 @@ import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventRequestTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventResponseTopTenDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.sector.SectorCategoryDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +39,13 @@ public class EventTop10Controller {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    @FXML
+    public CategoryAxis barAxisX;
+
     // ---------- Top Ten Tab -----------
+
+    @FXML
+    public ChoiceBox yearChoiceBox;
 
     @FXML
     private ChoiceBox<String> monthChoiceBox;
@@ -46,7 +54,7 @@ public class EventTop10Controller {
     public ChoiceBox categoryChoiceBox;
 
     @FXML
-    private BarChart<String, Integer> topTenBarChart;
+    private BarChart<String, Long> topTenBarChart;
 
     @FXML
     private ChoiceBox<String> topTenEventChoiceBox;
@@ -84,7 +92,17 @@ public class EventTop10Controller {
 
     @FXML
     private void initialize() {
+        initYearChoiceBox();
         initMonthChoiceBox();
+    }
+
+    private void initYearChoiceBox() {
+        List<Integer> yearList = new ArrayList<>();
+        for(int i = LocalDateTime.now().getYear(); i >= 1980; i--) {
+            yearList.add(i);
+        }
+        yearChoiceBox.getItems().setAll(yearList);
+        yearChoiceBox.getSelectionModel().selectFirst();
     }
 
     private void initMonthChoiceBox() {
@@ -129,6 +147,7 @@ public class EventTop10Controller {
         topTenEventChoiceBox.getItems().clear();
 
         Integer month = monthChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? monthChoiceBox.getSelectionModel().getSelectedIndex() + 1 : 1;
+        Integer year = (Integer) yearChoiceBox.getSelectionModel().getSelectedItem();
         Integer categorySelectionIndex = categoryChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? categoryChoiceBox.getSelectionModel().getSelectedIndex() - 1 : null;
         Long categoryId = null;
         if (categorySelectionIndex != null) {
@@ -138,7 +157,7 @@ public class EventTop10Controller {
         LOGGER.info("Show Top 10 Events for month: " + monthChoiceBox.getSelectionModel().getSelectedItem() + " and categoryId: " + categoryId);
 
         try {
-            List<EventResponseTopTenDTO> events = eventService.findTopTenByMonthAndCategory(new EventRequestTopTenDTO(month, categoryId));
+            List<EventResponseTopTenDTO> events = eventService.findTopTenByMonthAndCategory(new EventRequestTopTenDTO(month, year, categoryId));
             showTopTenEvents(events);
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch top 10 events from server for month: " + month + " " + e.getMessage());
@@ -147,16 +166,42 @@ public class EventTop10Controller {
     }
 
     private void showTopTenEvents(List<EventResponseTopTenDTO> response) {
+        currentEvents.clear();
         topTenBarChart.getData().clear();
+        barAxisX.getCategories().clear();
 
-        XYChart.Series<String, Integer> barSeries = new XYChart.Series();
+        XYChart.Series<String, Long> barSeries = new XYChart.Series();
         barSeries.setName(monthChoiceBox.getSelectionModel().getSelectedItem());
 
+        ArrayList<String> categories = new ArrayList<>();
+
+        int categoryOccurrences[] = new int[response.size()];
+
+        int i = 0;
+        for (EventResponseTopTenDTO eventResponse : response) {
+            if (!categories.contains(eventResponse.getEvent().getName())) {
+                categories.add(eventResponse.getEvent().getName());
+            } else {
+                // add number of occurrence to event name
+                categoryOccurrences[i]++;
+                categories.add(eventResponse.getEvent().getName() + "_" + (categoryOccurrences[i] + 1));
+            }
+            i++;
+        }
+
+        barAxisX.setCategories(FXCollections.observableArrayList(categories));
+
+        i = 0;
         for (EventResponseTopTenDTO eventResponse : response) {
             EventDTO eventDTO = eventResponse.getEvent();
-            barSeries.getData().add(new XYChart.Data(eventDTO.getName(), eventResponse.getSales()));
+            if(categoryOccurrences[i] <= 0) {
+                barSeries.getData().add(new XYChart.Data(eventDTO.getName(), eventResponse.getSales()));
+            } else {
+                barSeries.getData().add(new XYChart.Data(eventDTO.getName() + "_" + (categoryOccurrences[i] + 1), eventResponse.getSales()));
+            }
             currentEvents.add(eventDTO);
             topTenEventChoiceBox.getItems().add(eventDTO.getName());
+            i++;
         }
 
         if (response.size() > 0) {
@@ -170,8 +215,8 @@ public class EventTop10Controller {
         registerBarChartListener(barSeries);
     }
 
-    private void registerBarChartListener(XYChart.Series<String, Integer> barSeries) {
-        for (final XYChart.Data<String, Integer> data : barSeries.getData()) {
+    private void registerBarChartListener(XYChart.Series<String, Long> barSeries) {
+        for (final XYChart.Data<String, Long> data : barSeries.getData()) {
             Node node = data.getNode();
 
             node.setOnMouseEntered(event -> {

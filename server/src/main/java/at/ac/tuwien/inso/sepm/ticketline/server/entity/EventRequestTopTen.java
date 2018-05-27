@@ -5,13 +5,15 @@ import java.util.Objects;
 public class EventRequestTopTen {
 
     private Integer month;
+    private Integer year;
     private Long categoryId;
 
     public EventRequestTopTen() {
     }
 
-    public EventRequestTopTen(Integer month, Long categoryId) {
+    public EventRequestTopTen(Integer month, Integer year, Long categoryId) {
         this.month = month;
+        this.year = year;
         this.categoryId = categoryId;
     }
 
@@ -21,6 +23,14 @@ public class EventRequestTopTen {
 
     public void setMonth(Integer month) {
         this.month = month;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
     }
 
     public Long getCategoryId() {
@@ -35,6 +45,7 @@ public class EventRequestTopTen {
     public String toString() {
         return "EventRequestTopTen{" +
             "month=" + month +
+            "year=" + year +
             ", categoryId=" + categoryId +
             '}';
     }
@@ -45,12 +56,13 @@ public class EventRequestTopTen {
         if (o == null || getClass() != o.getClass()) return false;
         EventRequestTopTen that = (EventRequestTopTen) o;
         return Objects.equals(month, that.month) &&
+            Objects.equals(year, that.year) &&
             Objects.equals(categoryId, that.categoryId);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(month, categoryId);
+        return Objects.hash(month, year, categoryId);
     }
 }

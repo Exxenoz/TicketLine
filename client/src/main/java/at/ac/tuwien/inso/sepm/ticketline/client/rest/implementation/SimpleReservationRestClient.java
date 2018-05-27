@@ -3,10 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.rest.implementation;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.ReservationRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
-import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
@@ -67,25 +64,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", reservation.getStatusCode(), reservation.getBody());
             return reservation.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed retrieve paid reservation count with status code " + e.getStatusCode().toString());
-        } catch (RestClientException e) {
-            throw new DataAccessException(e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public Long getPaidReservationCountByFilter(ReservationFilterTopTenDTO reservationFilterTopTen) throws DataAccessException {
-        try {
-            LOGGER.debug("Retrieving paid reservation count of a specific event and month from {}", reservationByEventUri);
-            final var reservation =
-                restClient.exchange(
-                    new RequestEntity<>(reservationFilterTopTen, POST, reservationTopTenUri),
-                    new ParameterizedTypeReference<Long>() {
-                });
-            LOGGER.debug("Result status was {} with content {}", reservation.getStatusCode(), reservation.getBody());
-            return reservation.getBody();
-        } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed retrieve paid reservation count with status code " + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }
