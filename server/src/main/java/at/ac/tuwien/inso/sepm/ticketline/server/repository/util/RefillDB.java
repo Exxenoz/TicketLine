@@ -36,11 +36,12 @@ public class RefillDB {
             new SeatDataGenerator(seatRepository, sectorRepository),
             new ArtistDataGenerator(artistRepository),
             new EventDataGenerator(eventRepository),
-            new PerformanceDataGenerator(performanceRepository, eventRepository, artistRepository),
+            new HallDataGenerator(hallRepository, sectorRepository),
+            new PerformanceDataGenerator(performanceRepository, eventRepository, artistRepository, hallRepository),
             new NewsDataGenerator(newsRepository),
-            new ReservationDataGenerator(reservationRepository, seatRepository, performanceRepository),
-            new HallDataGenerator(hallRepository, sectorRepository)
+            new ReservationDataGenerator(reservationRepository, seatRepository, performanceRepository)
         );
+
         CompositeDataGenerator compositeDataGenerator = new CompositeDataGenerator(generators);
 
         reservationRepository.deleteAll();
