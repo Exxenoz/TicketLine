@@ -34,9 +34,10 @@ public class SectorCategoryDataGenerator implements DataGenerator {
             LOGGER.info("Sector categories already generated");
         } else {
             LOGGER.info("Generating {} sector category entries", NUMBER_OF_SECTOR_CATEGORIES_TO_GENERATE);
-            for (int i = 0; i < NUMBER_OF_SECTOR_CATEGORIES_TO_GENERATE; i++) {
+            char sectorChar = 'A';
+            for (int i = 0; i < NUMBER_OF_SECTOR_CATEGORIES_TO_GENERATE && sectorChar <= 'Z'; i++, sectorChar++) {
                 final var sectorCategory = new SectorCategory();
-                sectorCategory.setName(faker.lorem().characters(4, 16));
+                sectorCategory.setName(String.valueOf(sectorChar));
                 sectorCategory.setBasePriceMod(BigDecimal.valueOf(faker.number().randomDouble(4, 0, 2)));
                 LOGGER.debug("Saving sector category {}", sectorCategory);
                 sectorCategoryRepository.save(sectorCategory);
