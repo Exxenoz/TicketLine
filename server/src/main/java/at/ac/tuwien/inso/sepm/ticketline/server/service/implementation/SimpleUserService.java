@@ -1,10 +1,12 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.user.UserMapper;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.ForbiddenException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.NotFoundException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.UserRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.UsernameAlreadyTakenException;
@@ -13,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
@@ -32,47 +36,48 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public void enableUser(User user) throws UserValidatorException {
-        UserValidator.validateExistingUser(UserDTO.builder()
-            .id(user.getId())
-            .username(user.getUsername())
-            .password(user.getPassword())
-            .enabled(user.isEnabled())
-            .strikes(user.getStrikes())
-            .build()
-        );
-        LOGGER.info("Enabling user: {}", user.getUsername());
+    public void enableUser(UserDTO userDTO) throws UserValidatorException {
+        LOGGER.info("Enable user {}", userDTO);
+        UserValidator.validateExistingUser(userDTO);
+        User user = userMapper.userDTOToUser(userDTO);
         user.setEnabled(true);
         user.setStrikes(0);
         userRepository.save(user);
     }
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UserDTO> findAll() {
+        return userMapper.userListToUserDTOList(userRepository.findAll());
     }
 
     @Override
-    public void disableUser(User user) {
-        LOGGER.info(String.format("Disabling user: %s", user.getUsername()));
+    public void disableUser(UserDTO userDTO) throws UserValidatorException {
+        LOGGER.info("Disable user {}", userDTO);
+
+        UserValidator.validateExistingUser(userDTO);
+        User user = userMapper.userDTOToUser(userDTO);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getName().equals(user.getUsername())) {
+            throw new ForbiddenException();
+        }
+
         user.setEnabled(false);
+
         userRepository.save(user);
     }
 
     @Override
-    public boolean increaseStrikes(User user) throws UserValidatorException {
-        UserValidator.validateExistingUser(UserDTO.builder()
-            .id(user.getId())
-            .username(user.getUsername())
-            .password(user.getPassword())
-            .enabled(user.isEnabled())
-            .strikes(user.getStrikes())
-            .build()
-        );
+    public boolean increaseStrikes(UserDTO userDTO) throws UserValidatorException {
+        LOGGER.info("Increase strikes for user {}", userDTO);
+
+        UserValidator.validateExistingUser(userDTO);
+        User user = userMapper.userDTOToUser(userDTO);
 
         if(!user.isEnabled()) {
             return true;
         }
+
         int strike = user.getStrikes();
         strike += 1;
 
@@ -80,7 +85,8 @@ public class SimpleUserService implements UserService {
         LOGGER.info(String.format("Increasing strikes for user: %s to amount: %d", user.getUsername(), user.getStrikes()));
 
         if(strike >= 5) {
-            this.disableUser(user);
+            user.setEnabled(false);
+            userRepository.save(user);
             return true;
         }
 
@@ -89,17 +95,18 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public User findUserByName(String name) {
+    public UserDTO findUserByName(String name) {
         User user = userRepository.findByUsername(name);
         if (user == null) {
             throw new NotFoundException();
         }
-        return user;
+        return userMapper.userToUserDTO(user);
     }
 
     @Override
     public void initiateSecurityUser(org.springframework.security.core.userdetails.User user) {
-        User assimilatedUser = findUserByName(user.getUsername());
+        UserDTO assimilatedUserDTO = findUserByName(user.getUsername());
+        User assimilatedUser = userMapper.userDTOToUser(assimilatedUserDTO);
 
         assimilatedUser.setUsername(user.getUsername());
         assimilatedUser.setPassword(user.getPassword());
@@ -110,16 +117,20 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public Page<User> findAll(Pageable pageable) {
-        return userRepository.findAll(pageable);
+    public PageResponseDTO<UserDTO> findAll(Pageable pageable) {
+        Page<User> userPage = userRepository.findAll(pageable);
+        List<UserDTO> customerDTOList = userMapper.userListToUserDTOList(userPage.getContent());
+        return new PageResponseDTO<>(customerDTOList, userPage.getTotalPages());
     }
 
     @Override
     public UserDTO save(UserDTO userDTO) throws UserValidatorException, UsernameAlreadyTakenException {
+        LOGGER.info("Save user {}", userDTO);
+
         UserValidator.validateNewUser(userDTO);
 
         if (userRepository.findByUsername(userDTO.getUsername()) != null) {
-            throw new UsernameAlreadyTakenException("User validation failed, because username is already taken!");
+            throw new UsernameAlreadyTakenException();
         }
 
         var user = userMapper.userDTOToUser(userDTO);

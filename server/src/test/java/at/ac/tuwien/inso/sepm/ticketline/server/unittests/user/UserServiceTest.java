@@ -1,6 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.unittests.user;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.user.UserMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import org.junit.After;
 import org.junit.Assert;
@@ -34,6 +35,9 @@ public class UserServiceTest {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Autowired
     private DataSource dataSource;
@@ -73,13 +77,12 @@ public class UserServiceTest {
     }
 
     @Test
-    public void disableUserTest() {
+    public void disableUserTest() throws UserValidatorException {
         setTestUserEnabled(true);
-
-        var user = userService.findUserByName(TEST_USERNAME);
-        Assert.assertTrue(user.isEnabled());
-        userService.disableUser(user);
-        user = userService.findUserByName(TEST_USERNAME);
-        Assert.assertFalse(user.isEnabled());
+        var userDTO = userService.findUserByName(TEST_USERNAME);
+        Assert.assertTrue(userDTO.isEnabled());
+        userService.disableUser(userDTO);
+        userDTO = userService.findUserByName(TEST_USERNAME);
+        Assert.assertFalse(userDTO.isEnabled());
     }
 }

@@ -35,17 +35,14 @@ public class UsersEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation("find all existing Users")
     public List<UserDTO> findAll() {
-        return userMapper.userListToUserDTOList(userService.findAll());
+        return userService.findAll();
     }
-
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation("find all existing Users")
     public PageResponseDTO<UserDTO> findAll(@RequestBody final PageRequestDTO pageRequestDTO) {
-        Page<User> userPage = (userService.findAll(pageRequestDTO.getPageable()));
-        List<UserDTO> customerDTOList = userMapper.userListToUserDTOList(userPage.getContent());
-        return new PageResponseDTO<>(customerDTOList, userPage.getTotalPages());
+        return userService.findAll(pageRequestDTO.getPageable());
     }
 
     @PostMapping("enable")
@@ -53,8 +50,18 @@ public class UsersEndpoint {
     @ApiOperation("enable a disabled User")
     public void enableUser(@RequestBody UserDTO userDTO) {
         try {
-            UserValidator.validateExistingUser(userDTO);
-            userService.enableUser(userMapper.userDTOToUser(userDTO));
+            userService.enableUser(userDTO);
+        } catch (UserValidatorException e) {
+            throw new InvalidRequestException();
+        }
+    }
+
+    @PostMapping("/disable")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation("Disable an enabled user")
+    public void disableUser(@RequestBody UserDTO userDTO) {
+        try {
+            userService.disableUser(userDTO);
         } catch (UserValidatorException e) {
             throw new InvalidRequestException();
         }

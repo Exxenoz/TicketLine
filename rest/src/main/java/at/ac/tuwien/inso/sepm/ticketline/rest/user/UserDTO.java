@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.rest.user;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @ApiModel(value = "UserDTO", description = "A User DTO")
@@ -97,7 +98,7 @@ public class UserDTO {
         private String password;
         private boolean enabled;
         private Integer strikes;
-        private Set<String> roles;
+        private Set<String> roles = new HashSet<>();
 
         public UserDTOBuilder id(Long id) {
             this.id = id;
@@ -136,7 +137,7 @@ public class UserDTO {
             userDTO.setPassword(password);
             userDTO.setEnabled(enabled);
             userDTO.setStrikes(strikes);
-            userDTO.setRoles(roles);
+            userDTO.setRoles(new HashSet<>(roles));
             return userDTO;
         }
     }
