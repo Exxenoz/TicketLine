@@ -2,7 +2,6 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.PerformanceDetailViewController;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
@@ -10,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
@@ -34,37 +34,58 @@ public class HallPlanController {
     public Label pricePerTicket;
     public Label totalPrice;
     public Label hallHeading;
+    private final PurchaseReservationSummaryController PRSController;
+    public Button continueButton;
+    public Button backButton;
 
     private final SpringFxmlLoader fxmlLoader;
     private final SelectCustomerController selectCustomerController;
+    public Button reserveButton;
     private Stage stage;
-    private boolean isReservation = false;
     private ReservationDTO reservation;
     private List<SeatDTO> seats;
+    private boolean isReservation = false;
+    private boolean changeDetails = false;
 
 
-    public HallPlanController(SpringFxmlLoader fxmlLoader, SelectCustomerController selectCustomerController, @Lazy PerformanceDetailViewController performanceDetailViewController){
+    public HallPlanController(SpringFxmlLoader fxmlLoader,
+                              SelectCustomerController selectCustomerController,
+                              @Lazy PerformanceDetailViewController performanceDetailViewController,
+                              @Lazy PurchaseReservationSummaryController PRSController) {
         this.fxmlLoader = fxmlLoader;
         this.selectCustomerController = selectCustomerController;
+        this.PRSController = PRSController;
     }
 
     @FXML
-    private void initialize(){
-        seats = new LinkedList<>();
+    private void initialize() {
+
         eventNameLabel.setText(reservation.getPerformance().getEvent().getName());
         performanceNameLabel.setText(reservation.getPerformance().getName());
         amountOfTicketsLabel.setText("0");
-        if(reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SECTOR){
-           seatsOrSectorsLabel.setText("Chosen Sector: ");
-           hallHeading.setText("Choose your Sector");
-        }
         //TODO: amountOfTicketsLabel should change with amount of chosen seats
         //TODO: Connect display of chosen seats/sectors with hallplan (rowsSeatsOrSectorsLabel)
         //TODO: pricePerTicket & totalPrice
+        if (reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SECTOR) {
+            seatsOrSectorsLabel.setText("Chosen Sector: ");
+            hallHeading.setText("Choose your Sector");
+        }
+
+        if (!changeDetails) {
+            seats = new LinkedList<>();
+        } else {
+            seats = reservation.getSeats();
+            continueButton.setText("Save Changes");
+            backButton.setText("Cancel Editing");
+
+            reserveButton.setDisable(true);
+            reserveButton.setVisible(false);
+            reserveButton.setManaged(false);
+        }
     }
 
     @FXML
-    public void backButton(ActionEvent event){
+    public void backButton(ActionEvent event) {
         Parent parent = fxmlLoader.load("/fxml/events/performanceDetailView.fxml");
         stage.setScene(new Scene(parent));
         stage.setTitle("Performance Details");
@@ -72,30 +93,45 @@ public class HallPlanController {
     }
 
     @FXML
-    public void continueButton(ActionEvent event){
+    public void continueButton(ActionEvent event) {
         continueOrReserve();
     }
 
     @FXML
-    public void reserveButton(){
+    public void reserveButton() {
         isReservation = true;
         continueOrReserve();
     }
 
     private void continueOrReserve() {
         reservation.setSeats(seats);
-        //saving isReservation here because boolean isPaid will be set at the very end
-        selectCustomerController.fill(reservation, isReservation, stage);
-        Parent parent = fxmlLoader.load("/fxml/events/book/selectCustomerView.fxml");
-        selectCustomerController.loadCustomers();
-        stage.setScene(new Scene(parent));
-        stage.setTitle("Customer Details");
-        stage.centerOnScreen();
+
+        if (!changeDetails) {
+            selectCustomerController.fill(reservation, isReservation, stage);
+            Parent parent = fxmlLoader.load("/fxml/events/book/selectCustomerView.fxml");
+            selectCustomerController.loadCustomers();
+            stage.setScene(new Scene(parent));
+            stage.setTitle("Customer Details");
+            stage.centerOnScreen();
+        } else {
+            PRSController.fill(reservation, isReservation, stage);
+            Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
+            stage.setScene(new Scene(parent));
+            stage.setTitle("Reservation Overview");
+            stage.centerOnScreen();
+        }
     }
 
 
-    public void fill(ReservationDTO reservation, Stage stage){
+    public void fill(ReservationDTO reservation, Stage stage) {
         this.reservation = reservation;
         this.stage = stage;
+    }
+
+    public void changeReservationDetails(ReservationDTO reservation, Stage stage) {
+        this.reservation = reservation;
+        this.stage = stage;
+        this.changeDetails = true;
+        this.isReservation = true;
     }
 }

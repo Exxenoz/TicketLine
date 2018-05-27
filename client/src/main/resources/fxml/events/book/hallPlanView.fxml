@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
+<?import javafx.scene.text.Font?>
 <AnchorPane prefHeight="749.0" prefWidth="733.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking.HallPlanController">
    <children>
       <SplitPane dividerPositions="0.304654442877292, 0.8067700987306065" layoutX="-3.0" orientation="VERTICAL" prefHeight="749.0" prefWidth="740.0">
@@ -61,9 +59,11 @@
                   </HBox>
                   <HBox layoutX="427.0" layoutY="86.0" spacing="15.0">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#backButton" text="Back" />
-                        <Button mnemonicParsing="false" onAction="#reserveButton" text="Reserve" />
-                        <Button mnemonicParsing="false" onAction="#continueButton" text="Continue" />
+                         <Button fx:id="backButton" mnemonicParsing="false" onAction="#backButton" text="Back"/>
+                         <Button fx:id="reserveButton" mnemonicParsing="false" onAction="#reserveButton"
+                                 text="Reserve"/>
+                         <Button fx:id="continueButton" mnemonicParsing="false" onAction="#continueButton"
+                                 text="Continue"/>
                      </children>
                   </HBox>
                </children>

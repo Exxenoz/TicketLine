@@ -7,6 +7,8 @@ import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.SeatRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -68,6 +70,11 @@ public class SimpleReservationService implements ReservationService {
     public Reservation createAndPayReservation(Reservation reservation) throws InvalidReservationException {
         createReservation(reservation);
         return purchaseReservation(reservation);
+    }
+
+    @Override
+    public Page<Reservation> findAll(Pageable pageable) {
+        return reservationRepository.findAll(pageable);
     }
 
     @Override

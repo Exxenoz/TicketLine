@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 
-<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
       styleClass="vbox"
       xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" spacing="5.0"
@@ -16,7 +17,7 @@
             </stylesheets>
             <tabs>
                 <Tab text="%bookings.main.tab1">
-                    <fx:include fx:id="eventSearch" source="reservationSearchTab.fxml"/>
+                    <fx:include fx:id="bookingSearch" source="reservationTabSearch.fxml"/>
                 </Tab>
             </tabs>
         </TabPane>
