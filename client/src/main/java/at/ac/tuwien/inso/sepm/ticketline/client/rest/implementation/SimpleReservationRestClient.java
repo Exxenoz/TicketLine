@@ -45,7 +45,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
         this.reservationTopTenUri = restClient.getServiceURI("/reservation/top_ten/");
         this.reservationCreateUri = restClient.getServiceURI("/reservation/");
         this.reservationCreateAndPay = restClient.getServiceURI("/reservation/createAndPay/");
-        this.reservationFindAll = restClient.getServiceURI("/reservation");
+        this.reservationFindAll = restClient.getServiceURI("/reservation/findAll");
         this.reservationEdit = restClient.getServiceURI("/reservation/edit");
         this.reservationPurchase = restClient.getServiceURI("/reservation/purchase");
         this.reservationFindNotPaid = restClient.getServiceURI("/reservation/findNotPaid");

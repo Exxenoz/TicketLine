@@ -110,7 +110,7 @@ public class ReservationEndpoint {
         return reservationMapper.reservationToReservationDTO(createdReservation);
     }
 
-    @PostMapping
+    @PostMapping("/findAll")
     @ApiOperation("Finds a page of all exisiting Reservations")
     public PageResponseDTO<ReservationDTO> findAll(@RequestBody final PageRequestDTO pageRequestDTO) {
         Page<Reservation> reservationPage = reservationService.findAll(pageRequestDTO.getPageable());
