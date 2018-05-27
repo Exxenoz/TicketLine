@@ -26,6 +26,7 @@ public class PerformanceDTO {
     private LocalDateTime performanceEnd;
 
     private LocationAddressDTO address;
+
     private HallDTO hall;
 
     public PerformanceDTO() {
