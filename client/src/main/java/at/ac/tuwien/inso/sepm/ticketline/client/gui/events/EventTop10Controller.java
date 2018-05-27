@@ -92,15 +92,17 @@ public class EventTop10Controller {
 
     @FXML
     private void initialize() {
+        initYearChoiceBox();
         initMonthChoiceBox();
     }
 
     private void initYearChoiceBox() {
         List<Integer> yearList = new ArrayList<>();
-        for(int i = 1980; i <= LocalDateTime.now().getYear(); i++) {
+        for(int i = LocalDateTime.now().getYear(); i >= 1980; i--) {
             yearList.add(i);
         }
         yearChoiceBox.getItems().setAll(yearList);
+        yearChoiceBox.getSelectionModel().selectFirst();
     }
 
     private void initMonthChoiceBox() {
@@ -145,7 +147,7 @@ public class EventTop10Controller {
         topTenEventChoiceBox.getItems().clear();
 
         Integer month = monthChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? monthChoiceBox.getSelectionModel().getSelectedIndex() + 1 : 1;
-        Integer year = Integer.valueOf(monthChoiceBox.getSelectionModel().getSelectedItem());
+        Integer year = (Integer) yearChoiceBox.getSelectionModel().getSelectedItem();
         Integer categorySelectionIndex = categoryChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? categoryChoiceBox.getSelectionModel().getSelectedIndex() - 1 : null;
         Long categoryId = null;
         if (categorySelectionIndex != null) {
@@ -155,7 +157,7 @@ public class EventTop10Controller {
         LOGGER.info("Show Top 10 Events for month: " + monthChoiceBox.getSelectionModel().getSelectedItem() + " and categoryId: " + categoryId);
 
         try {
-            List<EventResponseTopTenDTO> events = eventService.findTopTenByMonthAndCategory(new EventRequestTopTenDTO(year, month, categoryId));
+            List<EventResponseTopTenDTO> events = eventService.findTopTenByMonthAndCategory(new EventRequestTopTenDTO(month, year, categoryId));
             showTopTenEvents(events);
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch top 10 events from server for month: " + month + " " + e.getMessage());
