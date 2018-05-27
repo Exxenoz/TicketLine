@@ -48,7 +48,7 @@ public class SimpleEventRestClient implements EventRestClient {
             LOGGER.debug("Result status was {} with content {}", event.getStatusCode(), event.getBody());
             return event.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed retrieve event with status code " + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }
@@ -69,7 +69,7 @@ public class SimpleEventRestClient implements EventRestClient {
             LOGGER.debug("Result status was {} with content {}", event.getStatusCode(), event.getBody());
             return event.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed retrieve events with status code " + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }
@@ -87,7 +87,7 @@ public class SimpleEventRestClient implements EventRestClient {
             LOGGER.debug("Result status was {} with content {}", event.getStatusCode(), event.getBody());
             return event.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed retrieve events with status code " + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }
