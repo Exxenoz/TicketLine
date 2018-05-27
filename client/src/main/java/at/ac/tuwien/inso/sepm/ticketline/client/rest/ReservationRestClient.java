@@ -1,7 +1,10 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.rest;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
@@ -49,4 +52,14 @@ public interface ReservationRestClient {
      * @throws DataAccessException in case something goes wrong while trying to create and set the reservation to paid in the db
      */
     ReservationDTO createAndPayReservation(CreateReservationDTO createReservationDTO) throws  DataAccessException;
+
+    ReservationDTO findOneByPaidFalseById(Long reservationId) throws DataAccessException;
+
+    List<ReservationDTO> findAllByPaidFalseByCustomerName(CustomerDTO customerDTO) throws DataAccessException;
+
+    ReservationDTO purchaseReservation(ReservationDTO reservationDTO) throws DataAccessException;
+
+    ReservationDTO editReservation(ReservationDTO reservationDTO) throws DataAccessException;
+
+    PageResponseDTO<ReservationDTO> findAll(final PageRequestDTO pageRequestDTO) throws DataAccessException;
 }

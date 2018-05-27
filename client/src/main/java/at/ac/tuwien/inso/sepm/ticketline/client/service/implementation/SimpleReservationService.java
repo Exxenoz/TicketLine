@@ -3,7 +3,10 @@ package at.ac.tuwien.inso.sepm.ticketline.client.service.implementation;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.ReservationRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
+import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
@@ -60,5 +63,30 @@ public class SimpleReservationService implements ReservationService {
     @Override
     public ReservationDTO createAndPayReservation(CreateReservationDTO createReservationDTO) throws DataAccessException {
         return reservationRestClient.createAndPayReservation(createReservationDTO);
+    }
+
+    @Override
+    public ReservationDTO findOneByPaidFalseById(Long reservationId) throws DataAccessException {
+        return reservationRestClient.findOneByPaidFalseById(reservationId);
+    }
+
+    @Override
+    public List<ReservationDTO> findAllByPaidFalseByCustomerName(CustomerDTO customerDTO) throws DataAccessException {
+        return reservationRestClient.findAllByPaidFalseByCustomerName(customerDTO);
+    }
+
+    @Override
+    public ReservationDTO purchaseReservation(ReservationDTO reservationDTO) throws DataAccessException {
+        return reservationRestClient.purchaseReservation(reservationDTO);
+    }
+
+    @Override
+    public ReservationDTO editReservation(ReservationDTO reservationDTO) throws DataAccessException {
+        return reservationRestClient.editReservation(reservationDTO);
+    }
+
+    @Override
+    public PageResponseDTO<ReservationDTO> findAll(PageRequestDTO pageRequestDTO) throws DataAccessException {
+        return reservationRestClient.findAll(pageRequestDTO);
     }
 }
