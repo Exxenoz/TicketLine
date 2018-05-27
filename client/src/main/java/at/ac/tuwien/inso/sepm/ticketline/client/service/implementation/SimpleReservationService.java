@@ -5,7 +5,6 @@ import at.ac.tuwien.inso.sepm.ticketline.client.rest.ReservationRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -40,14 +39,5 @@ public class SimpleReservationService implements ReservationService {
         }
 
         return reservationRestClient.getPaidReservationCountByEvent(event);
-    }
-
-    @Override
-    public Long getPaidReservationCountByFilter(ReservationFilterTopTenDTO reservationFilterTopTen) throws DataAccessException {
-        if(reservationFilterTopTen == null || reservationFilterTopTen.getEventId() == null) {
-            throw new DataAccessException("Event not found");
-        }
-
-        return reservationRestClient.getPaidReservationCountByFilter(reservationFilterTopTen);
     }
 }
