@@ -61,6 +61,7 @@ public interface ReservationRestClient {
 
     /**
      * Purchase a reservation.
+     *
      * @param reservationDTO contains the reservation that is to be purchased
      * @return the updated reservation
      * @throws DataAccessException in case something goes wrong while trying to change the reservation to purchased
@@ -69,6 +70,7 @@ public interface ReservationRestClient {
 
     /**
      * Edit a reservation.
+     *
      * @param reservationDTO contains the new seats for the reservation
      * @return the updated reservation
      * @throws DataAccessException in case something goes wrong while trying to update the seats

@@ -34,13 +34,13 @@ public class HallPlanController {
     public Label pricePerTicket;
     public Label totalPrice;
     public Label hallHeading;
+    private final PurchaseReservationSummaryController PRSController;
     public Button continueButton;
     public Button backButton;
-    public Button reserveButton;
 
     private final SpringFxmlLoader fxmlLoader;
     private final SelectCustomerController selectCustomerController;
-    private final PurchaseReservationSummaryController PRSController;
+    public Button reserveButton;
     private Stage stage;
     private ReservationDTO reservation;
     private List<SeatDTO> seats;
@@ -106,7 +106,7 @@ public class HallPlanController {
     private void continueOrReserve() {
         reservation.setSeats(seats);
 
-        if(!changeDetails) {
+        if (!changeDetails) {
             selectCustomerController.fill(reservation, isReservation, stage);
             Parent parent = fxmlLoader.load("/fxml/events/book/selectCustomerView.fxml");
             selectCustomerController.loadCustomers();

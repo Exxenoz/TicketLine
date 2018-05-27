@@ -14,7 +14,8 @@ public class ReservationsController {
     }
 
     @FXML
-    private void initialize() {}
+    private void initialize() {
+    }
 
     public void loadData() {
         bookingSearchController.loadData();

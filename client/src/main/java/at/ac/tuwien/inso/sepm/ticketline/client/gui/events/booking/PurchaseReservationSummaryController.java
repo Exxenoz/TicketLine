@@ -1,9 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
-import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
-import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
@@ -15,16 +13,14 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
-import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component
 public class PurchaseReservationSummaryController {
@@ -32,7 +28,7 @@ public class PurchaseReservationSummaryController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public Button buyButtonPRS;
-    public Button cancelButtonPRS;
+    private final HallPlanController hallPlanController;
 
     public Label performancePrice;
     public Label eventName;
@@ -44,10 +40,10 @@ public class PurchaseReservationSummaryController {
     private Stage stage;
 
     private ReservationDTO reservation;
-    private boolean isReservation = false;
-    private boolean showDetails = false;
     private final ReservationService reservationService;
-    private final HallPlanController hallPlanController;
+    private boolean isReservation = false;
+    public Button cancelButtonPRS;
+    private boolean showDetails = false;
 
     PurchaseReservationSummaryController(
         SpringFxmlLoader fxmlLoader,
@@ -76,7 +72,7 @@ public class PurchaseReservationSummaryController {
         if (showDetails) {
             performanceHeader.setText("Reservation Overview");
             //make sure the reservation is still unpaid
-            if(!reservation.isPaid()) {
+            if (!reservation.isPaid()) {
                 cancelButtonPRS.setText("Edit Reservation");
             }
         }
@@ -121,7 +117,7 @@ public class PurchaseReservationSummaryController {
     }
 
     public void cancelButton(ActionEvent event) {
-        if(showDetails){
+        if (showDetails) {
             hallPlanController.changeReservationDetails(reservation, stage);
             Parent parent = fxmlLoader.load("/fxml/events/book/hallPlanView.fxml");
             stage.setScene(new Scene(parent));

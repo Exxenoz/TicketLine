@@ -31,15 +31,14 @@ import static org.controlsfx.glyphfont.FontAwesome.Glyph.TICKET;
 public class ReservationsSearchController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    private final ReservationService reservationService;
+    private final PurchaseReservationSummaryController PRSController;
     public TableColumn<ReservationDTO, String> reservationIDColumn;
     public TableColumn<ReservationDTO, String> eventColumn;
     public TableColumn<ReservationDTO, String> customerColumn;
     public TableColumn<ReservationDTO, String> paidColumn;
     public TableView<ReservationDTO> foundReservationsTableView;
     public Button showReservationDetailsButton;
-
-    private final ReservationService reservationService;
-    private final PurchaseReservationSummaryController PRSController;
     private final SpringFxmlLoader fxmlLoader;
     private List<ReservationDTO> reservations;
 
