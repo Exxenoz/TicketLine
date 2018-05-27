@@ -45,6 +45,7 @@ public class MainController {
     private MenuBar mbMain;
 
     private Node login;
+    private Node loginNewPassword;
 
     private final SpringFxmlLoader springFxmlLoader;
     private final FontAwesome fontAwesome;
@@ -149,7 +150,11 @@ public class MainController {
 
     private void setAuthenticated(boolean authenticated) {
         if (authenticated) {
-            spMainContent.getChildren().remove(login);
+            if (spMainContent.getChildren().contains(login)) {
+                spMainContent.getChildren().remove(login);
+            } else if(spMainContent.getChildren().contains(loginNewPassword)) {
+                spMainContent.getChildren().remove(loginNewPassword);
+            }
             newsController.loadNews();
             eventController.loadData();
             userController.loadUsers(0);
@@ -163,5 +168,11 @@ public class MainController {
 
     public void setProgressbarProgress(double progress) {
         pbLoadingProgress.setProgress(progress);
+    }
+
+    public void switchToNewPasswordAuthentication() {
+        spMainContent.getChildren().remove(login);
+        loginNewPassword = springFxmlLoader.load("/fxml/authenticationNewPasswordComponent.fxml");
+        spMainContent.getChildren().add(loginNewPassword);
     }
 }

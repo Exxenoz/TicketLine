@@ -12,7 +12,10 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import static javafx.scene.control.ProgressIndicator.INDETERMINATE_PROGRESS;
 
@@ -77,9 +80,19 @@ public class AuthenticationController {
                 super.failed();
 
                 if(!credentialsEmpty()) {
+                    if (getException().getCause() != null &&
+                        getException().getCause().getClass() == HttpClientErrorException.class) {
+                        var httpErrorCode = ((HttpStatusCodeException) getException().getCause()).getStatusCode();
+                        if (httpErrorCode == HttpStatus.LOCKED) {
+                            mainController.switchToNewPasswordAuthentication();
+                            return;
+                        }
+                    }
+
                     JavaFXUtils.createErrorDialog(getException().getMessage(),
                         ((Node) actionEvent.getTarget()).getScene().getWindow()).showAndWait();
                 }
+
             }
         };
         task.runningProperty().addListener((observable, oldValue, running) ->

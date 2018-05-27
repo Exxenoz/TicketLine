@@ -53,7 +53,7 @@ public class SimpleUserRestClient implements UserRestClient {
                 });
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
             throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
         } catch (UserValidatorException e) {
@@ -71,7 +71,7 @@ public class SimpleUserRestClient implements UserRestClient {
                 });
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
             throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
         } catch (UserValidatorException e) {

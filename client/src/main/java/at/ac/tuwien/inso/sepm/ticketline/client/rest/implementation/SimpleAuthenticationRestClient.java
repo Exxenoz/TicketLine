@@ -49,7 +49,7 @@ public class SimpleAuthenticationRestClient implements AuthenticationRestClient 
             LOGGER.debug("Authenticate {} status {}", authenticationRequest.getUsername(), response.getStatusCode());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
             throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
         }
@@ -67,7 +67,7 @@ public class SimpleAuthenticationRestClient implements AuthenticationRestClient 
             LOGGER.debug("Get AuthenticationToken status {}", response.getStatusCode());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
             throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
         }
@@ -85,7 +85,7 @@ public class SimpleAuthenticationRestClient implements AuthenticationRestClient 
             LOGGER.debug("Get AuthenticationTokenInfo status {}", response.getStatusCode());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
             throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
         }

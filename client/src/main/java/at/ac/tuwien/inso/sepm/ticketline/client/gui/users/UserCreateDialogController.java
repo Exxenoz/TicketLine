@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 @Component
-public class UserCreateDialog {
+public class UserCreateDialogController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -56,7 +56,7 @@ public class UserCreateDialog {
     private final UserController userController;
     private final UserService userService;
 
-    public UserCreateDialog(UserController userController, UserService userService) {
+    public UserCreateDialogController(UserController userController, UserService userService) {
         this.userController = userController;
         this.userService = userService;
     }
