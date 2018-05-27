@@ -28,7 +28,7 @@ public class AuthenticationNewPasswordController {
     public RowConstraints errorLabelRow2;
 
     @FXML
-    private TextField txtpPasswordResetKey;
+    private TextField txtPasswordResetKey;
 
     @FXML
     private PasswordField txtPassword;
@@ -67,7 +67,7 @@ public class AuthenticationNewPasswordController {
                 errorLabelRow2.setMinHeight(0);
 
                 boolean passwordKeyEmpty = false;
-                if(txtpPasswordResetKey.getText().isEmpty()) {
+                if(txtPasswordResetKey.getText().isEmpty()) {
                     passwordResetKeyMissingLabel.setVisible(true);
                     errorLabelRow1.setMinHeight(10);
                     passwordKeyEmpty = true;
@@ -94,7 +94,7 @@ public class AuthenticationNewPasswordController {
                 // TODO
                 return authenticationService.authenticate(
                     AuthenticationRequest.builder()
-                        .username(txtpPasswordResetKey.getText())
+                        .username(txtPasswordResetKey.getText())
                         .password(txtPassword.getText())
                         .build());
             }
@@ -116,7 +116,7 @@ public class AuthenticationNewPasswordController {
     }
 
     private boolean credentialsEmpty() {
-        return txtpPasswordResetKey.getText().isEmpty() || txtPassword.getText().isEmpty();
+        return txtPasswordResetKey.getText().isEmpty() || txtPassword.getText().isEmpty();
     }
 
     private boolean passwordsMatching() {

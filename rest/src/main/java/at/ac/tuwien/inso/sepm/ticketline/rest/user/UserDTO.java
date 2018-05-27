@@ -9,7 +9,6 @@ import java.util.Set;
 @ApiModel(value = "UserDTO", description = "A User DTO")
 public class UserDTO {
 
-
     @ApiModelProperty(readOnly = true, name = "The automatically generated database id")
     private Long id;
 
