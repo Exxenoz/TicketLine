@@ -4,6 +4,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
 
 import java.util.List;
 
@@ -50,4 +51,10 @@ public interface UserService {
      * @throws DataAccessException in case something went wrong
      */
     UserDTO create(UserDTO userDTO) throws DataAccessException;
+
+    /**
+     * Reset a users password, so he has to specify a new one at his next login
+     * @throws DataAccessException in case something went wrong
+     */
+    void resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws DataAccessException;
 }

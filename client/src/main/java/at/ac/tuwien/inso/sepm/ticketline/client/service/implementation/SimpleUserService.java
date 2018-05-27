@@ -3,9 +3,12 @@ package at.ac.tuwien.inso.sepm.ticketline.client.service.implementation;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.UserRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.UserService;
+import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,16 +35,31 @@ public class SimpleUserService implements UserService {
 
     @Override
     public void enableUser(UserDTO userDTO) throws DataAccessException {
+        try {
+            UserValidator.validateExistingUser(userDTO);
+        } catch (UserValidatorException e) {
+            throw new DataAccessException(e.getMessage());
+        }
         userRestClient.enableUser(userDTO);
     }
 
     @Override
     public void disableUser(UserDTO userDTO) throws DataAccessException {
+        try {
+            UserValidator.validateExistingUser(userDTO);
+        } catch (UserValidatorException e) {
+            throw new DataAccessException(e.getMessage());
+        }
         userRestClient.disableUser(userDTO);
     }
 
     @Override
     public UserDTO create(UserDTO userDTO) throws DataAccessException {
         return userRestClient.create(userDTO);
+    }
+
+    @Override
+    public void resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws DataAccessException {
+
     }
 }
