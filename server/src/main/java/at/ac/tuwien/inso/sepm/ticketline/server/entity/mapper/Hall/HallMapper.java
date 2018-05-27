@@ -5,7 +5,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.Hall;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface HallMaper {
+public interface HallMapper {
 
     HallDTO hallToHallDTO(Hall hall);
 

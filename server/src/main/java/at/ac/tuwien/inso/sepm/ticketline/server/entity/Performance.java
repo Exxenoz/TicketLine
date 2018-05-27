@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.GenerationType.AUTO;
 
 @Entity
@@ -44,8 +45,8 @@ public class Performance {
 
     @Column(nullable = false)
     private LocationAddress locationAddress;
-
-    @Column(nullable = false)
+    
+    @ManyToOne
     private Hall hall;
 
     public Performance() {
