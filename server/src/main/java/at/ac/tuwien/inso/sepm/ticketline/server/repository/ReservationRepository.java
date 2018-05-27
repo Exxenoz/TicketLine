@@ -52,10 +52,18 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      * Finds a non invoiced reservation by reservation id
      *
      * @param reservationId the id of the reservation to be found
-     * @return the not yet purchase reservation
+     * @return the not yet purchased reservation
      */
     Reservation findByPaidFalseAndId(Long reservationId);
 
+    /**
+     * Finds a not yet purchased reservation by the name of the customer and performance
+     *
+     * @param firstName       first name of the customer
+     * @param lastName        last name of the customer
+     * @param performanceName name of the performance
+     * @return the not yed purchased reservation
+     */
     @Query(value = "SELECT r.* " +
         "FROM reservation r, customer c, performance p " +
         "WHERE c.id = r.customer_id AND p.id = r.performance_id AND r.paid = false " +

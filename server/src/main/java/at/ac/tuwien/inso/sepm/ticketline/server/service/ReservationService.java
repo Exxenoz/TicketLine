@@ -26,6 +26,15 @@ public interface ReservationService {
      */
     Reservation findOneByPaidFalseById(Long reservationId);
 
+    /**
+     * Finds all the existing Reservation owned by the User with the given full name for the given performance
+     * which the customer did not yet purchase
+     *
+     * @param firstName       the first name of the customer
+     * @param lastName        the last name of the customer
+     * @param performanceName the name of the performance
+     * @return the reservations belonging to the performance with the given name and owned by the customer
+     */
     List<Reservation> findAllByPaidFalseByCustomerNameAndPerformanceName(String firstName, String lastName,
                                                                          String performanceName);
 
