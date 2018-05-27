@@ -80,9 +80,10 @@ public class HallDataGenerator implements DataGenerator {
                 // and add address
                 LocationAddress address = new LocationAddress();
                 address.setLocationName(faker.lordOfTheRings().location());
-                address.setCity(faker.rickAndMorty().location());
-                address.setStreet(faker.twinPeaks().location());
-                address.setCountry(faker.hipster().word());
+                address.setCity(faker.address().city());
+                address.setStreet(faker.address().streetName());
+                address.setCountry(faker.address().country());
+                address.setPostalCode(faker.address().zipCode());
                 hall.setAddress(address);
 
                 // and store
