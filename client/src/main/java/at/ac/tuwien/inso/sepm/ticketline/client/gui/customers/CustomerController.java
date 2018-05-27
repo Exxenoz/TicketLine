@@ -7,26 +7,34 @@ import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
+import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.scene.control.Pagination;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
+import static javafx.stage.Modality.APPLICATION_MODAL;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.USERS;
 
 @Component
@@ -34,7 +42,8 @@ public class CustomerController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final int CUSTOMERS_PER_PAGE = 20;
+    public static final int CUSTOMERS_PER_PAGE = 20;
+    public static final int FIRST_CUSTOMER_TABLE_PAGE = 0;
 
     @FXML
     private TabHeaderController tabHeaderController;
@@ -54,13 +63,20 @@ public class CustomerController {
     @FXML
     public TableColumn<CustomerDTO, String> customerTableColumnEMail;
 
+    @FXML
+    public Button customerEditButton;
+
+    private final SpringFxmlLoader springFxmlLoader;
+
     private CustomerService customerService;
 
     private ObservableList<CustomerDTO> customerList = FXCollections.observableArrayList();
 
-    private int currentCustomerPage = 0;
+    private int customerTablePage = 0;
+    private int customerTablePageCount = 1;
 
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(SpringFxmlLoader springFxmlLoader, CustomerService customerService) {
+        this.springFxmlLoader = springFxmlLoader;
         this.customerService = customerService;
     }
 
@@ -79,13 +95,17 @@ public class CustomerController {
         customerTableColumnEMail.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEmail()));
 
         customerTable.setItems(customerList);
+
+        customerTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            customerEditButton.setDisable(newValue == null);
+        });
     }
 
     public void loadCustomers() {
         // Setting event handler for sort policy property calls it automatically
         customerTable.sortPolicyProperty().set(t -> {
             customerList.clear();
-            loadCustomerTable(0);
+            loadCustomerTable(FIRST_CUSTOMER_TABLE_PAGE);
             return true;
         });
 
@@ -93,9 +113,9 @@ public class CustomerController {
         if (scrollBar != null) {
             scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
                 double scrollValue = newValue.doubleValue();
-                if (scrollValue == scrollBar.getMax()) {
+                if (scrollValue == scrollBar.getMax() && (customerTablePage + 1) < customerTablePageCount) {
                     double targetValue = scrollValue * customerList.size();
-                    loadCustomerTable(currentCustomerPage + 1);
+                    loadCustomerTable(customerTablePage + 1);
                     scrollBar.setValue(targetValue / customerList.size());
                 }
             });
@@ -135,6 +155,11 @@ public class CustomerController {
     }
 
     public void loadCustomerTable(int page) {
+        if (page < 0 || page >= customerTablePageCount) {
+            LOGGER.error("Could not load customer table page, because page parameter is invalid!");
+            return;
+        }
+
         PageRequestDTO pageRequestDTO = null;
         if (customerTable.getSortOrder().size() > 0) {
             TableColumn<CustomerDTO, ?> sortedColumn = customerTable.getSortOrder().get(0);
@@ -145,14 +170,65 @@ public class CustomerController {
             pageRequestDTO = new PageRequestDTO(page, CUSTOMERS_PER_PAGE, Sort.Direction.ASC, null);
         }
 
+        customerTablePage = page;
+        customerTablePageCount = pageRequestDTO.getSize() > 0 ? pageRequestDTO.getSize() : 1;
+
         try {
             PageResponseDTO<CustomerDTO> response = customerService.findAll(pageRequestDTO);
             customerList.addAll(response.getContent());
-            currentCustomerPage = page;
         } catch (DataAccessException e) {
             LOGGER.warn("Could not access customers!");
         }
 
         customerTable.refresh();
+    }
+
+    public void refreshCustomerTable() {
+        customerTable.refresh();
+    }
+
+    public void clearCustomerList() {
+        customerList.clear();
+    }
+
+    public void onClickCreateCustomerButton(ActionEvent actionEvent) {
+        LOGGER.debug("Clicked create customer button");
+
+        final var stage = (Stage) customerTable.getScene().getWindow();
+        final var dialog = new Stage();
+
+        dialog.getIcons().add(new Image(CustomerController.class.getResourceAsStream("/image/ticketlineIcon.png")));
+        dialog.setResizable(false);
+        dialog.initModality(APPLICATION_MODAL);
+        dialog.initOwner(stage);
+        dialog.setScene(new Scene(springFxmlLoader.load("/fxml/customers/customerEditDialog.fxml")));
+        dialog.setTitle(BundleManager.getBundle().getString("customers.dialog.create.title"));
+        dialog.showAndWait();
+    }
+
+    public void onClickEditCustomerButton(ActionEvent actionEvent) {
+        LOGGER.debug("Clicked edit customer button");
+
+        CustomerDTO selectedCustomerDTO = customerTable.getSelectionModel().getSelectedItem();
+
+        if (selectedCustomerDTO == null) {
+            LOGGER.warn("Could not edit customer, because no customer is selected!");
+            return;
+        }
+
+        var wrap = springFxmlLoader.loadAndWrap("/fxml/customers/customerEditDialog.fxml");
+        final CustomerEditDialogController controller = (CustomerEditDialogController) wrap.getController();
+        final var stage = (Stage) customerTable.getScene().getWindow();
+        final var dialog = new Stage();
+
+        controller.SetCustomerToEdit(selectedCustomerDTO);
+
+        dialog.getIcons().add(new Image(CustomerController.class.getResourceAsStream("/image/ticketlineIcon.png")));
+        dialog.setResizable(false);
+        dialog.initModality(APPLICATION_MODAL);
+        dialog.initOwner(stage);
+        dialog.setScene(new Scene((Parent)wrap.getLoadedObject()));
+        dialog.setTitle(BundleManager.getBundle().getString("customers.dialog.edit.title"));
+        dialog.showAndWait();
     }
 }

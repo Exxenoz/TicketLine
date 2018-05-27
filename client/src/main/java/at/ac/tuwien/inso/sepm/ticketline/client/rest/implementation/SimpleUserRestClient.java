@@ -42,7 +42,7 @@ public class SimpleUserRestClient implements UserRestClient {
     @Override
     public void enableUser(UserDTO user) throws DataAccessException {
         try {
-            UserValidator.validateUser(user);
+            UserValidator.validateExistingUser(user);
             LOGGER.info("Enable User {} on {}", user.getUsername(), enableUserUri);
             final var response = restClient.exchange(new RequestEntity<>(user, POST, enableUserUri),
                 new ParameterizedTypeReference<UserDTO>() {

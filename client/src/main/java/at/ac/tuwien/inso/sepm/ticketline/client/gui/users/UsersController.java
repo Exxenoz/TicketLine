@@ -80,7 +80,7 @@ public class UsersController {
     private void scrolled(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
         double value = newValue.doubleValue();
         ScrollBar bar = getVerticalScrollbar(userTable);
-        if (value == bar.getMax() && page < totalPages) {
+        if ((value == bar.getMax()) && (page < totalPages)) {
             page++;
             LOGGER.debug("Getting next Page: {}", page);
             double targetValue = value * items.size();
@@ -157,7 +157,7 @@ public class UsersController {
     public void handleEnable(javafx.event.ActionEvent actionEvent) {
         try {
             UserDTO userDTO = userTable.getSelectionModel().getSelectedItem();
-            UserValidator.validateUser(userDTO);
+            UserValidator.validateExistingUser(userDTO);
             if (!userDTO.isEnabled()) {
                 userService.enableUser(userDTO);
             } else {

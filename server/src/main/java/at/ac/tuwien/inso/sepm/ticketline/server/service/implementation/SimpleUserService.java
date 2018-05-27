@@ -29,7 +29,7 @@ public class SimpleUserService implements UserService {
 
     @Override
     public void enableUser(User user) throws UserValidatorException {
-        UserValidator.validateUser(UserDTO.builder()
+        UserValidator.validateExistingUser(UserDTO.builder()
             .id(user.getId())
             .username(user.getUsername())
             .password(user.getPassword())
@@ -57,7 +57,7 @@ public class SimpleUserService implements UserService {
 
     @Override
     public boolean increaseStrikes(User user) throws UserValidatorException {
-        UserValidator.validateUser(UserDTO.builder()
+        UserValidator.validateExistingUser(UserDTO.builder()
             .id(user.getId())
             .username(user.getUsername())
             .password(user.getPassword())
