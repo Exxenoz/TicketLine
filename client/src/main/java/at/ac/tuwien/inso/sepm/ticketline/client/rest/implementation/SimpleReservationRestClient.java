@@ -33,22 +33,22 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     private final URI reservationByEventUri;
     private final URI reservationTopTenUri;
     private final URI reservationCreateUri;
-    private final URI reservationCreateAndPay;
-    private final URI reservationFindAll;
-    private final URI reservationEdit;
-    private final URI reservationPurchase;
-    private final URI reservationFindNotPaid;
+    private final URI reservationCreateAndPayUri;
+    private final URI reservationFindAllUri;
+    private final URI reservationEditUri;
+    private final URI reservationPurchaseUri;
+    private final URI reservationFindNotPaidUri;
 
     public SimpleReservationRestClient(RestClient restClient) {
         this.restClient = restClient;
         this.reservationByEventUri = restClient.getServiceURI("/reservation/event/");
         this.reservationTopTenUri = restClient.getServiceURI("/reservation/top_ten/");
         this.reservationCreateUri = restClient.getServiceURI("/reservation/");
-        this.reservationCreateAndPay = restClient.getServiceURI("/reservation/createAndPay/");
-        this.reservationFindAll = restClient.getServiceURI("/reservation/findAll");
-        this.reservationEdit = restClient.getServiceURI("/reservation/edit");
-        this.reservationPurchase = restClient.getServiceURI("/reservation/purchase");
-        this.reservationFindNotPaid = restClient.getServiceURI("/reservation/findNotPaid");
+        this.reservationCreateAndPayUri = restClient.getServiceURI("/reservation/createAndPay/");
+        this.reservationFindAllUri = restClient.getServiceURI("/reservation/findAll");
+        this.reservationEditUri = restClient.getServiceURI("/reservation/edit");
+        this.reservationPurchaseUri = restClient.getServiceURI("/reservation/purchase");
+        this.reservationFindNotPaidUri = restClient.getServiceURI("/reservation/findNotPaid");
     }
 
     @Override
@@ -63,7 +63,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", reservation.getStatusCode(), reservation.getBody());
             return reservation.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed retrieve performances with status code " + e.getStatusCode().toString());
+            throw new DataAccessException("Failed to retrieve performances with status code " + e.getStatusCode().toString());
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }
@@ -81,7 +81,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", reservation.getStatusCode(), reservation.getBody());
             return reservation.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed retrieve paid reservation count with status code " + e.getStatusCode().toString());
+            throw new DataAccessException("Failed to retrieve paid reservation count with status code " + e.getStatusCode().toString());
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }
@@ -99,7 +99,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", reservation.getStatusCode(), reservation.getBody());
             return reservation.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed retrieve paid reservation count with status code " + e.getStatusCode().toString());
+            throw new DataAccessException("Failed to retrieve paid reservation count with status code " + e.getStatusCode().toString());
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }
@@ -127,16 +127,15 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     @Override
     public ReservationDTO createAndPayReservation(CreateReservationDTO createReservationDTO) throws DataAccessException {
         try {
-            LOGGER.debug("Entering createNewReservation method with reservationCreateAndPay {}", reservationCreateAndPay);
-            final var response =
+            LOGGER.debug("Entering createNewReservation method with reservationCreateAndPayUri {}", reservationCreateAndPayUri);
+            final var reservation =
                 restClient.exchange(
-                    new RequestEntity<>(createReservationDTO, POST, reservationCreateUri),
+                    new RequestEntity<>(createReservationDTO, POST, reservationCreateAndPayUri),
                     new ParameterizedTypeReference<ReservationDTO>() {
                     });
-            LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
-            return response.getBody();
+            return reservation.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed to create new reservation." + e.getStatusCode().toString());
+            throw new DataAccessException("Failed to create and purchase new reservation." + e.getStatusCode().toString());
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }
@@ -145,8 +144,8 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     @Override
     public ReservationDTO findOneByPaidFalseById(Long reservationId) throws DataAccessException {
         try {
-            LOGGER.debug("Entering findOneByPaidFalseById method with URI {}", reservationFindNotPaid);
-            URI uri = restClient.getServiceURI(reservationFindNotPaid + "/" + reservationId);
+            LOGGER.debug("Entering findOneByPaidFalseById method with URI {}", reservationFindNotPaidUri);
+            URI uri = restClient.getServiceURI(reservationFindNotPaidUri + "/" + reservationId);
             final var response =
                 restClient.exchange(
                     new RequestEntity<>(POST, uri),
@@ -164,10 +163,10 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     @Override
     public List<ReservationDTO> findAllByPaidFalseByCustomerName(CustomerDTO customerDTO) throws DataAccessException {
         try {
-            LOGGER.debug("Entering findAllByPaidFalseByCustomerName method with URI {}", reservationFindNotPaid);
+            LOGGER.debug("Entering findAllByPaidFalseByCustomerName method with URI {}", reservationFindNotPaidUri);
             final var response =
                 restClient.exchange(
-                    new RequestEntity<>(customerDTO, POST, reservationFindNotPaid),
+                    new RequestEntity<>(customerDTO, POST, reservationFindNotPaidUri),
                     new ParameterizedTypeReference<List<ReservationDTO>>() {
                     });
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
@@ -182,10 +181,10 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     @Override
     public ReservationDTO purchaseReservation(ReservationDTO reservationDTO) throws DataAccessException {
         try {
-            LOGGER.debug("Entering purchaseReservation method with URI {}", reservationPurchase);
+            LOGGER.debug("Entering purchaseReservation method with URI {}", reservationPurchaseUri);
             final var response =
                 restClient.exchange(
-                    new RequestEntity<>(reservationDTO, POST, reservationPurchase),
+                    new RequestEntity<>(reservationDTO, POST, reservationPurchaseUri),
                     new ParameterizedTypeReference<ReservationDTO>() {
                     });
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
@@ -200,10 +199,10 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     @Override
     public ReservationDTO editReservation(ReservationDTO reservationDTO) throws DataAccessException {
         try {
-            LOGGER.debug("Entering editReservation method with URI {}", reservationEdit);
+            LOGGER.debug("Entering editReservation method with URI {}", reservationEditUri);
             final var response =
                 restClient.exchange(
-                    new RequestEntity<>(reservationDTO, POST, reservationEdit),
+                    new RequestEntity<>(reservationDTO, POST, reservationEditUri),
                     new ParameterizedTypeReference<ReservationDTO>() {
                     });
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
@@ -218,10 +217,10 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     @Override
     public PageResponseDTO<ReservationDTO> findAll(PageRequestDTO pageRequestDTO) throws DataAccessException {
         try {
-            LOGGER.debug("Entering findAll method with URI {}", reservationFindAll);
+            LOGGER.debug("Entering findAll method with URI {}", reservationFindAllUri);
             final var response =
                 restClient.exchange(
-                    new RequestEntity<>(pageRequestDTO, POST, reservationFindAll),
+                    new RequestEntity<>(pageRequestDTO, POST, reservationFindAllUri),
                     new ParameterizedTypeReference<PageResponseDTO<ReservationDTO>>() {
                     });
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());

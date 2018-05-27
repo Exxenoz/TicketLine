@@ -16,7 +16,7 @@
             </stylesheets>
             <tabs>
                 <Tab text="%bookings.main.tab1">
-                    <fx:include fx:id="eventSearch" source="reservationSearchTab.fxml"/>
+                    <fx:include fx:id="bookingSearch" source="reservationTabSearch.fxml"/>
                 </Tab>
             </tabs>
         </TabPane>

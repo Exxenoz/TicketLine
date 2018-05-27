@@ -57,9 +57,21 @@ public interface ReservationRestClient {
 
     List<ReservationDTO> findAllByPaidFalseByCustomerName(CustomerDTO customerDTO) throws DataAccessException;
 
+    PageResponseDTO<ReservationDTO> findAll(final PageRequestDTO pageRequestDTO) throws DataAccessException;
+
+    /**
+     * Purchase a reservation.
+     * @param reservationDTO contains the reservation that is to be purchased
+     * @return the updated reservation
+     * @throws DataAccessException in case something goes wrong while trying to change the reservation to purchased
+     */
     ReservationDTO purchaseReservation(ReservationDTO reservationDTO) throws DataAccessException;
 
+    /**
+     * Edit a reservation.
+     * @param reservationDTO contains the new seats for the reservation
+     * @return the updated reservation
+     * @throws DataAccessException in case something goes wrong while trying to update the seats
+     */
     ReservationDTO editReservation(ReservationDTO reservationDTO) throws DataAccessException;
-
-    PageResponseDTO<ReservationDTO> findAll(final PageRequestDTO pageRequestDTO) throws DataAccessException;
 }
