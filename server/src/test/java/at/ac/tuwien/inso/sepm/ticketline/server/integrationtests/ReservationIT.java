@@ -2,8 +2,10 @@ package at.ac.tuwien.inso.sepm.ticketline.server.integrationtests;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.performance.PerformanceMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.integrationtests.base.BaseIT;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.*;
@@ -30,6 +32,7 @@ import static org.junit.Assert.assertThat;
 public class ReservationIT extends BaseIT {
 
     private static final String RESERVATION_ENDPOINT = "/reservation";
+    private static Long PERFORMANCE_TEST_ID = 1L;
     private static Long RESERVATION_TEST_ID = 1L;
     private static Long CUSTOMER_TEST_ID = 1L;
 
@@ -47,6 +50,8 @@ public class ReservationIT extends BaseIT {
     private CustomerMapper customerMapper;
     @Autowired
     private ArtistRepository artistRepository;
+    @Autowired
+    private PerformanceMapper performanceMapper;
 
 
     @Before
@@ -61,6 +66,8 @@ public class ReservationIT extends BaseIT {
         Performance performance = newPerformance();
         performance.setArtists(artists);
         performance = performanceRepository.save(performance);
+        PERFORMANCE_TEST_ID = performance.getId();
+
         Seat seat = seatRepository.save(newSeat());
         Customer customer = customerRepository.save(newCustomer());
         CUSTOMER_TEST_ID = customer.getId();
@@ -113,14 +120,24 @@ public class ReservationIT extends BaseIT {
     @Test
     public void findReservationWithCustomerNameAsUser() {
         var customerOpt = customerRepository.findById(CUSTOMER_TEST_ID);
-        if (customerOpt.isPresent()) {
+        var performanceOpt = performanceRepository.findById(PERFORMANCE_TEST_ID);
+        if (customerOpt.isPresent() && performanceOpt.isPresent()) {
             var customerDTO = customerMapper.customerToCustomerDTO(customerOpt.get());
+            var performanceDTO = performanceMapper.performanceToPerformanceDTO(performanceOpt.get());
             Assert.assertNotNull(customerDTO);
+            Assert.assertNotNull(performanceDTO);
+
+            var reservationSearchDTO = ReservationSearchDTO.Builder.aReservationSearchDTO()
+                .withFirstName(customerDTO.getFirstName())
+                .withLastName(customerDTO.getLastName())
+                .withPerfomanceName(performanceDTO.getName())
+                .build();
+
             Response response = RestAssured
                 .given()
                 .contentType(ContentType.JSON)
                 .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-                .body(customerDTO)
+                .body(reservationSearchDTO)
                 .when().post(RESERVATION_ENDPOINT + "/findNotPaid")
                 .then().extract().response();
             Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
