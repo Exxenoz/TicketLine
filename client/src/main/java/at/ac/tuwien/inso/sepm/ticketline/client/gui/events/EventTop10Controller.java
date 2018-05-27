@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,9 @@ public class EventTop10Controller {
     public CategoryAxis barAxisX;
 
     // ---------- Top Ten Tab -----------
+
+    @FXML
+    public ChoiceBox yearChoiceBox;
 
     @FXML
     private ChoiceBox<String> monthChoiceBox;
@@ -91,6 +95,14 @@ public class EventTop10Controller {
         initMonthChoiceBox();
     }
 
+    private void initYearChoiceBox() {
+        List<Integer> yearList = new ArrayList<>();
+        for(int i = 1980; i <= LocalDateTime.now().getYear(); i++) {
+            yearList.add(i);
+        }
+        yearChoiceBox.getItems().setAll(yearList);
+    }
+
     private void initMonthChoiceBox() {
         monthChoiceBox.getItems().setAll(
             BundleManager.getBundle().getString("events.main.january"),
@@ -133,6 +145,7 @@ public class EventTop10Controller {
         topTenEventChoiceBox.getItems().clear();
 
         Integer month = monthChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? monthChoiceBox.getSelectionModel().getSelectedIndex() + 1 : 1;
+        Integer year = Integer.valueOf(monthChoiceBox.getSelectionModel().getSelectedItem());
         Integer categorySelectionIndex = categoryChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? categoryChoiceBox.getSelectionModel().getSelectedIndex() - 1 : null;
         Long categoryId = null;
         if (categorySelectionIndex != null) {
@@ -142,7 +155,7 @@ public class EventTop10Controller {
         LOGGER.info("Show Top 10 Events for month: " + monthChoiceBox.getSelectionModel().getSelectedItem() + " and categoryId: " + categoryId);
 
         try {
-            List<EventResponseTopTenDTO> events = eventService.findTopTenByMonthAndCategory(new EventRequestTopTenDTO(month, categoryId));
+            List<EventResponseTopTenDTO> events = eventService.findTopTenByMonthAndCategory(new EventRequestTopTenDTO(year, month, categoryId));
             showTopTenEvents(events);
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch top 10 events from server for month: " + month + " " + e.getMessage());
