@@ -33,13 +33,9 @@ public class SeatMapController {
 
     }
 
-    public void
-
 
     public void drawSeatMap() {
         this.graphicsContext.fillText("test", 10, 10);
-
-        this.graphicsContext.dra
     }
 
 }
