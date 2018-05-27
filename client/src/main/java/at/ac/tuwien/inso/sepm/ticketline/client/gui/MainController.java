@@ -130,12 +130,12 @@ public class MainController {
         SpringFxmlLoader.Wrapper<ReservationsController> wrapperEvents =
             springFxmlLoader.loadAndWrap("/fxml/reservations/reservationMain.fxml");
         reservationsController = wrapperEvents.getController();
-        final var eventsTab = new Tab(null, wrapperEvents.getLoadedObject());
-        final var eventsGlyph = fontAwesome.create(TICKET);
-        eventsGlyph.setFontSize(TAB_ICON_FONT_SIZE);
-        eventsGlyph.setColor(Color.WHITE);
-        eventsTab.setGraphic(eventsGlyph);
-        tpContent.getTabs().add(eventsTab);
+        final var reservationsTab = new Tab(null, wrapperEvents.getLoadedObject());
+        final var reservationsGlyph = fontAwesome.create(TICKET);
+        reservationsGlyph.setFontSize(TAB_ICON_FONT_SIZE);
+        reservationsGlyph.setColor(Color.WHITE);
+        reservationsTab.setGraphic(reservationsGlyph);
+        tpContent.getTabs().add(reservationsTab);
     }
 
     private void initUserManageTabPane() {

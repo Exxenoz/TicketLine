@@ -15,6 +15,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
@@ -31,6 +32,7 @@ public class PurchaseReservationSummaryController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public Button buyButtonPRS;
+    public Button cancelButtonPRS;
 
     public Label performancePrice;
     public Label eventName;
@@ -42,19 +44,23 @@ public class PurchaseReservationSummaryController {
     private Stage stage;
 
     private ReservationDTO reservation;
-    private boolean isReservation;
+    private boolean isReservation = false;
+    private boolean showDetails = false;
     private final ReservationService reservationService;
+    private final HallPlanController hallPlanController;
 
     PurchaseReservationSummaryController(
         SpringFxmlLoader fxmlLoader,
-        ReservationService reservationService
-    ){
+        ReservationService reservationService,
+        @Lazy HallPlanController hallPlanController
+    ) {
         this.fxmlLoader = fxmlLoader;
         this.reservationService = reservationService;
+        this.hallPlanController = hallPlanController;
     }
 
     @FXML
-    private void initialize(){
+    private void initialize() {
         LOGGER.debug("Entering initialize method of PRSController.");
         eventName.setText(reservation.getPerformance().getEvent().getName());
         performanceName.setText(reservation.getPerformance().getName());
@@ -62,26 +68,49 @@ public class PurchaseReservationSummaryController {
         ticketsNr.setText(totalAmountTickets);
         performancePrice.setText(reservation.getPerformance().getPrice().toString());
 
-        if(isReservation){
+        if (isReservation) {
             performanceHeader.setText("Reservation Summary");
             buyButtonPRS.setText("Continue");
         }
+
+        if (showDetails) {
+            performanceHeader.setText("Reservation Overview");
+            //make sure the reservation is still unpaid
+            if(!reservation.isPaid()) {
+                cancelButtonPRS.setText("Edit Reservation");
+            }
+        }
+
     }
 
-    public void buyTickets(ActionEvent event) throws DataAccessException {
+    public void buyTicketsButton(ActionEvent event) throws DataAccessException {
 
-            CreateReservationDTO createReservationDTO = new CreateReservationDTO();
-            createReservationDTO.setCustomerID(reservation.getCustomer().getId());
-            createReservationDTO.setPerformanceID(reservation.getPerformance().getId());
-            List<Long> seatsID = new LinkedList<>();
-            reservation.getSeats().forEach(seatDTO -> seatsID.add(seatDTO.getId()));
-            createReservationDTO.setSeatIDs(seatsID);
+        CreateReservationDTO createReservationDTO = new CreateReservationDTO();
+        createReservationDTO.setCustomerID(reservation.getCustomer().getId());
+        createReservationDTO.setPerformanceID(reservation.getPerformance().getId());
+        List<Long> seatsID = new LinkedList<>();
+        reservation.getSeats().forEach(seatDTO -> seatsID.add(seatDTO.getId()));
+        createReservationDTO.setSeatIDs(seatsID);
 
-        if(isReservation){
+
+        //only reserve tickets
+        if (isReservation) {
             reservationService.createNewReservation(createReservationDTO);
             closeWindow();
         } else {
+            //reserve and buy tickets
             reservationService.createAndPayReservation(createReservationDTO);
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Print Invoice");
+            alert.setHeaderText("Congratulations! Your Purchase was successful!" + "\n" + "Do you want to print the invoice?");
+            alert.showAndWait();
+            closeWindow();
+        }
+
+        //buy reserved tickets
+        if (showDetails) {
+            reservationService.purchaseReservation(reservation);
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Print Invoice");
@@ -91,12 +120,18 @@ public class PurchaseReservationSummaryController {
         }
     }
 
-    public void cancelButton(ActionEvent event){
-        LOGGER.debug("Entering onClickCancel.");
-        closeWindow();
+    public void cancelButton(ActionEvent event) {
+        if(showDetails){
+            hallPlanController.changeReservationDetails(reservation, stage);
+            Parent parent = fxmlLoader.load("/fxml/events/book/hallPlanView.fxml");
+            stage.setScene(new Scene(parent));
+
+        } else {
+            closeWindow();
+        }
     }
 
-    public void backButton(ActionEvent event){
+    public void backButton(ActionEvent event) {
         Parent parent = fxmlLoader.load("/fxml/events/book/selectCustomerView.fxml");
         stage.setScene(new Scene(parent));
         stage.setTitle("Customer Details");
@@ -104,15 +139,21 @@ public class PurchaseReservationSummaryController {
     }
 
     private void closeWindow() {
-        LOGGER.debug("Entering closeWindow method.");
         Stage stage = (Stage) performancePrice.getScene().getWindow();
         stage.close();
     }
 
-    public void fill(ReservationDTO reservation, boolean isReservation, Stage stage){
+    public void fill(ReservationDTO reservation, boolean isReservation, Stage stage) {
         this.reservation = reservation;
         this.isReservation = isReservation;
         this.stage = stage;
+
+    }
+
+    public void showReservationDetails(ReservationDTO reservation, Stage stage) {
+        this.reservation = reservation;
+        this.stage = stage;
+        this.showDetails = true;
 
     }
 

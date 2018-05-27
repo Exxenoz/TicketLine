@@ -37,8 +37,8 @@
                                                      minWidth="-1.0" prefWidth="209.0" text="%bookings.table.paid"/>
                                     </columns>
                                 </TableView>
-                                <Button fx:id="showReservationsButtons" disable="false" mnemonicParsing="false"
-                                        onAction="#showDetails" text="%bookings.main.button.details" VBox.vgrow="ALWAYS">
+                                <Button fx:id="showReservationDetailsButton" disable="false" mnemonicParsing="false"
+                                        onAction="#showReservationDetailsButton" text="%bookings.main.button.details" VBox.vgrow="ALWAYS">
                                     <VBox.margin>
                                         <Insets bottom="10.0"/>
                                     </VBox.margin>

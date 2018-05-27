@@ -61,4 +61,14 @@ public class SimpleReservationService implements ReservationService {
     public ReservationDTO createAndPayReservation(CreateReservationDTO createReservationDTO) throws DataAccessException {
         return reservationRestClient.createAndPayReservation(createReservationDTO);
     }
+
+    @Override
+    public ReservationDTO purchaseReservation(ReservationDTO reservationDTO) throws DataAccessException {
+        return reservationRestClient.purchaseReservation(reservationDTO);
+    }
+
+    @Override
+    public ReservationDTO editReservation(ReservationDTO reservationDTO) throws DataAccessException {
+        return reservationRestClient.editReservation(reservationDTO);
+    }
 }
