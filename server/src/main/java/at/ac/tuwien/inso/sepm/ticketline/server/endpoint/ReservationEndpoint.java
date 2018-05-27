@@ -1,9 +1,12 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationFilterTopTen;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationFilterTopTenMapper;
@@ -12,6 +15,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationExce
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -104,5 +108,15 @@ public class ReservationEndpoint {
         final var reservationToCreate = reservationMapper.createReservationDTOToReservation(createReservationDTO);
         final var createdReservation = reservationService.createAndPayReservation(reservationToCreate);
         return reservationMapper.reservationToReservationDTO(createdReservation);
+    }
+
+    @PostMapping
+    @ApiOperation("Finds a page of all exisiting Reservations")
+    public PageResponseDTO<ReservationDTO> findAll(@RequestBody final PageRequestDTO pageRequestDTO) {
+        Page<Reservation> reservationPage = reservationService.findAll(pageRequestDTO.getPageable());
+        List<ReservationDTO> reservationDTOList = reservationMapper.reservationToReservationDTO(
+            reservationPage.getContent()
+        );
+        return new PageResponseDTO<>(reservationDTOList, reservationPage.getTotalPages());
     }
 }
