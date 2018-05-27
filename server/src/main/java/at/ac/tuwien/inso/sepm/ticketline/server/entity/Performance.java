@@ -45,7 +45,7 @@ public class Performance {
 
     @Column(nullable = false)
     private LocationAddress locationAddress;
-    
+
     @ManyToOne
     private Hall hall;
 

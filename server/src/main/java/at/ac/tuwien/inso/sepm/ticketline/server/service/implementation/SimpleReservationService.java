@@ -99,9 +99,7 @@ public class SimpleReservationService implements ReservationService {
         Performance currentPerformance = repo.findById(reservation.getPerformance().getId()).get();
         reservation.setPaid(false);
 
-
         Reservation createdReservation = reservationRepository.save(reservation);
-
         createdReservation.setSeats(seatsForReservation);
         createdReservation.setPerformance(currentPerformance);
 
