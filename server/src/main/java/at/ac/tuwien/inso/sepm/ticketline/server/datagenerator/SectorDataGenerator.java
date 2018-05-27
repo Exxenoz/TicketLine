@@ -46,6 +46,7 @@ public class SectorDataGenerator implements DataGenerator {
             for (int i = 0; i < NUMBER_OF_SECTORS_TO_GENERATE; i++) {
                 final var sector = new Sector();
                 sector.setCategory(sectorCategories.get(faker.number().numberBetween(0, sectorCategories.size())));
+
                 LOGGER.debug("Saving sector {}", sector);
                 sectorRepository.save(sector);
             }

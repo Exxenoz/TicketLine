@@ -27,6 +27,7 @@ public class RefillDB {
         SectorCategoryRepository sectorCategoryRepository = context.getBean(SectorCategoryRepository.class);
         SectorRepository sectorRepository = context.getBean(SectorRepository.class);
         UserRepository usersRepository = context.getBean(UserRepository.class);
+        HallRepository hallRepository = context.getBean(HallRepository.class);
 
         //conditional beans => not in context
         List<DataGenerator> generators = List.of(
@@ -37,7 +38,8 @@ public class RefillDB {
             new EventDataGenerator(eventRepository),
             new PerformanceDataGenerator(performanceRepository, eventRepository, artistRepository),
             new NewsDataGenerator(newsRepository),
-            new ReservationDataGenerator(reservationRepository, seatRepository, performanceRepository)
+            new ReservationDataGenerator(reservationRepository, seatRepository, performanceRepository),
+            new HallDataGenerator(hallRepository, sectorRepository)
         );
         CompositeDataGenerator compositeDataGenerator = new CompositeDataGenerator(generators);
 

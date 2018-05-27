@@ -6,6 +6,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.LocationAddress;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ArtistRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.EventRepository;
+import at.ac.tuwien.inso.sepm.ticketline.server.repository.HallRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import com.github.javafaker.Faker;
 import org.slf4j.Logger;
@@ -37,12 +38,15 @@ public class PerformanceDataGenerator implements DataGenerator {
     private final ArtistRepository artistRepository;
     private final PerformanceRepository performanceRepository;
     private final EventRepository eventRepository;
+    private final HallRepository hallRepository;
     private final Faker faker;
 
-    public PerformanceDataGenerator(PerformanceRepository performanceRepository, EventRepository eventRepository, ArtistRepository artistRepository) {
+    public PerformanceDataGenerator(PerformanceRepository performanceRepository, EventRepository eventRepository,
+                                    ArtistRepository artistRepository, HallRepository hallRepository) {
         this.performanceRepository = performanceRepository;
         this.eventRepository = eventRepository;
         this.artistRepository = artistRepository;
+        this.hallRepository = hallRepository;
         faker = new Faker();
     }
 
@@ -62,7 +66,6 @@ public class PerformanceDataGenerator implements DataGenerator {
                 artistSet.add(artists.get(artistOffset));
                 artistSet.add(artists.get(artistOffset + 1));
 
-
                 final var address = new LocationAddress(faker.lordOfTheRings().location(), faker.address().streetName(), faker.address().city(), faker.address().country(), faker.address().zipCode());
 
                 BigDecimal price = new BigDecimal(2.2);
@@ -76,6 +79,12 @@ public class PerformanceDataGenerator implements DataGenerator {
                     startTime,
                     startTime.plusMinutes(faker.number().numberBetween(30, 4 * 60)),
                     address);
+
+                //just simply add the same hall for now
+
+                if(hallRepository.findAll().size() > 0) {
+                    performance.setHall(hallRepository.findAll().get(0));
+                }
 
                 LOGGER.debug("saving performance {}", performance);
 

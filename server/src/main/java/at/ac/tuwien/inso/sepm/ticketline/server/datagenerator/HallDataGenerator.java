@@ -26,6 +26,8 @@ public class HallDataGenerator implements DataGenerator {
     private final SectorRepository sectorRepository;
     private final Faker faker;
 
+    private final static boolean SINGLE_SECTOR_MODE = true;
+
     public HallDataGenerator(HallRepository hallRepository, SectorRepository sectorRepository) {
         this.hallRepository = hallRepository;
         this.sectorRepository = sectorRepository;
@@ -49,13 +51,29 @@ public class HallDataGenerator implements DataGenerator {
                 List<Sector> sectors = sectorRepository.findAll();
                 List<Sector> currentSectors = new ArrayList<>();
 
-                //.. at random
-                Random r = new Random();
-                int sectorCount = r.nextInt(10);
+                //.. in simple dev mode
+                if (SINGLE_SECTOR_MODE) {
+                    Sector mainSector = new Sector();
 
-                for(int j = 0; j < sectorCount; i++) {
-                    int si = r.nextInt(sectors.size());
-                    currentSectors.add(sectors.get(si));
+                    mainSector.setStartPositionX(0);
+                    mainSector.setStartPositionY(0);
+
+                    mainSector.setRows(6);
+                    mainSector.setSeatsPerRow(6);
+
+                    mainSector.setCategory(sectors.get(0).getCategory());
+                    sectorRepository.save(mainSector);
+
+                    currentSectors.add(mainSector);
+                } else {
+                    //.. or at random
+                    Random r = new Random();
+                    int sectorCount = r.nextInt(10);
+
+                    for (int j = 0; j < sectorCount; i++) {
+                        int si = r.nextInt(sectors.size());
+                        currentSectors.add(sectors.get(si));
+                    }
                 }
                 hall.setSectors(currentSectors);
 
