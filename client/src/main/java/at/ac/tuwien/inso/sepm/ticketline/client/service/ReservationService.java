@@ -53,12 +53,32 @@ public interface ReservationService {
      */
     ReservationDTO createAndPayReservation(CreateReservationDTO createReservationDTO) throws DataAccessException;
 
+    /**
+     * Finds a not yet purchased reservation with the given id
+     *
+     * @param reservationId the id of the reservation
+     * @return the found reservation
+     * @throws DataAccessException in case something went during the action
+     */
     ReservationDTO findOneByPaidFalseById(Long reservationId) throws DataAccessException;
 
+    /**
+     * Finds a not yet purchased reservation with the full name of the customer and name of the performance
+     *
+     * @param reservationSearchDTO the DTO object with the search parameters
+     * @return the found reservations
+     * @throws DataAccessException in case something went wrong during the action
+     */
     List<ReservationDTO> findAllByPaidFalseByCustomerNameAndPerformanceName(ReservationSearchDTO reservationSearchDTO) throws DataAccessException;
 
+    /**
+     * Finds a page of all existing reservations
+     *
+     * @param pageRequestDTO the DTO object specifing the requested page
+     * @return a page of reservations
+     * @throws DataAccessException in case something went wrong
+     */
     PageResponseDTO<ReservationDTO> findAll(final PageRequestDTO pageRequestDTO) throws DataAccessException;
-
 
     /**
      * Purchase a reservation.

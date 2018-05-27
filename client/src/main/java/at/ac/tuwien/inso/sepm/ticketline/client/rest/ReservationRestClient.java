@@ -48,15 +48,36 @@ public interface ReservationRestClient {
     /**
      * Create a reservation which is paid immediately with the given values within the createReservationDTO
      * @param createReservationDTO contains chosen values for the attributes of the reservation
-     * @returna reservationDTO which includes the id
+     * @return reservationDTO which includes the id
      * @throws DataAccessException in case something goes wrong while trying to create and set the reservation to paid in the db
      */
     ReservationDTO createAndPayReservation(CreateReservationDTO createReservationDTO) throws  DataAccessException;
 
+    /**
+     * Finds one not yet purchased reservation with the given id
+     *
+     * @param reservationId the id used the find the reservation
+     * @return the found reservation
+     * @throws DataAccessException in case something went wrong during the action
+     */
     ReservationDTO findOneByPaidFalseById(Long reservationId) throws DataAccessException;
 
+    /**
+     * Find not yet purchased reservation with the full name of the customer and the name of the performance
+     *
+     * @param reservationSearchDTO the object DTO with the search parameters
+     * @return the found reservations
+     * @throws DataAccessException in case something went wrong during the action
+     */
     List<ReservationDTO> findAllByPaidFalseByCustomerNameAndByPerformanceName(ReservationSearchDTO reservationSearchDTO) throws DataAccessException;
 
+    /**
+     * Finds a page all existing reservations
+     *
+     * @param pageRequestDTO the DTO object specifying the page and data
+     * @return a page of reservations
+     * @throws DataAccessException in case something went wrong during the action
+     */
     PageResponseDTO<ReservationDTO> findAll(final PageRequestDTO pageRequestDTO) throws DataAccessException;
 
     /**
