@@ -6,11 +6,15 @@ import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.SeatRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ConstraintViolationException;
+import java.lang.invoke.MethodHandles;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,6 +26,7 @@ public class SimpleReservationService implements ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final SeatRepository seatRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
     private PerformanceRepository repo;
@@ -115,14 +120,34 @@ public class SimpleReservationService implements ReservationService {
         Performance currentPerformance = repo.findById(reservation.getPerformance().getId()).get();
         reservation.setPaid(false);
 
+        boolean unique = false;
+
+        while (unique == false) {
+            try {
+                reservation.setReservationNumber(generateReservationNumber());
+                unique = true;
+            } catch (ConstraintViolationException e) {
+                unique = false;
+            }
+        }
 
         Reservation createdReservation = reservationRepository.save(reservation);
-        String reservationNumber = LocalDate.now().toString() + createdReservation.getId().toString();
-        createdReservation.setReservationNumber(reservationNumber);
+     /*   String reservationNumber = LocalDate.now().toString() + createdReservation.getId().toString();
+        createdReservation.setReservationNumber(reservationNumber); */
 
         createdReservation.setSeats(seatsForReservation);
         createdReservation.setPerformance(currentPerformance);
 
         return createdReservation;
+    }
+
+    public String generateReservationNumber() {
+        String reservationNumber = "";
+        final String ALPHA_NUMERIC_STRING = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789";
+        while (reservationNumber.length() <= 6) {
+            int character = (int) (Math.random() * ALPHA_NUMERIC_STRING.length());
+            reservationNumber += ALPHA_NUMERIC_STRING.charAt(character);
+        }
+        return reservationNumber;
     }
 }

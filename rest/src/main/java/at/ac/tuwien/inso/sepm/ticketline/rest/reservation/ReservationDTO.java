@@ -31,6 +31,9 @@ public class ReservationDTO {
     @ApiModelProperty(required = true, readOnly = true, name = "The date and time when the reservation was paid")
     private LocalDateTime paidAt;
 
+    @ApiModelProperty(required = true, readOnly = true, name = "The date and time when the reservation was paid")
+    private String reservationNumber;
+
     public Long getId() {
         return id;
     }
@@ -71,10 +74,19 @@ public class ReservationDTO {
         this.paidAt = paidAt;
     }
 
+    public String getReservationNumber() {
+        return reservationNumber;
+    }
+
+    public void setReservationNumber(String reservationNumber) {
+        this.reservationNumber = reservationNumber;
+    }
+
     @Override
     public String toString() {
         return "ReservationDTO{" +
             "id=" + id +
+            ", reservationNumber=" + reservationNumber +
             ", performance=" + performance +
             ", seat=" + seats +
             ", isPaid=" + isPaid +
@@ -93,13 +105,14 @@ public class ReservationDTO {
             Objects.equals(performance, that.performance) &&
             Objects.equals(seats, that.seats) &&
             Objects.equals(isPaid, that.isPaid) &&
+            Objects.equals(reservationNumber, that.reservationNumber) &&
             Objects.equals(paidAt, that.paidAt);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, performance, seats, isPaid, paidAt);
+        return Objects.hash(id, performance, seats, isPaid, paidAt, reservationNumber);
     }
 
     public static Builder builder() {

@@ -63,6 +63,7 @@ public class ReservationServiceTests {
         reservation.setSeats(seats);
         reservation.setPerformance(performance);
         reservation.setCustomer(customer);
+        reservation.setReservationNumber("000000");
 
         reservation = reservationRepository.save(reservation);
         RESERVATION_TEST_ID = reservation.getId();
@@ -193,6 +194,7 @@ public class ReservationServiceTests {
         reservation.setCustomer(customer);
         reservation.setPerformance(performance);
         reservation.setSeats(List.of(seat));
+        reservation.setReservationNumber("000001");
 
         Reservation returned = null;
         try {
@@ -210,6 +212,30 @@ public class ReservationServiceTests {
 
     }
 
+    @Test(expected = InvalidReservationException.class)
+    public void createInvalidReservation() throws InvalidReservationException {
+        Performance performance = performanceRepository.save(newPerformance());
+        Seat seat = seatRepository.save(newSeat());
+        Customer customer = customerRepository.save(newCustomer());
+
+        Reservation reservation = new Reservation();
+        reservation.setCustomer(customer);
+        reservation.setPerformance(performance);
+        reservation.setSeats(List.of(seat));
+        reservation.setReservationNumber("000003");
+
+        Reservation reservation2 = new Reservation();
+        reservation2.setCustomer(customer);
+        reservation2.setPerformance(performance);
+        reservation2.setSeats(List.of(seat));
+        reservation2.setReservationNumber("000004");
+
+        reservationService.createReservation(reservation);
+        reservationService.createReservation(reservation2);
+
+
+    }
+
     @Test
     public void createAndPay() {
         Performance performance = performanceRepository.save(newPerformance());
@@ -220,6 +246,7 @@ public class ReservationServiceTests {
         reservation.setCustomer(customer);
         reservation.setPerformance(performance);
         reservation.setSeats(List.of(seat));
+        reservation.setReservationNumber("000002");
 
         Reservation returned = null;
         try {
