@@ -77,6 +77,8 @@ public class HallDataGenerator implements DataGenerator {
 
                 int x = 0;
                 int y = 0;
+
+                List<Sector> sectors = new ArrayList<>();
                 for(int j = 0; j < sectorCount; j++) {
                     Sector s = new Sector();
                     s.setSeatsPerRow(sectorSeatsPerRow);
@@ -121,7 +123,7 @@ public class HallDataGenerator implements DataGenerator {
                         s.setCategory(sectorCategoryRepository.findAll().get(faker.number()
                             .numberBetween(0, Math.toIntExact(sectorCategoryRepository.count()) - 1)));
                     }
-
+                    sectors.add(s);
                     sectorRepository.save(s);
                     // Make sure the sectors do not overlap
                     x = x + sectorSeatsPerRow + 1;
@@ -131,7 +133,8 @@ public class HallDataGenerator implements DataGenerator {
                         y = y + sectorRows + 1;
                     }
                 }
-
+                // Set sectors
+                hall.setSectors(sectors);
                 // ..and store
                 hallRepository.save(hall);
             }

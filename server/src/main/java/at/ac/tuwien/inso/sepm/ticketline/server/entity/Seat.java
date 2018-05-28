@@ -57,6 +57,23 @@ public class Seat {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Seat)) return false;
+        Seat seat = (Seat) o;
+        return Objects.equals(getId(), seat.getId()) &&
+            Objects.equals(getPositionX(), seat.getPositionX()) &&
+            Objects.equals(getPositionY(), seat.getPositionY()) &&
+            Objects.equals(getSector(), seat.getSector());
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(getId(), getPositionX(), getPositionY(), getSector());
+    }
+
+    @Override
     public String toString() {
         return "Seat{" +
             "id=" + id +
@@ -64,25 +81,6 @@ public class Seat {
             ", positionY=" + positionY +
             ", sector=" + sector +
             '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Seat seat = (Seat) o;
-
-        return Objects.equals(id, seat.id) &&
-            Objects.equals(positionX, seat.positionX) &&
-            Objects.equals(positionY, seat.positionY) &&
-            Objects.equals(sector, seat.sector);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(id, positionX, positionY, sector);
     }
 
     public static Seat.SeatBuilder builder() {

@@ -93,23 +93,31 @@ public class SectorDTO {
         return "SectorDTO{" +
             "id=" + id +
             ", category=" + category +
+            ", startPositionX=" + startPositionX +
+            ", startPositionY=" + startPositionY +
+            ", seatsPerRow=" + seatsPerRow +
+            ", rows=" + rows +
+            ", seats=" + seats +
             '}';
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (!(o instanceof SectorDTO)) return false;
         SectorDTO sectorDTO = (SectorDTO) o;
-
-        return Objects.equals(id, sectorDTO.id) &&
-            Objects.equals(category, sectorDTO.category);
+        return getStartPositionX() == sectorDTO.getStartPositionX() &&
+            getStartPositionY() == sectorDTO.getStartPositionY() &&
+            getSeatsPerRow() == sectorDTO.getSeatsPerRow() &&
+            getRows() == sectorDTO.getRows() &&
+            Objects.equals(getId(), sectorDTO.getId()) &&
+            Objects.equals(getCategory(), sectorDTO.getCategory()) &&
+            Objects.equals(getSeats(), sectorDTO.getSeats());
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, category);
+        return Objects.hash(getId(), getCategory(), getStartPositionX(), getStartPositionY(), getSeatsPerRow(), getRows(), getSeats());
     }
 }

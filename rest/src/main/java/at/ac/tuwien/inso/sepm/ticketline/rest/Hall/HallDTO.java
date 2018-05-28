@@ -5,6 +5,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.sector.SectorDTO;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
+import java.util.Objects;
 
 public class HallDTO {
 
@@ -38,5 +39,32 @@ public class HallDTO {
 
     public void setSectors(List<SectorDTO> sectors) {
         this.sectors = sectors;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof HallDTO)) return false;
+        HallDTO hallDTO = (HallDTO) o;
+        return Objects.equals(getId(), hallDTO.getId()) &&
+            Objects.equals(getName(), hallDTO.getName()) &&
+            Objects.equals(getSectors(), hallDTO.getSectors()) &&
+            Objects.equals(address, hallDTO.address);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(getId(), getName(), getSectors(), address);
+    }
+
+    @Override
+    public String toString() {
+        return "HallDTO{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", sectors=" + sectors +
+            ", address=" + address +
+            '}';
     }
 }
