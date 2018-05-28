@@ -1,17 +1,20 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.exception.ReservationSearchValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.validator.ReservationSearchValidator;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationFilterTopTen;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationFilterTopTenMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationSearchMapper;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidRequestException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import io.swagger.annotations.Api;
@@ -91,10 +94,16 @@ public class ReservationEndpoint {
     @ApiOperation("Finds Reservations which wasn't purchased yet with the given customername and performancename")
     public List<ReservationDTO> findAllByPaidFalseByCustomerNameAndPerformanceName(
         @RequestBody ReservationSearchDTO reservationSearchDTO) {
-        var reservations = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
-            reservationSearchMapper.reservationSearchDTOToReservationSearch(reservationSearchDTO)
-        );
-        return reservationMapper.reservationToReservationDTO(reservations);
+        try {
+            ReservationSearchValidator.validateReservationSearchDTO(reservationSearchDTO);
+            var reservations = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
+                reservationSearchMapper.reservationSearchDTOToReservationSearch(reservationSearchDTO)
+            );
+
+            return reservationMapper.reservationToReservationDTO(reservations);
+        } catch (ReservationSearchValidationException e) {
+            throw new InvalidRequestException();
+        }
     }
 
     @PostMapping("/purchase")

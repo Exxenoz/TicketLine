@@ -5,7 +5,7 @@ import java.util.Objects;
 public class ReservationSearch {
     private String firstName;
     private String lastName;
-    private String perfomanceName;
+    private String performanceName;
 
     public ReservationSearch() {
     }
@@ -26,12 +26,12 @@ public class ReservationSearch {
         this.lastName = lastName;
     }
 
-    public String getPerfomanceName() {
-        return perfomanceName;
+    public String getPerformanceName() {
+        return performanceName;
     }
 
-    public void setPerfomanceName(String perfomanceName) {
-        this.perfomanceName = perfomanceName;
+    public void setPerformanceName(String performanceName) {
+        this.performanceName = performanceName;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class ReservationSearch {
         return "ReservationSearch{" +
             "customerFirstName=" + "\'" + firstName + "\'," +
             "customerLastName=" + "\'" + lastName + "\'," +
-            "performanceName=" + "\'" + perfomanceName + "\'" +
+            "performanceName=" + "\'" + performanceName + "\'" +
             "}";
     }
 
@@ -51,14 +51,14 @@ public class ReservationSearch {
         ReservationSearch that = (ReservationSearch) obj;
         return (this.firstName.equals(that.getFirstName()))
             && (this.lastName.equals(that.getLastName()))
-            && (this.perfomanceName.equals(that.getPerfomanceName()));
+            && (this.performanceName.equals(that.getPerformanceName()));
 
     }
 
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, perfomanceName);
+        return Objects.hash(firstName, lastName, performanceName);
     }
 
     public static final class Builder {
@@ -92,7 +92,7 @@ public class ReservationSearch {
             ReservationSearch reservationSearch = new ReservationSearch();
             reservationSearch.setFirstName(firstName);
             reservationSearch.setLastName(lastName);
-            reservationSearch.setPerfomanceName(perfomanceName);
+            reservationSearch.setPerformanceName(perfomanceName);
             return reservationSearch;
         }
     }

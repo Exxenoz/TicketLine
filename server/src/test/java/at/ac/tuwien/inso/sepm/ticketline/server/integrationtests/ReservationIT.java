@@ -280,8 +280,8 @@ public class ReservationIT extends BaseIT {
 
     private Customer newCustomer() {
         Customer customer = new Customer();
-        customer.setFirstName("first name");
-        customer.setLastName("last name");
+        customer.setFirstName("firstname");
+        customer.setLastName("lastname");
         customer.setEmail("email@mail.com");
         customer.setTelephoneNumber("0123456789");
 

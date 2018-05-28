@@ -5,7 +5,7 @@ import java.util.Objects;
 public class ReservationSearchDTO {
     private String firstName;
     private String lastName;
-    private String perfomanceName;
+    private String performanceName;
 
     public ReservationSearchDTO() {
     }
@@ -26,12 +26,12 @@ public class ReservationSearchDTO {
         this.lastName = lastName;
     }
 
-    public String getPerfomanceName() {
-        return perfomanceName;
+    public String getPerformanceName() {
+        return performanceName;
     }
 
-    public void setPerfomanceName(String perfomanceName) {
-        this.perfomanceName = perfomanceName;
+    public void setPerformanceName(String performanceName) {
+        this.performanceName = performanceName;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class ReservationSearchDTO {
         return "ReservationSearchDTO{" +
             "customerFirstName=" + "\'" + firstName + "\'," +
             "customerLastName=" + "\'" + lastName + "\'," +
-            "performanceName=" + "\'" + perfomanceName + "\'" +
+            "performanceName=" + "\'" + performanceName + "\'" +
             "}";
     }
 
@@ -51,13 +51,13 @@ public class ReservationSearchDTO {
         ReservationSearchDTO that = (ReservationSearchDTO) obj;
         return (this.firstName.equals(that.getFirstName()))
             && (this.lastName.equals(that.getLastName()))
-            && (this.perfomanceName.equals(that.getPerfomanceName()));
+            && (this.performanceName.equals(that.getPerformanceName()));
 
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, perfomanceName);
+        return Objects.hash(firstName, lastName, performanceName);
     }
 
     public static final class Builder {
@@ -91,7 +91,7 @@ public class ReservationSearchDTO {
             ReservationSearchDTO reservationSearchDTO = new ReservationSearchDTO();
             reservationSearchDTO.setFirstName(firstName);
             reservationSearchDTO.setLastName(lastName);
-            reservationSearchDTO.setPerfomanceName(perfomanceName);
+            reservationSearchDTO.setPerformanceName(perfomanceName);
             return reservationSearchDTO;
         }
     }
