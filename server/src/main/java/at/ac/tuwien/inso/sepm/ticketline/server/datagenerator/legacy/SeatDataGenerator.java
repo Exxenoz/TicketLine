@@ -1,5 +1,6 @@
-package at.ac.tuwien.inso.sepm.ticketline.server.datagenerator;
+package at.ac.tuwien.inso.sepm.ticketline.server.datagenerator.legacy;
 
+import at.ac.tuwien.inso.sepm.ticketline.server.datagenerator.DataGenerator;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Seat;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Sector;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.SeatRepository;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
-@Profile("generateData")
+//@Profile("generateData")
 @Component
 @Order(10)
 public class SeatDataGenerator implements DataGenerator {

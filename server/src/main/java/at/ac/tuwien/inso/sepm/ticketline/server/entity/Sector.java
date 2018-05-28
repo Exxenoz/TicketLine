@@ -1,9 +1,13 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Size;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -33,6 +37,10 @@ public class Sector {
     @Column
     @Max(30)
     private int rows;
+
+    @OneToMany
+    @JoinColumn(name="seat_id")
+    private List<Seat> seats;
 
     public Long getId() {
         return id;
@@ -82,6 +90,14 @@ public class Sector {
         this.rows = rows;
     }
 
+    public List<Seat> getSeats() {
+        return seats;
+    }
+
+    public void setSeats(List<Seat> seats) {
+        this.seats = seats;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -112,4 +128,6 @@ public class Sector {
             ", rows=" + rows +
             '}';
     }
+
+
 }

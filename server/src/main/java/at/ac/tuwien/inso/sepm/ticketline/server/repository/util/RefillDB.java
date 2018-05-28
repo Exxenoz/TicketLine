@@ -1,6 +1,9 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.repository.util;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.datagenerator.*;
+import at.ac.tuwien.inso.sepm.ticketline.server.datagenerator.legacy.SeatDataGenerator;
+import at.ac.tuwien.inso.sepm.ticketline.server.datagenerator.SectorCategoryDataGenerator;
+import at.ac.tuwien.inso.sepm.ticketline.server.datagenerator.legacy.SectorDataGenerator;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -36,7 +39,7 @@ public class RefillDB {
             new SeatDataGenerator(seatRepository, sectorRepository),
             new ArtistDataGenerator(artistRepository),
             new EventDataGenerator(eventRepository),
-            new HallDataGenerator(hallRepository, sectorRepository),
+            new HallDataGenerator(hallRepository, sectorCategoryRepository, sectorRepository, seatRepository),
             new PerformanceDataGenerator(performanceRepository, eventRepository, artistRepository, hallRepository),
             new NewsDataGenerator(newsRepository),
             new ReservationDataGenerator(reservationRepository, seatRepository, performanceRepository)

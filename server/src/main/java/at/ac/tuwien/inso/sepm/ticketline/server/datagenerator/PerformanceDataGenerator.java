@@ -1,9 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.datagenerator;
 
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Artist;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Event;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.LocationAddress;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ArtistRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.EventRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.HallRepository;
@@ -21,10 +18,7 @@ import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.time.LocalDateTime.now;
 
@@ -80,14 +74,15 @@ public class PerformanceDataGenerator implements DataGenerator {
                     startTime.plusMinutes(faker.number().numberBetween(30, 4 * 60)),
                     address);
 
-                //just simply add the same hall for now
-
+                // Simply adding a random hall
                 if(hallRepository.findAll().size() > 0) {
-                    performance.setHall(hallRepository.findAll().get(0));
+                    List<Hall> halls = hallRepository.findAll();
+                    performance.setHall(halls.get(new Random().nextInt(halls.size())));
+                } else {
+                    LOGGER.debug("Could not save hall for performance, since halls are not generated.");
                 }
 
-                LOGGER.debug("saving performance {}", performance);
-
+                LOGGER.debug("Saving performance {}", performance);
                 performanceRepository.save(performance);
             }
         }
