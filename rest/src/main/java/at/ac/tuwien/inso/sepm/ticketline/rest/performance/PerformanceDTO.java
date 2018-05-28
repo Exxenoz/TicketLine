@@ -125,11 +125,15 @@ public class PerformanceDTO {
     @Override
     public String toString() {
         return "PerformanceDTO{" +
-            "name='" + name +
+            "id=" + id +
+            ", event=" + event +
+            ", artists=" + artists +
+            ", name='" + name + '\'' +
             ", price=" + price +
             ", performanceStart=" + performanceStart +
             ", performanceEnd=" + performanceEnd +
             ", address=" + address +
+            ", hall=" + hall +
             '}';
     }
 

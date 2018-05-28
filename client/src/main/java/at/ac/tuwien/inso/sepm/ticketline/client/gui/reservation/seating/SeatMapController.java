@@ -8,13 +8,18 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Map;
 
 @Component
 public class SeatMapController {
+
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private final static double SEAT_HEIGHT = 30;
     private final static double SEAT_WIDTH = 30;
@@ -35,14 +40,18 @@ public class SeatMapController {
     @FXML
     public void initialize() {
         this.gc = seatMapCanvas.getGraphicsContext2D();
+        drawSeatMap();
     }
 
     public void drawSeatMap() {
-        gc.fillText("TEST", 0,0 );
+
     }
 
     public void drawSeatMap(PerformanceDTO performance) {
         gc.fillText("TEST", 0,0 );
+
+
+        LOGGER.debug("Performance to draw seatmap for {}", performance.toString());
 //        for(SectorDTO s: performance.getHall().getSectors()) {
 //
 //            for(int i = 0; i < s.getRows(); i++) {
@@ -59,6 +68,7 @@ public class SeatMapController {
 
     public void fill(PerformanceDTO performance) {
         this.performance = performance;
+        drawSeatMap(performance);
     }
 
 }

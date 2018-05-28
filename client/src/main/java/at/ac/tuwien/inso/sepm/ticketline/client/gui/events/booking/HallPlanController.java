@@ -38,39 +38,40 @@ public class HallPlanController implements SeatSelectionListener {
     public Label pricePerTicket;
     public Label totalPrice;
     public Label hallHeading;
-    private final PurchaseReservationSummaryController PRSController;
+
     public Button continueButton;
     public Button backButton;
+    public Button reserveButton;
+    private Stage stage;
 
     private final SpringFxmlLoader fxmlLoader;
     private final SelectCustomerController selectCustomerController;
+    private final PurchaseReservationSummaryController PRSController;
+    private final SeatMapController seatMapController;
+    private final SectorController sectorController;
 
-    private SeatMapController seatMapController;
-    private SectorController sectorController;
-
-    public Button reserveButton;
-    private Stage stage;
     private ReservationDTO reservation;
     private List<SeatDTO> seats;
+
     private boolean isReservation = false;
     private boolean changeDetails = false;
-
 
     public HallPlanController(SpringFxmlLoader fxmlLoader,
                               SelectCustomerController selectCustomerController,
                               @Lazy PerformanceDetailViewController performanceDetailViewController,
                               @Lazy PurchaseReservationSummaryController PRSController,
-                              @Lazy SeatMapController seatMapController) {
+                              @Lazy SeatMapController seatMapController,
+                              @Lazy SectorController sectorController) {
 
         this.fxmlLoader = fxmlLoader;
         this.selectCustomerController = selectCustomerController;
         this.PRSController = PRSController;
         this.seatMapController = seatMapController;
+        this.sectorController = sectorController;
     }
 
     @FXML
     private void initialize() {
-
         eventNameLabel.setText(reservation.getPerformance().getEvent().getName());
         performanceNameLabel.setText(reservation.getPerformance().getName());
         amountOfTicketsLabel.setText("0");
@@ -92,6 +93,11 @@ public class HallPlanController implements SeatSelectionListener {
             reserveButton.setDisable(true);
             reserveButton.setVisible(false);
             reserveButton.setManaged(false);
+        }
+
+        // Set performance detail to seat plan
+        if(this.reservation != null && this.reservation.getPerformance() != null) {
+            this.seatMapController.fill(this.reservation.getPerformance());
         }
     }
 
@@ -124,7 +130,6 @@ public class HallPlanController implements SeatSelectionListener {
         seats.remove(seatDTO);
     }
 
-
     private void continueOrReserve() {
         reservation.setSeats(seats);
 
@@ -143,7 +148,6 @@ public class HallPlanController implements SeatSelectionListener {
             stage.centerOnScreen();
         }
     }
-
 
     public void fill(ReservationDTO reservation, Stage stage) {
         this.reservation = reservation;
