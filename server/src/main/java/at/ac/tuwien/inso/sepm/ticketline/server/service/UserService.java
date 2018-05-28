@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service;
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordChangeRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.UsernameAlreadyTakenException;
@@ -86,4 +87,12 @@ public interface UserService {
      * @throws UserValidatorException in case user was invalid
      */
     boolean isPasswordChangeKeySet(UserDTO userDTO);
+
+    /**
+     * Changes the password of a user
+     *
+     * @param userPasswordChangeRequestDTO the data needed to change the password
+     * @throws UserValidatorException in case user was invalid
+     */
+    void changePassword(UserPasswordChangeRequestDTO userPasswordChangeRequestDTO);
 }

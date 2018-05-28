@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordChangeRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
@@ -185,5 +187,28 @@ public class SimpleUserService implements UserService {
         }
 
         return user.getPasswordChangeKey() != null && !user.getPasswordChangeKey().isEmpty();
+    }
+
+    @Override
+    public void changePassword(UserPasswordChangeRequestDTO userPasswordChangeRequestDTO) {
+        LOGGER.info("Change password for user {}", userPasswordChangeRequestDTO.getUsername());
+
+        User user = userRepository.findByUsername(userPasswordChangeRequestDTO.getUsername());
+        if (user == null) {
+            throw new NotFoundException();
+        }
+
+        if (user.getPasswordChangeKey() == null) {
+            throw new InvalidRequestException();
+        }
+
+        if (!user.getPasswordChangeKey().equals(userPasswordChangeRequestDTO.getPasswordChangeKey())) {
+            throw new InvalidRequestException();
+        }
+
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        user.setPassword(passwordEncoder.encode(userPasswordChangeRequestDTO.getPassword()));
+        user.setPasswordChangeKey(null);
+        userRepository.save(user);
     }
 }

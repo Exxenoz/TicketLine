@@ -4,6 +4,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordChangeRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
@@ -88,5 +89,12 @@ public class UsersEndpoint {
         } catch (UserValidatorException e) {
             throw new InvalidRequestException();
         }
+    }
+
+    @PostMapping("/password/change")
+    // No authorization needed
+    @ApiOperation("Change password of the specified user")
+    public void changePassword(@RequestBody final UserPasswordChangeRequestDTO userPasswordChangeRequestDTO) {
+        userService.changePassword(userPasswordChangeRequestDTO);
     }
 }
