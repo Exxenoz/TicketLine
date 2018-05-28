@@ -257,12 +257,10 @@ public class UserController {
         }
 
         String resetKey = generateResetKey();
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        String encryptedResetKey = passwordEncoder.encode(resetKey);
 
         UserPasswordResetRequestDTO userPasswordResetRequestDTO =
             UserPasswordResetRequestDTO.builder().
-                passwordChangeKey(encryptedResetKey).
+                passwordChangeKey(resetKey).
                 userDTO(userDTO).
                 build();
 

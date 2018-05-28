@@ -48,6 +48,7 @@ public class UserValidator {
                 BundleManager.getExceptionBundle().getString("exception.validator.user.password_characters_invalid"));
         }
 
+        // TODO: remove and move encryption to server
         // encrypt password
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         String encryptedPassword = passwordEncoder.encode(password);

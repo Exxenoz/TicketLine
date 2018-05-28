@@ -1,11 +1,15 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.UserValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationService;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.UserService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
+import at.ac.tuwien.inso.sepm.ticketline.client.validator.UserValidator;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationRequest;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationTokenInfo;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordChangeRequestDTO;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,6 +18,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.RowConstraints;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import static javafx.scene.control.ProgressIndicator.INDETERMINATE_PROGRESS;
@@ -46,13 +52,20 @@ public class AuthenticationPasswordChangeController {
     public Label passwordNotMatchingLabel;
 
     private final AuthenticationService authenticationService;
+    private final UserService userService;
+
+    private String username;
 
     private final MainController mainController;
 
-    public AuthenticationPasswordChangeController(AuthenticationService authenticationService, MainController mainController) {
+    public AuthenticationPasswordChangeController(AuthenticationService authenticationService, UserService userService, MainController mainController) {
         this.authenticationService = authenticationService;
+        this.userService = userService;
         this.mainController = mainController;
+    }
 
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @FXML
@@ -74,7 +87,6 @@ public class AuthenticationPasswordChangeController {
                 }
 
                 boolean passwordEmpty = false;
-                boolean passwordNotMatching = false;
                 if(txtPassword.getText().isEmpty()) {
                     passwordMissingLabel.setVisible(true);
                     errorLabelRow2.setMinHeight(10);
@@ -82,19 +94,27 @@ public class AuthenticationPasswordChangeController {
                 } else if(!passwordsMatching()){
                     passwordNotMatchingLabel.setVisible(true);
                     errorLabelRow2.setMinHeight(10);
-                    passwordNotMatching = true;
                 }
 
                 if(passwordKeyEmpty || passwordEmpty) {
                     throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.authenticate.credentials_missing"));
-                } else if(passwordNotMatching) {
-                    throw new DataAccessException(BundleManager.getBundle().getString("authenticate.password_not_matching"));
                 }
 
-                // TODO
+                try {
+                    UserValidator.validatePassword(txtPassword, txtPasswordRepeat);
+                } catch (UserValidationException e) {
+                    throw new DataAccessException(e.getMessage());
+                }
+
+                userService.changePassword(UserPasswordChangeRequestDTO.builder().
+                    passwordChangeKey(txtPasswordResetKey.getText()).
+                    username(username).
+                    password(txtPassword.getText()).
+                    build());
+
                 return authenticationService.authenticate(
                     AuthenticationRequest.builder()
-                        .username(txtPasswordResetKey.getText())
+                        .username(username)
                         .password(txtPassword.getText())
                         .build());
             }

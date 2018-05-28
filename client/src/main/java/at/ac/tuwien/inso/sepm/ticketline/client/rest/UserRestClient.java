@@ -4,6 +4,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordChangeRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
 
 import java.util.List;
@@ -57,4 +58,10 @@ public interface UserRestClient {
      * @throws DataAccessException in case something went wrong
      */
     void resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws DataAccessException;
+
+    /**
+     * Change a users password, with a given token to authenticate
+     * @throws DataAccessException in case something went wrong
+     */
+    void changePassword(UserPasswordChangeRequestDTO userPasswordChangeRequestDTO) throws DataAccessException;
 }

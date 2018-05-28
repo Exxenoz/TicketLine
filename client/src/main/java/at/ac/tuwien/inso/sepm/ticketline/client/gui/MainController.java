@@ -170,9 +170,11 @@ public class MainController {
         pbLoadingProgress.setProgress(progress);
     }
 
-    public void switchToNewPasswordAuthentication() {
+    public void switchToNewPasswordAuthentication(String username) {
         spMainContent.getChildren().remove(login);
-        loginNewPassword = springFxmlLoader.load("/fxml/authenticationPasswordChangeComponent.fxml");
-        spMainContent.getChildren().add(loginNewPassword);
+        SpringFxmlLoader.Wrapper<AuthenticationPasswordChangeController> wrapper =
+            springFxmlLoader.loadAndWrap("/fxml/authenticationPasswordChangeComponent.fxml");
+        spMainContent.getChildren().add(wrapper.getLoadedObject());
+        wrapper.getController().setUsername(username);
     }
 }

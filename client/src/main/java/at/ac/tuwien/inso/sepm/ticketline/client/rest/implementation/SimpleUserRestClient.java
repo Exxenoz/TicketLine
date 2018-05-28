@@ -7,6 +7,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordChangeRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import org.slf4j.Logger;
@@ -35,6 +36,7 @@ public class SimpleUserRestClient implements UserRestClient {
     private final URI disableUserUri;
     private final URI createUserUri;
     private final URI resetUserPasswordUri;
+    private final URI changeUserPasswordUri;
 
     public SimpleUserRestClient(RestClient restClient) {
         this.restClient = restClient;
@@ -44,6 +46,7 @@ public class SimpleUserRestClient implements UserRestClient {
         this.disableUserUri = restClient.getServiceURI("/users/disable");
         this.createUserUri = restClient.getServiceURI("/users/create");
         this.resetUserPasswordUri = restClient.getServiceURI("/users/password/reset");
+        this.changeUserPasswordUri = restClient.getServiceURI("/users/password/change");
     }
 
     @Override
@@ -134,6 +137,23 @@ public class SimpleUserRestClient implements UserRestClient {
                 restClient.exchange(
                     new RequestEntity<>(userPasswordResetRequestDTO, POST, resetUserPasswordUri),
                     new ParameterizedTypeReference<UserPasswordResetRequestDTO>() {
+                    });
+            LOGGER.debug("Result status was {} with content {}", user.getStatusCode(), user.getBody());
+        } catch (HttpStatusCodeException e) {
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
+        } catch (RestClientException e) {
+            throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
+        }
+    }
+
+    @Override
+    public void changePassword(UserPasswordChangeRequestDTO userPasswordChangeRequestDTO) throws DataAccessException {
+        try {
+            LOGGER.debug("Changing password of user with {}", changeUserPasswordUri);
+            final var user =
+                restClient.exchange(
+                    new RequestEntity<>(userPasswordChangeRequestDTO, POST, changeUserPasswordUri),
+                    new ParameterizedTypeReference<UserPasswordChangeRequestDTO>() {
                     });
             LOGGER.debug("Result status was {} with content {}", user.getStatusCode(), user.getBody());
         } catch (HttpStatusCodeException e) {

@@ -7,6 +7,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordChangeRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import org.springframework.stereotype.Service;
@@ -60,6 +61,11 @@ public class SimpleUserService implements UserService {
 
     @Override
     public void resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws DataAccessException {
+        userRestClient.resetPassword(userPasswordResetRequestDTO);
+    }
 
+    @Override
+    public void changePassword(UserPasswordChangeRequestDTO userPasswordChangeRequestDTO) throws DataAccessException {
+        userRestClient.changePassword(userPasswordChangeRequestDTO);
     }
 }

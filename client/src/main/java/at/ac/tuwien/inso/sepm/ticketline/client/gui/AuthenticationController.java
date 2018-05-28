@@ -83,7 +83,7 @@ public class AuthenticationController {
                         getException().getCause().getClass() == HttpClientErrorException.class) {
                         var httpErrorCode = ((HttpStatusCodeException) getException().getCause()).getStatusCode();
                         if (httpErrorCode == HttpStatus.LOCKED) {
-                            mainController.switchToNewPasswordAuthentication();
+                            mainController.switchToNewPasswordAuthentication(txtUsername.getText());
                             return;
                         }
                     }
