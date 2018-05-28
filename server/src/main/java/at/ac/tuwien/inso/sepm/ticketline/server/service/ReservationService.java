@@ -21,10 +21,18 @@ public interface ReservationService {
     /**
      * finds One not yet purchased Reservation
      *
-     * @param reservationId the id of the reservation
+     * @param  reservationId the id of the reservation
      * @return said reservation
      */
-    Reservation findOneByPaidFalseById(Long reservationId);
+    Reservation findOneByPaidFalseAndId(Long reservationId);
+
+    /**
+     * finds One not yet purchased Reservation
+     *
+     * @param reservationNr the id of the reservation
+     * @return said reservation
+     */
+    Reservation findOneByPaidFalseAndReservationNumber(String reservationNr);
 
     /**
      * Finds all the existing Reservation owned by the User with the given full name for the given performance
@@ -35,8 +43,8 @@ public interface ReservationService {
      * @param performanceName the name of the performance
      * @return the reservations belonging to the performance with the given name and owned by the customer
      */
-    List<Reservation> findAllByPaidFalseByCustomerNameAndPerformanceName(String firstName, String lastName,
-                                                                         String performanceName);
+    List<Reservation> findAllByPaidFalseAndCustomerNameAndPerformanceName(String firstName, String lastName,
+                                                                          String performanceName);
 
     /**
      * Get paid reservation count by event id.

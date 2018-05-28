@@ -18,16 +18,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
 import static java.math.BigDecimal.ONE;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -84,7 +81,7 @@ public class ReservationServiceTests {
     @Test
     public void removeSeatFromReservation() {
         //get reservation
-        var reservation = reservationService.findOneByPaidFalseById(RESERVATION_TEST_ID);
+        var reservation = reservationService.findOneByPaidFalseAndId(RESERVATION_TEST_ID);
         Assert.assertNotNull(reservation);
         Assert.assertEquals(false, reservation.isPaid());
 
@@ -108,13 +105,13 @@ public class ReservationServiceTests {
     @Test
     public void purchaseReservationWithId() {
         //get reservation
-        var reservation = reservationService.findOneByPaidFalseById(RESERVATION_TEST_ID);
+        var reservation = reservationService.findOneByPaidFalseAndId(RESERVATION_TEST_ID);
         Assert.assertNotNull(reservation);
         Assert.assertEquals(false, reservation.isPaid());
         reservationService.purchaseReservation(reservation);
         //assert result
         Assert.assertEquals(true, reservation.isPaid());
-        Assert.assertNull(reservationService.findOneByPaidFalseById(RESERVATION_TEST_ID));
+        Assert.assertNull(reservationService.findOneByPaidFalseAndId(RESERVATION_TEST_ID));
     }
 
     @Test
@@ -131,7 +128,7 @@ public class ReservationServiceTests {
             String lastName = customer.getLastName();
             String performanceName = performance.getName();
             //find not yet purchased reservations
-            var reservations = reservationService.findAllByPaidFalseByCustomerNameAndPerformanceName(
+            var reservations = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
                 firstName, lastName, performanceName);
             Assert.assertEquals(1, reservations.size());
             //purchase said reservations
@@ -140,7 +137,7 @@ public class ReservationServiceTests {
             }
 
             //assert result
-            reservations = reservationService.findAllByPaidFalseByCustomerNameAndPerformanceName(
+            reservations = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
                 firstName, lastName, performanceName);
             Assert.assertEquals(0, reservations.size());
         } else {
@@ -163,7 +160,7 @@ public class ReservationServiceTests {
             String performanceName = performance.getName();
 
             //search
-            var reservations = reservationService.findAllByPaidFalseByCustomerNameAndPerformanceName(
+            var reservations = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
                 firstName, lastName, performanceName);
 
             //assert result

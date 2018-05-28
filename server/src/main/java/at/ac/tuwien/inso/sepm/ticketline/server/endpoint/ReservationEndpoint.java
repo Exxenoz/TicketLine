@@ -72,7 +72,14 @@ public class ReservationEndpoint {
     @GetMapping("/findNotPaid/{reservationId}")
     @ApiOperation("Finds a Reservation which wasn't purchased yet with the given id")
     public ReservationDTO findOneByPaidFalseById(@PathVariable Long reservationId) {
-        final var reservation = reservationService.findOneByPaidFalseById(reservationId);
+        final var reservation = reservationService.findOneByPaidFalseAndId(reservationId);
+        return reservationMapper.reservationToReservationDTO(reservation);
+    }
+
+    @PostMapping("/findNotPaid/ReservationNumber")
+    @ApiOperation("Finds a Reservation which wasn't purchased yet with the given id")
+    public ReservationDTO findOneByPaidFalseAndReservationNumber(@RequestBody String reservationNr) {
+        final var reservation = reservationService.findOneByPaidFalseAndReservationNumber(reservationNr);
         return reservationMapper.reservationToReservationDTO(reservation);
     }
 
@@ -85,7 +92,7 @@ public class ReservationEndpoint {
         String customerLastName = reservationSearchDTO.getLastName();
         String performanceName = reservationSearchDTO.getPerfomanceName();
 
-        var reservations = reservationService.findAllByPaidFalseByCustomerNameAndPerformanceName(
+        var reservations = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
             customerFirstName, customerLastName, performanceName);
         return reservationMapper.reservationToReservationDTO(reservations);
     }

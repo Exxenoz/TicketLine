@@ -9,7 +9,6 @@ import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.SeatRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,13 +40,18 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
-    public Reservation findOneByPaidFalseById(Long reservationId) {
+    public Reservation findOneByPaidFalseAndId(Long reservationId) {
         return reservationRepository.findByPaidFalseAndId(reservationId);
     }
 
     @Override
-    public List<Reservation> findAllByPaidFalseByCustomerNameAndPerformanceName(String firstName, String lastName,
-                                                                                String performanceName) {
+    public Reservation findOneByPaidFalseAndReservationNumber(String reservationNr) {
+        return reservationRepository.findByPaidFalseAndReservationNumber(reservationNr);
+    }
+
+    @Override
+    public List<Reservation> findAllByPaidFalseAndCustomerNameAndPerformanceName(String firstName, String lastName,
+                                                                                 String performanceName) {
         return reservationRepository.findAllByPaidFalseAndCustomerNameAndPerformnceName(firstName, lastName, performanceName);
     }
 

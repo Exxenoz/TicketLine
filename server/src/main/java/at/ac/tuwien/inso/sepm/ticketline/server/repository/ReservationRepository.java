@@ -72,4 +72,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findAllByPaidFalseAndCustomerNameAndPerformnceName(@Param("firstName") String firstName,
                                                                          @Param("lastName") String lastName,
                                                                          @Param("performanceName") String performanceName);
+
+    /**
+     * Finds a non invoiced reservation by the unique reservationNr
+     *
+     * @param reservationNr the unique number of the reservation to be found
+     * @return the not yet purchased reservation
+     */
+    Reservation findByPaidFalseAndReservationNumber(String reservationNr);
 }

@@ -63,6 +63,15 @@ public interface ReservationService {
     ReservationDTO findOneByPaidFalseById(Long reservationId) throws DataAccessException;
 
     /**
+     * Finds a not yet purchased reservation with the given reservation number
+     *
+     * @param reservationNr the unique number of the reservation
+     * @return the found reservation
+     * @throws DataAccessException in case something went during the action
+     */
+    ReservationDTO findOneByPaidFalseAndReservationNumber(String reservationNr) throws DataAccessException;
+
+    /**
      * Finds a not yet purchased reservation with the full name of the customer and name of the performance
      *
      * @param reservationSearchDTO the DTO object with the search parameters
