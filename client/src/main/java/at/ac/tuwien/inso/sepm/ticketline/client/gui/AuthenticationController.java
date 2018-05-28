@@ -12,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.RowConstraints;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -34,6 +35,12 @@ public class AuthenticationController {
     @FXML
     public Label passwordMissingLabel;
 
+    @FXML
+    public RowConstraints errorLabelRow1;
+
+    @FXML
+    public RowConstraints errorLabelRow2;
+
     private final AuthenticationService authenticationService;
 
     private final MainController mainController;
@@ -50,16 +57,20 @@ public class AuthenticationController {
             protected AuthenticationTokenInfo call() throws DataAccessException {
                 userNameMissingLabel.setVisible(false);
                 passwordMissingLabel.setVisible(false);
+                errorLabelRow1.setMinHeight(0);
+                errorLabelRow2.setMinHeight(0);
 
                 boolean usernameEmpty = false;
                 if(txtUsername.getText().isEmpty()) {
                     userNameMissingLabel.setVisible(true);
+                    errorLabelRow1.setMinHeight(10);
                     usernameEmpty = true;
                 }
 
                 boolean passwordEmpty = false;
                 if(txtPassword.getText().isEmpty()) {
                     passwordMissingLabel.setVisible(true);
+                    errorLabelRow2.setMinHeight(10);
                     passwordEmpty = true;
                 }
 
