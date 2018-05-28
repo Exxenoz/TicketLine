@@ -63,6 +63,7 @@ public class ReservationServiceTests {
         reservation.setSeats(seats);
         reservation.setPerformance(performance);
         reservation.setCustomer(customer);
+        reservation.setReservationNumber("000000");
 
         reservation = reservationRepository.save(reservation);
         RESERVATION_TEST_ID = reservation.getId();
@@ -193,6 +194,7 @@ public class ReservationServiceTests {
         reservation.setCustomer(customer);
         reservation.setPerformance(performance);
         reservation.setSeats(List.of(seat));
+        reservation.setReservationNumber("000001");
 
         Reservation returned = null;
         try {
@@ -220,6 +222,7 @@ public class ReservationServiceTests {
         reservation.setCustomer(customer);
         reservation.setPerformance(performance);
         reservation.setSeats(List.of(seat));
+        reservation.setReservationNumber("000002");
 
         Reservation returned = null;
         try {

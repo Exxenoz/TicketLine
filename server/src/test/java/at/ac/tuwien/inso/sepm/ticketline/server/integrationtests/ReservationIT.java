@@ -79,7 +79,7 @@ public class ReservationIT extends BaseIT {
             .withPerformance(performance)
             .withSeats(seats)
             .withPaid(false)
-            .withReservationNumber("test")
+            .withReservationNumber("ABCD12")
             .build();
 
         reservation = reservationRepository.save(reservation);

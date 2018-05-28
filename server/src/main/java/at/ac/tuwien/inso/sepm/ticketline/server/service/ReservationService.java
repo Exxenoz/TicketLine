@@ -88,4 +88,6 @@ public interface ReservationService {
      * @return a Page of Reservation
      */
     Page<Reservation> findAll(Pageable pageable);
+
+    String generateReservationNumber();
 }

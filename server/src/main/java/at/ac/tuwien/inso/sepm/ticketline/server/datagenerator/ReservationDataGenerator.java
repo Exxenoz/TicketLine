@@ -1,11 +1,14 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.datagenerator;
 
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.Customer;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Seat;
+import at.ac.tuwien.inso.sepm.ticketline.server.repository.CustomerRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.SeatRepository;
+import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import com.github.javafaker.Faker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +34,16 @@ public class ReservationDataGenerator implements DataGenerator {
     private final ReservationRepository reservationRepository;
     private final PerformanceRepository performanceRepository;
     private final SeatRepository seatRepository;
+    private final CustomerRepository customerRepository;
+    private final ReservationService reservationService;
     private final Faker faker;
 
-    public ReservationDataGenerator(ReservationRepository reservationRepository, SeatRepository seatRepository, PerformanceRepository performanceRepository) {
+    public ReservationDataGenerator(ReservationRepository reservationRepository, SeatRepository seatRepository, PerformanceRepository performanceRepository, CustomerRepository customerRepository, ReservationService reservationService) {
         this.reservationRepository = reservationRepository;
         this.performanceRepository = performanceRepository;
         this.seatRepository = seatRepository;
+        this.customerRepository = customerRepository;
+        this.reservationService = reservationService;
         faker = new Faker();
     }
 
@@ -59,6 +66,7 @@ public class ReservationDataGenerator implements DataGenerator {
             LOGGER.info("Reservations already generated");
         } else {
             List<Performance> performances = performanceRepository.findAll();
+            List<Customer> customers = customerRepository.findAll();
             List<Seat> seats = seatRepository.findAll();
 
             LOGGER.info("Generating {} reservation entries", (NUMBER_OF_RESERVATIONS_PER_PERFORMANCE_TO_GENERATE * performances.size()));
@@ -69,6 +77,8 @@ public class ReservationDataGenerator implements DataGenerator {
                     final var reservation = new Reservation();
                     reservation.setPerformance(performance);
                     reservation.setSeats(singletonList(seats.get(0)));
+                    reservation.setCustomer(customers.get(faker.random().nextInt(0, customers.size() - 1)));
+                    reservation.setReservationNumber(reservationService.generateReservationNumber());
                     if (faker.random().nextBoolean()) {
                         reservation.setPaid(true);
                         reservation.setPaidAt(LocalDateTime.of(getRandomLocalDateForCurrentYear(), LocalTime.now()));

@@ -32,7 +32,7 @@ public class Reservation {
     @Column(nullable = true, name = "paid_at")
     private LocalDateTime paidAt;
 
-    @Column(nullable = true)
+    @Column(nullable = false, unique = true)
     private String reservationNumber;
 
     public Long getId() {
