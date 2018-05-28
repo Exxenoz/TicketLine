@@ -212,6 +212,13 @@ public class SimpleUserService implements UserService {
     public void changePassword(UserPasswordChangeRequestDTO userPasswordChangeRequestDTO) throws InternalUserNotFoundException, InternalBadRequestException {
         LOGGER.info("Change password for user {}", userPasswordChangeRequestDTO.getUsername());
 
+        if (userPasswordChangeRequestDTO.getPassword() == null ||
+            userPasswordChangeRequestDTO.getPassword().length() < 3 ||
+            userPasswordChangeRequestDTO.getPassword().length() > 30 ||
+            !userPasswordChangeRequestDTO.getPassword().matches("^[\\x00-\\xFF]*$")) {
+            throw new InternalBadRequestException();
+        }
+
         User user = userRepository.findByUsername(userPasswordChangeRequestDTO.getUsername());
         if (user == null) {
             throw new InternalUserNotFoundException();

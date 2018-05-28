@@ -106,7 +106,7 @@ public interface UserService {
      *
      * @param userPasswordChangeRequestDTO the data needed to change the password
      * @throws InternalUserNotFoundException in case the user was not found
-     * @throws InternalBadRequestException in case the password change keys did not match or the password of the user was not reset
+     * @throws InternalBadRequestException in case the password change keys did not match or the password of the user was not reset or the new password was invalid
      */
     void changePassword(UserPasswordChangeRequestDTO userPasswordChangeRequestDTO) throws InternalUserNotFoundException, InternalBadRequestException;
 }
