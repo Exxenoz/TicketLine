@@ -3,13 +3,13 @@ package at.ac.tuwien.inso.sepm.ticketline.client.service.implementation;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.ReservationRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
-import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -71,8 +71,8 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
-    public List<ReservationDTO> findAllByPaidFalseByCustomerName(CustomerDTO customerDTO) throws DataAccessException {
-        return reservationRestClient.findAllByPaidFalseByCustomerName(customerDTO);
+    public List<ReservationDTO> findAllByPaidFalseByCustomerNameAndPerformanceName(ReservationSearchDTO reservationSearchDTO) throws DataAccessException {
+        return reservationRestClient.findAllByPaidFalseByCustomerNameAndByPerformanceName(reservationSearchDTO);
     }
 
     @Override

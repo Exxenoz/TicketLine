@@ -1,11 +1,11 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 
-import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationFilterTopTen;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
@@ -77,10 +77,16 @@ public class ReservationEndpoint {
     }
 
     @PostMapping("/findNotPaid")
-    @ApiOperation("Finds Reservations which wasn't purchased yet with the given customer")
-    public List<ReservationDTO> findAllByPaidFalseByCustomerName(@RequestBody CustomerDTO customerDTO) {
-        var customer = customerMapper.customerDTOToCustomer(customerDTO);
-        var reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
+    @ApiOperation("Finds Reservations which wasn't purchased yet with the given customername and performancename")
+    public List<ReservationDTO> findAllByPaidFalseByCustomerNameAndPerformanceName(
+        @RequestBody ReservationSearchDTO reservationSearchDTO) {
+
+        String customerFirstName = reservationSearchDTO.getFirstName();
+        String customerLastName = reservationSearchDTO.getLastName();
+        String performanceName = reservationSearchDTO.getPerfomanceName();
+
+        var reservations = reservationService.findAllByPaidFalseByCustomerNameAndPerformanceName(
+            customerFirstName, customerLastName, performanceName);
         return reservationMapper.reservationToReservationDTO(reservations);
     }
 

@@ -2,8 +2,10 @@ package at.ac.tuwien.inso.sepm.ticketline.server.integrationtests;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.performance.PerformanceMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.integrationtests.base.BaseIT;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.*;
@@ -30,6 +32,7 @@ import static org.junit.Assert.assertThat;
 public class ReservationIT extends BaseIT {
 
     private static final String RESERVATION_ENDPOINT = "/reservation";
+    private static Long PERFORMANCE_TEST_ID = 1L;
     private static Long RESERVATION_TEST_ID = 1L;
     private static Long CUSTOMER_TEST_ID = 1L;
 
@@ -47,6 +50,8 @@ public class ReservationIT extends BaseIT {
     private CustomerMapper customerMapper;
     @Autowired
     private ArtistRepository artistRepository;
+    @Autowired
+    private PerformanceMapper performanceMapper;
 
 
     @Before
@@ -61,6 +66,8 @@ public class ReservationIT extends BaseIT {
         Performance performance = newPerformance();
         performance.setArtists(artists);
         performance = performanceRepository.save(performance);
+        PERFORMANCE_TEST_ID = performance.getId();
+
         Seat seat = seatRepository.save(newSeat());
         Customer customer = customerRepository.save(newCustomer());
         CUSTOMER_TEST_ID = customer.getId();
@@ -89,13 +96,13 @@ public class ReservationIT extends BaseIT {
 
     @Test
     public void purchaseReservationAsUser() {
-
+        //get not yet purchased Reservation
         var reservation = reservationRepository.findByPaidFalseAndId(RESERVATION_TEST_ID);
-
         ReservationDTO reservationDTO = reservationMapper.reservationToReservationDTO(reservation);
         Assert.assertNotNull(reservationDTO);
         Assert.assertNull(reservationDTO.getPaidAt());
 
+        //create and send request - purchase reservation
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
@@ -103,6 +110,8 @@ public class ReservationIT extends BaseIT {
             .body(reservationDTO)
             .when().post(RESERVATION_ENDPOINT + "/purchase")
             .then().extract().response();
+
+        //assert result
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         var result = response.getBody().as(ReservationDTO.class);
         Assert.assertNotNull(result.getId());
@@ -112,20 +121,35 @@ public class ReservationIT extends BaseIT {
 
     @Test
     public void findReservationWithCustomerNameAsUser() {
+        //get search parameters
         var customerOpt = customerRepository.findById(CUSTOMER_TEST_ID);
-        if (customerOpt.isPresent()) {
+        var performanceOpt = performanceRepository.findById(PERFORMANCE_TEST_ID);
+        if (customerOpt.isPresent() && performanceOpt.isPresent()) {
             var customerDTO = customerMapper.customerToCustomerDTO(customerOpt.get());
+            var performanceDTO = performanceMapper.performanceToPerformanceDTO(performanceOpt.get());
             Assert.assertNotNull(customerDTO);
+            Assert.assertNotNull(performanceDTO);
+
+            //create reservation search DTO
+            var reservationSearchDTO = ReservationSearchDTO.Builder.aReservationSearchDTO()
+                .withFirstName(customerDTO.getFirstName())
+                .withLastName(customerDTO.getLastName())
+                .withPerfomanceName(performanceDTO.getName())
+                .build();
+
+            //create and send request - find not yet purchased reservation from the customer and for the performance
+            //with the given name
             Response response = RestAssured
                 .given()
                 .contentType(ContentType.JSON)
                 .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-                .body(customerDTO)
+                .body(reservationSearchDTO)
                 .when().post(RESERVATION_ENDPOINT + "/findNotPaid")
                 .then().extract().response();
+
+            //assert result
             Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
             var resultList = List.of(response.getBody().as(ReservationDTO[].class));
-
             Assert.assertEquals(1, resultList.size());
             var result = resultList.get(0);
             Assert.assertEquals(ReservationDTO.class, result.getClass());
@@ -138,16 +162,18 @@ public class ReservationIT extends BaseIT {
 
     @Test
     public void removeSeatFromReservationAsUser() {
-
+        //get not yet purchased reservation
         var reservation = reservationRepository.findByPaidFalseAndId(RESERVATION_TEST_ID);
-
         ReservationDTO reservationDTO = reservationMapper.reservationToReservationDTO(reservation);
         Assert.assertNotNull(reservationDTO);
+
+        //edit reservation -> remove one seat
         var seatDTOs = reservationDTO.getSeats();
         Assert.assertEquals(1, seatDTOs.size());
         seatDTOs.remove(0);
         reservationDTO.setSeats(seatDTOs);
 
+        //create and send request - update reservation with new data
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
@@ -155,10 +181,11 @@ public class ReservationIT extends BaseIT {
             .body(reservationDTO)
             .when().post(RESERVATION_ENDPOINT + "/edit")
             .then().extract().response();
+
+        //assert result
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         var result = response.getBody().as(ReservationDTO.class);
         Assert.assertNotNull(result.getId());
-
         var resultSeatDTOs = result.getSeats();
         Assert.assertEquals(0, resultSeatDTOs.size());
     }

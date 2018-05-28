@@ -48,11 +48,28 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
         " AND r.is_paid = true AND r.paid_at >= :startTime AND r.paid_at <= :endTime", nativeQuery = true)
     Long getPaidReservationCountByEventIdAndTimeFrame(@Param("eventId")Long eventId, @Param("startTime")Timestamp startTime, @Param("endTime")Timestamp endTime);
 
+    /**
+     * Finds a non invoiced reservation by reservation id
+     *
+     * @param reservationId the id of the reservation to be found
+     * @return the not yet purchased reservation
+     */
     Reservation findByPaidFalseAndId(Long reservationId);
 
+    /**
+     * Finds a not yet purchased reservation by the name of the customer and performance
+     *
+     * @param firstName       first name of the customer
+     * @param lastName        last name of the customer
+     * @param performanceName name of the performance
+     * @return the not yed purchased reservation
+     */
     @Query(value = "SELECT r.* " +
-        "FROM reservation r, customer c " +
-        "WHERE c.id = r.customer_id AND r.paid = false " +
-        "AND c.first_name = :firstName AND c.last_name = :lastName", nativeQuery = true)
-    List<Reservation> findAllByPaidFalseAndCustomerFirstnameAndCustomerLastname(@Param("firstName") String firstName, @Param("lastName") String lastName);
+        "FROM reservation r, customer c, performance p " +
+        "WHERE c.id = r.customer_id AND p.id = r.performance_id AND r.paid = false " +
+        "AND c.first_name = :firstName AND c.last_name = :lastName AND p.name  = :performanceName",
+        nativeQuery = true)
+    List<Reservation> findAllByPaidFalseAndCustomerNameAndPerformnceName(@Param("firstName") String firstName,
+                                                                         @Param("lastName") String lastName,
+                                                                         @Param("performanceName") String performanceName);
 }

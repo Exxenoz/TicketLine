@@ -37,6 +37,7 @@ public class ReservationServiceTests {
     private static Long RESERVATION_TEST_ID = 1L;
     private static Long CUSTOMER_TEST_ID = 1L;
     private static Long SEAT_TEST_ID = 1L;
+    private static Long PERFORMANCE_TEST_ID = 1L;
     @Autowired
     private PerformanceRepository performanceRepository;
     @Autowired
@@ -49,6 +50,7 @@ public class ReservationServiceTests {
     @Before
     public void setUp() {
         Performance performance = performanceRepository.save(newPerformance());
+        PERFORMANCE_TEST_ID = performance.getId();
         Seat seat = seatRepository.save(newSeat());
         SEAT_TEST_ID = seat.getId();
 
@@ -79,22 +81,23 @@ public class ReservationServiceTests {
 
     @Test
     public void removeSeatFromReservation() {
+        //get reservation
         var reservation = reservationService.findOneByPaidFalseById(RESERVATION_TEST_ID);
         Assert.assertNotNull(reservation);
         Assert.assertEquals(false, reservation.isPaid());
 
+        //remove seats
         List<Seat> seats = reservation.getSeats();
         Assert.assertEquals(1, seats.size());
         Seat seat = seats.get(0);
         seats.remove(seat);
-
         reservation.setSeats(seats);
         reservation = reservationService.editReservation(reservation);
 
+        //assert result
         Assert.assertNotNull(reservation);
         seats = reservation.getSeats();
         Assert.assertEquals(0, seats.size());
-
         var seatOpt = seatRepository.findById(SEAT_TEST_ID);
         Assert.assertTrue(seatOpt.isPresent());
         Assert.assertEquals(seat, seatOpt.get());
@@ -102,43 +105,66 @@ public class ReservationServiceTests {
 
     @Test
     public void purchaseReservationWithId() {
+        //get reservation
         var reservation = reservationService.findOneByPaidFalseById(RESERVATION_TEST_ID);
         Assert.assertNotNull(reservation);
         Assert.assertEquals(false, reservation.isPaid());
         reservationService.purchaseReservation(reservation);
+        //assert result
         Assert.assertEquals(true, reservation.isPaid());
-
         Assert.assertNull(reservationService.findOneByPaidFalseById(RESERVATION_TEST_ID));
     }
 
     @Test
-    public void purchaseReservationWithCostumer() {
+    public void purchaseReservationWithCostumerAndPerformance() {
         var customerOpt = customerRepository.findById(CUSTOMER_TEST_ID);
+        var performanceOpt = performanceRepository.findById(PERFORMANCE_TEST_ID);
+        Performance performance;
         Customer customer;
-        if (customerOpt.isPresent()) {
+        if (customerOpt.isPresent() && performanceOpt.isPresent()) {
             customer = customerOpt.get();
-
-            var reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
+            performance = performanceOpt.get();
+            //Search Parameters
+            String firstName = customer.getFirstName();
+            String lastName = customer.getLastName();
+            String performanceName = performance.getName();
+            //find not yet purchased reservations
+            var reservations = reservationService.findAllByPaidFalseByCustomerNameAndPerformanceName(
+                firstName, lastName, performanceName);
+            Assert.assertEquals(1, reservations.size());
+            //purchase said reservations
             for (Reservation reservation : reservations) {
                 reservationService.purchaseReservation(reservation);
             }
 
-            reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
+            //assert result
+            reservations = reservationService.findAllByPaidFalseByCustomerNameAndPerformanceName(
+                firstName, lastName, performanceName);
             Assert.assertEquals(0, reservations.size());
         } else {
-            Assert.fail("No customer with id " + CUSTOMER_TEST_ID + " found!");
+            Assert.fail("Either the customer or the performance weren't found!");
         }
     }
 
     @Test
-    public void findReservationWithCustomer() {
+    public void findReservationWithCustomerAndPerformance() {
+        //get search parameters
         var customerOpt = customerRepository.findById(CUSTOMER_TEST_ID);
+        var performanceOpt = performanceRepository.findById(PERFORMANCE_TEST_ID);
         Customer customer;
-        if (customerOpt.isPresent()) {
+        Performance performance;
+        if (customerOpt.isPresent() && performanceOpt.isPresent()) {
             customer = customerOpt.get();
+            performance = performanceOpt.get();
+            String firstName = customer.getFirstName();
+            String lastName = customer.getLastName();
+            String performanceName = performance.getName();
 
-            var reservations = reservationService.findAllByPaidFalseByCustomerName(customer);
+            //search
+            var reservations = reservationService.findAllByPaidFalseByCustomerNameAndPerformanceName(
+                firstName, lastName, performanceName);
 
+            //assert result
             Assert.assertEquals(1, reservations.size());
             var reservation = reservations.get(0);
             var actualCustomer = reservation.getCustomer();
@@ -146,9 +172,9 @@ public class ReservationServiceTests {
             Assert.assertEquals(customer, actualCustomer);
             Assert.assertEquals(RESERVATION_TEST_ID, actualReservationId);
         } else {
-            Assert.fail("No customer with id " + CUSTOMER_TEST_ID + " found!");
+            //parameters weren't found
+            Assert.fail("Either the customer or the performance wasn't found!");
         }
-
     }
 
     @Test
