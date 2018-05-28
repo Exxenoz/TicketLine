@@ -269,8 +269,8 @@ public class UserController {
             LOGGER.error("Password reset was successful");
             JavaFXUtils.createInformationDialog(
                 BundleManager.getBundle().getString("usertab.password_reset.dialog.success.title"),
-                BundleManager.getBundle().getString("usertab.password_reset.dialog.success.header_text" + " " + userDTO.getUsername()),
-                BundleManager.getBundle().getString("usertab.password_reset.dialog.success.content_text" + " " + resetKey),
+                BundleManager.getBundle().getString("usertab.password_reset.dialog.success.header_text") + " " + userDTO.getUsername(),
+                BundleManager.getBundle().getString("usertab.password_reset.dialog.success.content_text") + " " + resetKey,
                 passwordResetButton.getScene().getWindow()
             ).showAndWait();
         } catch (DataAccessException e) {
