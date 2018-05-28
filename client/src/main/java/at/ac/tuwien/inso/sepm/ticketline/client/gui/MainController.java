@@ -172,7 +172,7 @@ public class MainController {
 
     public void switchToNewPasswordAuthentication() {
         spMainContent.getChildren().remove(login);
-        loginNewPassword = springFxmlLoader.load("/fxml/authenticationNewPasswordComponent.fxml");
+        loginNewPassword = springFxmlLoader.load("/fxml/authenticationPasswordChangeComponent.fxml");
         spMainContent.getChildren().add(loginNewPassword);
     }
 }

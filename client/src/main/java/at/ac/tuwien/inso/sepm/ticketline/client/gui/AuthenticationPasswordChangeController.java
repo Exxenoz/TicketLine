@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 import static javafx.scene.control.ProgressIndicator.INDETERMINATE_PROGRESS;
 
 @Component
-public class AuthenticationNewPasswordController {
+public class AuthenticationPasswordChangeController {
 
     @FXML
     public RowConstraints errorLabelRow1;
@@ -49,7 +49,7 @@ public class AuthenticationNewPasswordController {
 
     private final MainController mainController;
 
-    public AuthenticationNewPasswordController(AuthenticationService authenticationService, MainController mainController) {
+    public AuthenticationPasswordChangeController(AuthenticationService authenticationService, MainController mainController) {
         this.authenticationService = authenticationService;
         this.mainController = mainController;
 

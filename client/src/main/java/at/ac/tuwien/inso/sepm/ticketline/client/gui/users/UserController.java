@@ -11,6 +11,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -31,11 +32,14 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.lang.invoke.MethodHandles;
+import java.util.UUID;
 
 import static javafx.stage.Modality.APPLICATION_MODAL;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.LOCK;
@@ -62,6 +66,9 @@ public class UserController {
 
     @FXML
     public Button toggleEnableButton;
+
+    @FXML
+    public Button passwordResetButton;
 
     @FXML
     private TabHeaderController tabHeaderController;
@@ -102,9 +109,11 @@ public class UserController {
                 }
                 toggleEnableButton.setText(toggleEnableButtonText);
                 toggleEnableButton.setDisable(false);
+                passwordResetButton.setDisable(false);
             } else {
-                // no selection, disable toogle button
+                // no selection, disable toogle button and password reset button
                 toggleEnableButton.setDisable(true);
+                passwordResetButton.setDisable(true);
             }
         });
     }
@@ -232,5 +241,47 @@ public class UserController {
         dialog.setScene(new Scene(springFxmlLoader.load("/fxml/users/userCreateDialog.fxml")));
         dialog.setTitle(BundleManager.getBundle().getString("usertab.user.create"));
         dialog.showAndWait();
+    }
+
+    public void onClickResetPassword(ActionEvent actionEvent) {
+        LOGGER.debug("Clicked reset user password button");
+        UserDTO userDTO = userTable.getSelectionModel().getSelectedItem();
+
+        try {
+            UserValidator.validateExistingUser(userDTO);
+        } catch (UserValidatorException e) {
+            LOGGER.error("No User was selected");
+            JavaFXUtils.createErrorDialog(BundleManager.getExceptionBundle().getString("exception.no_selected_user"),
+                content.getScene().getWindow()).showAndWait();
+            return;
+        }
+
+        String resetKey = generateResetKey();
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        String encryptedResetKey = passwordEncoder.encode(resetKey);
+
+        UserPasswordResetRequestDTO userPasswordResetRequestDTO =
+            UserPasswordResetRequestDTO.builder().
+                passwordChangeKey(encryptedResetKey).
+                userDTO(userDTO).
+                build();
+
+        try {
+            userService.resetPassword(userPasswordResetRequestDTO);
+            LOGGER.error("Password reset was successful");
+            JavaFXUtils.createInformationDialog(
+                BundleManager.getBundle().getString("usertab.password_reset.dialog.success.title"),
+                BundleManager.getBundle().getString("usertab.password_reset.dialog.success.header_text" + " " + userDTO.getUsername()),
+                BundleManager.getBundle().getString("usertab.password_reset.dialog.success.content_text" + " " + resetKey),
+                passwordResetButton.getScene().getWindow()
+            ).showAndWait();
+        } catch (DataAccessException e) {
+            JavaFXUtils.createErrorDialog(e.getMessage(),
+                content.getScene().getWindow()).showAndWait();
+        }
+    }
+
+    private String generateResetKey() {
+        return UUID.randomUUID().toString();
     }
 }

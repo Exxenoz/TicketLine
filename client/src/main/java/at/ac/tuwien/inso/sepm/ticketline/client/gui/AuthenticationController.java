@@ -41,7 +41,6 @@ public class AuthenticationController {
     public AuthenticationController(AuthenticationService authenticationService, MainController mainController) {
         this.authenticationService = authenticationService;
         this.mainController = mainController;
-
     }
 
     @FXML

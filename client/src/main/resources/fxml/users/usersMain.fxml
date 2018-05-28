@@ -20,12 +20,17 @@
         </TableView>
         <ButtonBar prefHeight="40.0" prefWidth="200.0">
             <buttons>
-                <Button mnemonicParsing="false" onAction="#onClickCreateUserButton" text="%usertab.user.create">
+                <Button fx:id="passwordResetButton" disable="true" mnemonicParsing="false" onAction="#onClickResetPassword" text="%usertab.user.password_reset">
                     <HBox.margin>
                         <Insets right="16.0"/>
                     </HBox.margin>
                 </Button>
-                <Button fx:id="toggleEnableButton"  disable="true" mnemonicParsing="false" onAction="#toggleEnable" text="%usertab.user.enable"/>
+                <Button fx:id="toggleEnableButton"  disable="true" mnemonicParsing="false" onAction="#toggleEnable" text="%usertab.user.enable">
+                    <HBox.margin>
+                        <Insets right="16.0"/>
+                    </HBox.margin>
+                </Button>
+                <Button mnemonicParsing="false" onAction="#onClickCreateUserButton" text="%usertab.user.create" />
             </buttons>
         </ButtonBar>
     </children>
