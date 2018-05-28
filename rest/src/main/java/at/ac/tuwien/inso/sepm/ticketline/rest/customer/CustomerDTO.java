@@ -1,7 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.rest.customer;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.address.BaseAddressDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.address.LocationAddressDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -126,5 +125,60 @@ public class CustomerDTO {
     public int hashCode() {
 
         return Objects.hash(id, firstName, lastName, telephoneNumber, email, address);
+    }
+
+    public static CustomerDTOBuilder builder() {
+        return new CustomerDTOBuilder();
+    }
+
+    public static final class CustomerDTOBuilder {
+
+        private Long id;
+        private String firstName;
+        private String lastName;
+        private String telephoneNumber;
+        private String email;
+        private BaseAddressDTO address;
+
+        public CustomerDTOBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public CustomerDTOBuilder firstName(String firstName) {
+            this.firstName = firstName;
+            return this;
+        }
+
+        public CustomerDTOBuilder lastName(String lastName) {
+            this.lastName = lastName;
+            return this;
+        }
+
+        public CustomerDTOBuilder telephoneNumber(String telephoneNumber) {
+            this.telephoneNumber = telephoneNumber;
+            return this;
+        }
+
+        public CustomerDTOBuilder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public CustomerDTOBuilder address(BaseAddressDTO address) {
+            this.address = address;
+            return this;
+        }
+
+        public CustomerDTO build() {
+            CustomerDTO customerDTO = new CustomerDTO();
+            customerDTO.setId(id);
+            customerDTO.setFirstName(firstName);
+            customerDTO.setLastName(lastName);
+            customerDTO.setTelephoneNumber(telephoneNumber);
+            customerDTO.setEmail(email);
+            customerDTO.setBaseAddress(address);
+            return customerDTO;
+        }
     }
 }
