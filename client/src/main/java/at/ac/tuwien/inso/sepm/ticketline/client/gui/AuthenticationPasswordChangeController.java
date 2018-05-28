@@ -14,6 +14,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -50,6 +51,9 @@ public class AuthenticationPasswordChangeController {
 
     @FXML
     public Label passwordNotMatchingLabel;
+
+    @FXML
+    public Button btnAuthenticate;
 
     private final AuthenticationService authenticationService;
     private final UserService userService;
@@ -141,5 +145,9 @@ public class AuthenticationPasswordChangeController {
 
     private boolean passwordsMatching() {
         return txtPassword.getText().equals(txtPasswordRepeat.getText());
+    }
+
+    public void handleBackToAuthentication(ActionEvent actionEvent) {
+        mainController.switchBackToAuthentication();
     }
 }

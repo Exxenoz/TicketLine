@@ -145,7 +145,7 @@ public class UserController {
                 var httpErrorCode = ((HttpStatusCodeException) e.getCause()).getStatusCode();
                 if (httpErrorCode == HttpStatus.FORBIDDEN) {
                     LOGGER.debug("The current user doesnt have the authorization to load the users-list");
-                    mainController.getTpContent().getTabs().get(2).setDisable(true);
+                    mainController.getTpContent().getTabs().get(3).setDisable(true);
                 } else {
                     JavaFXUtils.createExceptionDialog(e,
                         content.getScene().getWindow()).showAndWait();
@@ -268,10 +268,11 @@ public class UserController {
         try {
             userService.resetPassword(userPasswordResetRequestDTO);
             LOGGER.error("Password reset was successful");
-            JavaFXUtils.createInformationDialog(
+            JavaFXUtils.createCopyTextDialog(
                 BundleManager.getBundle().getString("usertab.password_reset.dialog.success.title"),
                 BundleManager.getBundle().getString("usertab.password_reset.dialog.success.header_text") + " " + userDTO.getUsername(),
-                BundleManager.getBundle().getString("usertab.password_reset.dialog.success.content_text") + " " + resetKey,
+                BundleManager.getBundle().getString("usertab.password_reset.dialog.success.content_text"),
+                resetKey,
                 passwordResetButton.getScene().getWindow()
             ).showAndWait();
         } catch (DataAccessException e) {

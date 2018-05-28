@@ -174,7 +174,13 @@ public class MainController {
         spMainContent.getChildren().remove(login);
         SpringFxmlLoader.Wrapper<AuthenticationPasswordChangeController> wrapper =
             springFxmlLoader.loadAndWrap("/fxml/authenticationPasswordChangeComponent.fxml");
-        spMainContent.getChildren().add(wrapper.getLoadedObject());
+        loginNewPassword = wrapper.getLoadedObject();
+        spMainContent.getChildren().add(loginNewPassword);
         wrapper.getController().setUsername(username);
+    }
+
+    public void switchBackToAuthentication() {
+        spMainContent.getChildren().remove(loginNewPassword);
+        spMainContent.getChildren().add(login);
     }
 }
