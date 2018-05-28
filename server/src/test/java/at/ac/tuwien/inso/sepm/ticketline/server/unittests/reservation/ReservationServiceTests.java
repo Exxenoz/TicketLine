@@ -18,12 +18,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
 import static java.math.BigDecimal.ONE;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -200,6 +202,7 @@ public class ReservationServiceTests {
         assertThat(reservation.getSeats(), is(returned.getSeats()));
         assertThat(reservation.getPerformance(), is(returned.getPerformance()));
         assertThat(reservation.getPaid(), is(false));
+        assertNotNull(reservation.getReservationNumber());
 
     }
 

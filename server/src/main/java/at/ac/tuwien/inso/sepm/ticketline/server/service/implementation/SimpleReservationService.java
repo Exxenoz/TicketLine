@@ -9,12 +9,14 @@ import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.SeatRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -112,6 +114,8 @@ public class SimpleReservationService implements ReservationService {
 
 
         Reservation createdReservation = reservationRepository.save(reservation);
+        String reservationNumber = LocalDate.now().toString() + createdReservation.getId().toString();
+        createdReservation.setReservationNumber(reservationNumber);
 
         createdReservation.setSeats(seatsForReservation);
         createdReservation.setPerformance(currentPerformance);
