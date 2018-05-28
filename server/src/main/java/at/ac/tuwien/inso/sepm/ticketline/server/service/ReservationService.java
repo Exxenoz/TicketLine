@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationFilterTopTen;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationSearch;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,13 +39,10 @@ public interface ReservationService {
      * Finds all the existing Reservation owned by the User with the given full name for the given performance
      * which the customer did not yet purchase
      *
-     * @param firstName       the first name of the customer
-     * @param lastName        the last name of the customer
-     * @param performanceName the name of the performance
+     * @param reservationSearch the object holding the search
      * @return the reservations belonging to the performance with the given name and owned by the customer
      */
-    List<Reservation> findAllByPaidFalseAndCustomerNameAndPerformanceName(String firstName, String lastName,
-                                                                          String performanceName);
+    List<Reservation> findAllByPaidFalseAndCustomerNameAndPerformanceName(ReservationSearch reservationSearch);
 
     /**
      * Get paid reservation count by event id.

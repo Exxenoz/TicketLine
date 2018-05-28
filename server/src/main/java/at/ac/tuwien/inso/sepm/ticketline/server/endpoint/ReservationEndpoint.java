@@ -11,6 +11,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationFilterTopTen;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationFilterTopTenMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationMapper;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationSearchMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import io.swagger.annotations.Api;
@@ -29,16 +30,19 @@ public class ReservationEndpoint {
     private final ReservationMapper reservationMapper;
     private final ReservationFilterTopTenMapper reservationFilterTopTenMapper;
     private final CustomerMapper customerMapper;
+    private final ReservationSearchMapper reservationSearchMapper;
 
     public ReservationEndpoint(ReservationService reservationService,
                                ReservationMapper reservationMapper,
                                ReservationFilterTopTenMapper reservationFilterTopTenMapper,
-                               CustomerMapper customerMapper
+                               CustomerMapper customerMapper,
+                               ReservationSearchMapper reservationSearchMapper
     ) {
         this.reservationService = reservationService;
         this.reservationMapper = reservationMapper;
         this.reservationFilterTopTenMapper = reservationFilterTopTenMapper;
         this.customerMapper = customerMapper;
+        this.reservationSearchMapper = reservationSearchMapper;
     }
 
     @GetMapping("/event/{eventId}")
@@ -87,13 +91,9 @@ public class ReservationEndpoint {
     @ApiOperation("Finds Reservations which wasn't purchased yet with the given customername and performancename")
     public List<ReservationDTO> findAllByPaidFalseByCustomerNameAndPerformanceName(
         @RequestBody ReservationSearchDTO reservationSearchDTO) {
-
-        String customerFirstName = reservationSearchDTO.getFirstName();
-        String customerLastName = reservationSearchDTO.getLastName();
-        String performanceName = reservationSearchDTO.getPerfomanceName();
-
         var reservations = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
-            customerFirstName, customerLastName, performanceName);
+            reservationSearchMapper.reservationSearchDTOToReservationSearch(reservationSearchDTO)
+        );
         return reservationMapper.reservationToReservationDTO(reservations);
     }
 

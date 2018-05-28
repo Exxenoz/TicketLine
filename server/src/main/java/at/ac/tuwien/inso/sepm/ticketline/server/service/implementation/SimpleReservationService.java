@@ -1,9 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationFilterTopTen;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Seat;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
@@ -50,8 +47,10 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
-    public List<Reservation> findAllByPaidFalseAndCustomerNameAndPerformanceName(String firstName, String lastName,
-                                                                                 String performanceName) {
+    public List<Reservation> findAllByPaidFalseAndCustomerNameAndPerformanceName(ReservationSearch reservationSearch) {
+        String firstName = reservationSearch.getFirstName();
+        String lastName = reservationSearch.getLastName();
+        String performanceName = reservationSearch.getPerfomanceName();
         return reservationRepository.findAllByPaidFalseAndCustomerNameAndPerformnceName(firstName, lastName, performanceName);
     }
 

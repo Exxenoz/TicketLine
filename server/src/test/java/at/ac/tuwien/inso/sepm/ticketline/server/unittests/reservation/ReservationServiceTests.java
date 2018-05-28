@@ -124,12 +124,16 @@ public class ReservationServiceTests {
             customer = customerOpt.get();
             performance = performanceOpt.get();
             //Search Parameters
-            String firstName = customer.getFirstName();
-            String lastName = customer.getLastName();
-            String performanceName = performance.getName();
-            //find not yet purchased reservations
+            var reservationSearch = ReservationSearch.Builder.aReservationSearch()
+                .withFirstName(customer.getFirstName())
+                .withLastName(customer.getLastName())
+                .withPerfomanceName(performance.getName())
+                .build();
+
+
+            //search
             var reservations = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
-                firstName, lastName, performanceName);
+                reservationSearch);
             Assert.assertEquals(1, reservations.size());
             //purchase said reservations
             for (Reservation reservation : reservations) {
@@ -138,7 +142,7 @@ public class ReservationServiceTests {
 
             //assert result
             reservations = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
-                firstName, lastName, performanceName);
+                reservationSearch);
             Assert.assertEquals(0, reservations.size());
         } else {
             Assert.fail("Either the customer or the performance weren't found!");
@@ -155,13 +159,16 @@ public class ReservationServiceTests {
         if (customerOpt.isPresent() && performanceOpt.isPresent()) {
             customer = customerOpt.get();
             performance = performanceOpt.get();
-            String firstName = customer.getFirstName();
-            String lastName = customer.getLastName();
-            String performanceName = performance.getName();
+            var reservationSearch = ReservationSearch.Builder.aReservationSearch()
+                .withFirstName(customer.getFirstName())
+                .withLastName(customer.getLastName())
+                .withPerfomanceName(performance.getName())
+                .build();
+
 
             //search
             var reservations = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
-                firstName, lastName, performanceName);
+                reservationSearch);
 
             //assert result
             Assert.assertEquals(1, reservations.size());

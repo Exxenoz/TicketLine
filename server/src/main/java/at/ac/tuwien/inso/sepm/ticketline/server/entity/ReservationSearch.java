@@ -1,13 +1,13 @@
-package at.ac.tuwien.inso.sepm.ticketline.rest.reservation;
+package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
 import java.util.Objects;
 
-public class ReservationSearchDTO {
+public class ReservationSearch {
     private String firstName;
     private String lastName;
     private String perfomanceName;
 
-    public ReservationSearchDTO() {
+    public ReservationSearch() {
     }
 
     public String getFirstName() {
@@ -36,7 +36,7 @@ public class ReservationSearchDTO {
 
     @Override
     public String toString() {
-        return "ReservationSearchDTO{" +
+        return "ReservationSearch{" +
             "customerFirstName=" + "\'" + firstName + "\'," +
             "customerLastName=" + "\'" + lastName + "\'," +
             "performanceName=" + "\'" + perfomanceName + "\'" +
@@ -48,12 +48,13 @@ public class ReservationSearchDTO {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
 
-        ReservationSearchDTO that = (ReservationSearchDTO) obj;
+        ReservationSearch that = (ReservationSearch) obj;
         return (this.firstName.equals(that.getFirstName()))
             && (this.lastName.equals(that.getLastName()))
             && (this.perfomanceName.equals(that.getPerfomanceName()));
 
     }
+
 
     @Override
     public int hashCode() {
@@ -68,7 +69,7 @@ public class ReservationSearchDTO {
         private Builder() {
         }
 
-        public static Builder aReservationSearchDTO() {
+        public static Builder aReservationSearch() {
             return new Builder();
         }
 
@@ -87,12 +88,12 @@ public class ReservationSearchDTO {
             return this;
         }
 
-        public ReservationSearchDTO build() {
-            ReservationSearchDTO reservationSearchDTO = new ReservationSearchDTO();
-            reservationSearchDTO.setFirstName(firstName);
-            reservationSearchDTO.setLastName(lastName);
-            reservationSearchDTO.setPerfomanceName(perfomanceName);
-            return reservationSearchDTO;
+        public ReservationSearch build() {
+            ReservationSearch reservationSearch = new ReservationSearch();
+            reservationSearch.setFirstName(firstName);
+            reservationSearch.setLastName(lastName);
+            reservationSearch.setPerfomanceName(perfomanceName);
+            return reservationSearch;
         }
     }
 }
