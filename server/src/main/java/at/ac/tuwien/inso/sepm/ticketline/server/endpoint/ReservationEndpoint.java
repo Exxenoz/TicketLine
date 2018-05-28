@@ -8,6 +8,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.Reserv
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,18 +29,21 @@ public class ReservationEndpoint {
     }
 
     @GetMapping("/event/{eventId}")
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Get list of reservation entries by event id")
     public List<ReservationDTO> findAllByEventId(@PathVariable Long eventId) {
         return reservationMapper.reservationToReservationDTO(reservationService.findAllByEventId(eventId));
     }
 
     @GetMapping("/event/{eventId}/count")
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Get count of paid reservation entries by event id")
     public Long getPaidReservationCountByEventId(@PathVariable Long eventId) {
         return reservationService.getPaidReservationCountByEventId(eventId);
     }
 
     @PostMapping("/top_ten")
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Get count of paid reservation entries by top ten filter")
     public Long getPaidReservationCountByFilter(@RequestBody final ReservationFilterTopTenDTO reservationFilterTopTenDTO) {
         ReservationFilterTopTen reservationFilterTopTen = reservationFilterTopTenMapper.reservationFilterTopTenDTOToReservationFilterTopTen(reservationFilterTopTenDTO);

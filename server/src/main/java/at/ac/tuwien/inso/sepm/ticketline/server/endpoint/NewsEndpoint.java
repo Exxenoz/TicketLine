@@ -31,12 +31,14 @@ public class NewsEndpoint {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Get list of simple news entries")
     public List<SimpleNewsDTO> findAll() {
         return newsMapper.newsToSimpleNewsDTO(newsService.findAll());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Get detailed information about a specific news entry")
     public DetailedNewsDTO find(@PathVariable Long id) {
         return newsMapper.newsToDetailedNewsDTO(newsService.findOne(id));
