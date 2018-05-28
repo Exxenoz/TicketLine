@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationToken;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationTokenInfo;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.*;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 
@@ -12,9 +13,13 @@ public interface HeaderTokenAuthenticationService {
      *
      * @param username of the user
      * @param password of the user
+     * @throws InternalUserNotFoundException in case the user was not found
+     * @throws InternalUserDisabledException in case the user was disabled
+     * @throws InternalPasswordResetException in case the password of the user was reset
+     * @throws InternalUserPasswordWrongException in case the password of the user did not match
      * @return an authentication token
      */
-    AuthenticationToken authenticate(String username, CharSequence password);
+    AuthenticationToken authenticate(String username, CharSequence password) throws InternalUserNotFoundException, InternalUserDisabledException, InternalPasswordResetException, InternalUserPasswordWrongException;
 
     /**
      * Get informations about a header token.

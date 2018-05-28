@@ -8,11 +8,8 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.user.UserMapper;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.ForbiddenException;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidRequestException;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.NotFoundException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.UserRepository;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.UsernameAlreadyTakenException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,14 +37,18 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public void enableUser(UserDTO userDTO) throws UserValidatorException {
+    public void enableUser(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException {
         LOGGER.info("Enable user {}", userDTO);
 
-        UserValidator.validateExistingUser(userDTO);
+        try {
+            UserValidator.validateExistingUser(userDTO);
+        } catch (UserValidatorException e) {
+            throw new InternalUserValidationException();
+        }
 
         User user = userRepository.findByUsername(userDTO.getUsername());
         if (user == null) {
-            throw new NotFoundException();
+            throw new InternalUserNotFoundException();
         }
 
         user.setEnabled(true);
@@ -62,19 +63,23 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public void disableUser(UserDTO userDTO) throws UserValidatorException {
+    public void disableUser(UserDTO userDTO) throws InternalUserValidationException, InternalForbiddenException, InternalUserNotFoundException {
         LOGGER.info("Disable user {}", userDTO);
 
-        UserValidator.validateExistingUser(userDTO);
+        try {
+            UserValidator.validateExistingUser(userDTO);
+        } catch (UserValidatorException e) {
+            throw new InternalUserValidationException();
+        }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getName().equals(userDTO.getUsername())) {
-            throw new ForbiddenException();
+            throw new InternalForbiddenException();
         }
 
         User user = userRepository.findByUsername(userDTO.getUsername());
         if (user == null) {
-            throw new NotFoundException();
+            throw new InternalUserNotFoundException();
         }
 
         user.setEnabled(false);
@@ -83,14 +88,18 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public boolean increaseStrikes(UserDTO userDTO) throws UserValidatorException {
+    public boolean increaseStrikes(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException {
         LOGGER.info("Increase strikes for user {}", userDTO);
 
-        UserValidator.validateExistingUser(userDTO);
+        try {
+            UserValidator.validateExistingUser(userDTO);
+        } catch (UserValidatorException e) {
+            throw new InternalUserValidationException();
+        }
 
         User user = userRepository.findByUsername(userDTO.getUsername());
         if (user == null) {
-            throw new NotFoundException();
+            throw new InternalUserNotFoundException();
         }
 
         if(!user.isEnabled()) {
@@ -114,10 +123,10 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public UserDTO findUserByName(String name) {
+    public UserDTO findUserByName(String name) throws InternalUserNotFoundException {
         User user = userRepository.findByUsername(name);
         if (user == null) {
-            throw new NotFoundException();
+            throw new InternalUserNotFoundException();
         }
         return userMapper.userToUserDTO(user);
     }
@@ -142,13 +151,17 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public UserDTO save(UserDTO userDTO) throws UserValidatorException, UsernameAlreadyTakenException {
+    public UserDTO save(UserDTO userDTO) throws InternalUserValidationException, InternalUsernameConflictException {
         LOGGER.info("Save user {}", userDTO);
 
-        UserValidator.validateNewUser(userDTO);
+        try {
+            UserValidator.validateNewUser(userDTO);
+        } catch (UserValidatorException e) {
+            throw new InternalUserValidationException();
+        }
 
         if (userRepository.findByUsername(userDTO.getUsername()) != null) {
-            throw new UsernameAlreadyTakenException();
+            throw new InternalUsernameConflictException();
         }
 
         var user = userMapper.userDTOToUser(userDTO);
@@ -156,19 +169,23 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public void resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws UserValidatorException {
+    public void resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws InternalUserValidationException, InternalUserNotFoundException, InternalBadRequestException {
         LOGGER.info("Reset password for user {}", userPasswordResetRequestDTO.getUserDTO());
 
-        UserValidator.validateExistingUser(userPasswordResetRequestDTO.getUserDTO());
+        try {
+            UserValidator.validateExistingUser(userPasswordResetRequestDTO.getUserDTO());
+        } catch (UserValidatorException e) {
+            throw new InternalUserValidationException();
+        }
 
         String passwordChangeKey = userPasswordResetRequestDTO.getPasswordChangeKey();
         if (passwordChangeKey == null || passwordChangeKey.length() != 8) {
-            throw new InvalidRequestException();
+            throw new InternalBadRequestException();
         }
 
         User user = userRepository.findByUsername(userPasswordResetRequestDTO.getUserDTO().getUsername());
         if (user == null) {
-            throw new NotFoundException();
+            throw new InternalUserNotFoundException();
         }
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
@@ -180,34 +197,34 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public boolean isPasswordChangeKeySet(UserDTO userDTO) {
+    public boolean isPasswordChangeKeySet(UserDTO userDTO) throws InternalUserNotFoundException {
         LOGGER.info("Check password change key for user {}", userDTO);
 
         User user = userRepository.findByUsername(userDTO.getUsername());
         if (user == null) {
-            throw new NotFoundException();
+            throw new InternalUserNotFoundException();
         }
 
         return user.getPasswordChangeKey() != null && !user.getPasswordChangeKey().isEmpty();
     }
 
     @Override
-    public void changePassword(UserPasswordChangeRequestDTO userPasswordChangeRequestDTO) {
+    public void changePassword(UserPasswordChangeRequestDTO userPasswordChangeRequestDTO) throws InternalUserNotFoundException, InternalBadRequestException {
         LOGGER.info("Change password for user {}", userPasswordChangeRequestDTO.getUsername());
 
         User user = userRepository.findByUsername(userPasswordChangeRequestDTO.getUsername());
         if (user == null) {
-            throw new NotFoundException();
+            throw new InternalUserNotFoundException();
         }
 
         if (user.getPasswordChangeKey() == null) {
-            throw new InvalidRequestException();
+            throw new InternalBadRequestException();
         }
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
         if (!passwordEncoder.matches(userPasswordChangeRequestDTO.getPasswordChangeKey(), user.getPasswordChangeKey())) {
-            throw new InvalidRequestException();
+            throw new InternalBadRequestException();
         }
 
         user.setPassword(passwordEncoder.encode(userPasswordChangeRequestDTO.getPassword()));

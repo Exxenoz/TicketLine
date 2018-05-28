@@ -1,14 +1,13 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.News;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.NotFoundException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalNotFoundException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.NewsRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.NewsService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SimpleNewsService implements NewsService {
@@ -25,8 +24,8 @@ public class SimpleNewsService implements NewsService {
     }
 
     @Override
-    public News findOne(Long id) {
-        return newsRepository.findOneById(id).orElseThrow(NotFoundException::new);
+    public News findOne(Long id) throws InternalNotFoundException {
+        return newsRepository.findOneById(id).orElseThrow(InternalNotFoundException::new);
     }
 
     @Override

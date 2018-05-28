@@ -4,6 +4,8 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.news.DetailedNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.SimpleNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.News;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.news.NewsMapper;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpNotFoundException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalNotFoundException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.NewsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,7 +41,11 @@ public class NewsEndpoint {
     @GetMapping("/{id}")
     @ApiOperation("Get detailed information about a specific news entry")
     public DetailedNewsDTO find(@PathVariable Long id) {
-        return newsMapper.newsToDetailedNewsDTO(newsService.findOne(id));
+        try {
+            return newsMapper.newsToDetailedNewsDTO(newsService.findOne(id));
+        } catch (InternalNotFoundException e) {
+            throw new HttpNotFoundException();
+        }
     }
 
     @PostMapping

@@ -2,6 +2,9 @@ package at.ac.tuwien.inso.sepm.ticketline.server.unittests.user;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.user.UserMapper;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalForbiddenException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalUserNotFoundException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalUserValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import org.junit.After;
 import org.junit.Assert;
@@ -66,7 +69,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void enableUserTest() throws UserValidatorException {
+    public void enableUserTest() throws InternalUserNotFoundException, InternalUserValidationException {
         setTestUserEnabled(false);
 
         var user = userService.findUserByName(TEST_USERNAME);
@@ -77,7 +80,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void disableUserTest() throws UserValidatorException {
+    public void disableUserTest() throws InternalUserNotFoundException, InternalForbiddenException, InternalUserValidationException {
         setTestUserEnabled(true);
         var userDTO = userService.findUserByName(TEST_USERNAME);
         Assert.assertTrue(userDTO.isEnabled());

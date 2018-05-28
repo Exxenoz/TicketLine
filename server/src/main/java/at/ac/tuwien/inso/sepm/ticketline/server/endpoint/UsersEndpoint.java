@@ -6,15 +6,12 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordChangeRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.user.UserMapper;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidRequestException;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.UsernameAlreadyTakenException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpBadRequestException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,8 +50,10 @@ public class UsersEndpoint {
     public void enableUser(@RequestBody UserDTO userDTO) {
         try {
             userService.enableUser(userDTO);
-        } catch (UserValidatorException e) {
-            throw new InvalidRequestException();
+        } catch (InternalUserValidationException e) {
+            throw new HttpBadRequestException();
+        } catch (InternalUserNotFoundException e) {
+            throw new HttpBadRequestException();
         }
     }
 
@@ -64,8 +63,12 @@ public class UsersEndpoint {
     public void disableUser(@RequestBody UserDTO userDTO) {
         try {
             userService.disableUser(userDTO);
-        } catch (UserValidatorException e) {
-            throw new InvalidRequestException();
+        } catch (InternalUserNotFoundException e) {
+            throw new HttpBadRequestException();
+        } catch (InternalForbiddenException e) {
+            throw new HttpBadRequestException();
+        } catch (InternalUserValidationException e) {
+            throw new HttpBadRequestException();
         }
     }
 
@@ -75,8 +78,10 @@ public class UsersEndpoint {
     public UserDTO save(@RequestBody UserDTO userDTO) {
         try {
             return userService.save(userDTO);
-        } catch (UserValidatorException e) {
-            throw new InvalidRequestException();
+        } catch (InternalUserValidationException e) {
+            throw new HttpBadRequestException();
+        } catch (InternalUsernameConflictException e) {
+            throw new HttpBadRequestException();
         }
     }
 
@@ -86,8 +91,12 @@ public class UsersEndpoint {
     public void resetPassword(@RequestBody final UserPasswordResetRequestDTO userPasswordResetRequestDTO) {
         try {
             userService.resetPassword(userPasswordResetRequestDTO);
-        } catch (UserValidatorException e) {
-            throw new InvalidRequestException();
+        } catch (InternalUserNotFoundException e) {
+            throw new HttpBadRequestException();
+        } catch (InternalBadRequestException e) {
+            throw new HttpBadRequestException();
+        } catch (InternalUserValidationException e) {
+            throw new HttpBadRequestException();
         }
     }
 
@@ -95,6 +104,12 @@ public class UsersEndpoint {
     // No authorization needed
     @ApiOperation("Change password of the specified user")
     public void changePassword(@RequestBody final UserPasswordChangeRequestDTO userPasswordChangeRequestDTO) {
-        userService.changePassword(userPasswordChangeRequestDTO);
+        try {
+            userService.changePassword(userPasswordChangeRequestDTO);
+        } catch (InternalUserNotFoundException e) {
+            throw new HttpBadRequestException();
+        } catch (InternalBadRequestException e) {
+            throw new HttpBadRequestException();
+        }
     }
 }
