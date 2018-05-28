@@ -26,6 +26,9 @@ public class User implements Serializable {
     @Column(nullable = false)
     private Integer strikes = 0;
 
+    @Column(nullable = true)
+    private String passwordChangeKey;
+
     @ElementCollection
     @JoinTable(name = "authorities", joinColumns = {
         @JoinColumn(name = "username", referencedColumnName = "username")
@@ -73,6 +76,14 @@ public class User implements Serializable {
         this.strikes = strikes;
     }
 
+    public String getPasswordChangeKey() {
+        return passwordChangeKey;
+    }
+
+    public void setPasswordChangeKey(String passwordChangeKey) {
+        this.passwordChangeKey = passwordChangeKey;
+    }
+
     public Set<String> getRoles() {
         return roles;
     }
@@ -91,6 +102,7 @@ public class User implements Serializable {
         private String password;
         private boolean enabled;
         private int strikes;
+        private String passwordChangeKey;
         private Set<String> roles = new HashSet<>();
 
         public UserBuilder id(Long id) {
@@ -118,6 +130,11 @@ public class User implements Serializable {
             return this;
         }
 
+        public UserBuilder passwordChangeKey(String passwordChangeKey) {
+            this.passwordChangeKey = passwordChangeKey;
+            return this;
+        }
+
         public UserBuilder roles(Set<String> roles) {
             this.roles = roles;
             return this;
@@ -130,6 +147,7 @@ public class User implements Serializable {
             user.setPassword(password);
             user.setEnabled(enabled);
             user.setStrikes(strikes);
+            user.setPasswordChangeKey(passwordChangeKey);
             user.setRoles(new HashSet<>(roles));
             return user;
         }

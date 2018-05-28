@@ -3,7 +3,9 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationToken;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationTokenInfo;
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.configuration.properties.AuthenticationConfigurationProperties;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.HttpLockedException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidRequestException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.UserDisabledException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.HeaderTokenAuthenticationService;
@@ -83,13 +85,20 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
         } catch (AuthenticationException a) {
             LOGGER.error(String.format("Failed to authenticate user with name: %s", username), a);
 
-            if(userService.findUserByName(username) != null) {
+            UserDTO userDTO = userService.findUserByName(username);
+            if(userDTO != null) {
+                if (userService.isPasswordChangeKeySet(userDTO)) {
+                    throw new HttpLockedException();
+                }
+
                 boolean isDisabled = false;
+
                 try {
-                    isDisabled = userService.increaseStrikes(userService.findUserByName(username));
+                    isDisabled = userService.increaseStrikes(userDTO);
                 } catch (UserValidatorException e) {
                     throw new InvalidRequestException();
                 }
+
                 if (!isDisabled) {
                     throw new BadCredentialsException("Wrong password.");
                 } else {

@@ -3,10 +3,12 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.user.UserMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.ForbiddenException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidRequestException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.NotFoundException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.UserRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.UsernameAlreadyTakenException;
@@ -38,10 +40,17 @@ public class SimpleUserService implements UserService {
     @Override
     public void enableUser(UserDTO userDTO) throws UserValidatorException {
         LOGGER.info("Enable user {}", userDTO);
+
         UserValidator.validateExistingUser(userDTO);
-        User user = userMapper.userDTOToUser(userDTO);
+
+        User user = userRepository.findByUsername(userDTO.getUsername());
+        if (user == null) {
+            throw new NotFoundException();
+        }
+
         user.setEnabled(true);
         user.setStrikes(0);
+
         userRepository.save(user);
     }
 
@@ -55,11 +64,15 @@ public class SimpleUserService implements UserService {
         LOGGER.info("Disable user {}", userDTO);
 
         UserValidator.validateExistingUser(userDTO);
-        User user = userMapper.userDTOToUser(userDTO);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication.getName().equals(user.getUsername())) {
+        if (authentication.getName().equals(userDTO.getUsername())) {
             throw new ForbiddenException();
+        }
+
+        User user = userRepository.findByUsername(userDTO.getUsername());
+        if (user == null) {
+            throw new NotFoundException();
         }
 
         user.setEnabled(false);
@@ -72,7 +85,11 @@ public class SimpleUserService implements UserService {
         LOGGER.info("Increase strikes for user {}", userDTO);
 
         UserValidator.validateExistingUser(userDTO);
-        User user = userMapper.userDTOToUser(userDTO);
+
+        User user = userRepository.findByUsername(userDTO.getUsername());
+        if (user == null) {
+            throw new NotFoundException();
+        }
 
         if(!user.isEnabled()) {
             return true;
@@ -105,8 +122,7 @@ public class SimpleUserService implements UserService {
 
     @Override
     public void initiateSecurityUser(org.springframework.security.core.userdetails.User user) {
-        UserDTO assimilatedUserDTO = findUserByName(user.getUsername());
-        User assimilatedUser = userMapper.userDTOToUser(assimilatedUserDTO);
+        User assimilatedUser = userRepository.findByUsername(user.getUsername());
 
         assimilatedUser.setUsername(user.getUsername());
         assimilatedUser.setPassword(user.getPassword());
@@ -135,5 +151,39 @@ public class SimpleUserService implements UserService {
 
         var user = userMapper.userDTOToUser(userDTO);
         return userMapper.userToUserDTO(userRepository.save(user));
+    }
+
+    @Override
+    public void resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws UserValidatorException {
+        LOGGER.info("Reset password for user {}", userPasswordResetRequestDTO.getUserDTO());
+
+        UserValidator.validateExistingUser(userPasswordResetRequestDTO.getUserDTO());
+
+        String passwordChangeKey = userPasswordResetRequestDTO.getPasswordChangeKey();
+        if (passwordChangeKey == null || passwordChangeKey.length() != 8) {
+            throw new InvalidRequestException();
+        }
+
+        User user = userRepository.findByUsername(userPasswordResetRequestDTO.getUserDTO().getUsername());
+        if (user == null) {
+            throw new NotFoundException();
+        }
+
+        user.setPassword("");
+        user.setPasswordChangeKey(passwordChangeKey);
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public boolean isPasswordChangeKeySet(UserDTO userDTO) {
+        LOGGER.info("Check password change key for user {}", userDTO);
+
+        User user = userRepository.findByUsername(userDTO.getUsername());
+        if (user == null) {
+            throw new NotFoundException();
+        }
+
+        return user.getPasswordChangeKey() != null && !user.getPasswordChangeKey().isEmpty();
     }
 }

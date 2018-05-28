@@ -4,6 +4,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.user.UserMapper;
@@ -73,6 +74,17 @@ public class UsersEndpoint {
     public UserDTO save(@RequestBody UserDTO userDTO) {
         try {
             return userService.save(userDTO);
+        } catch (UserValidatorException e) {
+            throw new InvalidRequestException();
+        }
+    }
+
+    @PostMapping("/password/reset")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation("Reset password of the specified user")
+    public void resetPassword(@RequestBody final UserPasswordResetRequestDTO userPasswordResetRequestDTO) {
+        try {
+            userService.resetPassword(userPasswordResetRequestDTO);
         } catch (UserValidatorException e) {
             throw new InvalidRequestException();
         }

@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service;
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.UsernameAlreadyTakenException;
 import org.springframework.data.domain.Page;
@@ -68,4 +69,21 @@ public interface UserService {
      * @throws UsernameAlreadyTakenException in case the username is already taken
      */
     UserDTO save(UserDTO userDTO) throws UserValidatorException, UsernameAlreadyTakenException;
+
+    /**
+     * Resets the password of a user
+     *
+     * @param userPasswordResetRequestDTO the data needed to reset the password
+     * @throws UserValidatorException in case user was invalid
+     */
+    void resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws UserValidatorException;
+
+    /**
+     * Checks if the password change key for the specified user is set
+     *
+     * @param userDTO user to check
+     * @return true, if the password change key is set, otherwise false
+     * @throws UserValidatorException in case user was invalid
+     */
+    boolean isPasswordChangeKeySet(UserDTO userDTO);
 }
