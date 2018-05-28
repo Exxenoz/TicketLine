@@ -171,8 +171,10 @@ public class SimpleUserService implements UserService {
             throw new NotFoundException();
         }
 
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+
         user.setPassword("");
-        user.setPasswordChangeKey(passwordChangeKey);
+        user.setPasswordChangeKey(passwordEncoder.encode(passwordChangeKey));
 
         userRepository.save(user);
     }
@@ -202,11 +204,12 @@ public class SimpleUserService implements UserService {
             throw new InvalidRequestException();
         }
 
-        if (!user.getPasswordChangeKey().equals(userPasswordChangeRequestDTO.getPasswordChangeKey())) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+
+        if (!user.getPasswordChangeKey().equals(passwordEncoder.encode(userPasswordChangeRequestDTO.getPasswordChangeKey()))) {
             throw new InvalidRequestException();
         }
 
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(userPasswordChangeRequestDTO.getPassword()));
         user.setPasswordChangeKey(null);
         userRepository.save(user);
