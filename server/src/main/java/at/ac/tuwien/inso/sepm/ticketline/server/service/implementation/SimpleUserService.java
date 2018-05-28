@@ -206,7 +206,7 @@ public class SimpleUserService implements UserService {
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
-        if (!user.getPasswordChangeKey().equals(passwordEncoder.encode(userPasswordChangeRequestDTO.getPasswordChangeKey()))) {
+        if (!passwordEncoder.matches(userPasswordChangeRequestDTO.getPasswordChangeKey(), user.getPasswordChangeKey())) {
             throw new InvalidRequestException();
         }
 
