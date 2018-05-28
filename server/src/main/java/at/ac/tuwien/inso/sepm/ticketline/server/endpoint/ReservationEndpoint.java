@@ -20,6 +20,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,18 +50,21 @@ public class ReservationEndpoint {
     }
 
     @GetMapping("/event/{eventId}")
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Get list of reservation entries by event id")
     public List<ReservationDTO> findAllByEventId(@PathVariable Long eventId) {
         return reservationMapper.reservationToReservationDTO(reservationService.findAllByEventId(eventId));
     }
 
     @GetMapping("/event/{eventId}/count")
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Get count of paid reservation entries by event id")
     public Long getPaidReservationCountByEventId(@PathVariable Long eventId) {
         return reservationService.getPaidReservationCountByEventId(eventId);
     }
 
     @PostMapping("/top_ten")
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Get count of paid reservation entries by top ten filter")
     public Long getPaidReservationCountByFilter(@RequestBody final ReservationFilterTopTenDTO reservationFilterTopTenDTO) {
         ReservationFilterTopTen reservationFilterTopTen =
@@ -69,6 +73,7 @@ public class ReservationEndpoint {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Create a new Reservation for Seats in a Performance")
     public ReservationDTO createNewReservation(@RequestBody CreateReservationDTO createReservationDTO) throws InvalidReservationException {
         final var reservationToCreate = reservationMapper.createReservationDTOToReservation(createReservationDTO);
@@ -77,6 +82,7 @@ public class ReservationEndpoint {
     }
 
     @GetMapping("/findNotPaid/{reservationId}")
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Finds a Reservation which wasn't purchased yet with the given id")
     public ReservationDTO findOneByPaidFalseById(@PathVariable Long reservationId) {
         final var reservation = reservationService.findOneByPaidFalseAndId(reservationId);
@@ -84,6 +90,7 @@ public class ReservationEndpoint {
     }
 
     @PostMapping("/findNotPaid/ReservationNumber")
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Finds a Reservation which wasn't purchased yet with the given id")
     public ReservationDTO findOneByPaidFalseAndReservationNumber(@RequestBody String reservationNr) {
         final var reservation = reservationService.findOneByPaidFalseAndReservationNumber(reservationNr);
@@ -91,6 +98,7 @@ public class ReservationEndpoint {
     }
 
     @PostMapping("/findNotPaid")
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Finds Reservations which wasn't purchased yet with the given customername and performancename")
     public List<ReservationDTO> findAllByPaidFalseByCustomerNameAndPerformanceName(
         @RequestBody ReservationSearchDTO reservationSearchDTO) {
@@ -107,6 +115,7 @@ public class ReservationEndpoint {
     }
 
     @PostMapping("/purchase")
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Purchases the given Reservation")
     public ReservationDTO purchaseReservation(@RequestBody ReservationDTO reservationDTO) {
         var reservation = reservationService.purchaseReservation(
@@ -116,6 +125,7 @@ public class ReservationEndpoint {
     }
 
     @PostMapping("/edit")
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Edit an existing Reservation")
     public ReservationDTO editReservation(@RequestBody ReservationDTO reservationDTO) {
         var reservation = reservationService.editReservation(
@@ -125,6 +135,7 @@ public class ReservationEndpoint {
     }
 
     @PostMapping("/createAndPay")
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Create and pay new Reservation for Seats in a Performance")
     public ReservationDTO createAndPayReservation(@RequestBody CreateReservationDTO createReservationDTO) throws InvalidReservationException {
         final var reservationToCreate = reservationMapper.createReservationDTOToReservation(createReservationDTO);
@@ -133,6 +144,7 @@ public class ReservationEndpoint {
     }
 
     @PostMapping("/findAll")
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Finds a page of all exisiting Reservations")
     public PageResponseDTO<ReservationDTO> findAll(@RequestBody final PageRequestDTO pageRequestDTO) {
         Page<Reservation> reservationPage = reservationService.findAll(pageRequestDTO.getPageable());
