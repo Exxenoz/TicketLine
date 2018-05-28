@@ -39,6 +39,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.lang.invoke.MethodHandles;
+import java.security.SecureRandom;
 import java.util.UUID;
 
 import static javafx.stage.Modality.APPLICATION_MODAL;
@@ -250,7 +251,7 @@ public class UserController {
         try {
             UserValidator.validateExistingUser(userDTO);
         } catch (UserValidatorException e) {
-            LOGGER.error("No User was selected");
+            LOGGER.error("User not valid / No User was selected");
             JavaFXUtils.createErrorDialog(BundleManager.getExceptionBundle().getString("exception.no_selected_user"),
                 content.getScene().getWindow()).showAndWait();
             return;
@@ -279,7 +280,14 @@ public class UserController {
         }
     }
 
+    // https://stackoverflow.com/a/157202
     private String generateResetKey() {
-        return UUID.randomUUID().toString();
+        final String AB = "123456789ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        SecureRandom rnd = new SecureRandom();
+
+        StringBuilder sb = new StringBuilder(8);
+        for(int i = 0; i < 8; i++)
+            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+        return sb.toString();
     }
 }
