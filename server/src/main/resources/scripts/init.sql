@@ -27,6 +27,9 @@ KEY (username)
 VALUES ('admin', '$2a$10$hXJx1IBhxH2fcTa/NR2ZMetAKy.4w3SoWeJm7FiEjK6XjOOtyRQmO');
 MERGE INTO authorities (username, authority)
 KEY (username, authority)
+VALUES ('admin', 'USER');
+MERGE INTO authorities (username, authority)
+KEY (username, authority)
 VALUES ('admin', 'ADMIN');
 
 -- Horst Gruntz
@@ -41,6 +44,9 @@ VALUES ('hgruntz', 'USER');
 MERGE INTO users (username, password)
 KEY (username)
 VALUES ('uzahnweh', '$2a$10$hXJx1IBhxH2fcTa/NR2ZMetAKy.4w3SoWeJm7FiEjK6XjOOtyRQmO');
+MERGE INTO authorities (username, authority)
+KEY (username, authority)
+VALUES ('uzahnweh', 'USER');
 MERGE INTO authorities (username, authority)
 KEY (username, authority)
 VALUES ('uzahnweh', 'ADMIN');
