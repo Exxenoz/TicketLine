@@ -47,6 +47,7 @@ public class PerformanceDetailViewController {
     private final EventDetailViewController eventDetailViewController;
     private final PerformanceService performanceService;
     private final HallPlanController hallPlanController;
+
     private Stage stage;
     private ReservationDTO reservation;
 
@@ -81,9 +82,18 @@ public class PerformanceDetailViewController {
     void continueButton(ActionEvent event) {
         reservation.setPerformance(performance);
         hallPlanController.fill(reservation, stage);
+
+        // Fill with correct sub controller dependent on event category
+        if(performance.getEvent().getEventType() == EventTypeDTO.SEAT) {
+
+        } else {
+
+        }
+
         Parent parent = fxmlLoader.load("/fxml/events/book/hallPlanView.fxml");
         stage.setScene(new Scene(parent));
 
+        // Setting stage name
         if (performance.getEvent().getEventType() == EventTypeDTO.SEAT) {
             stage.setTitle("Seat Selection");
         } else {

@@ -26,7 +26,7 @@
                   </Pane>
                </children>
             </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="293.0" prefWidth="706.0" />
+            <fx:include source="/fxml/reservation/seatMapPicker.fxml" fx:id="seatMap"/>
             <AnchorPane layoutX="10.0" layoutY="10.0" minHeight="0.0" minWidth="0.0" prefHeight="156.0" prefWidth="731.0">
                <children>
                   <HBox layoutX="89.0" layoutY="23.0" prefHeight="17.0" prefWidth="240.0">

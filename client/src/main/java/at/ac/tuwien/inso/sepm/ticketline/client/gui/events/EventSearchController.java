@@ -195,7 +195,6 @@ public class EventSearchController {
         };
     }
 
-
     @FXML
     private void bookPerformance(ActionEvent event) {
         Stage stage = new Stage();
