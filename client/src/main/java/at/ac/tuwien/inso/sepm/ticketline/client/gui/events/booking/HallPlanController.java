@@ -1,6 +1,9 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.PerformanceDetailViewController;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.reservation.seating.SeatMapController;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.reservation.seating.SeatSelectionListener;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.reservation.seating.SectorController;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
@@ -14,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.repository.cdi.Eager;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
@@ -21,7 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Component
-public class HallPlanController {
+public class HallPlanController implements SeatSelectionListener {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -40,6 +44,10 @@ public class HallPlanController {
 
     private final SpringFxmlLoader fxmlLoader;
     private final SelectCustomerController selectCustomerController;
+
+    private SeatMapController seatMapController;
+    private SectorController sectorController;
+
     public Button reserveButton;
     private Stage stage;
     private ReservationDTO reservation;
@@ -51,10 +59,13 @@ public class HallPlanController {
     public HallPlanController(SpringFxmlLoader fxmlLoader,
                               SelectCustomerController selectCustomerController,
                               @Lazy PerformanceDetailViewController performanceDetailViewController,
-                              @Lazy PurchaseReservationSummaryController PRSController) {
+                              @Lazy PurchaseReservationSummaryController PRSController,
+                              @Lazy SeatMapController seatMapController) {
+
         this.fxmlLoader = fxmlLoader;
         this.selectCustomerController = selectCustomerController;
         this.PRSController = PRSController;
+        this.seatMapController = seatMapController;
     }
 
     @FXML
@@ -102,6 +113,17 @@ public class HallPlanController {
         isReservation = true;
         continueOrReserve();
     }
+
+    @Override
+    public void onSeatSelected(SeatDTO seatDTO) {
+        seats.add(seatDTO);
+    }
+
+    @Override
+    public void onSeatDeselected(SeatDTO seatDTO) {
+        seats.remove(seatDTO);
+    }
+
 
     private void continueOrReserve() {
         reservation.setSeats(seats);
