@@ -42,7 +42,7 @@ public class CustomerController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public static final int CUSTOMERS_PER_PAGE = 30;
+    public static final int CUSTOMERS_PER_PAGE = 50;
     public static final int FIRST_CUSTOMER_TABLE_PAGE = 0;
 
     @FXML
@@ -102,13 +102,6 @@ public class CustomerController {
     }
 
     public void loadCustomers() {
-        // Setting event handler for sort policy property calls it automatically
-        customerTable.sortPolicyProperty().set(t -> {
-            customerList.clear();
-            loadCustomerTable(FIRST_CUSTOMER_TABLE_PAGE);
-            return true;
-        });
-
         final ScrollBar scrollBar = getVerticalScrollbar(customerTable);
         if (scrollBar != null) {
             scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -119,7 +112,21 @@ public class CustomerController {
                     scrollBar.setValue(targetValue / customerList.size());
                 }
             });
+
+            scrollBar.visibleProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                if (newValue == false) {
+                    // Scrollbar is invisible, load pages until scrollbar is shown again
+                    loadCustomerTable(customerTablePage + 1);
+                }
+            });
         }
+
+        // Setting event handler for sort policy property calls it automatically
+        customerTable.sortPolicyProperty().set(t -> {
+            customerList.clear();
+            loadCustomerTable(FIRST_CUSTOMER_TABLE_PAGE);
+            return true;
+        });
     }
 
     private ScrollBar getVerticalScrollbar(TableView<?> table) {
@@ -171,10 +178,10 @@ public class CustomerController {
         }
 
         customerTablePage = page;
-        customerTablePageCount = pageRequestDTO.getSize() > 0 ? pageRequestDTO.getSize() : 1;
 
         try {
             PageResponseDTO<CustomerDTO> response = customerService.findAll(pageRequestDTO);
+            customerTablePageCount = response.getTotalPages() > 0 ? response.getTotalPages() : 1;
             customerList.addAll(response.getContent());
         } catch (DataAccessException e) {
             LOGGER.warn("Could not access customers!");

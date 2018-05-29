@@ -46,7 +46,7 @@ public class UserController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public static final int USERS_PER_PAGE = 30;
+    public static final int USERS_PER_PAGE = 50;
     public static final int FIRST_USER_TABLE_PAGE = 0;
 
     @FXML
@@ -73,6 +73,7 @@ public class UserController {
     @FXML
     private TabHeaderController tabHeaderController;
 
+    private ScrollBar verticalScrollbar;
 
     private final SpringFxmlLoader springFxmlLoader;
     private final MainController mainController;
@@ -136,14 +137,17 @@ public class UserController {
         userTable.setItems(items);
     }
 
-    public void loadUsers() {
-        // Setting event handler for sort policy property calls it automatically
-        userTable.sortPolicyProperty().set(t -> {
-            items.clear();
-            loadUserTable(FIRST_USER_TABLE_PAGE);
-            return true;
-        });
+    // TODO: call when ui was loaded/currently ther visibility wont be updated until authentication is done
+    private void loadPageUntilTableIsFilled(int page) {
+        if(loadUserTable(page)) {
+            var scrollbar = getVerticalScrollbar(userTable);
+            if (!scrollbar.visibleProperty().get()) {
+                loadPageUntilTableIsFilled(page + 1);
+            }
+        }
+    }
 
+    public void loadUsers() {
         final ScrollBar scrollBar = getVerticalScrollbar(userTable);
         if (scrollBar != null) {
             scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -154,20 +158,39 @@ public class UserController {
                     scrollBar.setValue(targetValue / items.size());
                 }
             });
+
+            verticalScrollbar.visibleProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                if (newValue == false) {
+                    // Scrollbar is invisible, load pages until scrollbar is shown again
+                    loadUserTable(page + 1);
+                }
+            });
         }
+
+        // Setting event handler for sort policy property calls it automatically
+        userTable.sortPolicyProperty().set(t -> {
+            items.clear();
+            loadUserTable(FIRST_USER_TABLE_PAGE);
+            return true;
+        });
     }
 
     private ScrollBar getVerticalScrollbar(TableView<?> table) {
-        ScrollBar result = null;
-        for (Node n : table.lookupAll(".scroll-bar")) {
-            if (n instanceof ScrollBar) {
-                ScrollBar bar = (ScrollBar) n;
-                if (bar.getOrientation().equals(Orientation.VERTICAL)) {
-                    result = bar;
+        if(verticalScrollbar == null) {
+            ScrollBar result = null;
+            for (Node n : table.lookupAll(".scroll-bar")) {
+                if (n instanceof ScrollBar) {
+                    ScrollBar bar = (ScrollBar) n;
+                    if (bar.getOrientation().equals(Orientation.VERTICAL)) {
+                        verticalScrollbar = bar;
+
+                        break;
+                    }
                 }
             }
         }
-        return result;
+
+        return verticalScrollbar;
     }
 
     private String getColumnNameBy(TableColumn<UserDTO, ?> tableColumn) {
@@ -184,10 +207,10 @@ public class UserController {
         return "id";
     }
 
-    public void loadUserTable(int page) {
+    public boolean loadUserTable(int page) {
         if (page < 0 || page >= totalPages) {
-            LOGGER.error("Could not load user table page, because page parameter is invalid!");
-            return;
+            LOGGER.error("Could not load user table page, because page parameter is invalid: " + page);
+            return false;
         }
 
         PageRequestDTO pageRequestDTO = null;
@@ -201,10 +224,10 @@ public class UserController {
         }
 
         this.page = page;
-        this.totalPages = pageRequestDTO.getSize() > 0 ? pageRequestDTO.getSize() : 1;
 
         try {
             PageResponseDTO<UserDTO> response = userService.findAll(pageRequestDTO);
+            this.totalPages = response.getTotalPages() > 0 ? response.getTotalPages() : 1;
             items.addAll(response.getContent());
         } catch (DataAccessException e) {
             if ((e.getCause().getClass()) == HttpClientErrorException.class) {
@@ -223,6 +246,7 @@ public class UserController {
         }
 
         userTable.refresh();
+        return true;
     }
 
     public void refreshUserTable() {
