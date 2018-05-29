@@ -14,6 +14,7 @@ public class CanvasSeat implements CanvasComponent {
     public final static double WIDTH = 30;
     public final static double HEIGHT = 30;
 
+    public final static double OFFSET_LEFT = 14;
     public final static double OFFSET_TOP = 20;
     public final static double REGULAR_MARGIN = 2;
     public final static double EXTRA_MARGIN = 4;
@@ -24,7 +25,7 @@ public class CanvasSeat implements CanvasComponent {
     private boolean selected;
 
     public CanvasSeat(int planX, int planY, double xPos, double yPos) {
-        this.xPos = xPos;
+        this.xPos = xPos + OFFSET_LEFT;
         this.yPos = yPos + OFFSET_TOP;
     }
 

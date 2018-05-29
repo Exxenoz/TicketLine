@@ -36,13 +36,16 @@ public class SeatMapController {
         sectorSeatMap = new HashMap<>();
     }
 
-
     public void drawSeatMap(PerformanceDTO performance) {
         LOGGER.debug("Performance to draw seatmap for {}", performance.toString());
         for(SectorDTO sector: performance.getHall().getSectors()) {
             List<CanvasSeat> canvasSeats = new ArrayList<>(sector.getSeatsPerRow() * sector.getRows());
             for(int i = 0; i < sector.getSeatsPerRow(); i++) {
                 for(int j = 0; j < sector.getRows(); j++) {
+                    //Draw the row labels
+                    gc.fillText("" + (j + 1), 0, (CanvasSeat.HEIGHT / 1.5)
+                        + (sector.getStartPositionY() * CanvasSeat.HEIGHT + CanvasSeat.REGULAR_MARGIN * j + j * CanvasSeat.HEIGHT)
+                        + (CanvasSeat.OFFSET_TOP));
 
                     CanvasSeat canvasSeat = new CanvasSeat(i, j,
                         sector.getStartPositionX() * CanvasSeat.WIDTH + CanvasSeat.REGULAR_MARGIN * i + i * CanvasSeat.WIDTH,

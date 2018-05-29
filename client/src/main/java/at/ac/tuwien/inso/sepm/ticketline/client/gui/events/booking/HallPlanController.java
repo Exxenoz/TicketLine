@@ -131,6 +131,7 @@ public class HallPlanController implements SeatSelectionListener {
         seats.remove(seatDTO);
     }
 
+
     private void continueOrReserve() {
         reservation.setSeats(seats);
 

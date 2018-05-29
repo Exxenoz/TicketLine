@@ -59,7 +59,7 @@ public class HallDataGenerator implements DataGenerator {
                 final var hall = new Hall();
 
                 // Set random name
-                hall.setName(String.format("The Hall of %s", faker.lordOfTheRings().character().toUpperCase()));
+                hall.setName(String.format("The Hall of %s", faker.lordOfTheRings().character()));
 
                 // ..and add random address
                 LocationAddress address = new LocationAddress();
