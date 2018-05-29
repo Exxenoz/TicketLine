@@ -4,6 +4,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -98,7 +99,14 @@ public class PurchaseReservationSummaryController {
 
         //only reserve tickets
         if (!showDetails && isReservation) {
-            reservationService.createNewReservation(createReservationDTO);
+            //ReservationDTO reservationDTO = reservationService.createNewReservation(createReservationDTO);
+
+            //Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            //alert.setTitle("Print Invoice");
+           // alert.setHeaderText("Congratulations! Your Reservation was successful!" + reservationDTO.getReservationNumber());
+           // alert.showAndWait();
+           // closeWindow();
+
             closeWindow();
         } else if (!showDetails){
             //reserve and buy tickets

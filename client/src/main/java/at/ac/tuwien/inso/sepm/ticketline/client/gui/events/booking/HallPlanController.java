@@ -73,9 +73,13 @@ public class HallPlanController implements SeatSelectionListener {
     private void initialize() {
         eventNameLabel.setText(reservation.getPerformance().getEvent().getName());
         performanceNameLabel.setText(reservation.getPerformance().getName());
-        amountOfTicketsLabel.setText("0");
-        //TODO: amountOfTicketsLabel should change with amount of chosen seats
+        if(seats != null){
+            amountOfTicketsLabel.setText("" + seats.size());
+        } else {
+            amountOfTicketsLabel.setText("0");
+        }
         //TODO: Connect display of chosen seats/sectors with hallplan (rowsSeatsOrSectorsLabel)
+
         //TODO: pricePerTicket & totalPrice
         if (reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SECTOR) {
             seatsOrSectorsLabel.setText("Chosen Sector: ");
@@ -128,11 +132,13 @@ public class HallPlanController implements SeatSelectionListener {
     @Override
     public void onSeatSelected(SeatDTO seatDTO) {
         seats.add(seatDTO);
+        amountOfTicketsLabel.setText("" + seats.size());
     }
 
     @Override
     public void onSeatDeselected(SeatDTO seatDTO) {
         seats.remove(seatDTO);
+        amountOfTicketsLabel.setText("" + seats.size());
     }
 
 
