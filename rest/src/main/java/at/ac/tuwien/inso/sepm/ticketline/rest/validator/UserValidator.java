@@ -2,23 +2,27 @@ package at.ac.tuwien.inso.sepm.ticketline.rest.validator;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.util.DuplicateFinder;
 import at.ac.tuwien.inso.sepm.ticketline.rest.util.RestBundleManager;
 
 public abstract class UserValidator {
 
-    //validates existing user
-    public static void validateExistingUser(UserDTO userDTO) throws UserValidatorException {
-        validateDTO(userDTO);
-        validateUsername(userDTO);
-        validateEncryptedPassword(userDTO);
-        validateStrikes(userDTO);
-    }
 
     //validates newly created user
     public static void validateNewUser(UserDTO userDTO) throws UserValidatorException {
-        validateDTO(userDTO);
+        validateUsername(userDTO);
+        validatePlainTextPassword(userDTO);
+        validateStrikes(userDTO);
+        validateRoles(userDTO);
+    }
+
+    //validates existing user
+    public static void validateExistingUser(UserDTO userDTO) throws UserValidatorException {
         validateID(userDTO);
-        validateExistingUser(userDTO);
+        validateUsername(userDTO);
+        validateEncryptedPassword(userDTO); // ToDo: Remove me
+        validateStrikes(userDTO);
+        validateRoles(userDTO);
     }
 
     public static void validateDTO(UserDTO userDTO) throws UserValidatorException {
@@ -55,7 +59,20 @@ public abstract class UserValidator {
                 throw new UserValidatorException(
                     RestBundleManager.getExceptionBundle().getString("exception.validator.user.username.too_short")
                 );
+            } else  if (userDTO.getUsername().length() > 30) {
+                throw new UserValidatorException("username validation failed");
             }
+        }
+    }
+
+    public static void validatePlainTextPassword(UserDTO userDTO) throws UserValidatorException {
+        validateDTO(userDTO);
+
+        if (userDTO.getPassword() == null ||
+            userDTO.getPassword().length() < 3 ||
+            userDTO.getPassword().length() > 30 ||
+            !userDTO.getPassword().matches("^[\\x00-\\xFF]*$")) {
+            throw new UserValidatorException("Plain text password validation failed, because it is invalid!");
         }
     }
 
@@ -85,6 +102,28 @@ public abstract class UserValidator {
                 throw new UserValidatorException(
                     RestBundleManager.getExceptionBundle().getString("exception.validator.user.strikes.invalid")
                 );
+            }
+        }
+    }
+
+    public static void validateRoles(UserDTO userDTO) throws UserValidatorException {
+        validateDTO(userDTO);
+
+        if (userDTO.getRoles() == null) {
+            throw new UserValidatorException("User roles validation failed, because roles may not be null!");
+        }
+
+        if (! new DuplicateFinder(userDTO.getRoles()).Duplicates.isEmpty()) {
+            throw new UserValidatorException("User roles validation failed, because role duplicates are not allowed!");
+        }
+
+        for (String role : userDTO.getRoles()) {
+            if (role.isEmpty()) {
+                throw new UserValidatorException("User roles validation failed, because empty roles are not allowed!");
+            }
+
+            if (role.length() > 64) {
+                throw new UserValidatorException("User roles validation failed, because roles character count must not exceed 64!");
             }
         }
     }

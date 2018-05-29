@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane fx:id="loginNode" styleClass="glass" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.AuthenticationController">
+<StackPane fx:id="loginNode" styleClass="glass" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.AuthenticationController">
     <children>
         <Pane styleClass="background" />
         <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" spacing="10.0">
@@ -34,10 +34,10 @@
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints fx:id="errorLabelRow1" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="23.0" minHeight="6.0" prefHeight="8.0" vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints fx:id="errorLabelRow2" minHeight="0.0" prefHeight="0.0" />
                     </rowConstraints>
                     <children>
                         <TextField fx:id="txtUsername" promptText="%authenticate.username" GridPane.columnIndex="1" GridPane.columnSpan="2">
@@ -46,19 +46,19 @@
                      </opaqueInsets></TextField>
                         <PasswordField fx:id="txtPassword" promptText="%authenticate.password" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3">
                      <GridPane.margin>
-                        <Insets top="10.0" />
+                        <Insets top="5.0" />
                      </GridPane.margin></PasswordField>
-                  <Label fx:id="userNameMissingLabel" visible="false" prefHeight="0.0" prefWidth="255.0" text="%authenticate.username_missing" textFill="#c91515" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label fx:id="userNameMissingLabel" prefHeight="0.0" prefWidth="255.0" text="%authenticate.username_missing" textFill="#c91515" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Separator prefHeight="2.0" prefWidth="380.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
                      <padding>
-                        <Insets bottom="10.0" top="10.0" />
+                        <Insets bottom="5.0" top="5.0" />
                      </padding></Separator>
                         <Label text="%authenticate.username" />
                         <Label text="%authenticate.password" GridPane.rowIndex="3">
                      <padding>
-                        <Insets top="10.0" />
+                        <Insets top="5.0" />
                      </padding></Label>
-                  <Label fx:id="passwordMissingLabel" visible="false" prefHeight="0.0" prefWidth="255.0" text="%authenticate.password_missing" textFill="#c91515" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <Label fx:id="passwordMissingLabel" prefHeight="0.0" prefWidth="255.0" text="%authenticate.password_missing" textFill="#c91515" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                     </children>
                     <VBox.margin>
                         <Insets />

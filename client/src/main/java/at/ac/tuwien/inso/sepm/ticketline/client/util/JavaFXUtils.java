@@ -126,4 +126,37 @@ public class JavaFXUtils {
         alert.setWidth(400);
         return alert;
     }
+
+    /**
+     * Creates a standard information dialog.
+     *
+     * @param title of the information dialog
+     * @param headerText of the information dialog
+     * @param contentText  of the information dialog
+     * @param parentWindow or null if not modal
+     * @return the dialog which shows the information
+     */
+    public static Alert createCopyTextDialog(String title, String headerText, String contentText, String copyText, Window parentWindow) {
+        Alert alert = new Alert(INFORMATION);
+        if (parentWindow != null) {
+            alert.initOwner(parentWindow);
+            alert.initModality(WINDOW_MODAL);
+        }
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+
+        Label label = new Label(contentText);
+        TextArea textArea = new TextArea(copyText);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        GridPane gridPane = new GridPane();
+        gridPane.setMaxWidth(Double.MAX_VALUE);
+        gridPane.add(label, 0, 0);
+        gridPane.add(textArea, 0, 1);
+
+        alert.getDialogPane().setContent(gridPane);
+        alert.setHeight(300);
+        alert.setWidth(400);
+        return alert;
+    }
 }

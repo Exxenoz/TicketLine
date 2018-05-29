@@ -3,9 +3,10 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationToken;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationTokenInfo;
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.configuration.properties.AuthenticationConfigurationProperties;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidRequestException;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.UserDisabledException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpLockedException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.HeaderTokenAuthenticationService;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -73,7 +74,7 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
     }
 
     @Override
-    public AuthenticationToken authenticate(String username, CharSequence password) {
+    public AuthenticationToken authenticate(String username, CharSequence password) throws InternalUserNotFoundException, InternalUserDisabledException, InternalPasswordResetException, InternalUserPasswordWrongException {
 
         Authentication authentication = null;
         try {
@@ -83,21 +84,34 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
         } catch (AuthenticationException a) {
             LOGGER.error(String.format("Failed to authenticate user with name: %s", username), a);
 
-            if(userService.findUserByName(username) != null) {
-                boolean isDisabled = false;
-                try {
-                    isDisabled = userService.increaseStrikes(userService.findUserByName(username));
-                } catch (UserValidatorException e) {
-                    throw new InvalidRequestException();
+            UserDTO userDTO = null;
+            try {
+                userDTO = userService.findUserByName(username);
+            } catch (InternalUserNotFoundException e) {
+                throw new InternalUserNotFoundException();
+            }
+
+            if(userDTO != null) {
+                if (userService.isPasswordChangeKeySet(userDTO)) {
+                    throw new InternalPasswordResetException();
                 }
+
+                boolean isDisabled = false;
+
+                try {
+                    isDisabled = userService.increaseStrikes(userDTO);
+                } catch (InternalUserValidationException e) {
+                    throw new InternalUserNotFoundException();
+                }
+
                 if (!isDisabled) {
-                    throw new BadCredentialsException("Wrong password.");
+                    throw new InternalUserPasswordWrongException();
                 } else {
                     LOGGER.info("User will been informed that he was disabled.");
-                    throw new UserDisabledException("User is disabled.");
+                    throw new InternalUserDisabledException("User is disabled");
                 }
             } else {
-               throw new BadCredentialsException("User name was not found.");
+               throw new InternalUserNotFoundException();
             }
         }
 

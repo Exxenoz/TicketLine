@@ -4,9 +4,8 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.CustomerValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Customer;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidRequestException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpBadRequestException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalBadRequestException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.CustomerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,7 +18,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.MethodHandles;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/customer")
@@ -41,7 +39,7 @@ public class CustomerEndpoint {
         try {
             return customerService.save(customerDTO);
         } catch (CustomerValidationException e) {
-            throw new InvalidRequestException();
+            throw new HttpBadRequestException();
         }
     }
 
@@ -52,7 +50,7 @@ public class CustomerEndpoint {
         try {
             return customerService.update(customerDTO);
         } catch (CustomerValidationException e) {
-            throw new InvalidRequestException();
+            throw new HttpBadRequestException();
         }
     }
 

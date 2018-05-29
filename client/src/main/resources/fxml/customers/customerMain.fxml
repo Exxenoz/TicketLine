@@ -9,11 +9,12 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="5.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.customers.CustomerController">
+<?import javafx.scene.control.ButtonBar?>
+<VBox spacing="5.0" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.customers.CustomerController">
     <children>
         <fx:include fx:id="tabHeader" source="/fxml/tabHeader.fxml" />
         <Separator />
-        <TableView fx:id="customerTable" layoutX="200.0" layoutY="14.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="1000.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+        <TableView fx:id="customerTable" VBox.vgrow="ALWAYS" prefWidth="1000.0">
             <columns>
                 <TableColumn fx:id="customerTableColumnFirstName" text="%customers.main.table.column.first_name" />
                 <TableColumn fx:id="customerTableColumnLastName" text="%customers.main.table.column.last_name" />
@@ -24,15 +25,15 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
         </TableView>
-      <HBox alignment="TOP_RIGHT">
-         <children>
+      <ButtonBar prefHeight="40.0"  VBox.vgrow="ALWAYS" maxHeight="40">
+         <buttons>
              <Button fx:id="customerEditButton" disable="true" mnemonicParsing="false" onAction="#onClickEditCustomerButton" text="%customers.main.button.edit">
                <HBox.margin>
                   <Insets right="16.0" />
                </HBox.margin></Button>
              <Button mnemonicParsing="false" onAction="#onClickCreateCustomerButton" text="%customers.main.button.create" />
-         </children>
-      </HBox>
+         </buttons>
+      </ButtonBar>
     </children>
     <padding>
         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

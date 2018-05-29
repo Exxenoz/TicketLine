@@ -2,36 +2,39 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="content" maxHeight="1.7976931348623157E308"
-            maxWidth="1.7976931348623157E308" minHeight="100.0" minWidth="100.0" prefHeight="700.0" prefWidth="1100.0"
-            xmlns="http://javafx.com/javafx/10"
-            fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.users.UsersController">
+<?import javafx.geometry.Insets?>
+<VBox spacing="5.0" xmlns:fx="http://javafx.com/fxml/1" fx:id="content" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/10"
+      fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.users.UserController">
     <children>
-        <fx:include fx:id="tabHeader" source="../tabHeader.fxml" AnchorPane.leftAnchor="10.0"
-                    AnchorPane.topAnchor="10.0"/>
+        <fx:include fx:id="tabHeader" source="../tabHeader.fxml"/>
         <Separator/>
-        <AnchorPane minHeight="100.0" minWidth="100.0" prefHeight="700.0" AnchorPane.leftAnchor="5.0"
-                    AnchorPane.rightAnchor="5.0">
-            <children>
-                <ButtonBar layoutX="200.0" layoutY="360.0" prefHeight="40.0" prefWidth="200.0"
-                           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                    <buttons>
-                        <Button mnemonicParsing="false" onAction="#handleEnable" text="%usertab.user.enable"/>
-                    </buttons>
-                </ButtonBar>
-                <TableView fx:id="userTable" layoutY="49.0" minHeight="100.0" minWidth="100.0" prefHeight="499.0"
-                           prefWidth="1000.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                           AnchorPane.topAnchor="49.0">
-                    <columns>
-                        <TableColumn fx:id="usernameCol" prefWidth="166.4000244140625"
-                                     text="%usertab.usertable.username"/>
-                        <TableColumn fx:id="useraccountStatusCol" minWidth="3.20001220703125" prefWidth="172.0"
-                                     text="%usertab.usertable.user_is_enabled"/>
-                        <TableColumn fx:id="userAuthTriesCol" minWidth="3.20001220703125" prefWidth="172.0"
-                                     text="%usertab.usertable.user_auth_tries"/>
-                    </columns>
-                </TableView>
-            </children>
-        </AnchorPane>
+        <TableView fx:id="userTable" VBox.vgrow="ALWAYS" prefWidth="1000.0">
+            <columns>
+                <TableColumn fx:id="usernameCol" text="%usertab.usertable.username"/>
+                <TableColumn fx:id="useraccountStatusCol" text="%usertab.usertable.user_is_enabled"/>
+                <TableColumn fx:id="userAuthTriesCol" text="%usertab.usertable.user_auth_tries"/>
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+            </columnResizePolicy>
+        </TableView>
+        <ButtonBar prefHeight="40.0" VBox.vgrow="ALWAYS" maxHeight="40">
+            <buttons>
+                <Button fx:id="passwordResetButton" disable="true" mnemonicParsing="false" onAction="#onClickResetPassword" text="%usertab.user.password_reset">
+                    <HBox.margin>
+                        <Insets right="16.0"/>
+                    </HBox.margin>
+                </Button>
+                <Button fx:id="toggleEnableButton"  disable="true" mnemonicParsing="false" onAction="#toggleEnable" text="%usertab.user.enable">
+                    <HBox.margin>
+                        <Insets right="16.0"/>
+                    </HBox.margin>
+                </Button>
+                <Button mnemonicParsing="false" onAction="#onClickCreateUserButton" text="%usertab.user.create" />
+            </buttons>
+        </ButtonBar>
     </children>
-</AnchorPane>
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+    </padding>
+</VBox>

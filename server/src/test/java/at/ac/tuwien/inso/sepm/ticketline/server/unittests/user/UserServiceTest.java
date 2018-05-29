@@ -1,6 +1,10 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.unittests.user;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.user.UserMapper;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalForbiddenException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalUserNotFoundException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalUserValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import org.junit.After;
 import org.junit.Assert;
@@ -31,6 +35,9 @@ public class UserServiceTest {
     private UserService userService;
 
     @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
     private DataSource dataSource;
 
     private JdbcUserDetailsManager mgr;
@@ -57,7 +64,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void enableUserTest() throws UserValidatorException {
+    public void enableUserTest() throws InternalUserNotFoundException, InternalUserValidationException {
         setTestUserEnabled(false);
 
         var user = userService.findUserByName(TEST_USERNAME);
@@ -68,13 +75,12 @@ public class UserServiceTest {
     }
 
     @Test
-    public void disableUserTest() {
+    public void disableUserTest() throws InternalUserNotFoundException, InternalForbiddenException, InternalUserValidationException {
         setTestUserEnabled(true);
-
-        var user = userService.findUserByName(TEST_USERNAME);
-        Assert.assertTrue(user.isEnabled());
-        userService.disableUser(user);
-        user = userService.findUserByName(TEST_USERNAME);
-        Assert.assertFalse(user.isEnabled());
+        var userDTO = userService.findUserByName(TEST_USERNAME);
+        Assert.assertTrue(userDTO.isEnabled());
+        userService.disableUser(userDTO);
+        userDTO = userService.findUserByName(TEST_USERNAME);
+        Assert.assertFalse(userDTO.isEnabled());
     }
 }

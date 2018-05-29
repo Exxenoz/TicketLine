@@ -5,6 +5,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.news.NewsController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.reservations.ReservationsController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.users.UsersController;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.users.UserController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationInformationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
@@ -46,12 +47,13 @@ public class MainController {
     private MenuBar mbMain;
 
     private Node login;
+    private Node loginNewPassword;
 
     private final SpringFxmlLoader springFxmlLoader;
     private final FontAwesome fontAwesome;
     private NewsController newsController;
     private EventController eventController;
-    private UsersController usersController;
+    private UserController userController;
     private CustomerController customerController;
     private ReservationsController reservationsController;
 
@@ -79,8 +81,8 @@ public class MainController {
         initNewsTabPane();
         initEventsTabPane();
         initReservationTabPane();
-        initUserManageTabPane();
         initCustomersTabPane();
+        initUserManagementTabPane();
     }
 
     @FXML
@@ -138,18 +140,6 @@ public class MainController {
         tpContent.getTabs().add(reservationsTab);
     }
 
-    private void initUserManageTabPane() {
-        SpringFxmlLoader.Wrapper<UsersController> wrapper =
-            springFxmlLoader.loadAndWrap("/fxml/users/usersMain.fxml");
-        usersController = wrapper.getController();
-        final var usersTab = new Tab(null, wrapper.getLoadedObject());
-        final var usersGlyph = fontAwesome.create(LOCK);
-        usersGlyph.setFontSize(TAB_ICON_FONT_SIZE);
-        usersGlyph.setColor(Color.WHITE);
-        usersTab.setGraphic(usersGlyph);
-        tpContent.getTabs().add(usersTab);
-    }
-
     private void initCustomersTabPane() {
         SpringFxmlLoader.Wrapper<CustomerController> wrapperEvents =
             springFxmlLoader.loadAndWrap("/fxml/customers/customerMain.fxml");
@@ -162,13 +152,29 @@ public class MainController {
         tpContent.getTabs().add(eventsTab);
     }
 
+    private void initUserManagementTabPane() {
+        SpringFxmlLoader.Wrapper<UserController> wrapper =
+            springFxmlLoader.loadAndWrap("/fxml/users/usersMain.fxml");
+        userController = wrapper.getController();
+        final var usersTab = new Tab(null, wrapper.getLoadedObject());
+        final var usersGlyph = fontAwesome.create(LOCK);
+        usersGlyph.setFontSize(TAB_ICON_FONT_SIZE);
+        usersGlyph.setColor(Color.WHITE);
+        usersTab.setGraphic(usersGlyph);
+        tpContent.getTabs().add(usersTab);
+    }
+
     private void setAuthenticated(boolean authenticated) {
         if (authenticated) {
-            spMainContent.getChildren().remove(login);
+            if (spMainContent.getChildren().contains(login)) {
+                spMainContent.getChildren().remove(login);
+            } else if(spMainContent.getChildren().contains(loginNewPassword)) {
+                spMainContent.getChildren().remove(loginNewPassword);
+            }
             newsController.loadNews();
             eventController.loadData();
+            userController.loadUsers();
             reservationsController.loadData();
-            usersController.loadUsers();
             customerController.loadCustomers();
         } else {
             if (!spMainContent.getChildren().contains(login)) {
@@ -179,5 +185,19 @@ public class MainController {
 
     public void setProgressbarProgress(double progress) {
         pbLoadingProgress.setProgress(progress);
+    }
+
+    public void switchToNewPasswordAuthentication(String username) {
+        spMainContent.getChildren().remove(login);
+        SpringFxmlLoader.Wrapper<AuthenticationPasswordChangeController> wrapper =
+            springFxmlLoader.loadAndWrap("/fxml/authenticationPasswordChangeComponent.fxml");
+        loginNewPassword = wrapper.getLoadedObject();
+        spMainContent.getChildren().add(loginNewPassword);
+        wrapper.getController().setUsername(username);
+    }
+
+    public void switchBackToAuthentication() {
+        spMainContent.getChildren().remove(loginNewPassword);
+        spMainContent.getChildren().add(login);
     }
 }

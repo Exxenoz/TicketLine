@@ -1,6 +1,9 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.integrationtests.base;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.configuration.JacksonConfiguration;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalPasswordResetException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalUserNotFoundException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalUserPasswordWrongException;
 import at.ac.tuwien.inso.sepm.ticketline.server.security.AuthenticationConstants;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.implementation.SimpleHeaderTokenAuthenticationService;
 import io.restassured.RestAssured;
@@ -43,7 +46,7 @@ public abstract class BaseIT {
     protected String validAdminTokenWithPrefix;
 
     @Before
-    public void beforeBase() {
+    public void beforeBase() throws InternalPasswordResetException, InternalUserPasswordWrongException, InternalUserNotFoundException {
         RestAssured.basePath = contextPath;
         RestAssured.port = port;
         RestAssured.config = RestAssuredConfig.config().

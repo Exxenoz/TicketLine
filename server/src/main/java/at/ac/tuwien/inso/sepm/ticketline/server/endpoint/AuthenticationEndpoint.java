@@ -3,6 +3,10 @@ package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationRequest;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationToken;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationTokenInfo;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpBadRequestException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpForbiddenException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpLockedException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.HeaderTokenAuthenticationService;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.implementation.SimpleHeaderTokenAuthenticationService;
 import io.swagger.annotations.Api;
@@ -27,8 +31,19 @@ public class AuthenticationEndpoint {
     @PostMapping
     @ApiOperation("Get an authentication token with your username and password")
     public AuthenticationToken authenticate(@RequestBody final AuthenticationRequest authenticationRequest) {
-        AuthenticationToken token = authenticationService.authenticate(authenticationRequest.getUsername(),
-            authenticationRequest.getPassword());
+        AuthenticationToken token = null;
+        try {
+            token = authenticationService.authenticate(authenticationRequest.getUsername(),
+                authenticationRequest.getPassword());
+        } catch (InternalUserNotFoundException e) {
+            throw new HttpForbiddenException();
+        } catch (InternalUserDisabledException e) {
+            throw new HttpForbiddenException();
+        } catch (InternalPasswordResetException e) {
+            throw new HttpLockedException();
+        } catch (InternalUserPasswordWrongException e) {
+            throw new HttpForbiddenException();
+        }
         return token;
     }
 

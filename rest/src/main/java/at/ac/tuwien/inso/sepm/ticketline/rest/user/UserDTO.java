@@ -3,9 +3,11 @@ package at.ac.tuwien.inso.sepm.ticketline.rest.user;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @ApiModel(value = "UserDTO", description = "A User DTO")
 public class UserDTO {
-
 
     @ApiModelProperty(readOnly = true, name = "The automatically generated database id")
     private Long id;
@@ -21,6 +23,9 @@ public class UserDTO {
 
     @ApiModelProperty(readOnly = true, name = "The number of tries the users had for authorization")
     private Integer strikes = 0;
+
+    @ApiModelProperty(readOnly = true, name = "A set of roles for the user")
+    private Set<String> roles;
 
     public static UserDTOBuilder builder() {
         return new UserDTOBuilder();
@@ -66,21 +71,33 @@ public class UserDTO {
         this.strikes = strikes;
     }
 
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
+    }
+
     @Override
     public String toString() {
-        return "User{"
-            + "id=" + id
-            + ", username='" + username + '\''
-            + ", isEnabled=" + enabled
-            + ", strikes=" + strikes +
-            "}";
+        return "UserDTO{" +
+            "id=" + id +
+            ", username='" + username + '\'' +
+            ", password='" + password + '\'' +
+            ", enabled=" + enabled +
+            ", strikes=" + strikes +
+            ", roles=" + roles +
+            '}';
     }
+
     public static final class UserDTOBuilder {
         private Long id;
         private String username;
         private String password;
         private boolean enabled;
         private Integer strikes;
+        private Set<String> roles = new HashSet<>();
 
         public UserDTOBuilder id(Long id) {
             this.id = id;
@@ -107,14 +124,19 @@ public class UserDTO {
             return this;
         }
 
-        public UserDTO build() {
+        public UserDTOBuilder roles(Set<String> roles) {
+            this.roles = roles;
+            return this;
+        }
 
+        public UserDTO build() {
             UserDTO userDTO = new UserDTO();
             userDTO.setId(id);
             userDTO.setUsername(username);
             userDTO.setPassword(password);
             userDTO.setEnabled(enabled);
             userDTO.setStrikes(strikes);
+            userDTO.setRoles(new HashSet<>(roles));
             return userDTO;
         }
     }

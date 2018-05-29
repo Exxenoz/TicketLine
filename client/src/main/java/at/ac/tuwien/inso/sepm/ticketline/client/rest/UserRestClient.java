@@ -4,10 +4,13 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordChangeRequestDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
 
 import java.util.List;
 
 public interface UserRestClient {
+
     /**
      * Enables the given user entry
      *
@@ -15,6 +18,14 @@ public interface UserRestClient {
      * @throws DataAccessException in case something went wrong
      */
     void enableUser(UserDTO user) throws DataAccessException;
+
+    /**
+     * Disables the given user entry
+     *
+     * @param user the user entry to be disabled
+     * @throws DataAccessException in case something went wrong
+     */
+    void disableUser(UserDTO user) throws DataAccessException;
 
     /**
      * Find all user entries
@@ -32,4 +43,25 @@ public interface UserRestClient {
      * @throws DataAccessException in case something went wrong
      */
     PageResponseDTO<UserDTO> findAll(PageRequestDTO request) throws DataAccessException;
+
+    /**
+     * Create a user with the specified data transfer object.
+     *
+     * @param userDTO the user to create
+     * @return the created user
+     * @throws DataAccessException in case something went wrong
+     */
+    UserDTO create(UserDTO userDTO) throws DataAccessException;
+
+    /**
+     * Reset a users password, so he has to specify a new one at his next login
+     * @throws DataAccessException in case something went wrong
+     */
+    void resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws DataAccessException;
+
+    /**
+     * Change a users password, with a given token to authenticate
+     * @throws DataAccessException in case something went wrong
+     */
+    void changePassword(UserPasswordChangeRequestDTO userPasswordChangeRequestDTO) throws DataAccessException;
 }

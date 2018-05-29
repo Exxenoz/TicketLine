@@ -1,8 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.datagenerator;
 
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Authority;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
-import at.ac.tuwien.inso.sepm.ticketline.server.repository.AuthorityRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.UserRepository;
 import com.github.javafaker.Faker;
 import org.slf4j.Logger;
@@ -11,6 +9,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
+import java.util.HashSet;
 
 
 @Profile("generateData")
@@ -21,12 +20,10 @@ public class UserDataGenerator implements DataGenerator {
     private static final int NUMBER_OF_USERS_TO_GENERATE = 50;
     private static long appendix = 0;
     private final UserRepository userRepository;
-    private final AuthorityRepository authorityRepository;
     private final Faker faker;
 
-    public UserDataGenerator(UserRepository userRepository, AuthorityRepository authorityRepository) {
+    public UserDataGenerator(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.authorityRepository = authorityRepository;
         faker = new Faker();
     }
 
@@ -47,13 +44,9 @@ public class UserDataGenerator implements DataGenerator {
                     .username(username)
                     .password("$2a$10$hXJx1IBhxH2fcTa/NR2ZMetAKy.4w3SoWeJm7FiEjK6XjOOtyRQmO")
                     .enabled(true)
-                    .strikes(0).build();
-                user = userRepository.save(user);
-                final var authority = Authority.builder()
-                    .username(user.getUsername())
-                    .authority("USER")
-                    .build();
-                authorityRepository.save(authority);
+                    .strikes(0)
+                    .roles(new HashSet<>()).build();
+                userRepository.save(user);
             }
         }
     }
