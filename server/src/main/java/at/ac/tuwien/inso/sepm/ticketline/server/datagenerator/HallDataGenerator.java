@@ -14,9 +14,7 @@ import org.springframework.stereotype.Component;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 @Profile("generateData")
 @Component
@@ -25,9 +23,13 @@ public class HallDataGenerator implements DataGenerator {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final static int NUMBER_OF_HALLS = 25;
-    private final static int SECTOR_COUNT_LIMIT = 4;
-    private final static int SECTOR_WIDTH_LIMIT = 8;
-    private final static int SECTOR_HEIGHT_LIMIT = 4;
+
+    private final static int SECTOR_COUNT_MIN = 4;
+    private final static int SECTOR_WIDTH_MIN = 5;
+    private final static int SECTOR_HEIGHT_MIN = 3;
+    private final static int SECTOR_COUNT_MAX = 8;
+    private final static int SECTOR_WIDTH_MAX = 10;
+    private final static int SECTOR_HEIGHT_MAX = 6;
 
     private final HallRepository hallRepository;
     private final SectorCategoryRepository sectorCategoryRepository;
@@ -69,11 +71,11 @@ public class HallDataGenerator implements DataGenerator {
                 hall.setAddress(address);
 
                 // Now we want to generate the sectors and seats
-                int sectorCount = faker.number().numberBetween(1, SECTOR_COUNT_LIMIT);
+                int sectorCount = faker.number().numberBetween(SECTOR_COUNT_MIN, SECTOR_COUNT_MAX);
 
                 //we want to keep all sectors same sized for now
-                int sectorSeatsPerRow = faker.number().numberBetween(1, SECTOR_WIDTH_LIMIT);
-                int sectorRows = faker.number().numberBetween(1, SECTOR_HEIGHT_LIMIT);
+                int sectorSeatsPerRow = faker.number().numberBetween(SECTOR_WIDTH_MIN, SECTOR_WIDTH_MAX);
+                int sectorRows = faker.number().numberBetween(SECTOR_HEIGHT_MIN, SECTOR_HEIGHT_MAX);
 
                 int x = 0;
                 int y = 0;

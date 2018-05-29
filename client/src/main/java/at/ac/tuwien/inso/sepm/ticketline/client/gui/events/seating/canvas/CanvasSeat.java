@@ -5,6 +5,9 @@ import javafx.scene.paint.Color;
 
 public class CanvasSeat implements CanvasComponent {
 
+    private int planX;
+    private int planY;
+
     private double xPos;
     private double yPos;
 
@@ -18,14 +21,20 @@ public class CanvasSeat implements CanvasComponent {
     private final static double ARC_WIDTH = 8;
     private final static double ARC_HEIGHT = 8;
 
-    public CanvasSeat(double xPos, double yPos) {
+    private boolean selected;
+
+    public CanvasSeat(int planX, int planY, double xPos, double yPos) {
         this.xPos = xPos;
         this.yPos = yPos + OFFSET_TOP;
     }
 
     @Override
-    public void onClicked() {
-
+    public boolean isClicked(double x, double y) {
+        if((x > xPos && x < xPos + WIDTH) && (y > yPos && y < yPos + HEIGHT)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -36,9 +45,16 @@ public class CanvasSeat implements CanvasComponent {
         gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
     }
 
-    @Override
-    public void isInInterval(double topLeft, double lowerRight) {
+    public void drawSelected(GraphicsContext gc) {
+        selected = true;
+        gc.setFill(Color.CHARTREUSE);
+        gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
+    }
 
+    public void drawDeselected(GraphicsContext gc) {
+        selected = false;
+        gc.setFill(Color.DARKGREEN);
+        gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
     }
 
     public double getxPos() {
@@ -55,5 +71,29 @@ public class CanvasSeat implements CanvasComponent {
 
     public void setyPos(double yPos) {
         this.yPos = yPos;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public int getPlanX() {
+        return planX;
+    }
+
+    public void setPlanX(int planX) {
+        this.planX = planX;
+    }
+
+    public int getPlanY() {
+        return planY;
+    }
+
+    public void setPlanY(int planY) {
+        this.planY = planY;
     }
 }

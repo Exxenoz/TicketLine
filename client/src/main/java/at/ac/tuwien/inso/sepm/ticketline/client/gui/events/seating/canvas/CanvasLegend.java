@@ -4,10 +4,6 @@ import javafx.scene.canvas.GraphicsContext;
 
 public class CanvasLegend implements CanvasComponent {
 
-    @Override
-    public void onClicked() {
-
-    }
 
     @Override
     public void draw(GraphicsContext gc) {
@@ -15,7 +11,7 @@ public class CanvasLegend implements CanvasComponent {
     }
 
     @Override
-    public void isInInterval(double topLeft, double lowerRight) {
-
+    public boolean isClicked(double x, double y) {
+        return false;
     }
 }

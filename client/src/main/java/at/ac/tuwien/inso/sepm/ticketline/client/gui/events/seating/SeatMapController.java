@@ -8,6 +8,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.sector.SectorDTO;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.MouseEvent;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +44,7 @@ public class SeatMapController {
             for(int i = 0; i < sector.getSeatsPerRow(); i++) {
                 for(int j = 0; j < sector.getRows(); j++) {
 
-                    CanvasSeat canvasSeat = new CanvasSeat(
+                    CanvasSeat canvasSeat = new CanvasSeat(i, j,
                         sector.getStartPositionX() * CanvasSeat.WIDTH + CanvasSeat.REGULAR_MARGIN * i + i * CanvasSeat.WIDTH,
                         sector.getStartPositionY() * CanvasSeat.HEIGHT + CanvasSeat.REGULAR_MARGIN * j + j * CanvasSeat.HEIGHT);
                     canvasSeats.add(canvasSeat);
@@ -58,6 +59,28 @@ public class SeatMapController {
                 seat.draw(this.gc);
             }
         }
+
+        seatMapCanvas.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            double eventX = event.getX();
+            double eventY = event.getY();
+
+            for(Map.Entry<SectorDTO, List<CanvasSeat>> entry: sectorSeatMap.entrySet()) {
+                for(CanvasSeat seat: entry.getValue()) {
+                    // Check if the seat was clicked
+                    if(seat.isClicked(eventX, eventY)) {
+                        if(seat.isSelected()) {
+                            seat.drawDeselected(gc);
+                            seatSelectionListener.onSeatSelected(new SeatDTO(seat.getPlanX(), seat.getPlanY(),
+                                entry.getKey()));
+                        } else {
+                            seat.drawSelected(gc);
+                            seatSelectionListener.onSeatDeselected(new SeatDTO(seat.getPlanX(), seat.getPlanY(),
+                                entry.getKey()));
+                        }
+                    }
+                }
+            }
+        });
     }
 
     public void fill(PerformanceDTO performance) {
