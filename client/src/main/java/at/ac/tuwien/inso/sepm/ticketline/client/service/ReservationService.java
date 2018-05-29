@@ -6,7 +6,6 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
 
 import java.util.List;
@@ -28,14 +27,6 @@ public interface ReservationService {
      * @throws DataAccessException in case something went wrong
      */
     Long getPaidReservationCountByEvent(EventDTO event) throws DataAccessException;
-
-    /**
-     * Find number of paid reservations by given event and month
-     * @param reservationFilterTopTen filter containing month and event id
-     * @return count of paid reservations
-     * @throws DataAccessException in case something went wrong
-     */
-    Long getPaidReservationCountByFilter(ReservationFilterTopTenDTO reservationFilterTopTen) throws DataAccessException;
 
     /**
      * Create a reservation with the given values within the createReservationDTO

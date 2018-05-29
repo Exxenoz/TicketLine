@@ -1,7 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationFilterTopTen;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationSearch;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import org.springframework.data.domain.Page;
@@ -51,15 +50,6 @@ public interface ReservationService {
      * @return count of paid reservation entries with the passed event id
      */
     Long getPaidReservationCountByEventId(Long eventId);
-
-    /**
-     * Get paid reservation count by event id and time frame.
-     *
-     * @param reservationFilterTopTen the filter for the paid reservations
-     * @return count of paid reservation entries with the passed event id and time frame
-     */
-    Long getPaidReservationCountByFilter(ReservationFilterTopTen reservationFilterTopTen);
-
 
     /**
      * create new reservation

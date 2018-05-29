@@ -7,7 +7,6 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,24 +80,6 @@ public class SimpleReservationRestClient implements ReservationRestClient {
                     new RequestEntity<>(GET, reservationByEventUri.resolve(event.getId() + "/count")),
                     new ParameterizedTypeReference<Long>() {
                 });
-            LOGGER.debug("Result status was {} with content {}", reservation.getStatusCode(), reservation.getBody());
-            return reservation.getBody();
-        } catch (HttpStatusCodeException e) {
-            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
-        } catch (RestClientException e) {
-            throw new DataAccessException(e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public Long getPaidReservationCountByFilter(ReservationFilterTopTenDTO reservationFilterTopTen) throws DataAccessException {
-        try {
-            LOGGER.debug("Retrieving paid reservation count of a specific event and month from {}", reservationByEventUri);
-            final var reservation =
-                restClient.exchange(
-                    new RequestEntity<>(reservationFilterTopTen, POST, reservationTopTenUri),
-                    new ParameterizedTypeReference<Long>() {
-                    });
             LOGGER.debug("Result status was {} with content {}", reservation.getStatusCode(), reservation.getBody());
             return reservation.getBody();
         } catch (HttpStatusCodeException e) {

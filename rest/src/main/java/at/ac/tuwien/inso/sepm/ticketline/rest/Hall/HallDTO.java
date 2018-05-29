@@ -25,6 +25,10 @@ public class HallDTO {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
@@ -41,21 +45,12 @@ public class HallDTO {
         this.sectors = sectors;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof HallDTO)) return false;
-        HallDTO hallDTO = (HallDTO) o;
-        return Objects.equals(getId(), hallDTO.getId()) &&
-            Objects.equals(getName(), hallDTO.getName()) &&
-            Objects.equals(getSectors(), hallDTO.getSectors()) &&
-            Objects.equals(address, hallDTO.address);
+    public LocationAddressDTO getAddress() {
+        return address;
     }
 
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(getId(), getName(), getSectors(), address);
+    public void setAddress(LocationAddressDTO address) {
+        this.address = address;
     }
 
     @Override
@@ -66,5 +61,22 @@ public class HallDTO {
             ", sectors=" + sectors +
             ", address=" + address +
             '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HallDTO hallDTO = (HallDTO) o;
+        return Objects.equals(id, hallDTO.id) &&
+            Objects.equals(name, hallDTO.name) &&
+            Objects.equals(sectors, hallDTO.sectors) &&
+            Objects.equals(address, hallDTO.address);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, name, sectors, address);
     }
 }

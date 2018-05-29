@@ -110,10 +110,6 @@ public class PerformanceDTO {
         return address;
     }
 
-    public void setAddress(LocationAddressDTO address) {
-        this.address = address;
-    }
-
     public HallDTO getHall() {
         return hall;
     }
@@ -139,24 +135,23 @@ public class PerformanceDTO {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         PerformanceDTO that = (PerformanceDTO) o;
         return id == that.id &&
+            Objects.equals(event, that.event) &&
+            Objects.equals(artists, that.artists) &&
             Objects.equals(name, that.name) &&
             Objects.equals(price, that.price) &&
             Objects.equals(performanceStart, that.performanceStart) &&
-            Objects.equals(performanceEnd, that.performanceEnd)
-            ;
+            Objects.equals(performanceEnd, that.performanceEnd) &&
+            Objects.equals(address, that.address) &&
+            Objects.equals(hall, that.hall);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, name, price, performanceStart, performanceEnd);
+        return Objects.hash(id, event, artists, name, price, performanceStart, performanceEnd, address, hall);
     }
 }

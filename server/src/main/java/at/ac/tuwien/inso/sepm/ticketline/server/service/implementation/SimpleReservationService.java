@@ -65,15 +65,6 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
-    public Long getPaidReservationCountByFilter(ReservationFilterTopTen reservationFilterTopTen) {
-        LocalDateTime startOfTheMonthDateTime = LocalDateTime.of(LocalDateTime.now().getYear(), reservationFilterTopTen.getMonth(), 1, 0, 0);
-        LocalDateTime endOfTheMonthDateTime = LocalDateTime.of(startOfTheMonthDateTime.getYear(), reservationFilterTopTen.getMonth(), startOfTheMonthDateTime.toLocalDate().lengthOfMonth(), 23, 59, 59);
-        Timestamp startOfTheMonth = Timestamp.valueOf(startOfTheMonthDateTime);
-        Timestamp endOfTheMonth = Timestamp.valueOf(endOfTheMonthDateTime);
-        return reservationRepository.getPaidReservationCountByEventIdAndTimeFrame(reservationFilterTopTen.getEventId(), startOfTheMonth, endOfTheMonth);
-    }
-
-    @Override
     public Reservation purchaseReservation(Reservation reservation) {
         reservation.setPaid(true);
         reservation.setPaidAt(LocalDateTime.now());

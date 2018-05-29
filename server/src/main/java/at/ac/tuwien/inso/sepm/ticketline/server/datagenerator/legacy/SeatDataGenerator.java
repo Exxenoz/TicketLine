@@ -17,7 +17,7 @@ import java.util.List;
 
 @Profile("generateData")
 @Component
-@Order(10)
+@Order(2)
 public class SeatDataGenerator implements DataGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());

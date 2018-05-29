@@ -5,13 +5,10 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationFilterTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.ReservationSearchValidator;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationFilterTopTen;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationFilterTopTenMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationSearchMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidRequestException;
@@ -32,19 +29,16 @@ public class ReservationEndpoint {
 
     private final ReservationService reservationService;
     private final ReservationMapper reservationMapper;
-    private final ReservationFilterTopTenMapper reservationFilterTopTenMapper;
     private final CustomerMapper customerMapper;
     private final ReservationSearchMapper reservationSearchMapper;
 
     public ReservationEndpoint(ReservationService reservationService,
                                ReservationMapper reservationMapper,
-                               ReservationFilterTopTenMapper reservationFilterTopTenMapper,
                                CustomerMapper customerMapper,
                                ReservationSearchMapper reservationSearchMapper
     ) {
         this.reservationService = reservationService;
         this.reservationMapper = reservationMapper;
-        this.reservationFilterTopTenMapper = reservationFilterTopTenMapper;
         this.customerMapper = customerMapper;
         this.reservationSearchMapper = reservationSearchMapper;
     }
@@ -61,15 +55,6 @@ public class ReservationEndpoint {
     @ApiOperation("Get count of paid reservation entries by event id")
     public Long getPaidReservationCountByEventId(@PathVariable Long eventId) {
         return reservationService.getPaidReservationCountByEventId(eventId);
-    }
-
-    @PostMapping("/top_ten")
-    @PreAuthorize("hasRole('USER')")
-    @ApiOperation("Get count of paid reservation entries by top ten filter")
-    public Long getPaidReservationCountByFilter(@RequestBody final ReservationFilterTopTenDTO reservationFilterTopTenDTO) {
-        ReservationFilterTopTen reservationFilterTopTen =
-            reservationFilterTopTenMapper.reservationFilterTopTenDTOToReservationFilterTopTen(reservationFilterTopTenDTO);
-        return reservationService.getPaidReservationCountByFilter(reservationFilterTopTen);
     }
 
     @PostMapping

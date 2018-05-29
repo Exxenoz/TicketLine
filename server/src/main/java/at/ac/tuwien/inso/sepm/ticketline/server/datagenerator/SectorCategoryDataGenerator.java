@@ -30,7 +30,7 @@ public class SectorCategoryDataGenerator implements DataGenerator {
 
     @Override
     public void generate() {
-        if (sectorCategoryRepository.count() > 0) {
+        if (sectorCategoryRepository.count() > 1) {
             LOGGER.info("Sector categories already generated");
         } else {
             LOGGER.info("Generating {} sector category entries", NUMBER_OF_SECTOR_CATEGORIES_TO_GENERATE);
