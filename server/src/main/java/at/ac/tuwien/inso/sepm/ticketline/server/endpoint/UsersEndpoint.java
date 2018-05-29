@@ -8,6 +8,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordChangeRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.user.UserMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpBadRequestException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpConflictException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import io.swagger.annotations.Api;
@@ -81,7 +82,7 @@ public class UsersEndpoint {
         } catch (InternalUserValidationException e) {
             throw new HttpBadRequestException();
         } catch (InternalUsernameConflictException e) {
-            throw new HttpBadRequestException();
+            throw new HttpConflictException();
         }
     }
 
