@@ -38,6 +38,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     private final URI reservationEditUri;
     private final URI reservationPurchaseUri;
     private final URI reservationFindNotPaidUri;
+    private final URI reservationFindNotPaidByReservationNumberUri;
 
     public SimpleReservationRestClient(RestClient restClient) {
         this.restClient = restClient;
@@ -49,6 +50,8 @@ public class SimpleReservationRestClient implements ReservationRestClient {
         this.reservationEditUri = restClient.getServiceURI("/reservation/edit");
         this.reservationPurchaseUri = restClient.getServiceURI("/reservation/purchase");
         this.reservationFindNotPaidUri = restClient.getServiceURI("/reservation/findNotPaid");
+        this.reservationFindNotPaidByReservationNumberUri =
+            restClient.getServiceURI("reservation/findNotPaid/ReservationNumber");
     }
 
     @Override
@@ -63,7 +66,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", reservation.getStatusCode(), reservation.getBody());
             return reservation.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed to retrieve performances with status code " + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }
@@ -81,7 +84,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", reservation.getStatusCode(), reservation.getBody());
             return reservation.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed to retrieve paid reservation count with status code " + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }
@@ -99,7 +102,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", reservation.getStatusCode(), reservation.getBody());
             return reservation.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed to retrieve paid reservation count with status code " + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }
@@ -117,7 +120,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed to create new reservation." + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }
@@ -135,7 +138,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
                     });
             return reservation.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed to create and purchase new reservation." + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }
@@ -154,7 +157,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed to find reservation. " + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }
@@ -172,7 +175,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed to find reservation." + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }
@@ -190,7 +193,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed to purchase reservation." + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }
@@ -208,7 +211,26 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed to purchase reservation." + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
+        } catch (RestClientException e) {
+            throw new DataAccessException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public ReservationDTO findOneByPaidFalseAndReservationNumber(String reservationNr) throws DataAccessException {
+        try {
+            LOGGER.debug("Entering findOneByPaidFalseAndReservationNumber method with URI {}",
+                reservationFindNotPaidByReservationNumberUri);
+            final var response =
+                restClient.exchange(
+                    new RequestEntity<>(reservationNr, POST, reservationFindNotPaidByReservationNumberUri),
+                    new ParameterizedTypeReference<ReservationDTO>() {
+                    });
+            LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
+            return response.getBody();
+        } catch (HttpStatusCodeException e) {
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }
@@ -226,7 +248,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed to purchase reservation." + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }

@@ -24,8 +24,7 @@ import java.util.List;
 
 import static java.math.BigDecimal.ONE;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -64,6 +63,7 @@ public class ReservationServiceTests {
         reservation.setSeats(seats);
         reservation.setPerformance(performance);
         reservation.setCustomer(customer);
+        reservation.setReservationNumber("000000");
 
         reservation = reservationRepository.save(reservation);
         RESERVATION_TEST_ID = reservation.getId();
@@ -82,7 +82,7 @@ public class ReservationServiceTests {
     @Test
     public void removeSeatFromReservation() {
         //get reservation
-        var reservation = reservationService.findOneByPaidFalseById(RESERVATION_TEST_ID);
+        var reservation = reservationService.findOneByPaidFalseAndId(RESERVATION_TEST_ID);
         Assert.assertNotNull(reservation);
         Assert.assertEquals(false, reservation.isPaid());
 
@@ -106,13 +106,13 @@ public class ReservationServiceTests {
     @Test
     public void purchaseReservationWithId() {
         //get reservation
-        var reservation = reservationService.findOneByPaidFalseById(RESERVATION_TEST_ID);
+        var reservation = reservationService.findOneByPaidFalseAndId(RESERVATION_TEST_ID);
         Assert.assertNotNull(reservation);
         Assert.assertEquals(false, reservation.isPaid());
         reservationService.purchaseReservation(reservation);
         //assert result
         Assert.assertEquals(true, reservation.isPaid());
-        Assert.assertNull(reservationService.findOneByPaidFalseById(RESERVATION_TEST_ID));
+        Assert.assertNull(reservationService.findOneByPaidFalseAndId(RESERVATION_TEST_ID));
     }
 
     @Test
@@ -125,12 +125,16 @@ public class ReservationServiceTests {
             customer = customerOpt.get();
             performance = performanceOpt.get();
             //Search Parameters
-            String firstName = customer.getFirstName();
-            String lastName = customer.getLastName();
-            String performanceName = performance.getName();
-            //find not yet purchased reservations
-            var reservations = reservationService.findAllByPaidFalseByCustomerNameAndPerformanceName(
-                firstName, lastName, performanceName);
+            var reservationSearch = ReservationSearch.Builder.aReservationSearch()
+                .withFirstName(customer.getFirstName())
+                .withLastName(customer.getLastName())
+                .withPerfomanceName(performance.getName())
+                .build();
+
+
+            //search
+            var reservations = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
+                reservationSearch);
             Assert.assertEquals(1, reservations.size());
             //purchase said reservations
             for (Reservation reservation : reservations) {
@@ -138,8 +142,8 @@ public class ReservationServiceTests {
             }
 
             //assert result
-            reservations = reservationService.findAllByPaidFalseByCustomerNameAndPerformanceName(
-                firstName, lastName, performanceName);
+            reservations = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
+                reservationSearch);
             Assert.assertEquals(0, reservations.size());
         } else {
             Assert.fail("Either the customer or the performance weren't found!");
@@ -156,13 +160,16 @@ public class ReservationServiceTests {
         if (customerOpt.isPresent() && performanceOpt.isPresent()) {
             customer = customerOpt.get();
             performance = performanceOpt.get();
-            String firstName = customer.getFirstName();
-            String lastName = customer.getLastName();
-            String performanceName = performance.getName();
+            var reservationSearch = ReservationSearch.Builder.aReservationSearch()
+                .withFirstName(customer.getFirstName())
+                .withLastName(customer.getLastName())
+                .withPerfomanceName(performance.getName())
+                .build();
+
 
             //search
-            var reservations = reservationService.findAllByPaidFalseByCustomerNameAndPerformanceName(
-                firstName, lastName, performanceName);
+            var reservations = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
+                reservationSearch);
 
             //assert result
             Assert.assertEquals(1, reservations.size());
@@ -187,6 +194,7 @@ public class ReservationServiceTests {
         reservation.setCustomer(customer);
         reservation.setPerformance(performance);
         reservation.setSeats(List.of(seat));
+        reservation.setReservationNumber("000001");
 
         Reservation returned = null;
         try {
@@ -203,6 +211,30 @@ public class ReservationServiceTests {
 
     }
 
+    @Test(expected = InvalidReservationException.class)
+    public void createInvalidReservation() throws InvalidReservationException {
+        Performance performance = performanceRepository.save(newPerformance());
+        Seat seat = seatRepository.save(newSeat());
+        Customer customer = customerRepository.save(newCustomer());
+
+        Reservation reservation = new Reservation();
+        reservation.setCustomer(customer);
+        reservation.setPerformance(performance);
+        reservation.setSeats(List.of(seat));
+        reservation.setReservationNumber("000003");
+
+        Reservation reservation2 = new Reservation();
+        reservation2.setCustomer(customer);
+        reservation2.setPerformance(performance);
+        reservation2.setSeats(List.of(seat));
+        reservation2.setReservationNumber("000004");
+
+        reservationService.createReservation(reservation);
+        reservationService.createReservation(reservation2);
+
+
+    }
+
     @Test
     public void createAndPay() {
         Performance performance = performanceRepository.save(newPerformance());
@@ -213,6 +245,7 @@ public class ReservationServiceTests {
         reservation.setCustomer(customer);
         reservation.setPerformance(performance);
         reservation.setSeats(List.of(seat));
+        reservation.setReservationNumber("000002");
 
         Reservation returned = null;
         try {

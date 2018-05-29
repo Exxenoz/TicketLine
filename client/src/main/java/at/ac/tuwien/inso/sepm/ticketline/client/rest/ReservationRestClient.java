@@ -97,4 +97,13 @@ public interface ReservationRestClient {
      * @throws DataAccessException in case something goes wrong while trying to update the seats
      */
     ReservationDTO editReservation(ReservationDTO reservationDTO) throws DataAccessException;
+
+    /**
+     * Finds one not yet purchased reservation with the given reservationnumber
+     *
+     * @param reservationNr the unique reservationnumber used the find the reservation
+     * @return the found reservation
+     * @throws DataAccessException in case something went wrong during the action
+     */
+    ReservationDTO findOneByPaidFalseAndReservationNumber(String reservationNr) throws DataAccessException;
 }
