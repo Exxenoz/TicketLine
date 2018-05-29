@@ -23,6 +23,8 @@ public class SearchSpecBuilder implements Specification<Performance> {
 
     @Override
     public Predicate toPredicate(Root<Performance> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+        query.distinct(true);
+
         Join<Performance, Event> event = root.join("event");
         SetJoin<Performance, Artist> artists = root.joinSet("artists", JoinType.LEFT);
 

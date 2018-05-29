@@ -2,7 +2,6 @@ package at.ac.tuwien.inso.sepm.ticketline.server.entity.specification;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Event;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.EventType;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -10,6 +9,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class EventSpecification implements Specification<Event> {
 
@@ -27,7 +28,7 @@ public class EventSpecification implements Specification<Event> {
         final var predicates = new ArrayList<Predicate>();
 
         String eventNameLike = '%' + eventName + '%';
-        if(eventName != null){
+        if (!isNullOrEmpty(eventName)) {
             predicates.add(builder.like(root.get("name"), eventNameLike));
         }
 

@@ -6,6 +6,8 @@ import org.springframework.data.jpa.domain.Specification;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 public class ArtistSpecification implements Specification<Artist> {
 
     private final String firstName;
@@ -25,12 +27,12 @@ public class ArtistSpecification implements Specification<Artist> {
         final var predicates = new ArrayList<Predicate>();
 
         String firstNameLike = '%' + firstName + '%';
-        if (firstName != null) {
-            predicates.add(builder.equal(root.get("firstName"), firstNameLike));
+        if (!isNullOrEmpty(firstName)) {
+            predicates.add(builder.like(root.get("firstName"), firstNameLike));
         }
 
         String lastNameLike = '%' + lastName + '%';
-        if (lastName != null) {
+        if (!isNullOrEmpty(lastName)) {
             predicates.add(builder.like(root.get("lastName"), lastNameLike));
         }
         return builder.and(predicates.toArray(new Predicate[]{}));

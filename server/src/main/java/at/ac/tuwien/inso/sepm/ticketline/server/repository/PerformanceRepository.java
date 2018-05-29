@@ -1,7 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.repository;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Event;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.specification.ArtistSpecification;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.specification.EventSpecification;
@@ -16,6 +15,7 @@ import java.util.List;
 
 @Repository
 public interface PerformanceRepository extends JpaRepository<Performance, Long>, QueryByExampleExecutor<Performance>, JpaSpecificationExecutor<Performance> {
+
 
     /**
      * Finds a list of performances filtered by the given event id.
