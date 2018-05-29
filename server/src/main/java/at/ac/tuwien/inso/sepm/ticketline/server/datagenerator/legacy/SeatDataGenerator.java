@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
-//@Profile("generateData")
+@Profile("generateData")
 @Component
 @Order(10)
 public class SeatDataGenerator implements DataGenerator {

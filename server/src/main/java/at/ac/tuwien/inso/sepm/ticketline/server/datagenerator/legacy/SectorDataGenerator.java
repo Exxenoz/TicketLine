@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
-//@Profile("generateData")
+@Profile("generateData")
 @Component
 @Order(5)
 public class SectorDataGenerator implements DataGenerator {
