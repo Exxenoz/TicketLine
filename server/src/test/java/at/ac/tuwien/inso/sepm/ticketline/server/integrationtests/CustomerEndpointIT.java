@@ -22,9 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.*;
@@ -60,7 +58,7 @@ public class CustomerEndpointIT extends BaseIT {
     }
 
     //TODO: generics not transfered to reponse. doesn't match
-    /*@Test
+    @Test
     public void findAllCustomersAsUser() {
         List<Customer> customers = Collections.singletonList(
             Customer.builder()
@@ -95,9 +93,40 @@ public class CustomerEndpointIT extends BaseIT {
                 .address(TEST_CUSTOMER_BASEADDRESS)
                 .build());
 
-        PageResponseDTO<CustomerDTO> pageResponseDTO = new PageResponseDTO<>(customersDTOList, 1);
-        Assert.assertThat(response.as(PageResponseDTO.class), is(pageResponseDTO));
-    }*/
+        HashMap<String, Object> json = response.jsonPath().get();
+        CustomerDTO responseCustomerDTO = jsonToCustomerDTO(json);
+
+        PageResponseDTO<CustomerDTO> restPageResponse = new PageResponseDTO<>(List.of(responseCustomerDTO), (int)json.get("totalPages"));
+        PageResponseDTO<CustomerDTO> testPageReponse = new PageResponseDTO<>(customersDTOList, 1);
+        Assert.assertThat(restPageResponse, is(testPageReponse));
+    }
+
+    // plenty room for improvement
+    private CustomerDTO jsonToCustomerDTO(HashMap<String, Object> json) {
+        ArrayList restResponseCustomerList = (ArrayList) json.get("content");
+        HashMap<String, String> reponseContentHashmap = (HashMap<String, String>) restResponseCustomerList.get(0);
+
+        BaseAddressDTO responseBaseAddress = jsonToBaseAddressDTO((HashMap<String, Object>) restResponseCustomerList.get(0));
+
+        return CustomerDTO.builder()
+            .id(Long.valueOf(String.valueOf(reponseContentHashmap.get("id"))))
+            .firstName(reponseContentHashmap.get("firstName"))
+            .lastName(reponseContentHashmap.get("lastName"))
+            .telephoneNumber(reponseContentHashmap.get("telephoneNumber"))
+            .email(reponseContentHashmap.get("email"))
+            .address(responseBaseAddress)
+            .build();
+    }
+
+    // plenty room for improvement
+    private BaseAddressDTO jsonToBaseAddressDTO(HashMap<String, Object> reponseContentHashmap) {
+        HashMap<String, Object> responseBaseAddressHashmap = (HashMap<String, Object>) reponseContentHashmap.get("baseAddress");
+        return new BaseAddressDTO(
+            (String) responseBaseAddressHashmap.get("street"),
+            (String) responseBaseAddressHashmap.get("city"),
+            (String) responseBaseAddressHashmap.get("country"),
+            (String) responseBaseAddressHashmap.get("postalCode"));
+    }
 
     @Test
     public void saveCustomerUnauthorizedAsAnonymous() {
