@@ -81,11 +81,11 @@ public class SeatMapController {
                     if(seat.isClicked(eventX, eventY)) {
                         if(seat.isSelected()) {
                             seat.drawDeselected(gc);
-                            seatSelectionListener.onSeatSelected(new SeatDTO(seat.getPlanX(), seat.getPlanY(),
+                            seatSelectionListener.onSeatDeselected(new SeatDTO(seat.getPlanX(), seat.getPlanY(),
                                 entry.getKey()));
                         } else {
                             seat.drawSelected(gc);
-                            seatSelectionListener.onSeatDeselected(new SeatDTO(seat.getPlanX(), seat.getPlanY(),
+                            seatSelectionListener.onSeatSelected(new SeatDTO(seat.getPlanX(), seat.getPlanY(),
                                 entry.getKey()));
                         }
                     }
