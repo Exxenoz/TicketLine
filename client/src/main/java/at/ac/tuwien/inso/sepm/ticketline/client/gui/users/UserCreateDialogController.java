@@ -114,6 +114,9 @@ public class UserCreateDialogController {
             return;
         }
 
+        userController.clearUserList();
+        userController.loadUserTable(UserController.FIRST_USER_TABLE_PAGE);
+
         LOGGER.debug("User creation successfully completed!");
 
         JavaFXUtils.createInformationDialog(

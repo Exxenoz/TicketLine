@@ -3,7 +3,6 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.users;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.MainController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
-import at.ac.tuwien.inso.sepm.ticketline.client.gui.customers.CustomerController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.UserService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
@@ -26,22 +25,18 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.lang.invoke.MethodHandles;
 import java.security.SecureRandom;
-import java.util.UUID;
 
 import static javafx.stage.Modality.APPLICATION_MODAL;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.LOCK;
@@ -51,8 +46,8 @@ public class UserController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    @FXML
-    public TableColumn<UserDTO, Integer> userAuthTriesCol;
+    public static final int USERS_PER_PAGE = 30;
+    public static final int FIRST_USER_TABLE_PAGE = 0;
 
     @FXML
     private VBox content;
@@ -65,6 +60,9 @@ public class UserController {
 
     @FXML
     private TableColumn<UserDTO, String> useraccountStatusCol;
+
+    @FXML
+    public TableColumn<UserDTO, Integer> userAuthTriesCol;
 
     @FXML
     public Button toggleEnableButton;
@@ -80,10 +78,9 @@ public class UserController {
     private final MainController mainController;
     private final UserService userService;
 
-    private static final int USERS_PER_PAGE = 30;
     private ObservableList<UserDTO> items;
     private int page = 0;
-    private int totalPages = 0;
+    private int totalPages = 1;
 
     public UserController(SpringFxmlLoader springFxmlLoader, MainController mainController, UserService userService) {
         this.springFxmlLoader = springFxmlLoader;
@@ -96,10 +93,11 @@ public class UserController {
     private void initialize() {
         tabHeaderController.setIcon(LOCK);
         tabHeaderController.setTitle(BundleManager.getBundle().getString("usertab.header"));
-        registerTableSelectionListener();
+
+        initializeUserTable();
     }
 
-    private void registerTableSelectionListener() {
+    private void initializeUserTable() {
         userTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if(newSelection != null) {
                 // update button text according to enabled status of selected user
@@ -118,44 +116,6 @@ public class UserController {
                 passwordResetButton.setDisable(true);
             }
         });
-    }
-
-    private void scrolled(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        double value = newValue.doubleValue();
-        ScrollBar bar = getVerticalScrollbar(userTable);
-        if ((value == bar.getMax()) && (page < totalPages)) {
-            page++;
-            LOGGER.debug("Getting next Page: {}", page);
-            double targetValue = value * items.size();
-            loadUsers(page);
-            bar.setValue(targetValue / items.size());
-        }
-    }
-
-    public void loadUsers(int page) {
-        ScrollBar bar = getVerticalScrollbar(userTable);
-        bar.valueProperty().addListener(this::scrolled);
-        LOGGER.debug("Loading Users of page {}", page);
-        try {
-            PageRequestDTO request = new PageRequestDTO(page, USERS_PER_PAGE, null, null);
-            PageResponseDTO<UserDTO> response = userService.findAll(request);
-            items.addAll(response.getContent());
-            totalPages = response.getTotalPages();
-        } catch (DataAccessException e) {
-            if ((e.getCause().getClass()) == HttpClientErrorException.class) {
-                var httpErrorCode = ((HttpStatusCodeException) e.getCause()).getStatusCode();
-                if (httpErrorCode == HttpStatus.FORBIDDEN) {
-                    LOGGER.debug("The current user doesnt have the authorization to load the users-list");
-                    mainController.getTpContent().getTabs().get(3).setDisable(true);
-                } else {
-                    JavaFXUtils.createExceptionDialog(e,
-                        content.getScene().getWindow()).showAndWait();
-                }
-            } else {
-                JavaFXUtils.createExceptionDialog(e,
-                    content.getScene().getWindow()).showAndWait();
-            }
-        }
 
         usernameCol.setCellValueFactory(cellData -> new SimpleStringProperty(
             cellData.getValue().getUsername())
@@ -172,8 +132,29 @@ public class UserController {
         userAuthTriesCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(
             cellData.getValue().getStrikes()).asObject()
         );
-        LOGGER.debug("loading the page into the table");
+
         userTable.setItems(items);
+    }
+
+    public void loadUsers() {
+        // Setting event handler for sort policy property calls it automatically
+        userTable.sortPolicyProperty().set(t -> {
+            items.clear();
+            loadUserTable(FIRST_USER_TABLE_PAGE);
+            return true;
+        });
+
+        final ScrollBar scrollBar = getVerticalScrollbar(userTable);
+        if (scrollBar != null) {
+            scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
+                double scrollValue = newValue.doubleValue();
+                if (scrollValue == scrollBar.getMax() && (page + 1) < totalPages) {
+                    double targetValue = scrollValue * items.size();
+                    loadUserTable(page + 1);
+                    scrollBar.setValue(targetValue / items.size());
+                }
+            });
+        }
     }
 
     private ScrollBar getVerticalScrollbar(TableView<?> table) {
@@ -189,11 +170,72 @@ public class UserController {
         return result;
     }
 
-    private void clear() {
-        LOGGER.debug("clearing the data");
-        items = FXCollections.observableArrayList();
-        page = 0;
-        this.getVerticalScrollbar(userTable).setValue(0);
+    private String getColumnNameBy(TableColumn<UserDTO, ?> tableColumn) {
+        if (tableColumn == usernameCol) {
+            return "username";
+        }
+        else if (tableColumn == useraccountStatusCol) {
+            return "enabled";
+        }
+        else if (tableColumn == userAuthTriesCol) {
+            return "strikes";
+        }
+
+        return "id";
+    }
+
+    public void loadUserTable(int page) {
+        if (page < 0 || page >= totalPages) {
+            LOGGER.error("Could not load user table page, because page parameter is invalid!");
+            return;
+        }
+
+        PageRequestDTO pageRequestDTO = null;
+        if (userTable.getSortOrder().size() > 0) {
+            TableColumn<UserDTO, ?> sortedColumn = userTable.getSortOrder().get(0);
+            Sort.Direction sortDirection = (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageRequestDTO = new PageRequestDTO(page, USERS_PER_PAGE, sortDirection, getColumnNameBy(sortedColumn));
+        }
+        else {
+            pageRequestDTO = new PageRequestDTO(page, USERS_PER_PAGE, Sort.Direction.ASC, null);
+        }
+
+        this.page = page;
+        this.totalPages = pageRequestDTO.getSize() > 0 ? pageRequestDTO.getSize() : 1;
+
+        try {
+            PageResponseDTO<UserDTO> response = userService.findAll(pageRequestDTO);
+            items.addAll(response.getContent());
+        } catch (DataAccessException e) {
+            if ((e.getCause().getClass()) == HttpClientErrorException.class) {
+                var httpErrorCode = ((HttpStatusCodeException) e.getCause()).getStatusCode();
+                if (httpErrorCode == HttpStatus.FORBIDDEN) {
+                    LOGGER.debug("The current user doesnt have the authorization to load the users-list");
+                    mainController.getTpContent().getTabs().get(3).setDisable(true);
+                } else {
+                    JavaFXUtils.createExceptionDialog(e,
+                        content.getScene().getWindow()).showAndWait();
+                }
+            } else {
+                JavaFXUtils.createExceptionDialog(e,
+                    content.getScene().getWindow()).showAndWait();
+            }
+        }
+
+        userTable.refresh();
+    }
+
+    public void refreshUserTable() {
+        userTable.refresh();
+    }
+
+    public void clearUserList() {
+        items.clear();
+
+        ScrollBar scrollBar = getVerticalScrollbar(userTable);
+        if (scrollBar != null) {
+            scrollBar.setValue(0);
+        }
     }
 
     public void toggleEnable(javafx.event.ActionEvent actionEvent) {
@@ -204,9 +246,11 @@ public class UserController {
             if (userDTO.isEnabled()) {
                 LOGGER.debug("Trying to disable user");
                 userService.disableUser(userDTO);
+                userDTO.setEnabled(false);
             } else {
                 LOGGER.debug("Trying to enable user");
                 userService.enableUser(userDTO);
+                userDTO.setEnabled(true);
             }
         } catch (DataAccessException e) {
             String errorMessage = e.getMessage();
@@ -225,9 +269,8 @@ public class UserController {
             JavaFXUtils.createErrorDialog(BundleManager.getExceptionBundle().getString("exception.no_selected_user"),
                 content.getScene().getWindow()).showAndWait();
         }
-        this.clear();
+
         userTable.refresh();
-        loadUsers(0);
     }
 
     public void onClickCreateUserButton(ActionEvent actionEvent) {
@@ -243,10 +286,6 @@ public class UserController {
         dialog.setScene(new Scene(springFxmlLoader.load("/fxml/users/userCreateDialog.fxml")));
         dialog.setTitle(BundleManager.getBundle().getString("usertab.user.create"));
         dialog.showAndWait();
-
-        this.clear();
-        userTable.refresh();
-        loadUsers(0);
     }
 
     public void onClickResetPassword(ActionEvent actionEvent) {

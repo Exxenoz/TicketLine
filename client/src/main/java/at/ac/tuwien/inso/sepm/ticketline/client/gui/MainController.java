@@ -157,7 +157,7 @@ public class MainController {
             }
             newsController.loadNews();
             eventController.loadData();
-            userController.loadUsers(0);
+            userController.loadUsers();
             customerController.loadCustomers();
         } else {
             if (!spMainContent.getChildren().contains(login)) {
