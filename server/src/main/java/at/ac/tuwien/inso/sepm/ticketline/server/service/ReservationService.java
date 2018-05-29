@@ -61,6 +61,13 @@ public interface ReservationService {
     Long getPaidReservationCountByFilter(ReservationFilterTopTen reservationFilterTopTen);
 
 
+    /**
+     * create new reservation
+     *
+     * @param reservation
+     * @return created reservation
+     * @throws InvalidReservationException
+     */
     Reservation createReservation(Reservation reservation) throws InvalidReservationException;
 
     /**
@@ -79,6 +86,13 @@ public interface ReservationService {
      */
     Reservation editReservation(Reservation reservation);
 
+    /**
+     * create a new reservation and set paid true
+     *
+     * @param reservation
+     * @return created Reservation
+     * @throws InvalidReservationException
+     */
     Reservation createAndPayReservation(Reservation reservation) throws InvalidReservationException;
 
     /**
@@ -89,5 +103,10 @@ public interface ReservationService {
      */
     Page<Reservation> findAll(Pageable pageable);
 
+    /**
+     * create new reservation number with 6 alpha numeric values
+     *
+     * @return reservationnumber
+     */
     String generateReservationNumber();
 }
