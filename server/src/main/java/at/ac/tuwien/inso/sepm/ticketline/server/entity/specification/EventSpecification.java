@@ -4,10 +4,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Event;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -24,6 +21,10 @@ public class EventSpecification implements Specification<Event> {
 
     @Override
     public Predicate toPredicate(Root<Event> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+        return toPredicate3(root, query, builder);
+    }
+
+    public Predicate toPredicate3(From<?, Event> root, CriteriaQuery<?> query, CriteriaBuilder builder){
 
         final var predicates = new ArrayList<Predicate>();
 
@@ -37,5 +38,6 @@ public class EventSpecification implements Specification<Event> {
         }
 
         return builder.and(predicates.toArray(new Predicate[]{}));
+
     }
 }

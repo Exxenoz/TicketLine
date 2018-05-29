@@ -30,7 +30,8 @@ public class SearchSpecBuilder implements Specification<Performance> {
 
         return builder.and(
             performanceSpecification.toPredicate(root, query, builder),
-            artistSpecification.toPredicate2(artists, query, builder)
+            artistSpecification.toPredicate2(artists, query, builder),
+            eventSpecification.toPredicate3(event, query, builder)
         );
     }
 }

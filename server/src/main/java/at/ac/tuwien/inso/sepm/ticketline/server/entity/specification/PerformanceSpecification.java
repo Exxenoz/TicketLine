@@ -50,7 +50,10 @@ public class PerformanceSpecification implements Specification<Performance> {
         final var predicates = new ArrayList<Predicate>();
 
         if (start != null) {
-            predicates.add(builder.equal(root.get("performanceStart"), start));
+            LocalDateTime before = start.minusHours(1);
+            LocalDateTime after = start.plusHours(1);
+
+            predicates.add(builder.between(root.get("performanceStart"), before, after));
         }
 
         if (duration != null && !duration.isZero()) {
