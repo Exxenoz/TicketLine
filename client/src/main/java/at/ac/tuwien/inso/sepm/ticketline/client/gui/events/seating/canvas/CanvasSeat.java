@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
 public class CanvasSeat implements CanvasComponent {
 
@@ -23,10 +24,14 @@ public class CanvasSeat implements CanvasComponent {
     private final static double ARC_HEIGHT = 8;
 
     private boolean selected;
+    private Paint paint;
 
-    public CanvasSeat(int planX, int planY, double xPos, double yPos) {
+    public CanvasSeat(int planX, int planY, double xPos, double yPos, Paint paint) {
+        this.planX = planX;
+        this.planY = planY;
         this.xPos = xPos + OFFSET_LEFT;
         this.yPos = yPos + OFFSET_TOP;
+        this.paint = paint;
     }
 
     @Override
@@ -40,21 +45,20 @@ public class CanvasSeat implements CanvasComponent {
 
     @Override
     public void draw(GraphicsContext gc) {
-        gc.setFill(Color.DARKGREEN);
-        gc.setStroke(Color.DARKGREEN);
+        gc.setFill(this.paint);
         gc.setLineWidth(1);
         gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
     }
 
     public void drawSelected(GraphicsContext gc) {
         selected = true;
-        gc.setFill(Color.CHARTREUSE);
+        gc.setFill(Color.ROYALBLUE);
         gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
     }
 
     public void drawDeselected(GraphicsContext gc) {
         selected = false;
-        gc.setFill(Color.DARKGREEN);
+        gc.setFill(this.paint);
         gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
     }
 
