@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
 import javax.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static javax.persistence.GenerationType.AUTO;
@@ -56,6 +57,23 @@ public class Seat {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Seat)) return false;
+        Seat seat = (Seat) o;
+        return Objects.equals(getId(), seat.getId()) &&
+            Objects.equals(getPositionX(), seat.getPositionX()) &&
+            Objects.equals(getPositionY(), seat.getPositionY()) &&
+            Objects.equals(getSector(), seat.getSector());
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(getId(), getPositionX(), getPositionY(), getSector());
+    }
+
+    @Override
     public String toString() {
         return "Seat{" +
             "id=" + id +
@@ -65,22 +83,25 @@ public class Seat {
             '}';
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Seat seat = (Seat) o;
-
-        return Objects.equals(id, seat.id) &&
-            Objects.equals(positionX, seat.positionX) &&
-            Objects.equals(positionY, seat.positionY) &&
-            Objects.equals(sector, seat.sector);
+    public static Seat.SeatBuilder builder() {
+        return new Seat.SeatBuilder();
     }
 
-    @Override
-    public int hashCode() {
+    public static final class SeatBuilder {
+        private Long id;
 
-        return Objects.hash(id, positionX, positionY, sector);
+        private SeatBuilder() {
+        }
+
+        public Seat.SeatBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Seat build() {
+            Seat seat = new Seat();
+            seat.setId(id);
+            return seat;
+        }
     }
 }

@@ -15,17 +15,17 @@ CREATE TABLE IF NOT EXISTS Authorities (
 );
 
 -- user
-MERGE INTO Users (username, password)
+MERGE INTO Users (username, password, enabled, strikes)
 KEY (username)
-VALUES ('user', '$2a$10$hXJx1IBhxH2fcTa/NR2ZMetAKy.4w3SoWeJm7FiEjK6XjOOtyRQmO');
+VALUES ('user', '$2a$10$hXJx1IBhxH2fcTa/NR2ZMetAKy.4w3SoWeJm7FiEjK6XjOOtyRQmO', TRUE, 0);
 MERGE INTO Authorities (username, authority)
 KEY (username, authority)
 VALUES ('user', 'USER');
 
 -- admin
-MERGE INTO Users (username, password)
+MERGE INTO Users (username, password, enabled, strikes)
 KEY (username)
-VALUES ('admin', '$2a$10$hXJx1IBhxH2fcTa/NR2ZMetAKy.4w3SoWeJm7FiEjK6XjOOtyRQmO');
+VALUES ('admin', '$2a$10$hXJx1IBhxH2fcTa/NR2ZMetAKy.4w3SoWeJm7FiEjK6XjOOtyRQmO', TRUE, 0);
 MERGE INTO Authorities (username, authority)
 KEY (username, authority)
 VALUES ('admin', 'USER');
@@ -34,17 +34,17 @@ KEY (username, authority)
 VALUES ('admin', 'ADMIN');
 
 -- Horst Gruntz
-MERGE INTO Users (username, password, enabled)
+MERGE INTO Users (username, password, enabled, strikes)
 KEY (username)
-VALUES ('hgruntz', '$2a$10$hXJx1IBhxH2fcTa/NR2ZMetAKy.4w3SoWeJm7FiEjK6XjOOtyRQmO', FALSE);
+VALUES ('hgruntz', '$2a$10$hXJx1IBhxH2fcTa/NR2ZMetAKy.4w3SoWeJm7FiEjK6XjOOtyRQmO', FALSE, 0);
 MERGE INTO Authorities (username, authority)
 KEY (username, authority)
 VALUES ('hgruntz', 'USER');
 
 -- Ursel Zahnweh
-MERGE INTO Users (username, password)
+MERGE INTO Users (username, password, enabled, strikes)
 KEY (username)
-VALUES ('uzahnweh', '$2a$10$hXJx1IBhxH2fcTa/NR2ZMetAKy.4w3SoWeJm7FiEjK6XjOOtyRQmO');
+VALUES ('uzahnweh', '$2a$10$hXJx1IBhxH2fcTa/NR2ZMetAKy.4w3SoWeJm7FiEjK6XjOOtyRQmO', TRUE, 0);
 MERGE INTO Authorities (username, authority)
 KEY (username, authority)
 VALUES ('uzahnweh', 'USER');

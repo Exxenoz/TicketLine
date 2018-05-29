@@ -6,8 +6,10 @@ import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository
 import at.ac.tuwien.inso.sepm.ticketline.server.service.PerformanceService;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +34,7 @@ public class SimplePerformanceService implements PerformanceService {
         return performanceRepository.findByEventId(eventID);
     }
 
+    @Override
     public List<Performance> search(SearchDTO search) {
         Example<Performance> example = getPerformanceExample(search);
 
@@ -53,16 +56,16 @@ public class SimplePerformanceService implements PerformanceService {
         performance.setPerformanceEnd(performanceEnd);
         performance.setPrice(search.getPrice());
 
+        Artist artist = new Artist(search.getArtistFirstName(), search.getArtistLastName());
+        Set<Artist> artists = new HashSet<>();
+        artists.add(artist);
+
         Event event = new Event();
         event.setName(search.getEventName());
 
         if (search.getEventType() != null) {
             event.setEventType(EventType.valueOf(search.getEventType().toString()));
         }
-
-        Artist artist = new Artist(search.getArtistFirstName(), search.getArtistLastName());
-        Set<Artist> artists = new HashSet<>();
-        artists.add(artist);
 
         LocationAddress locationAddress = new LocationAddress();
         locationAddress.setLocationName(search.getLocationName());
@@ -71,8 +74,8 @@ public class SimplePerformanceService implements PerformanceService {
         locationAddress.setCountry(search.getCountry());
         locationAddress.setPostalCode(search.getPostalCode());
 
-        event.setArtists(artists);
         performance.setEvent(event);
+        performance.setArtists(artists);
         performance.setLocationAddress(locationAddress);
 
         //adding special checks - no case sensitivity, allow searching for parts of names

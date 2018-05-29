@@ -45,4 +45,9 @@ public class SimpleCustomerService implements CustomerService {
         List<CustomerDTO> customerDTOList = customerMapper.customerToCustomerDTO(customerPage.getContent());
         return new PageResponseDTO<>(customerDTOList, customerPage.getTotalPages());
     }
+
+    @Override
+    public Customer findOneById(Long id) {
+        return customerRepository.getOne(id);
+    }
 }

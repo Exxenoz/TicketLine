@@ -1,5 +1,6 @@
-package at.ac.tuwien.inso.sepm.ticketline.server.datagenerator;
+package at.ac.tuwien.inso.sepm.ticketline.server.datagenerator.legacy;
 
+import at.ac.tuwien.inso.sepm.ticketline.server.datagenerator.DataGenerator;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Seat;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Sector;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.SeatRepository;

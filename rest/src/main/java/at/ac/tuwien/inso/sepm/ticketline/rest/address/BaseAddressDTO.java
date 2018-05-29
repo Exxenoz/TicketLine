@@ -61,10 +61,10 @@ public class BaseAddressDTO {
     @Override
     public String toString() {
         return "BaseAddressDTO{" +
-            "street='" + street + '\'' +
-            ", city='" + city + '\'' +
-            ", country='" + country + '\'' +
-            ", postalCode='" + postalCode + '\'' +
+            " street= " + street +
+            ", city= " + city +
+            ", country= " + country +
+            ", postalCode= " + postalCode +
             '}';
     }
 

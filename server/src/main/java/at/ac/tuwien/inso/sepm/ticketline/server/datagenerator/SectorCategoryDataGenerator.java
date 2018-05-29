@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 
 @Profile("generateData")
 @Component
-@Order(1)
+@Order(4)
 public class SectorCategoryDataGenerator implements DataGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());

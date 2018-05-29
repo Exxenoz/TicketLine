@@ -10,6 +10,10 @@ import java.util.List;
 
 public interface PerformanceMapper {
 
+    Performance performanceDTOToPerformance(PerformanceDTO performanceDTO);
+
+    PerformanceDTO performanceToPerformanceDTO(Performance performance);
+
     List<Performance> performanceDTOToPerformance(List<PerformanceDTO> all);
 
     List<PerformanceDTO> performanceToPerformanceDTO(List<Performance> all);

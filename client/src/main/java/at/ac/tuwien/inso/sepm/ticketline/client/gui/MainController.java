@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.customers.CustomerController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.news.NewsController;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.reservations.ReservationsController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.users.UsersController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationInformationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
@@ -52,6 +53,7 @@ public class MainController {
     private EventController eventController;
     private UsersController usersController;
     private CustomerController customerController;
+    private ReservationsController reservationsController;
 
     public MainController(
         SpringFxmlLoader springFxmlLoader,
@@ -76,6 +78,7 @@ public class MainController {
         spMainContent.getChildren().add(login);
         initNewsTabPane();
         initEventsTabPane();
+        initReservationTabPane();
         initUserManageTabPane();
         initCustomersTabPane();
     }
@@ -123,6 +126,18 @@ public class MainController {
         tpContent.getTabs().add(eventsTab);
     }
 
+    private void initReservationTabPane(){
+        SpringFxmlLoader.Wrapper<ReservationsController> wrapperEvents =
+            springFxmlLoader.loadAndWrap("/fxml/reservations/reservationMain.fxml");
+        reservationsController = wrapperEvents.getController();
+        final var reservationsTab = new Tab(null, wrapperEvents.getLoadedObject());
+        final var reservationsGlyph = fontAwesome.create(TICKET);
+        reservationsGlyph.setFontSize(TAB_ICON_FONT_SIZE);
+        reservationsGlyph.setColor(Color.WHITE);
+        reservationsTab.setGraphic(reservationsGlyph);
+        tpContent.getTabs().add(reservationsTab);
+    }
+
     private void initUserManageTabPane() {
         SpringFxmlLoader.Wrapper<UsersController> wrapper =
             springFxmlLoader.loadAndWrap("/fxml/users/usersMain.fxml");
@@ -152,7 +167,8 @@ public class MainController {
             spMainContent.getChildren().remove(login);
             newsController.loadNews();
             eventController.loadData();
-            usersController.loadUsers(0);
+            reservationsController.loadData();
+            usersController.loadUsers();
             customerController.loadCustomers();
         } else {
             if (!spMainContent.getChildren().contains(login)) {

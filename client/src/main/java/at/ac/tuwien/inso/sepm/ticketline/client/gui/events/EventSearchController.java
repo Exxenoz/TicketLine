@@ -1,6 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
@@ -28,11 +29,16 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+import static org.controlsfx.glyphfont.FontAwesome.Glyph.CALENDAR_ALT;
+
 @Component
 public class EventSearchController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     // ---------- Show all and search tab -----------
+
+    @FXML
+    private TabHeaderController tabHeaderController;
 
     @FXML
     private TabPane eventTabPane;
@@ -129,7 +135,6 @@ public class EventSearchController {
 
     @FXML
     private void initialize() {
-
         SpinnerValueFactory<Integer> beginTimeHoursFactory = buildSpinner(23);
         SpinnerValueFactory<Integer> beginTimeMinutesFactory = buildSpinner(59);
         seatingYesButton.setSelected(false);
@@ -140,6 +145,9 @@ public class EventSearchController {
 
         beginTimeHourSpinner.setValueFactory(beginTimeHoursFactory);
         beginTimeMinuteSpinner.setValueFactory(beginTimeMinutesFactory);
+
+        tabHeaderController.setIcon(CALENDAR_ALT);
+        tabHeaderController.setTitle("Events");
     }
 
     public void loadData() {
@@ -186,7 +194,6 @@ public class EventSearchController {
             }
         };
     }
-
 
     @FXML
     private void bookPerformance(ActionEvent event) {

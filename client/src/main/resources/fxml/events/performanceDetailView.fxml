@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.text.Font?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="503.0" prefWidth="688.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.PerformanceDetailViewController">
+<AnchorPane prefHeight="427.0" prefWidth="688.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.PerformanceDetailViewController">
    <children>
-      <Label fx:id="performanceHeader" layoutX="268.0" layoutY="81.0" text="Event Name">
+      <Label fx:id="performanceHeader" layoutX="268.0" layoutY="73.0" text="Event Name">
          <font>
             <Font name="System Bold" size="21.0" />
          </font>
       </Label>
-      <GridPane layoutX="204.0" layoutY="148.0" prefHeight="138.0" prefWidth="280.0">
+      <GridPane layoutX="71.0" layoutY="143.0" prefHeight="135.0" prefWidth="563.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="240.0" minWidth="10.0" prefWidth="140.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="336.0" minWidth="10.0" prefWidth="140.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="240.0" minWidth="10.0" prefWidth="136.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="430.0" minWidth="10.0" prefWidth="427.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -31,20 +27,21 @@
             <Label text="Start Time:" GridPane.rowIndex="1" />
             <Label fx:id="locationName" text="Location Name, City" GridPane.columnIndex="1" />
             <Label fx:id="startTime" text="Date and Time" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label text="Artist:" GridPane.rowIndex="2" />
+            <Label text="Performing Artists:" GridPane.rowIndex="2" />
             <Label fx:id="artistNamePerformance" text="Artist Name" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
       </GridPane>
-      <Label fx:id="performancePrice" layoutX="535.0" layoutY="321.0" text="100€">
+      <Label fx:id="performancePrice" layoutX="535.0" layoutY="313.0" text="100€">
          <font>
             <Font size="19.0" />
          </font>
       </Label>
-      <Label layoutX="410.0" layoutY="327.0" text="Tickets starting at" />
-      <HBox layoutX="415.0" layoutY="379.0" spacing="15.0">
+      <Label layoutX="410.0" layoutY="319.0" text="Tickets starting at" />
+      <HBox layoutX="326.0" layoutY="373.0" prefHeight="27.0" prefWidth="255.0" spacing="15.0">
          <children>
-            <Button fx:id="eventButtonPerformance" mnemonicParsing="false" onAction="#changeToEventDetailView" text="Event" />
-            <Button fx:id="bookButtonPerformance" mnemonicParsing="false" onAction="#bookPerformance" text="Book Tickets" />
+            <Button fx:id="eventButtonPerformance" mnemonicParsing="false" onAction="#backButton" text="Back" />
+            <Button fx:id="bookButtonPerformance" mnemonicParsing="false" onAction="#changeToEventDetailView" text="Event Details" />
+            <Button fx:id="eventButtonPerformance1" mnemonicParsing="false" onAction="#continueButton" text="Continue" />
          </children>
       </HBox>
    </children>

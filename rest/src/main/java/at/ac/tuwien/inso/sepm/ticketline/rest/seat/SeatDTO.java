@@ -21,6 +21,14 @@ public class SeatDTO {
     @ApiModelProperty(required = true, readOnly = true, name = "The sector of the seat")
     private SectorDTO sector;
 
+    public SeatDTO() {}
+
+    public SeatDTO(Integer positionX, Integer positionY, SectorDTO sector) {
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.sector = sector;
+    }
+
     public Long getId() {
         return id;
     }

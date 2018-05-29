@@ -1,11 +1,13 @@
 package at.ac.tuwien.inso.sepm.ticketline.rest.reservation;
 
-import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @ApiModel(value = "ReservationDTO", description = "The reservation DTO for reservation entries via rest")
@@ -14,21 +16,23 @@ public class ReservationDTO {
     @ApiModelProperty(readOnly = true, name = "The automatically generated database id")
     private Long id;
 
-    // ToDo: Add customer DTO
-    //@ApiModelProperty(required = true, readOnly = true, name = "The customer of the reservation")
-    //private CustomerDTO customer;
+    @ApiModelProperty(required = true, readOnly = true, name = "The customer of the reservation")
+    private CustomerDTO customer;
 
     @ApiModelProperty(required = true, readOnly = true, name = "The performance of the reservation")
     private PerformanceDTO performance;
 
     @ApiModelProperty(required = true, readOnly = true, name = "The seat of the reservation")
-    private SeatDTO seat;
+    private List<SeatDTO> seats;
 
     @ApiModelProperty(required = true, readOnly = true, name = "The pay state of the reservation")
     private Boolean isPaid;
 
     @ApiModelProperty(required = true, readOnly = true, name = "The date and time when the reservation was paid")
     private LocalDateTime paidAt;
+
+    @ApiModelProperty(required = true, readOnly = true, name = "The date and time when the reservation was paid")
+    private String reservationNumber;
 
     public Long getId() {
         return id;
@@ -46,12 +50,12 @@ public class ReservationDTO {
         this.performance = performance;
     }
 
-    public SeatDTO getSeat() {
-        return seat;
+    public List<SeatDTO> getSeats() {
+        return seats;
     }
 
-    public void setSeat(SeatDTO seat) {
-        this.seat = seat;
+    public void setSeats(List<SeatDTO> seats) {
+        this.seats = seats;
     }
 
     public Boolean isPaid() {
@@ -70,12 +74,21 @@ public class ReservationDTO {
         this.paidAt = paidAt;
     }
 
+    public String getReservationNumber() {
+        return reservationNumber;
+    }
+
+    public void setReservationNumber(String reservationNumber) {
+        this.reservationNumber = reservationNumber;
+    }
+
     @Override
     public String toString() {
         return "ReservationDTO{" +
             "id=" + id +
+            ", reservationNumber=" + reservationNumber +
             ", performance=" + performance +
-            ", seat=" + seat +
+            ", seat=" + seats +
             ", isPaid=" + isPaid +
             ", paidAt=" + paidAt +
             '}';
@@ -90,14 +103,84 @@ public class ReservationDTO {
 
         return Objects.equals(id, that.id) &&
             Objects.equals(performance, that.performance) &&
-            Objects.equals(seat, that.seat) &&
+            Objects.equals(seats, that.seats) &&
             Objects.equals(isPaid, that.isPaid) &&
+            Objects.equals(reservationNumber, that.reservationNumber) &&
             Objects.equals(paidAt, that.paidAt);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, performance, seat, isPaid, paidAt);
+        return Objects.hash(id, performance, seats, isPaid, paidAt, reservationNumber);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public CustomerDTO getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(CustomerDTO customer) {
+        this.customer = customer;
+    }
+
+    public static final class Builder {
+        private Long id;
+        private CustomerDTO customer;
+        private PerformanceDTO performance;
+        private List<SeatDTO> seats;
+        private Boolean isPaid;
+        private LocalDateTime paidAt;
+
+        private Builder() {
+        }
+
+        public static Builder aReservationDTO() {
+            return new Builder();
+        }
+
+        public Builder withId(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder withCustomer(CustomerDTO customer) {
+            this.customer = customer;
+            return this;
+        }
+
+        public Builder withPerformance(PerformanceDTO performance) {
+            this.performance = performance;
+            return this;
+        }
+
+        public Builder withSeats(List<SeatDTO> seats) {
+            this.seats = seats;
+            return this;
+        }
+
+        public Builder withIsPaid(Boolean isPaid) {
+            this.isPaid = isPaid;
+            return this;
+        }
+
+        public Builder withPaidAt(LocalDateTime paidAt) {
+            this.paidAt = paidAt;
+            return this;
+        }
+
+        public ReservationDTO build() {
+            ReservationDTO reservationDTO = new ReservationDTO();
+            reservationDTO.setId(id);
+            reservationDTO.setPerformance(performance);
+            reservationDTO.setSeats(seats);
+            reservationDTO.setPaidAt(paidAt);
+            reservationDTO.customer = this.customer;
+            reservationDTO.isPaid = this.isPaid;
+            return reservationDTO;
+        }
     }
 }

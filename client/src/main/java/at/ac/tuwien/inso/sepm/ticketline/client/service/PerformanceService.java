@@ -9,8 +9,19 @@ import java.util.List;
 
 public interface PerformanceService {
 
+    /**
+     * Finds a list of all performances currently in the database.
+     * @return list of all performances
+     * @throws DataAccessException
+     */
     List<PerformanceDTO> findAll() throws DataAccessException;
 
+    /**
+     * Finds a list of all performances that match the given search criteria.
+     * @param searchDTO a DTO that contains all the given search criteria
+     * @return returns a list of the matching performances
+     * @throws DataAccessException in case something went wrong while trying to retrieve the performances from the database
+     */
     List<PerformanceDTO> search(SearchDTO searchDTO) throws DataAccessException;
 
     /**

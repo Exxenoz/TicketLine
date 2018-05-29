@@ -30,9 +30,9 @@ public class NewsDataGenerator implements DataGenerator {
     @Override
     public void generate() {
         if (newsRepository.count() > 0) {
-            LOGGER.info("news already generated");
+            LOGGER.info("News already generated");
         } else {
-            LOGGER.info("generating {} news entries", NUMBER_OF_NEWS_TO_GENERATE);
+            LOGGER.info("Generating {} news entries", NUMBER_OF_NEWS_TO_GENERATE);
             for (int i = 0; i < NUMBER_OF_NEWS_TO_GENERATE; i++) {
                 final var news = News.builder()
                     .title(faker.lorem().characters(25, 100))
@@ -45,7 +45,7 @@ public class NewsDataGenerator implements DataGenerator {
                             ZoneId.systemDefault()
                         ))
                     .build();
-                LOGGER.debug("saving news {}", news);
+                LOGGER.debug("Saving news {}", news);
                 newsRepository.save(news);
             }
         }
