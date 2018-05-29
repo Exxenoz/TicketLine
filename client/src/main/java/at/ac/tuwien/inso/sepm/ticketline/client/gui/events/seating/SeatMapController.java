@@ -9,6 +9,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.sector.SectorDTO;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.List;
 
 @Component
 public class SeatMapController {
@@ -24,6 +26,10 @@ public class SeatMapController {
 
     @FXML
     private Canvas seatMapCanvas;
+
+    @FXML
+    private ScrollPane seatMapScrollPane;
+
     private GraphicsContext gc;
 
     private Map<SectorDTO, List<CanvasSeat>> sectorSeatMap;
