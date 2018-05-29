@@ -68,7 +68,7 @@
                                         </TitledPane>
                                     </panes>
                                 </Accordion>
-                                <Button fx:id="searchButton" mnemonicParsing="false" onAction="#searchForReservations" text="%bookings.main.button.search" VBox.vgrow="ALWAYS">
+                                <Button fx:id="searchButton" mnemonicParsing="false" onAction="#searchForReservations" text="%bookings.main.button.search" VBox.vgrow="ALWAYS" disable="true">
                                     <VBox.margin>
                                         <Insets bottom="10.0" right="10.0" />
                                     </VBox.margin>
