@@ -85,10 +85,19 @@ public class Reservation {
         this.customer = customer;
     }
 
+    public String getReservationNumber() {
+        return reservationNumber;
+    }
+
+    public void setReservationNumber(String reservationNumber) {
+        this.reservationNumber = reservationNumber;
+    }
+
     @Override
     public String toString() {
         return "Reservation{" +
             "id=" + id +
+            ", reservationNumber=" + reservationNumber +
             ", customer=" + customer +
             ", performance=" + performance +
             ", seats=" + seats +
@@ -103,6 +112,7 @@ public class Reservation {
         if (o == null || getClass() != o.getClass()) return false;
         Reservation that = (Reservation) o;
         return Objects.equals(id, that.id) &&
+            Objects.equals(reservationNumber, that.reservationNumber) &&
             Objects.equals(customer, that.customer) &&
             Objects.equals(performance, that.performance) &&
             Objects.equals(seats, that.seats) &&
@@ -113,7 +123,7 @@ public class Reservation {
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, customer, performance, seats, paid, paidAt);
+        return Objects.hash(id, customer, performance, seats, paid, paidAt, reservationNumber);
     }
 
     public static final class Builder {
@@ -123,6 +133,7 @@ public class Reservation {
         private List<Seat> seats;
         private Boolean paid;
         private LocalDateTime paidAt;
+        private String reservationNumber;
 
         private Builder() {
         }
@@ -161,6 +172,11 @@ public class Reservation {
             return this;
         }
 
+        public Builder withReservationNumber(String reservationNumber) {
+            this.reservationNumber = reservationNumber;
+            return this;
+        }
+
         public Reservation build() {
             Reservation reservation = new Reservation();
             reservation.setId(id);
@@ -169,6 +185,7 @@ public class Reservation {
             reservation.setSeats(seats);
             reservation.setPaid(paid);
             reservation.setPaidAt(paidAt);
+            reservation.setReservationNumber(reservationNumber);
             return reservation;
         }
     }
