@@ -4,7 +4,6 @@ import at.ac.tuwien.inso.sepm.ticketline.client.gui.customers.CustomerController
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.news.NewsController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.reservations.ReservationsController;
-import at.ac.tuwien.inso.sepm.ticketline.client.gui.users.UsersController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.users.UserController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationInformationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;

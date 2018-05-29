@@ -6,6 +6,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationToken
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpBadRequestException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpForbiddenException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpLockedException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpUnauthorizedException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.HeaderTokenAuthenticationService;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.implementation.SimpleHeaderTokenAuthenticationService;
@@ -42,7 +43,7 @@ public class AuthenticationEndpoint {
         } catch (InternalPasswordResetException e) {
             throw new HttpLockedException();
         } catch (InternalUserPasswordWrongException e) {
-            throw new HttpForbiddenException();
+            throw new HttpUnauthorizedException();
         }
         return token;
     }

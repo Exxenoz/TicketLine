@@ -234,7 +234,7 @@ public class UserController {
                 var httpErrorCode = ((HttpStatusCodeException) e.getCause()).getStatusCode();
                 if (httpErrorCode == HttpStatus.FORBIDDEN) {
                     LOGGER.debug("The current user doesnt have the authorization to load the users-list");
-                    mainController.getTpContent().getTabs().get(3).setDisable(true);
+                    mainController.getTpContent().getTabs().get(4).setDisable(true);
                 } else {
                     JavaFXUtils.createExceptionDialog(e,
                         content.getScene().getWindow()).showAndWait();

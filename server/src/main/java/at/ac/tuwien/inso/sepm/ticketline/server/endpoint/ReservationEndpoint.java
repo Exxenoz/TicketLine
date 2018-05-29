@@ -11,13 +11,12 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationSearchMapper;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidRequestException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpBadRequestException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -96,7 +95,7 @@ public class ReservationEndpoint {
 
             return reservationMapper.reservationToReservationDTO(reservations);
         } catch (ReservationSearchValidationException e) {
-            throw new InvalidRequestException();
+            throw new HttpBadRequestException();
         }
     }
 
