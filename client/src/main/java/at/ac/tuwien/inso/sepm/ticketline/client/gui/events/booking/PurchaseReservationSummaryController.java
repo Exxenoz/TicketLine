@@ -28,6 +28,7 @@ public class PurchaseReservationSummaryController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public Button buyButtonPRS;
+    public Button cancelButtonPRS;
     private final HallPlanController hallPlanController;
 
     public Label performancePrice;
@@ -42,7 +43,6 @@ public class PurchaseReservationSummaryController {
     private ReservationDTO reservation;
     private final ReservationService reservationService;
     private boolean isReservation = false;
-    public Button cancelButtonPRS;
     private boolean showDetails = false;
 
     PurchaseReservationSummaryController(
@@ -74,6 +74,13 @@ public class PurchaseReservationSummaryController {
             //make sure the reservation is still unpaid
             if (!reservation.isPaid()) {
                 cancelButtonPRS.setText("Edit Reservation");
+            } else{
+                cancelButtonPRS.setDisable(true);
+                cancelButtonPRS.setVisible(false);
+                cancelButtonPRS.setManaged(false);
+                buyButtonPRS.setDisable(true);
+                buyButtonPRS.setVisible(false);
+                buyButtonPRS.setManaged(false);
             }
         }
 
@@ -90,10 +97,10 @@ public class PurchaseReservationSummaryController {
 
 
         //only reserve tickets
-        if (isReservation) {
+        if (!showDetails && isReservation) {
             reservationService.createNewReservation(createReservationDTO);
             closeWindow();
-        } else {
+        } else if (!showDetails){
             //reserve and buy tickets
             reservationService.createAndPayReservation(createReservationDTO);
 
@@ -102,10 +109,8 @@ public class PurchaseReservationSummaryController {
             alert.setHeaderText("Congratulations! Your Purchase was successful!" + "\n" + "Do you want to print the invoice?");
             alert.showAndWait();
             closeWindow();
-        }
-
-        //buy reserved tickets
-        if (showDetails) {
+        } else {
+            //buy already reserved tickets
             reservationService.purchaseReservation(reservation);
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -128,10 +133,14 @@ public class PurchaseReservationSummaryController {
     }
 
     public void backButton(ActionEvent event) {
-        Parent parent = fxmlLoader.load("/fxml/events/book/selectCustomerView.fxml");
-        stage.setScene(new Scene(parent));
-        stage.setTitle("Customer Details");
-        stage.centerOnScreen();
+        if(showDetails){
+            closeWindow();
+        }else {
+            Parent parent = fxmlLoader.load("/fxml/events/book/selectCustomerView.fxml");
+            stage.setScene(new Scene(parent));
+            stage.setTitle("Customer Details");
+            stage.centerOnScreen();
+        }
     }
 
     private void closeWindow() {

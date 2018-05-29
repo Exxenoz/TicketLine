@@ -1,10 +1,12 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.reservations;
 
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking.PurchaseReservationSummaryController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.property.SimpleStringProperty;
@@ -24,14 +26,8 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpStatusCodeException;
-
 import java.lang.invoke.MethodHandles;
-import java.util.Collections;
-import java.util.List;
 
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.TICKET;
 
@@ -48,8 +44,8 @@ public class ReservationsSearchController {
     public TableView<ReservationDTO> foundReservationsTableView;
     public Button showReservationDetailsButton;
     private final SpringFxmlLoader fxmlLoader;
-    private List<ReservationDTO> reservations;
     private ObservableList<ReservationDTO> reservationDTOS = FXCollections.observableArrayList();
+
 
     @FXML
     private TabHeaderController tabHeaderController;
@@ -69,32 +65,7 @@ public class ReservationsSearchController {
     private void initialize() {
         tabHeaderController.setIcon(TICKET);
         tabHeaderController.setTitle(BundleManager.getBundle().getString("bookings.tab.header"));
-    }
-
-
-    public void loadData() {
-        //TODO:load all reservations
-        reservations = Collections.emptyList();
         initializeTableView();
-    }
-
-    private void clear() {
-        LOGGER.debug("clearing the data");
-        reservationDTOS.clear();
-        page = 0;
-    }
-
-    private ScrollBar getVerticalScrollbar(TableView<?> table) {
-        ScrollBar result = null;
-        for (Node n : table.lookupAll(".scroll-bar")) {
-            if (n instanceof ScrollBar) {
-                ScrollBar bar = (ScrollBar) n;
-                if (bar.getOrientation().equals(Orientation.VERTICAL)) {
-                    result = bar;
-                }
-            }
-        }
-        return result;
     }
 
     public void loadReservations() {
@@ -119,19 +90,7 @@ public class ReservationsSearchController {
         }
     }
 
-    private String getColumnNameBy(TableColumn<ReservationDTO, ?> sortedColumn) {
-        if (sortedColumn == eventColumn) {
-            return "eventName";
-        } else if (sortedColumn == customerColumn) {
-            return "customerName";
-        } else if (sortedColumn == paidColumn) {
-            return "status";
-        }
-        return "id";
-    }
-
     public void loadPerformanceTable(int page){
-        /**
         PageRequestDTO pageRequestDTO = null;
         if (foundReservationsTableView.getSortOrder().size() > 0) {
             TableColumn<ReservationDTO, ?> sortedColumn = foundReservationsTableView.getSortOrder().get(0);
@@ -142,30 +101,25 @@ public class ReservationsSearchController {
         }
 
         try {
-            PageResponseDTO<DTO> response = userService.findAll(pageRequestDTO);
-            items.addAll(response.getContent());
+            PageResponseDTO<ReservationDTO> response = reservationService.findAll(pageRequestDTO);
+            reservationDTOS.addAll(response.getContent());
             totalPages = response.getTotalPages();
         } catch (DataAccessException e) {
-            if ((e.getCause().getClass()) == HttpClientErrorException.class) {
-                var httpErrorCode = ((HttpStatusCodeException) e.getCause()).getStatusCode();
-                if (httpErrorCode == HttpStatus.FORBIDDEN) {
-                    LOGGER.warn("The current user doesnt have the authorization to load the users-list");
-                    mainController.getTpContent().getTabs().get(2).setDisable(true);
-                } else {
-                    JavaFXUtils.createExceptionDialog(e,
-                        content.getScene().getWindow()).showAndWait();
-                }
-            } else {
-                JavaFXUtils.createExceptionDialog(e,
-                    content.getScene().getWindow()).showAndWait();
-            }
+            LOGGER.error("Couldn't fetch performances from server!", e);
         }
-
-        userTable.refresh();
-         */
+        foundReservationsTableView.refresh();
     }
 
-
+    private String getColumnNameBy(TableColumn<ReservationDTO, ?> sortedColumn) {
+        if (sortedColumn == eventColumn) {
+            return "eventName";
+        } else if (sortedColumn == customerColumn) {
+            return "customerName";
+        } else if (sortedColumn == paidColumn) {
+            return "status";
+        }
+        return "id";
+    }
 
     private void initializeTableView() {
 
@@ -179,14 +133,32 @@ public class ReservationsSearchController {
         paidColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
             cellData.getValue().isPaid().toString()));
 
-        ObservableList<ReservationDTO> reservationData = FXCollections.observableArrayList(reservations);
-        foundReservationsTableView.setItems(reservationData);
+        foundReservationsTableView.setItems(reservationDTOS);
+    }
+
+    private ScrollBar getVerticalScrollbar(TableView<?> table) {
+        ScrollBar result = null;
+        for (Node n : table.lookupAll(".scroll-bar")) {
+            if (n instanceof ScrollBar) {
+                ScrollBar bar = (ScrollBar) n;
+                if (bar.getOrientation().equals(Orientation.VERTICAL)) {
+                    result = bar;
+                }
+            }
+        }
+        return result;
+    }
+
+    private void clear() {
+        LOGGER.debug("clearing the data");
+        reservationDTOS.clear();
+        page = 0;
     }
 
     public void showReservationDetailsButton() {
         Stage stage = new Stage();
         int row = foundReservationsTableView.getSelectionModel().getFocusedIndex();
-        PRSController.showReservationDetails(reservations.get(row), stage);
+        PRSController.showReservationDetails(reservationDTOS.get(row), stage);
 
         Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
 
