@@ -7,6 +7,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.performance.Perfor
 import at.ac.tuwien.inso.sepm.ticketline.server.service.PerformanceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,18 +30,21 @@ public class PerformanceEndpoint {
 
     @GetMapping
     @ApiOperation("Get a list of all performances")
+    @PreAuthorize("hasRole('USER')")
     public List<PerformanceDTO> findAll() {
         return performanceMapper.performanceToPerformanceDTO(performanceService.findAll());
     }
 
     @GetMapping("findByEventID/{eventID}")
     @ApiOperation("Get a list of all the performances of a given event")
+    @PreAuthorize("hasRole('USER')")
     public List<PerformanceDTO> findByEventID(@PathVariable("eventID") Long eventID) {
         return performanceMapper.performanceToPerformanceDTO(performanceService.findByEventID(eventID));
     }
 
     @GetMapping("search")
     @ApiOperation("Get a list of all the performances that match the given criteria")
+    @PreAuthorize("hasRole('USER')")
     public List<PerformanceDTO> search(SearchDTO search) {
         return performanceMapper.performanceToPerformanceDTO(performanceService.search(search));
     }

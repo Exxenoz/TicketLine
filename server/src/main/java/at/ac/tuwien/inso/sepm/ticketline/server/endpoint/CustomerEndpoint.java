@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.MethodHandles;
@@ -34,6 +35,7 @@ public class CustomerEndpoint {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Add new customer")
     public CustomerDTO save(@RequestBody final CustomerDTO customerDTO) {
         try {
@@ -44,6 +46,7 @@ public class CustomerEndpoint {
     }
 
     @PostMapping("/update")
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Add new customer")
     public CustomerDTO update(@RequestBody final CustomerDTO customerDTO) {
         try {
@@ -54,6 +57,7 @@ public class CustomerEndpoint {
     }
 
     @PostMapping()
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Get page of customer entries")
     public PageResponseDTO<CustomerDTO> findAll(@RequestBody final PageRequestDTO pageRequestDTO) {
         return customerService.findAll(pageRequestDTO.getPageable());

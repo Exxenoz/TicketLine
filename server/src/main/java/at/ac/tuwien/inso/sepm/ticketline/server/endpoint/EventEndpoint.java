@@ -11,6 +11,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.event.EventRespons
 import at.ac.tuwien.inso.sepm.ticketline.server.service.EventService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,12 +40,14 @@ public class EventEndpoint {
     }
 
     @GetMapping("findByPerformanceID/{performanceID}")
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Get the event of a given performance")
     public EventDTO findByPerformanceID(@PathVariable("performanceID") Long performanceID) {
         return eventMapper.eventToEventDTO(eventService.findByPerformanceID(performanceID));
     }
 
     @PostMapping("/top_ten")
+    @PreAuthorize("hasRole('USER')")
     public List<EventResponseTopTenDTO> findTopTenByMonthAndCategory(@RequestBody final EventRequestTopTenDTO eventRequestTopTenDTO) {
         var eventRequestTopTen = eventRequestTopTenMapper.eventRequestTopTenDTOToEventRequestTopTen(eventRequestTopTenDTO);
         return eventResponseTopTenMapper.eventResponseTopTenToEventResponseTopTenDTO(eventService.findTopTenByMonthAndCategory(eventRequestTopTen));
