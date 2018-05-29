@@ -17,6 +17,6 @@ public class ReservationsController {
     private void initialize() {}
 
     public void loadData() {
-        bookingSearchController.loadData();
+        bookingSearchController.loadReservations();
     }
 }
