@@ -11,7 +11,7 @@ public abstract class UserValidator {
     //validates newly created user
     public static void validateNewUser(UserDTO userDTO) throws UserValidatorException {
         validateUsername(userDTO);
-        validateEncryptedPassword(userDTO);
+        validatePlainTextPassword(userDTO);
         validateStrikes(userDTO);
         validateRoles(userDTO);
     }
@@ -19,7 +19,10 @@ public abstract class UserValidator {
     //validates existing user
     public static void validateExistingUser(UserDTO userDTO) throws UserValidatorException {
         validateID(userDTO);
-        validateNewUser(userDTO);
+        validateUsername(userDTO);
+        validateEncryptedPassword(userDTO); // ToDo: Remove me
+        validateStrikes(userDTO);
+        validateRoles(userDTO);
     }
 
     public static void validateDTO(UserDTO userDTO) throws UserValidatorException {
@@ -59,6 +62,17 @@ public abstract class UserValidator {
             } else  if (userDTO.getUsername().length() > 30) {
                 throw new UserValidatorException("username validation failed");
             }
+        }
+    }
+
+    public static void validatePlainTextPassword(UserDTO userDTO) throws UserValidatorException {
+        validateDTO(userDTO);
+
+        if (userDTO.getPassword() == null ||
+            userDTO.getPassword().length() < 3 ||
+            userDTO.getPassword().length() > 30 ||
+            !userDTO.getPassword().matches("^[\\x00-\\xFF]*$")) {
+            throw new UserValidatorException("Plain text password validation failed, because it is invalid!");
         }
     }
 

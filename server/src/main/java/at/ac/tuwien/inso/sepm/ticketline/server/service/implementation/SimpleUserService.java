@@ -165,6 +165,9 @@ public class SimpleUserService implements UserService {
         }
 
         var user = userMapper.userDTOToUser(userDTO);
+
+        user.setPassword(new BCryptPasswordEncoder(10).encode(userDTO.getPassword()));
+
         return userMapper.userToUserDTO(userRepository.save(user));
     }
 
