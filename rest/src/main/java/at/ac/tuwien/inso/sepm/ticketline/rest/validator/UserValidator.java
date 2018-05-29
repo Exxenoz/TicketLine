@@ -8,29 +8,19 @@ public abstract class UserValidator {
 
     public static void validateUser(UserDTO userDTO) throws UserValidatorException {
         if (userDTO == null) {
-            throw new UserValidatorException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.user.is_null")
-            );
+            throw new UserValidatorException("User validation failed, because object reference is null!");
         } else {
             if (userDTO.getId() <= 0) {
-                throw new UserValidatorException(
-                    RestBundleManager.getExceptionBundle().getString("exception.validator.user.id_is_negative")
-                );
+                throw new UserValidatorException("User validation failed, because user ID is negative!");
             }
             if (userDTO.getUsername().length() < 3) {
-                throw new UserValidatorException(
-                    RestBundleManager.getExceptionBundle().getString("exception.validator.user.username_too_short")
-                );
+                throw new UserValidatorException("User validation failed, because user name is too short!");
             }
             if (userDTO.getPassword().length() != 60) {
-                throw new UserValidatorException(
-                    RestBundleManager.getExceptionBundle().getString("exception.validator.user.password_invalid_length")
-                );
+                throw new UserValidatorException("User validation failed, because user password has an invalid length!");
             }
             if ((userDTO.getStrikes() < 0) && (userDTO.getStrikes() > 5)) {
-                throw new UserValidatorException(
-                    RestBundleManager.getExceptionBundle().getString("exception.validator.user.invalid_strikes")
-                );
+                throw new UserValidatorException("User validation failed, because user strikes are invalid!");
             }
         }
     }
