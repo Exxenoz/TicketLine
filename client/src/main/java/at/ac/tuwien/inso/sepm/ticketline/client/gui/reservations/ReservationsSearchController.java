@@ -8,6 +8,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -17,10 +18,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollBar;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -35,23 +33,26 @@ import static org.controlsfx.glyphfont.FontAwesome.Glyph.TICKET;
 public class ReservationsSearchController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private final ReservationService reservationService;
-    private final PurchaseReservationSummaryController PRSController;
+    @FXML
+    private TabHeaderController tabHeaderController;
     public TableColumn<ReservationDTO, String> reservationIDColumn;
     public TableColumn<ReservationDTO, String> eventColumn;
     public TableColumn<ReservationDTO, String> customerColumn;
     public TableColumn<ReservationDTO, String> paidColumn;
     public TableView<ReservationDTO> foundReservationsTableView;
     public Button showReservationDetailsButton;
+    public TextField eventNameField;
+    public TextField customerNameField;
+    public TextField performanceNrField;
+
     private final SpringFxmlLoader fxmlLoader;
+    private final ReservationService reservationService;
+    private final PurchaseReservationSummaryController PRSController;
     private ObservableList<ReservationDTO> reservationDTOS = FXCollections.observableArrayList();
-
-
-    @FXML
-    private TabHeaderController tabHeaderController;
     private int page = 0;
     private int totalPages = 0;
     private static final int RESERVATIONS_PER_PAGE = 25;
+    private String activeFilters = "";
 
     public ReservationsSearchController(SpringFxmlLoader fxmlLoader,
                                         ReservationService reservationService,
@@ -124,7 +125,7 @@ public class ReservationsSearchController {
     private void initializeTableView() {
 
         reservationIDColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
-            cellData.getValue().getId().toString()));
+            cellData.getValue().getReservationNumber()));
         eventColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
             cellData.getValue().getPerformance().getEvent().getName()));
         customerColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
@@ -172,6 +173,11 @@ public class ReservationsSearchController {
     }
 
     public void searchForReservations() {
+        String eventName = eventNameField.getText();
+        String customerName = customerNameField.getText();
+        //TODO:finish this
     }
+
+
 
 }
