@@ -42,7 +42,7 @@ public class CustomerController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public static final int CUSTOMERS_PER_PAGE = 20;
+    public static final int CUSTOMERS_PER_PAGE = 30;
     public static final int FIRST_CUSTOMER_TABLE_PAGE = 0;
 
     @FXML
@@ -189,8 +189,14 @@ public class CustomerController {
 
     public void clearCustomerList() {
         customerList.clear();
+
+        ScrollBar scrollBar = getVerticalScrollbar(customerTable);
+        if (scrollBar != null) {
+            scrollBar.setValue(0);
+        }
     }
 
+    @FXML
     public void onClickCreateCustomerButton(ActionEvent actionEvent) {
         LOGGER.debug("Clicked create customer button");
 
@@ -206,6 +212,7 @@ public class CustomerController {
         dialog.showAndWait();
     }
 
+    @FXML
     public void onClickEditCustomerButton(ActionEvent actionEvent) {
         LOGGER.debug("Clicked edit customer button");
 

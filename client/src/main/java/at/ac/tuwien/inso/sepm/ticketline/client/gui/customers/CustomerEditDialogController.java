@@ -77,11 +77,17 @@ public class CustomerEditDialogController {
     private final CustomerController customerController;
     private final CustomerService customerService;
 
-    private CustomerDTO customerToEdit;
+    private CustomerDTO customerToEdit = null;
 
     public CustomerEditDialogController(CustomerController customerController, CustomerService customerService) {
         this.customerController = customerController;
         this.customerService = customerService;
+    }
+
+    @FXML
+    private void initialize() {
+        // Reset customer to edit in case the whole controller object gets recycled...
+        customerToEdit = null;
     }
 
     public void SetCustomerToEdit(CustomerDTO customerToEdit) {
