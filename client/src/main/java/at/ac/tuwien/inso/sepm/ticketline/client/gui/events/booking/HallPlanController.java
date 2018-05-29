@@ -104,10 +104,14 @@ public class HallPlanController implements SeatSelectionListener {
 
     @FXML
     public void backButton(ActionEvent event) {
-        Parent parent = fxmlLoader.load("/fxml/events/performanceDetailView.fxml");
-        stage.setScene(new Scene(parent));
-        stage.setTitle("Performance Details");
-        stage.centerOnScreen();
+        if(changeDetails){
+            closeWindow();
+        }else {
+            Parent parent = fxmlLoader.load("/fxml/events/performanceDetailView.fxml");
+            stage.setScene(new Scene(parent));
+            stage.setTitle("Performance Details");
+            stage.centerOnScreen();
+        }
     }
 
     @FXML
@@ -143,7 +147,7 @@ public class HallPlanController implements SeatSelectionListener {
             stage.setTitle("Customer Details");
             stage.centerOnScreen();
         } else {
-            PRSController.fill(reservation, isReservation, stage);
+            PRSController.showReservationDetails(reservation, stage);
             Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
             stage.setScene(new Scene(parent));
             stage.setTitle("Reservation Overview");
@@ -161,5 +165,10 @@ public class HallPlanController implements SeatSelectionListener {
         this.stage = stage;
         this.changeDetails = true;
         this.isReservation = true;
+    }
+
+    private void closeWindow() {
+        Stage stage = (Stage) performanceNameLabel.getScene().getWindow();
+        stage.close();
     }
 }
