@@ -10,13 +10,12 @@ import java.time.LocalDateTime;
 public class SearchDTO {
     private String performanceName;
     private String eventName;
-    private String artistFirstName;
-    private String artistLastName;
+    private String firstName;
+    private String lastName;
     private EventTypeDTO eventType;
     @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime performanceStart;
     private BigDecimal price;
-
     private String locationName;
     private String street;
     private String city;
@@ -27,14 +26,14 @@ public class SearchDTO {
     public SearchDTO() {
     }
 
-    public SearchDTO(String performanceName, String eventName, String artistFirstName,
-                     String artistLastName, EventTypeDTO eventType, LocalDateTime performanceStart,
+    public SearchDTO(String performanceName, String eventName, String firstName,
+                     String lastName, EventTypeDTO eventType, LocalDateTime performanceStart,
                      BigDecimal price, String locationName, String street, String city, String country,
                      String postalCode, Duration duration) {
         this.performanceName = performanceName;
         this.eventName = eventName;
-        this.artistFirstName = artistFirstName;
-        this.artistLastName = artistLastName;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.eventType = eventType;
         this.performanceStart = performanceStart;
         this.price = price;
@@ -70,20 +69,20 @@ public class SearchDTO {
         this.duration = duration;
     }
 
-    public String getArtistFirstName() {
-        return artistFirstName;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setArtistFirstName(String artistFirstName) {
-        this.artistFirstName = artistFirstName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getArtistLastName() {
-        return artistLastName;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setArtistLastName(String artistLastName) {
-        this.artistLastName = artistLastName;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public LocalDateTime getPerformanceStart() {

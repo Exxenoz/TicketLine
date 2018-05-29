@@ -29,15 +29,12 @@ public class SimplePerformanceService implements PerformanceService {
         return performanceRestClient.findAllPerformances();
     }
 
+    public List<PerformanceDTO> findAll(SearchDTO searchDTO) throws DataAccessException {
+        return performanceRestClient.findAll(searchDTO);
+    }
+
     @Override
     public List<PerformanceDTO> findByEventID(Long eventID) throws DataAccessException {
         return performanceRestClient.findByEventID(eventID);
     }
-
-    @Override
-    public List<PerformanceDTO> search(SearchDTO searchDTO) throws DataAccessException {
-        return performanceRestClient.search(searchDTO);
-    }
-
-
 }

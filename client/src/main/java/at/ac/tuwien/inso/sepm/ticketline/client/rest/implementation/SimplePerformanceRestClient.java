@@ -2,7 +2,6 @@ package at.ac.tuwien.inso.sepm.ticketline.client.rest.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.PerformanceRestClient;
-import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
 import org.slf4j.Logger;
@@ -19,6 +18,7 @@ import java.net.URI;
 import java.util.List;
 
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 
 @Component
 public class SimplePerformanceRestClient implements PerformanceRestClient {
@@ -75,14 +75,16 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
     }
 
     @Override
-    public List<PerformanceDTO> search(SearchDTO search) throws DataAccessException {
+    public List<PerformanceDTO> findAll(SearchDTO search) throws DataAccessException {
         try {
-            LOGGER.debug("Retrieving all performances of a specific query from {}", performanceUri + "/performance/search");
-            UriComponentsBuilder builder = UriComponentsBuilder.fromUri(restClient.getServiceURI("/performance/search"))
+            LOGGER.debug("Retrieving all performances of a specific query from {}", performanceUri + "/search/");
+
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUri(restClient.getServiceURI(performanceUri + "/search/"))
+
                 .queryParam("performanceName", search.getPerformanceName())
                 .queryParam("eventName", search.getEventName())
-                .queryParam("artistFirstName", search.getArtistFirstName())
-                .queryParam("artistLastname", search.getArtistLastName())
+                .queryParam("firstName", search.getFirstName())
+                .queryParam("lastName", search.getLastName())
                 .queryParam("eventType", search.getEventType())
                 .queryParam("performanceStart", search.getPerformanceStart())
                 .queryParam("price", search.getPrice())
@@ -98,6 +100,7 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
                     new RequestEntity<>(GET, builder.build().toUri()),
                     new ParameterizedTypeReference<List<PerformanceDTO>>() {
                     });
+
             LOGGER.debug("Result status was {} with content {}", performance.getStatusCode(), performance.getBody());
             return performance.getBody();
         } catch (HttpStatusCodeException e) {

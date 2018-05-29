@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
@@ -40,7 +41,7 @@ public class Performance {
 
     @Column(nullable = false)
     @NotNull
-    private LocalDateTime performanceEnd;
+    private Duration duration;
 
     @Column(nullable = false)
     private LocationAddress locationAddress;
@@ -48,16 +49,23 @@ public class Performance {
     public Performance() {
     }
 
-    public Performance(Event event, Set<Artist> artists, @Size(max = 100) String name, BigDecimal price, LocalDateTime performanceStart, LocalDateTime performanceEnd, LocationAddress locationAddress) {
+    public Performance(Event event, Set<Artist> artists, @Size(max = 100) String name, BigDecimal price, LocalDateTime performanceStart, Duration duration, LocationAddress locationAddress) {
         this.event = event;
         this.artists = artists;
         this.name = name;
         this.price = price;
         this.performanceStart = performanceStart;
-        this.performanceEnd = performanceEnd;
+        this.duration = duration;
         this.locationAddress = locationAddress;
     }
 
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
     public Set<Artist> getArtists() {
         return artists;
     }
@@ -114,13 +122,6 @@ public class Performance {
         this.performanceStart = performanceStart;
     }
 
-    public LocalDateTime getPerformanceEnd() {
-        return performanceEnd;
-    }
-
-    public void setPerformanceEnd(LocalDateTime performanceEnd) {
-        this.performanceEnd = performanceEnd;
-    }
 
     @Override
     public String toString() {
@@ -128,7 +129,7 @@ public class Performance {
             "name= " + name +
             ", price= " + price +
             ", performanceStart= " + performanceStart +
-            ", performanceEnd= " + performanceEnd +
+            ", duration= " + duration +
             '}';
     }
 
@@ -145,12 +146,12 @@ public class Performance {
             Objects.equals(name, that.name) &&
             Objects.equals(price, that.price) &&
             Objects.equals(performanceStart, that.performanceStart) &&
-            Objects.equals(performanceEnd, that.performanceEnd);
+            Objects.equals(duration, that.duration);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, event, name, price, performanceStart, performanceEnd);
+        return Objects.hash(id, event, name, price, performanceStart, duration);
     }
 }

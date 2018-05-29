@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -74,7 +75,7 @@ public class PerformanceDataGenerator implements DataGenerator {
                     faker.esports().event(),
                     price,
                     startTime,
-                    startTime.plusMinutes(faker.number().numberBetween(30, 4 * 60)),
+                    Duration.ofMinutes(30),
                     address);
 
                 LOGGER.debug("saving performance {}", performance);

@@ -21,6 +21,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -121,7 +122,7 @@ public class ReservationIT extends BaseIT {
 
     @Test
     public void findReservationWithCustomerNameAsUser() {
-        //get search parameters
+        //get findAll parameters
         var customerOpt = customerRepository.findById(CUSTOMER_TEST_ID);
         var performanceOpt = performanceRepository.findById(PERFORMANCE_TEST_ID);
         if (customerOpt.isPresent() && performanceOpt.isPresent()) {
@@ -130,7 +131,7 @@ public class ReservationIT extends BaseIT {
             Assert.assertNotNull(customerDTO);
             Assert.assertNotNull(performanceDTO);
 
-            //create reservation search DTO
+            //create reservation findAll DTO
             var reservationSearchDTO = ReservationSearchDTO.Builder.aReservationSearchDTO()
                 .withFirstName(customerDTO.getFirstName())
                 .withLastName(customerDTO.getLastName())
@@ -257,7 +258,7 @@ public class ReservationIT extends BaseIT {
         performance.setName("test");
         performance.setPrice(new BigDecimal("1.00"));
         performance.setPerformanceStart(LocalDateTime.now());
-        performance.setPerformanceEnd(LocalDateTime.now());
+        performance.setDuration(Duration.ofMinutes(30));
 
         LocationAddress address = new LocationAddress();
         address.setCity("city");

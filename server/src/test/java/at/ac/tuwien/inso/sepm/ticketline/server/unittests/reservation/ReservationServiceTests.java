@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -148,7 +149,7 @@ public class ReservationServiceTests {
 
     @Test
     public void findReservationWithCustomerAndPerformance() {
-        //get search parameters
+        //get findAll parameters
         var customerOpt = customerRepository.findById(CUSTOMER_TEST_ID);
         var performanceOpt = performanceRepository.findById(PERFORMANCE_TEST_ID);
         Customer customer;
@@ -160,7 +161,7 @@ public class ReservationServiceTests {
             String lastName = customer.getLastName();
             String performanceName = performance.getName();
 
-            //search
+            //findAll
             var reservations = reservationService.findAllByPaidFalseByCustomerNameAndPerformanceName(
                 firstName, lastName, performanceName);
 
@@ -234,7 +235,7 @@ public class ReservationServiceTests {
         performance.setName("test");
         performance.setPrice(ONE);
         performance.setPerformanceStart(LocalDateTime.now());
-        performance.setPerformanceEnd(LocalDateTime.now());
+        performance.setDuration(Duration.ofMinutes(20));
 
         LocationAddress address = new LocationAddress();
         address.setCity("city");

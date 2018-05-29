@@ -167,7 +167,7 @@ public class MainController {
             spMainContent.getChildren().remove(login);
             newsController.loadNews();
             eventController.loadData();
-            reservationsController.loadData();
+             reservationsController.loadData();
             usersController.loadUsers();
             customerController.loadCustomers();
         } else {

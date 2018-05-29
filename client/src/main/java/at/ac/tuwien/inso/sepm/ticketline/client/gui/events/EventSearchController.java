@@ -274,7 +274,7 @@ public class EventSearchController {
         SearchDTO searchParameters = new SearchDTO(null, eventName, artistFirstName, artistLastName, eventType, beginDateAndTime, price, locationName, street, city, country, postalCode, duration);
 
         try {
-            performances = performanceService.search(searchParameters);
+            performances = performanceService.findAll(searchParameters);
             intializeTableView();
             foundEventsTableView.refresh();
             updateCurrentSearchParameters();
