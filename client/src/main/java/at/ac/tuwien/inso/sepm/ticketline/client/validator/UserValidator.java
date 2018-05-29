@@ -6,8 +6,6 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class UserValidator {
 
@@ -48,18 +46,6 @@ public class UserValidator {
                 BundleManager.getExceptionBundle().getString("exception.validator.user.password_characters_invalid"));
         }
 
-        // TODO: remove and move encryption to server
-        // encrypt password
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        String encryptedPassword = passwordEncoder.encode(password);
-
-        try {
-            at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator.validateEncryptedPassword(
-                UserDTO.builder().password(encryptedPassword).build());
-        } catch (UserValidatorException e) {
-            throw new UserValidationException(BundleManager.getExceptionBundle().getString("exception.unexpected"));
-        }
-
-        return encryptedPassword;
+        return password;
     }
 }
