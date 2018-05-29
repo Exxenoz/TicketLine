@@ -31,6 +31,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -242,6 +243,10 @@ public class UserController {
         dialog.setScene(new Scene(springFxmlLoader.load("/fxml/users/userCreateDialog.fxml")));
         dialog.setTitle(BundleManager.getBundle().getString("usertab.user.create"));
         dialog.showAndWait();
+
+        this.clear();
+        userTable.refresh();
+        loadUsers(0);
     }
 
     public void onClickResetPassword(ActionEvent actionEvent) {
