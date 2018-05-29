@@ -28,7 +28,7 @@ public abstract class UserValidator {
     public static void validateDTO(UserDTO userDTO) throws UserValidatorException {
         if (userDTO == null) {
             throw new UserValidatorException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.user.is_null")
+              "User Validation failed: not found"
             );
         }
     }
@@ -37,12 +37,12 @@ public abstract class UserValidator {
         validateDTO(userDTO);
         if (userDTO.getId() == null) {
             throw new UserValidatorException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.user.id.is_null")
+                "User Validation failed: id not found"
             );
         } else {
             if (userDTO.getId() <= 0) {
                 throw new UserValidatorException(
-                    RestBundleManager.getExceptionBundle().getString("exception.validator.user.id.is_negative")
+                    "User Validation failed: id invalid"
                 );
             }
         }
@@ -57,10 +57,10 @@ public abstract class UserValidator {
         } else {
             if (userDTO.getUsername().length() < 3) {
                 throw new UserValidatorException(
-                    RestBundleManager.getExceptionBundle().getString("exception.validator.user.username.too_short")
+                    "User Validation failed: username too short"
                 );
             } else  if (userDTO.getUsername().length() > 30) {
-                throw new UserValidatorException("username validation failed");
+                "User Validation failed: username too long"
             }
         }
     }
@@ -80,12 +80,12 @@ public abstract class UserValidator {
         validateDTO(userDTO);
         if (userDTO.getPassword() == null) {
             throw new UserValidatorException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.user.password.is_null")
+                "User Validation failed: password null"
             );
         } else {
             if (userDTO.getPassword().length() != 60) {
                 throw new UserValidatorException(
-                    RestBundleManager.getExceptionBundle().getString("exception.validator.user.password.invalid_length")
+                    "User Validation failed: password faulty"
                 );
             }
         }
@@ -95,12 +95,12 @@ public abstract class UserValidator {
         validateDTO(userDTO);
         if (userDTO.getStrikes() == null) {
             throw new UserValidatorException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.user.strikes.is_null")
+                "User Validation failed: strikes faulty"
             );
         } else {
             if ((userDTO.getStrikes() < 0) && (userDTO.getStrikes() > 5)) {
                 throw new UserValidatorException(
-                    RestBundleManager.getExceptionBundle().getString("exception.validator.user.strikes.invalid")
+                    "User Validation failed: strikes faulty"
                 );
             }
         }

@@ -1,15 +1,15 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.customers;
 
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.AddressValidationException;
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.CustomerValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.CustomerService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
+import at.ac.tuwien.inso.sepm.ticketline.client.validator.AddressValidator;
+import at.ac.tuwien.inso.sepm.ticketline.client.validator.CustomerValidator;
 import at.ac.tuwien.inso.sepm.ticketline.rest.address.LocationAddressDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.exception.AddressValidationException;
-import at.ac.tuwien.inso.sepm.ticketline.rest.exception.CustomerValidationException;
-import at.ac.tuwien.inso.sepm.ticketline.rest.validator.AddressValidator;
-import at.ac.tuwien.inso.sepm.ticketline.rest.validator.CustomerValidator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -132,24 +132,14 @@ public class CustomerEditDialogController {
         if (customerToEdit != null) {
             customerDTO.setId(customerToEdit.getId());
         }
-        customerDTO.setFirstName(firstNameTextfield.getText());
-        customerDTO.setLastName(lastNameTextfield.getText());
-        customerDTO.setTelephoneNumber(telephoneNumberTextfield.getText());
-        customerDTO.setEmail(emailTextfield.getText());
 
         LocationAddressDTO locationAddressDTO = new LocationAddressDTO();
-
-        locationAddressDTO.setStreet(streetTextfield.getText());
-        locationAddressDTO.setPostalCode(postalCodeTextfield.getText());
-        locationAddressDTO.setCity(cityTextfield.getText());
-        locationAddressDTO.setCountry(countryTextfield.getText());
-
         customerDTO.setBaseAddress(locationAddressDTO);
 
         boolean valid = true;
 
         try {
-            CustomerValidator.validateFirstName(customerDTO);
+            customerDTO.setFirstName(CustomerValidator.validateFirstName(firstNameTextfield));
             firstNameErrorLabel.setText("");
         }
         catch (CustomerValidationException e) {
@@ -159,7 +149,7 @@ public class CustomerEditDialogController {
         }
 
         try {
-            CustomerValidator.validateLastName(customerDTO);
+            customerDTO.setLastName(CustomerValidator.validateLastName(lastNameTextfield));
             lastNameErrorLabel.setText("");
         }
         catch (CustomerValidationException e) {
@@ -169,7 +159,7 @@ public class CustomerEditDialogController {
         }
 
         try {
-            CustomerValidator.validateTelephoneNumber(customerDTO);
+            customerDTO.setTelephoneNumber(CustomerValidator.validateTelephoneNumber(telephoneNumberTextfield));
             telephoneNumberErrorLabel.setText("");
         }
         catch (CustomerValidationException e) {
@@ -179,7 +169,7 @@ public class CustomerEditDialogController {
         }
 
         try {
-            CustomerValidator.validateEmail(customerDTO);
+            customerDTO.setEmail(CustomerValidator.validateEmail(emailTextfield));
             emailErrorLabel.setText("");
         }
         catch (CustomerValidationException e) {
@@ -189,7 +179,7 @@ public class CustomerEditDialogController {
         }
 
         try {
-            AddressValidator.validateStreet(locationAddressDTO);
+            locationAddressDTO.setStreet(AddressValidator.validateStreet(streetTextfield));
             streetErrorLabel.setText("");
         }
         catch (AddressValidationException e) {
@@ -199,7 +189,7 @@ public class CustomerEditDialogController {
         }
 
         try {
-            AddressValidator.validatePostalCode(locationAddressDTO);
+            locationAddressDTO.setPostalCode(AddressValidator.validatePostalCode(postalCodeTextfield));
             postalCodeErrorLabel.setText("");
         }
         catch (AddressValidationException e) {
@@ -209,7 +199,7 @@ public class CustomerEditDialogController {
         }
 
         try {
-            AddressValidator.validateCity(locationAddressDTO);
+            locationAddressDTO.setCity(AddressValidator.validateCity(cityTextfield));
             cityErrorLabel.setText("");
         }
         catch (AddressValidationException e) {
@@ -219,7 +209,7 @@ public class CustomerEditDialogController {
         }
 
         try {
-            AddressValidator.validateCountry(locationAddressDTO);
+            locationAddressDTO.setCountry(AddressValidator.validateCountry(countryTextfield));
             countryErrorLabel.setText("");
         }
         catch (AddressValidationException e) {

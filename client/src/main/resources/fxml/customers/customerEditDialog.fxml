@@ -6,6 +6,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <HBox prefWidth="600.0" spacing="5.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.customers.CustomerEditDialogController">
    <children>
@@ -19,7 +20,10 @@
                         <Label text="*" textFill="#cc0000" />
                      </children></HBox>
                   <TextField fx:id="firstNameTextfield" />
-                  <Label fx:id="firstNameErrorLabel" textFill="#cc0000" />
+                  <Label fx:id="firstNameErrorLabel" textFill="#cc0000">
+                     <font>
+                        <Font size="9.0" />
+                     </font></Label>
                </children>
                <VBox.margin>
                   <Insets bottom="8.0" />
@@ -33,7 +37,10 @@
                         <Label text="*" textFill="#cc0000" />
                      </children></HBox>
                   <TextField fx:id="lastNameTextfield" />
-                  <Label fx:id="lastNameErrorLabel" textFill="#cc0000" />
+                  <Label fx:id="lastNameErrorLabel" textFill="#cc0000">
+                      <font>
+                          <Font size="9.0" />
+                      </font></Label>
                </children>
                <VBox.margin>
                   <Insets bottom="8.0" />
@@ -48,7 +55,10 @@
                      </children>
                   </HBox>
                   <TextField fx:id="telephoneNumberTextfield" />
-                  <Label fx:id="telephoneNumberErrorLabel" textFill="#cc0000" />
+                  <Label fx:id="telephoneNumberErrorLabel" textFill="#cc0000">
+                      <font>
+                          <Font size="9.0" />
+                      </font></Label>
                </children>
                <VBox.margin>
                   <Insets bottom="8.0" />
@@ -58,7 +68,10 @@
                <children>
                   <Label text="%customers.dialog.create.email" />
                   <TextField fx:id="emailTextfield" />
-                  <Label fx:id="emailErrorLabel" textFill="#cc0000" />
+                  <Label fx:id="emailErrorLabel" textFill="#cc0000">
+                      <font>
+                          <Font size="9.0" />
+                      </font></Label>
                </children>
                <VBox.margin>
                   <Insets bottom="8.0" />
@@ -83,7 +96,10 @@
                <children>
                   <Label text="%customers.dialog.create.street" />
                   <TextField fx:id="streetTextfield" />
-                  <Label fx:id="streetErrorLabel" textFill="#cc0000" />
+                  <Label fx:id="streetErrorLabel" textFill="#cc0000">
+                      <font>
+                          <Font size="9.0" />
+                      </font></Label>
                </children>
                <VBox.margin>
                   <Insets bottom="8.0" />
@@ -93,7 +109,10 @@
                <children>
                   <Label text="%customers.dialog.create.postal_code" />
                   <TextField fx:id="postalCodeTextfield" />
-                  <Label fx:id="postalCodeErrorLabel" textFill="#cc0000" />
+                  <Label fx:id="postalCodeErrorLabel" textFill="#cc0000">
+                      <font>
+                          <Font size="9.0" />
+                      </font></Label>
                </children>
                <VBox.margin>
                   <Insets bottom="8.0" />
@@ -103,7 +122,10 @@
                <children>
                   <Label text="%customers.dialog.create.city" />
                   <TextField fx:id="cityTextfield" />
-                  <Label fx:id="cityErrorLabel" textFill="#cc0000" />
+                  <Label fx:id="cityErrorLabel" textFill="#cc0000">
+                      <font>
+                          <Font size="9.0" />
+                      </font></Label>
                </children>
                <VBox.margin>
                   <Insets bottom="8.0" />
@@ -113,7 +135,10 @@
                <children>
                   <Label text="%customers.dialog.create.country" />
                   <TextField fx:id="countryTextfield" />
-                  <Label fx:id="countryErrorLabel" textFill="#cc0000" />
+                  <Label fx:id="countryErrorLabel" textFill="#cc0000">
+                      <font>
+                          <Font size="9.0" />
+                      </font></Label>
                </children>
                <VBox.margin>
                   <Insets bottom="8.0" />

@@ -3,7 +3,6 @@ package at.ac.tuwien.inso.sepm.ticketline.rest.validator;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.AddressValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.CustomerValidationException;
-import at.ac.tuwien.inso.sepm.ticketline.rest.util.RestBundleManager;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,87 +28,63 @@ public class CustomerValidator {
 
     public static void validateDTO(CustomerDTO customerDTO) throws CustomerValidationException {
         if(customerDTO == null) {
-            throw new CustomerValidationException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.customer.is_null")
-            );
+            throw new CustomerValidationException("Customer validation failed, because object reference is null!");
         }
     }
 
     public static void validateID(CustomerDTO customerDTO) throws CustomerValidationException {
         validateDTO(customerDTO);
         if(customerDTO.getId() == null || customerDTO.getId() < 0) {
-            throw new CustomerValidationException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.customer.id.invalid")
-            );
+            throw new CustomerValidationException("Customer validation failed, because ID is invalid!");
         }
     }
 
     public static void validateFirstName(CustomerDTO customerDTO) throws CustomerValidationException {
         validateDTO(customerDTO);
         if(customerDTO.getFirstName() == null) {
-            throw new CustomerValidationException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.customer.firstname.is_null")
-            );
+            throw new CustomerValidationException("Customer validation failed, because first name is null!");
         }
 
         if(customerDTO.getFirstName().length() < 2) {
-            throw new CustomerValidationException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.customer.firstname.too_short")
-            );
+            throw new CustomerValidationException("Customer validation failed, because first name is too short!");
         }
 
         if(customerDTO.getFirstName().length() > 50) {
-            throw new CustomerValidationException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.customer.firstname.too_long")
-            );
+            throw new CustomerValidationException("Customer validation failed, because first name is too long!");
         }
 
         if(!customerDTO.getFirstName().matches(letterRegex)) {
-            throw new CustomerValidationException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.customer.firstname.invalid_characters")
-            );
+            throw new CustomerValidationException("Customer validation failed, because first name contains invalid characters!");
         }
     }
 
     public static void validateLastName(CustomerDTO customerDTO) throws CustomerValidationException {
         validateDTO(customerDTO);
         if(customerDTO.getLastName() == null) {
-            throw new CustomerValidationException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.customer.lastname.is_null")
-            );
+            throw new CustomerValidationException("Customer validation failed, because last name is null!");
         }
 
         if(customerDTO.getLastName().length() < 2) {
-            throw new CustomerValidationException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.customer.lastname.too_short")
-            );
+            throw new CustomerValidationException("Customer validation failed, because last name is too short!");
         }
 
         if(customerDTO.getLastName().length() > 50) {
-            throw new CustomerValidationException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.customer.lastname.too_long")
-            );
+            throw new CustomerValidationException("Customer validation failed, because last name is too long!");
         }
 
         if(!customerDTO.getLastName().matches(letterRegex)) {
-            throw new CustomerValidationException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.customer.lastname.invalid_characters")
-            );
+            throw new CustomerValidationException("Customer validation failed, because last name contains invalid characters!");
         }
     }
 
     public static void validateTelephoneNumber(CustomerDTO customerDTO) throws CustomerValidationException {
         validateDTO(customerDTO);
         if (customerDTO.getTelephoneNumber() == null) {
-            throw new CustomerValidationException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.customer.telephone_number.is_null")
-            );
+            throw new CustomerValidationException("Customer validation failed, because telephone number is null!");
         }
 
         if(!customerDTO.getTelephoneNumber().matches("^[\\d\\/\\s+-]{7,25}$")) {
-            throw new CustomerValidationException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.customer.telephone_number.invalid")
-            );
+            throw new CustomerValidationException("Customer validation failed, because telephone number is invalid!");
         }
     }
 
@@ -123,9 +98,7 @@ public class CustomerValidator {
 
             Matcher matcher = emailRegex.matcher(customerDTO.getEmail());
             if(!matcher.find()) {
-                throw new CustomerValidationException(
-                    RestBundleManager.getExceptionBundle().getString("exception.validator.customer.email.invalid")
-                );
+                throw new CustomerValidationException("Customer validation failed, because email is invalid!");
             }
         }
     }
