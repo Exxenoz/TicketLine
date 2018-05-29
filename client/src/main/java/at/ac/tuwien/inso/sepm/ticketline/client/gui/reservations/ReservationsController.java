@@ -1,4 +1,4 @@
-package at.ac.tuwien.inso.sepm.ticketline.client.gui.reservations.seating;
+package at.ac.tuwien.inso.sepm.ticketline.client.gui.reservations;
 
 import javafx.fxml.FXML;
 import org.springframework.stereotype.Component;

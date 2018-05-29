@@ -1,9 +1,9 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.PerformanceDetailViewController;
-import at.ac.tuwien.inso.sepm.ticketline.client.gui.reservation.seating.SeatMapController;
-import at.ac.tuwien.inso.sepm.ticketline.client.gui.reservation.seating.SeatSelectionListener;
-import at.ac.tuwien.inso.sepm.ticketline.client.gui.reservation.seating.SectorController;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SeatMapController;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SeatSelectionListener;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SectorController;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
@@ -17,7 +17,6 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.repository.cdi.Eager;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
@@ -97,6 +96,8 @@ public class HallPlanController implements SeatSelectionListener {
 
         // Set performance detail to seat plan
         if(this.reservation != null && this.reservation.getPerformance() != null) {
+            //Set this controller als seat selection listener for the seat map
+            this.seatMapController.setSeatSelectionListener(this);
             this.seatMapController.fill(this.reservation.getPerformance());
         }
     }

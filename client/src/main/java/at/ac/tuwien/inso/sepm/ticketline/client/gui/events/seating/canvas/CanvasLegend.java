@@ -1,4 +1,6 @@
-package at.ac.tuwien.inso.sepm.ticketline.client.gui.reservation.seating.canvas;
+package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas;
+
+import javafx.scene.canvas.GraphicsContext;
 
 public class CanvasLegend implements CanvasComponent {
 
@@ -8,7 +10,7 @@ public class CanvasLegend implements CanvasComponent {
     }
 
     @Override
-    public void draw() {
+    public void draw(GraphicsContext gc) {
 
     }
 

@@ -1,4 +1,4 @@
-package at.ac.tuwien.inso.sepm.ticketline.client.gui.reservation.seating;
+package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollBar;

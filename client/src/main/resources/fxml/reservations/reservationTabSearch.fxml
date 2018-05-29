@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.reservations.seating.ReservationsSearchController">
+      fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.reservations.ReservationsSearchController">
 
     <children>
         <fx:include fx:id="tabHeader" source="../tabHeader.fxml"/>
