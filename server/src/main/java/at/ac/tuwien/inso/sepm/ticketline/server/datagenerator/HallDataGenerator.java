@@ -88,6 +88,22 @@ public class HallDataGenerator implements DataGenerator {
                     s.setStartPositionX(x);
                     s.setStartPositionY(y);
 
+                    // And set a sector category
+                    if(sectorCategoryRepository.count() == 0) {
+                        LOGGER.debug("Could net set sector category since the corresponding repository is empty");
+                        SectorCategory sectorCategory = new SectorCategory();
+                        sectorCategory.setBasePriceMod(new BigDecimal(0.5));
+                        sectorCategory.setName(faker.hipster().word());
+                        s.setCategory(sectorCategory);
+                        sectorCategoryRepository.save(sectorCategory);
+                    } else {
+                        s.setCategory(sectorCategoryRepository.findAll().get(faker.number()
+                            .numberBetween(0, Math.toIntExact(sectorCategoryRepository.count()) - 1)));
+                    }
+
+                    // Save sector without seats
+                    s = sectorRepository.save(s);
+
                     List<Seat> seats = new ArrayList<>(5);
                     // Add a few random seats
                     for(int k = 0; k < 5; k++) {
@@ -98,6 +114,7 @@ public class HallDataGenerator implements DataGenerator {
                         int nextY = faker.number().numberBetween(0, sectorRows);
                         seat.setPositionX(nextX);
                         seat.setPositionY(nextY);
+                        seat.setSector(s);
 
                         //Check if such a seat already exists, and just dont store it for now if it does.
                         for(Seat t: seats) {
@@ -111,22 +128,13 @@ public class HallDataGenerator implements DataGenerator {
                         }
 
                     }
+
+                    // Set sector seats
                     s.setSeats(seats);
 
-                    // And set a sector category
-                    if(sectorCategoryRepository.count() == 0) {
-                        LOGGER.debug("Could net set sector category since the corresponding repository is empty");
-                        SectorCategory sectorCategory = new SectorCategory();
-                        sectorCategory.setBasePriceMod(new BigDecimal(0.5));
-                        sectorCategory.setName(faker.hipster().word());
-                        s.setCategory(sectorCategory);
-                        sectorCategoryRepository.save(sectorCategory);
-                    } else {
-                        s.setCategory(sectorCategoryRepository.findAll().get(faker.number()
-                            .numberBetween(0, Math.toIntExact(sectorCategoryRepository.count()) - 1)));
-                    }
-                    sectors.add(s);
+                    // Update seats of sector
                     sectorRepository.save(s);
+
                     // Make sure the sectors do not overlap
                     x = x + sectorSeatsPerRow + 1;
                     if(y % 2 == 0) {
@@ -134,6 +142,8 @@ public class HallDataGenerator implements DataGenerator {
                     } else {
                         y = y + sectorRows + 1;
                     }
+
+                    sectors.add(s);
                 }
                 // Set sectors
                 hall.setSectors(sectors);
