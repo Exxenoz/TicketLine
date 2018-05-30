@@ -45,13 +45,13 @@
                                            maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="nameColumn" maxWidth="1.7976931348623157E308"
-                                                     prefWidth="168.0" text="%events.table.name"/>
+                                                     prefWidth="168.0" text="%events.table.name" sortable="false"/>
                                         <TableColumn fx:id="eventColumn" maxWidth="1.7976931348623157E308"
-                                                     prefWidth="195.0" text="%events.table.event"/>
+                                                     prefWidth="195.0" text="%events.table.event" sortable="false"/>
                                         <TableColumn fx:id="startTimeColumn" maxWidth="1.7976931348623157E308"
-                                                     prefWidth="244.0" text="%events.table.starttime"/>
+                                                     prefWidth="244.0" text="%events.table.starttime" sortable="false"/>
                                         <TableColumn fx:id="locationColumn" maxWidth="1.7976931348623157E308"
-                                                     minWidth="-1.0" prefWidth="209.0" text="%events.table.location"/>
+                                                     minWidth="-1.0" prefWidth="209.0" text="%events.table.location" sortable="false"/>
                                     </columns>
                                 </TableView>
                                 <Button fx:id="bookButton" disable="false" mnemonicParsing="false"
