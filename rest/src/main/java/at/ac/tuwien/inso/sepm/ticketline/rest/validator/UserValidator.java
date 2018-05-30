@@ -52,7 +52,7 @@ public abstract class UserValidator {
         validateDTO(userDTO);
         if (userDTO.getUsername() == null) {
             throw new UserValidatorException(
-                RestBundleManager.getExceptionBundle().getString("exception.validator.user.username.is_null")
+                "User Validation failed: username is null"
             );
         } else {
             if (userDTO.getUsername().length() < 3) {
@@ -60,7 +60,9 @@ public abstract class UserValidator {
                     "User Validation failed: username too short"
                 );
             } else  if (userDTO.getUsername().length() > 30) {
-                "User Validation failed: username too long"
+                throw new UserValidatorException(
+                    "User Validation failed: username too long"
+                );
             }
         }
     }
