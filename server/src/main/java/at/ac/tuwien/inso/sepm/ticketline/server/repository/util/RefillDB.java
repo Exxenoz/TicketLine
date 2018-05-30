@@ -1,10 +1,9 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.repository.util;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.datagenerator.*;
-import at.ac.tuwien.inso.sepm.ticketline.server.datagenerator.legacy.SeatDataGenerator;
+import at.ac.tuwien.inso.sepm.ticketline.server.datagenerator.SeatDataGenerator;
 import at.ac.tuwien.inso.sepm.ticketline.server.datagenerator.SectorCategoryDataGenerator;
-import at.ac.tuwien.inso.sepm.ticketline.server.datagenerator.legacy.SectorDataGenerator;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
+import at.ac.tuwien.inso.sepm.ticketline.server.datagenerator.SectorDataGenerator;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import org.springframework.boot.SpringApplication;

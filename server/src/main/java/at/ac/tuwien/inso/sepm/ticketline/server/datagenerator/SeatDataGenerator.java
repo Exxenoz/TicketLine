@@ -1,4 +1,4 @@
-package at.ac.tuwien.inso.sepm.ticketline.server.datagenerator.legacy;
+package at.ac.tuwien.inso.sepm.ticketline.server.datagenerator;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.datagenerator.DataGenerator;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Seat;
@@ -17,7 +17,7 @@ import java.util.List;
 
 @Profile("generateData")
 @Component
-@Order(2)
+@Order(6)
 public class SeatDataGenerator implements DataGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());

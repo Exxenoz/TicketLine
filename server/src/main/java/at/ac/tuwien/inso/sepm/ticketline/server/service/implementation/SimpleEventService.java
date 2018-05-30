@@ -39,6 +39,6 @@ public class SimpleEventService implements EventService {
         LocalDateTime startOfTheMonth = LocalDateTime.of(eventRequestTopTen.getYear(), eventRequestTopTen.getMonth(), 1, 0, 0);
         LocalDateTime endOfTheMonth = LocalDateTime.of(startOfTheMonth.getYear(), eventRequestTopTen.getMonth(), startOfTheMonth.toLocalDate().lengthOfMonth(), 23, 59, 59);
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "cnt"));
-        return eventRepository.findTopTenByMonthAndCategory(startOfTheMonth, endOfTheMonth, eventRequestTopTen.getCategoryId(), pageable);
+        return eventRepository.findTopTenByMonthAndCategory(startOfTheMonth, endOfTheMonth, pageable);
     }
 }

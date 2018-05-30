@@ -114,7 +114,7 @@ public class HallDataGenerator implements DataGenerator {
                         int nextY = faker.number().numberBetween(0, sectorRows);
                         seat.setPositionX(nextX);
                         seat.setPositionY(nextY);
-                        seat.setSector(s);
+//                        seat.setSector(s);
 
                         //Check if such a seat already exists, and just dont store it for now if it does.
                         for(Seat t: seats) {
