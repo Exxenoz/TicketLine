@@ -160,9 +160,9 @@ public class Performance {
             Objects.equals(name, that.name) &&
             Objects.equals(price, that.price) &&
             Objects.equals(performanceStart, that.performanceStart) &&
-            Objects.equals(duration, that.duration);
-            Objects.equals(getLocationAddress(), that.getLocationAddress()) &&
-            Objects.equals(getHall(), that.getHall());
+            Objects.equals(duration, that.duration) &&
+            Objects.equals(locationAddress, that.locationAddress) &&
+            Objects.equals(hall, that.hall);
     }
 
     @Override

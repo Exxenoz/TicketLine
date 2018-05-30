@@ -45,8 +45,6 @@ public class PerformanceEndpoint {
     @PostMapping("search")
     @ApiOperation("Get a list of all the performances that match the given criteria")
     @PreAuthorize("hasRole('USER')")
-    public List<PerformanceDTO> search(SearchDTO search) {
-        return performanceMapper.performanceToPerformanceDTO(performanceService.search(search));
     public List<PerformanceDTO> findAll(@RequestBody final SearchDTO search) {
         return performanceMapper.performanceToPerformanceDTO(performanceService.findAll(search));
     }
