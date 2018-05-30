@@ -34,8 +34,7 @@ public class UserDataGenerator implements DataGenerator {
         } else {
             LOGGER.info("generating {} user entries", NUMBER_OF_USERS_TO_GENERATE);
             for (int i = 0; i < NUMBER_OF_USERS_TO_GENERATE; i++) {
-                String username = faker.witcher().character().
-                    replace(' ', '.').toLowerCase();
+                String username = faker.name().firstName();
                 if (userRepository.findByUsername(username) != null) {
                     appendix++;
                     username += appendix;
