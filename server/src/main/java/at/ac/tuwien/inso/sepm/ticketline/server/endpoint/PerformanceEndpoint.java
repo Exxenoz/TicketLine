@@ -2,7 +2,6 @@ package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Event;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.performance.PerformanceMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.PerformanceService;
 import io.swagger.annotations.Api;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -42,10 +42,12 @@ public class PerformanceEndpoint {
         return performanceMapper.performanceToPerformanceDTO(performanceService.findByEventID(eventID));
     }
 
-    @GetMapping("search")
+    @PostMapping("search")
     @ApiOperation("Get a list of all the performances that match the given criteria")
     @PreAuthorize("hasRole('USER')")
     public List<PerformanceDTO> search(SearchDTO search) {
         return performanceMapper.performanceToPerformanceDTO(performanceService.search(search));
+    public List<PerformanceDTO> findAll(@RequestBody final SearchDTO search) {
+        return performanceMapper.performanceToPerformanceDTO(performanceService.findAll(search));
     }
 }

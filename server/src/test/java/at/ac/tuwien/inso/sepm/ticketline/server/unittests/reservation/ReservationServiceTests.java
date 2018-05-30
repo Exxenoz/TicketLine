@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -267,7 +268,7 @@ public class ReservationServiceTests {
         performance.setName("test");
         performance.setPrice(ONE);
         performance.setPerformanceStart(LocalDateTime.now());
-        performance.setPerformanceEnd(LocalDateTime.now());
+        performance.setDuration(Duration.ofMinutes(20));
 
         LocationAddress address = new LocationAddress();
         address.setCity("city");

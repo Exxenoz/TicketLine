@@ -26,10 +26,10 @@ public interface PerformanceRestClient {
 
     /**
      * Find a list of all performances that match the given search criteria .
-     * @param search a DTO which contains all the given search criteria
+     * @param searchDTO a DTO which contains all the given search criteria
      * @return a list of matching performances
      * @throws DataAccessException in case something went wrong while trying to retrieve the performances from the database
      */
-    List<PerformanceDTO> search(SearchDTO search) throws DataAccessException;
+    List<PerformanceDTO> findAll(SearchDTO searchDTO) throws DataAccessException;
 
 }

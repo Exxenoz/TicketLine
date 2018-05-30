@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
@@ -41,7 +42,7 @@ public class Performance {
 
     @Column(nullable = false)
     @NotNull
-    private LocalDateTime performanceEnd;
+    private Duration duration;
 
     @Column(nullable = false)
     private LocationAddress locationAddress;
@@ -52,16 +53,23 @@ public class Performance {
     public Performance() {
     }
 
-    public Performance(Event event, Set<Artist> artists, @Size(max = 100) String name, BigDecimal price, LocalDateTime performanceStart, LocalDateTime performanceEnd, LocationAddress locationAddress) {
+    public Performance(Event event, Set<Artist> artists, @Size(max = 100) String name, BigDecimal price, LocalDateTime performanceStart, Duration duration, LocationAddress locationAddress) {
         this.event = event;
         this.artists = artists;
         this.name = name;
         this.price = price;
         this.performanceStart = performanceStart;
-        this.performanceEnd = performanceEnd;
+        this.duration = duration;
         this.locationAddress = locationAddress;
     }
 
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
     public Set<Artist> getArtists() {
         return artists;
     }
@@ -118,13 +126,6 @@ public class Performance {
         this.performanceStart = performanceStart;
     }
 
-    public LocalDateTime getPerformanceEnd() {
-        return performanceEnd;
-    }
-
-    public void setPerformanceEnd(LocalDateTime performanceEnd) {
-        this.performanceEnd = performanceEnd;
-    }
 
     public Hall getHall() {
         return hall;
@@ -137,13 +138,10 @@ public class Performance {
     @Override
     public String toString() {
         return "Performance{" +
-            "id=" + id +
-            ", event=" + event +
-            ", artists=" + artists +
-            ", name='" + name + '\'' +
-            ", price=" + price +
-            ", performanceStart=" + performanceStart +
-            ", performanceEnd=" + performanceEnd +
+            "name= " + name +
+            ", price= " + price +
+            ", performanceStart= " + performanceStart +
+            ", duration= " + duration +
             ", locationAddress=" + locationAddress +
             ", hall=" + hall +
             '}';
@@ -151,16 +149,18 @@ public class Performance {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Performance)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Performance that = (Performance) o;
-        return Objects.equals(getId(), that.getId()) &&
-            Objects.equals(getEvent(), that.getEvent()) &&
-            Objects.equals(getArtists(), that.getArtists()) &&
-            Objects.equals(getName(), that.getName()) &&
-            Objects.equals(getPrice(), that.getPrice()) &&
-            Objects.equals(getPerformanceStart(), that.getPerformanceStart()) &&
-            Objects.equals(getPerformanceEnd(), that.getPerformanceEnd()) &&
+        return Objects.equals(id, that.id) &&
+            Objects.equals(name, that.name) &&
+            Objects.equals(price, that.price) &&
+            Objects.equals(performanceStart, that.performanceStart) &&
+            Objects.equals(duration, that.duration);
             Objects.equals(getLocationAddress(), that.getLocationAddress()) &&
             Objects.equals(getHall(), that.getHall());
     }
@@ -168,6 +168,6 @@ public class Performance {
     @Override
     public int hashCode() {
 
-        return Objects.hash(getId(), getEvent(), getArtists(), getName(), getPrice(), getPerformanceStart(), getPerformanceEnd(), getLocationAddress(), getHall());
+        return Objects.hash(getId(), getEvent(), getArtists(), getName(), getPrice(), getPerformanceStart(), getDuration(), getLocationAddress(), getHall());
     }
 }

@@ -23,9 +23,9 @@ public interface PerformanceService {
 
     /**
      * Finds a list of performances filtered by the given filter criteria.
-     * @param search a DTO filled with all the search criteria
-     * @return a list of performances that match the search criteria
+     * @param search a DTO filled with all the findAll criteria
+     * @return a list of performances that match the findAll criteria
      */
-    List<Performance> search(SearchDTO search);
+    List<Performance> findAll(SearchDTO search);
 
 }

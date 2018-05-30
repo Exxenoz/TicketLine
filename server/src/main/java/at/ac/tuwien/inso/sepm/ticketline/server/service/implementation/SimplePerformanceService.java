@@ -6,11 +6,8 @@ import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository
 import at.ac.tuwien.inso.sepm.ticketline.server.service.PerformanceService;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,61 +26,10 @@ public class SimplePerformanceService implements PerformanceService {
         return performanceRepository.findAll();
     }
 
+    public List<Performance> findAll(SearchDTO searchDTO) {return performanceRepository.findAll(searchDTO);}
+
     @Override
     public List<Performance> findByEventID(Long eventID) {
         return performanceRepository.findByEventId(eventID);
-    }
-
-    @Override
-    public List<Performance> search(SearchDTO search) {
-        Example<Performance> example = getPerformanceExample(search);
-
-        return performanceRepository.findAll(example);
-    }
-
-    //building example for search
-    private Example<Performance> getPerformanceExample(SearchDTO search) {
-
-        Performance performance = new Performance();
-        performance.setName(search.getPerformanceName());
-        performance.setPerformanceStart(search.getPerformanceStart());
-
-        //adding duration to performance start in order to get performance end
-        LocalDateTime performanceEnd = null;
-        if (performance.getPerformanceStart() != null && search.getDuration() != null) {
-            performanceEnd = performance.getPerformanceStart().plus(search.getDuration());
-        }
-        performance.setPerformanceEnd(performanceEnd);
-        performance.setPrice(search.getPrice());
-
-        Artist artist = new Artist(search.getArtistFirstName(), search.getArtistLastName());
-        Set<Artist> artists = new HashSet<>();
-        artists.add(artist);
-
-        Event event = new Event();
-        event.setName(search.getEventName());
-
-        if (search.getEventType() != null) {
-            event.setEventType(EventType.valueOf(search.getEventType().toString()));
-        }
-
-        LocationAddress locationAddress = new LocationAddress();
-        locationAddress.setLocationName(search.getLocationName());
-        locationAddress.setStreet(search.getStreet());
-        locationAddress.setCity(search.getCity());
-        locationAddress.setCountry(search.getCountry());
-        locationAddress.setPostalCode(search.getPostalCode());
-
-        performance.setEvent(event);
-        performance.setArtists(artists);
-        performance.setLocationAddress(locationAddress);
-
-        //adding special checks - no case sensitivity, allow searching for parts of names
-        ExampleMatcher matcher = ExampleMatcher.matching()
-            // .withMatcher("performanceStart", ExampleMatcher.)
-            .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
-            .withIgnoreCase();
-
-        return Example.of(performance, matcher);
     }
 }

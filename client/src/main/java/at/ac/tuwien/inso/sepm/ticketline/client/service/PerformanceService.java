@@ -17,19 +17,19 @@ public interface PerformanceService {
     List<PerformanceDTO> findAll() throws DataAccessException;
 
     /**
-     * Finds a list of all performances that match the given search criteria.
-     * @param searchDTO a DTO that contains all the given search criteria
-     * @return returns a list of the matching performances
-     * @throws DataAccessException in case something went wrong while trying to retrieve the performances from the database
-     */
-    List<PerformanceDTO> search(SearchDTO searchDTO) throws DataAccessException;
-
-    /**
      * Find all performances of given event
      * @param eventID of event of performances
      * @return list of performances
      * @throws DataAccessException in case something went wrong
      */
     List<PerformanceDTO> findByEventID(Long eventID) throws DataAccessException;
+
+    /**
+     * Finds a list of all performances that match the given search criteria.
+     * @param searchDTO a DTO that contains all the given search criteria
+     * @return returns a list of the matching performances
+     * @throws DataAccessException in case something went wrong while trying to retrieve the performances from the database
+     */
+    List<PerformanceDTO> findAll(SearchDTO searchDTO) throws DataAccessException;
 
 }

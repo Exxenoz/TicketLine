@@ -231,7 +231,8 @@ public class EventSearchController {
         }
         String durationString = lengthInMinutesTextField.getText();
         Duration duration = null;
-        if (!durationString.equals("")) {
+
+        if (durationString.matches("[0-9]+")) {
             addToCurrentSearchParameters(durationString + " min");
             duration = Duration.ofMinutes(Integer.parseInt(durationString));
         }
@@ -249,9 +250,10 @@ public class EventSearchController {
 
         String priceString = priceTextField.getText();
         BigDecimal price = null;
-        if (!priceString.equals("")) {
-            addToCurrentSearchParameters(priceString);
+        try {
             price = new BigDecimal(priceString);
+            addToCurrentSearchParameters(priceString);
+        } catch (NumberFormatException ignored) {
         }
 
         String locationName = locationNameTextField.getText();
@@ -273,7 +275,7 @@ public class EventSearchController {
         SearchDTO searchParameters = new SearchDTO(null, eventName, artistFirstName, artistLastName, eventType, beginDateAndTime, price, locationName, street, city, country, postalCode, duration);
 
         try {
-            performances = performanceService.search(searchParameters);
+            performances = performanceService.findAll(searchParameters);
             intializeTableView();
             foundEventsTableView.refresh();
             updateCurrentSearchParameters();

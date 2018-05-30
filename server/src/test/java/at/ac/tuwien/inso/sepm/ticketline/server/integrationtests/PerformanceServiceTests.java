@@ -12,9 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -51,7 +51,7 @@ public class PerformanceServiceTests {
         //be careful with BigDecimal - 20 != 20.00 - equals will fail
         new BigDecimal("20.00"),
         LocalDateTime.now().plusDays(5).withNano(0),
-        LocalDateTime.now().plusDays(5).plusHours(2).withNano(0),
+        Duration.ofMinutes(40),
         ADDRESS_1
     );
 
@@ -65,7 +65,7 @@ public class PerformanceServiceTests {
         //be careful with BigDecimal - 20 != 20.00 - equals will fail
         new BigDecimal("20.00"),
         LocalDateTime.now().plusDays(20).withNano(0),
-        LocalDateTime.now().plusDays(20).plusHours(3).withNano(0),
+        Duration.ofMinutes(40),
         ADDRESS_2
     );
 
@@ -79,7 +79,7 @@ public class PerformanceServiceTests {
         //be careful with BigDecimal - 20 != 20.00 - equals will fail
         new BigDecimal("20.00"),
         LocalDateTime.now().plusDays(10).withNano(0),
-        LocalDateTime.now().plusDays(10).plusHours(2).withNano(0),
+        Duration.ofMinutes(40),
         ADDRESS_3
     );
 
@@ -107,7 +107,7 @@ public class PerformanceServiceTests {
         SearchDTO searchDTO = new SearchDTO();
         searchDTO.setPerformanceName("zauberflöte");
 
-        List<Performance> performances = service.search(searchDTO);
+        List<Performance> performances = service.findAll(searchDTO);
 
         assertThat(performances).containsExactly(PERFORMANCE_1);
     }
@@ -118,7 +118,7 @@ public class PerformanceServiceTests {
         SearchDTO searchDTO = new SearchDTO();
         searchDTO.setCity("Vienna");
 
-        List<Performance> performances = service.search(searchDTO);
+        List<Performance> performances = service.findAll(searchDTO);
 
         assertThat(performances).containsExactlyInAnyOrder(PERFORMANCE_1, PERFORMANCE_2, PERFORMANCE_3);
     }
@@ -129,7 +129,7 @@ public class PerformanceServiceTests {
         SearchDTO searchDTO = new SearchDTO();
         searchDTO.setPerformanceStart(LocalDateTime.now().plusDays(22));
 
-        List<Performance> performances = service.search(searchDTO);
+        List<Performance> performances = service.findAll(searchDTO);
 
         assertThat(performances).doesNotContain(PERFORMANCE_1, PERFORMANCE_2, PERFORMANCE_3);
     }
@@ -138,9 +138,9 @@ public class PerformanceServiceTests {
     public void searchByArtistFirstName() {
         createPerformances();
         SearchDTO searchDTO = new SearchDTO();
-        searchDTO.setArtistFirstName("artist C");
+        searchDTO.setFirstName("artist C");
 
-        List<Performance> performances = service.search(searchDTO);
+        List<Performance> performances = service.findAll(searchDTO);
 
         assertThat(performances).containsExactly(PERFORMANCE_2);
     }
