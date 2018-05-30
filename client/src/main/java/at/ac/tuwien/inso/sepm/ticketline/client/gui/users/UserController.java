@@ -271,10 +271,12 @@ public class UserController {
                 LOGGER.debug("Trying to disable user");
                 userService.disableUser(userDTO);
                 userDTO.setEnabled(false);
+                toggleEnableButton.setText(BundleManager.getBundle().getString("usertab.user.enable"));
             } else {
                 LOGGER.debug("Trying to enable user");
                 userService.enableUser(userDTO);
                 userDTO.setEnabled(true);
+                toggleEnableButton.setText(BundleManager.getBundle().getString("usertab.user.disable"));
             }
         } catch (DataAccessException e) {
             String errorMessage = e.getMessage();

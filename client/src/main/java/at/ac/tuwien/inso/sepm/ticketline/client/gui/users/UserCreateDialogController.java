@@ -80,17 +80,17 @@ public class UserCreateDialogController {
         } catch (UserValidationException e) {
             valid = false;
             LOGGER.debug("User validation failed: " + e.getMessage());
-            passwordRepeatErrorLabel.setText(e.getMessage());
+            usernameErrorLabel.setText(e.getMessage());
         }
 
         try {
             String encryptedPassword = UserValidator.validatePassword(passwordField, passwordRepeatField);
             userDTO.setPassword(encryptedPassword);
-            passwordRepeatErrorLabel.setText("");
+            passwordErrorLabel.setText("");
         } catch (UserValidationException e) {
             valid = false;
             LOGGER.debug("User validation failed: " + e.getMessage());
-            passwordRepeatErrorLabel.setText(e.getMessage());
+            passwordErrorLabel.setText(e.getMessage());
         }
 
         userDTO.setRoles(getRoles());
