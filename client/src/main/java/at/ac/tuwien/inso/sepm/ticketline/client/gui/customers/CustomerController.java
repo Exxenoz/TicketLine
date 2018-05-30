@@ -191,6 +191,7 @@ public class CustomerController {
     }
 
     public void refreshCustomerTable() {
+        customerTable.sort();
         customerTable.refresh();
     }
 

@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
   password VARCHAR(60) NOT NULL,
   enabled  BOOLEAN          DEFAULT TRUE,
   strikes  INTEGER          DEFAULT 0,
-  password_change_key VARCHAR(8)
+  password_change_key VARCHAR(60)
 );
 
 CREATE TABLE IF NOT EXISTS authorities (
