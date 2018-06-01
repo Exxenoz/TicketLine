@@ -76,7 +76,8 @@ public class SecurityConfiguration {
             .dataSource(dataSource)
             .rolePrefix("ROLE_")
             .usersByUsernameQuery(JdbcUserDetailsManager.DEF_USERS_BY_USERNAME_QUERY)
-            .authoritiesByUsernameQuery(JdbcUserDetailsManager.DEF_AUTHORITIES_BY_USERNAME_QUERY);
+            .authoritiesByUsernameQuery(JdbcUserDetailsManager.DEF_AUTHORITIES_BY_USERNAME_QUERY)
+            .passwordEncoder(passwordEncoder);
         providerList.forEach(auth::authenticationProvider);
     }
 
