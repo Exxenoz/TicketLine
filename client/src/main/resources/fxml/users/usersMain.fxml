@@ -21,14 +21,14 @@
         <ButtonBar prefHeight="40.0" VBox.vgrow="ALWAYS" maxHeight="40">
             <buttons>
                 <Button fx:id="passwordResetButton" disable="true" mnemonicParsing="false" onAction="#onClickResetPassword" text="%usertab.user.password_reset">
-                    <HBox.margin>
+                    <VBox.margin>
                         <Insets right="16.0"/>
-                    </HBox.margin>
+                    </VBox.margin>
                 </Button>
                 <Button fx:id="toggleEnableButton"  disable="true" mnemonicParsing="false" onAction="#toggleEnable" text="%usertab.user.enable">
-                    <HBox.margin>
+                    <VBox.margin>
                         <Insets right="16.0"/>
-                    </HBox.margin>
+                    </VBox.margin>
                 </Button>
                 <Button mnemonicParsing="false" onAction="#onClickCreateUserButton" text="%usertab.user.create" />
             </buttons>

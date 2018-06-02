@@ -28,9 +28,9 @@
       <ButtonBar prefHeight="40.0"  VBox.vgrow="ALWAYS" maxHeight="40">
          <buttons>
              <Button fx:id="customerEditButton" disable="true" mnemonicParsing="false" onAction="#onClickEditCustomerButton" text="%customers.main.button.edit">
-               <HBox.margin>
+               <VBox.margin>
                   <Insets right="16.0" />
-               </HBox.margin></Button>
+               </VBox.margin></Button>
              <Button mnemonicParsing="false" onAction="#onClickCreateCustomerButton" text="%customers.main.button.create" />
          </buttons>
       </ButtonBar>
