@@ -12,11 +12,13 @@ import at.ac.tuwien.inso.sepm.ticketline.server.repository.*;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
@@ -137,28 +139,25 @@ public class ReservationIT extends BaseIT {
                 .withFirstName(customerDTO.getFirstName())
                 .withLastName(customerDTO.getLastName())
                 .withPerformanceName(performanceDTO.getName())
+                .withPage(0)
+                .withSize(10)
+                .withSortColumnName("id")
+                .withSortDirection(Sort.Direction.ASC)
                 .build();
 
             //create and send request - find not yet purchased reservation from the customer and for the performance
             //with the given name
-            Response response = RestAssured
+            RestAssured
                 .given()
                 .contentType(ContentType.JSON)
                 .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
                 .body(reservationSearchDTO)
                 .when().post(RESERVATION_ENDPOINT + "/findNotPaid")
-                .then().extract().response();
-
-            //assert result
-            Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
-            var resultList = List.of(response.getBody().as(ReservationDTO[].class));
-            Assert.assertEquals(1, resultList.size());
-            var result = resultList.get(0);
-            Assert.assertEquals(ReservationDTO.class, result.getClass());
-            Assert.assertNotNull(result.getId());
-            Assert.assertFalse(result.isPaid());
+                .then().statusCode(HttpStatus.OK.value())
+                .assertThat().body("content.id", Matchers.hasItem(PERFORMANCE_TEST_ID.intValue()))
+                .assertThat().body("content.paid", Matchers.hasItem(false));
         } else {
-            Assert.fail("Customer with the id " + CUSTOMER_TEST_ID + " was not found!");
+            Assert.fail("Either the Customer or the Performance were not found!");
         }
     }
 

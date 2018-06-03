@@ -137,18 +137,20 @@ public class ReservationServiceTests {
 
             //search
             Pageable pageable = Pageable.unpaged();
-            var reservations = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
+            var reservationPage = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
                 reservationSearch, pageable);
-            Assert.assertEquals(1, reservations.getSize());
+            var reservations = reservationPage.getContent();
+            Assert.assertEquals(1, reservations.size());
             //purchase said reservations
             for (Reservation reservation : reservations) {
                 reservationService.purchaseReservation(reservation);
             }
 
             //assert result
-            reservations = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
+            reservationPage = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
                 reservationSearch, pageable);
-            Assert.assertEquals(0, reservations.getSize());
+            reservations = reservationPage.getContent();
+            Assert.assertEquals(0, reservations.size());
         } else {
             Assert.fail("Either the customer or the performance weren't found!");
         }
@@ -173,12 +175,13 @@ public class ReservationServiceTests {
 
             //search
             Pageable pageable = Pageable.unpaged();
-            var reservations = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
+            var reservationPage = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
                 reservationSearch, pageable);
+            var reservations = reservationPage.getContent();
 
             //assert result
-            Assert.assertEquals(1, reservations.getSize());
-            var reservation = reservations.getContent().get(0);
+            Assert.assertEquals(1, reservations.size());
+            var reservation = reservations.get(0);
             var actualCustomer = reservation.getCustomer();
             var actualReservationId = reservation.getId();
             Assert.assertEquals(customer, actualCustomer);
