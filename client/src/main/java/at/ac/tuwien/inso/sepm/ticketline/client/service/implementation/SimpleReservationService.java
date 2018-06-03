@@ -66,7 +66,8 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
-    public List<ReservationDTO> findAllByPaidFalseByCustomerNameAndPerformanceName(ReservationSearchDTO reservationSearchDTO) throws DataAccessException {
+    public PageResponseDTO<ReservationDTO> findAllByPaidFalseByCustomerNameAndPerformanceName(ReservationSearchDTO reservationSearchDTO)
+        throws DataAccessException {
         return reservationRestClient.findAllByPaidFalseByCustomerNameAndByPerformanceName(reservationSearchDTO);
     }
 

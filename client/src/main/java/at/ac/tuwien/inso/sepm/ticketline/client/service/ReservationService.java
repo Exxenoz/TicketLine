@@ -69,7 +69,8 @@ public interface ReservationService {
      * @return the found reservations
      * @throws DataAccessException in case something went wrong during the action
      */
-    List<ReservationDTO> findAllByPaidFalseByCustomerNameAndPerformanceName(ReservationSearchDTO reservationSearchDTO) throws DataAccessException;
+    PageResponseDTO<ReservationDTO> findAllByPaidFalseByCustomerNameAndPerformanceName(ReservationSearchDTO reservationSearchDTO)
+        throws DataAccessException;
 
     /**
      * Finds a page of all existing reservations
