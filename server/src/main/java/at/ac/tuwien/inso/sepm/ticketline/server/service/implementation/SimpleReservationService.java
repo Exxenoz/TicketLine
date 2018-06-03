@@ -58,7 +58,7 @@ public class SimpleReservationService implements ReservationService {
         String firstName = reservationSearch.getFirstName();
         String lastName = reservationSearch.getLastName();
         String performanceName = reservationSearch.getPerformanceName();
-        return reservationRepository.findAllByPaidFalseAndCustomerNameAndPerformnceName(firstName, lastName, performanceName,
+        return reservationRepository.findAllByPaidFalseAndCustomerNameAndPerformanceName(firstName, lastName, performanceName,
             pageable);
     }
 

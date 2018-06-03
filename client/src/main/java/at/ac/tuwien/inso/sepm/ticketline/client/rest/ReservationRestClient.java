@@ -57,7 +57,7 @@ public interface ReservationRestClient {
      * Find not yet purchased reservation with the full name of the customer and the name of the performance
      *
      * @param reservationSearchDTO the object DTO with the search parameters
-     * @return the found reservations
+     * @return a page of the found reservations
      * @throws DataAccessException in case something went wrong during the action
      */
     PageResponseDTO<ReservationDTO> findAllByPaidFalseByCustomerNameAndByPerformanceName(ReservationSearchDTO reservationSearchDTO)

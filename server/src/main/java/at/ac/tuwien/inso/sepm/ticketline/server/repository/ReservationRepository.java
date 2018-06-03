@@ -64,17 +64,17 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      * @param firstName       first name of the customer
      * @param lastName        last name of the customer
      * @param performanceName name of the performance
-     * @return the not yed purchased reservation
+     * @return a page of the found  not yet purchased reservations
      */
     @Query(value = "SELECT r.* " +
         "FROM reservation r, customer c, performance p " +
         "WHERE c.id = r.customer_id AND p.id = r.performance_id AND r.paid = false " +
         "AND c.first_name = :firstName AND c.last_name = :lastName AND p.name  = :performanceName",
         nativeQuery = true)
-    Page<Reservation> findAllByPaidFalseAndCustomerNameAndPerformnceName(@Param("firstName") String firstName,
-                                                                         @Param("lastName") String lastName,
-                                                                         @Param("performanceName") String performanceName,
-                                                                         Pageable pageable);
+    Page<Reservation> findAllByPaidFalseAndCustomerNameAndPerformanceName(@Param("firstName") String firstName,
+                                                                          @Param("lastName") String lastName,
+                                                                          @Param("performanceName") String performanceName,
+                                                                          Pageable pageable);
 
     /**
      * Finds a non invoiced reservation by the unique reservationNr

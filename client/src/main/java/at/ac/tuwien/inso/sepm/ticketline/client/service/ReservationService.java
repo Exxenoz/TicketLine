@@ -39,7 +39,7 @@ public interface ReservationService {
     /**
      * Create a reservation which is paid immediately with the given values within the createReservationDTO
      * @param createReservationDTO contains chosen values for the attributes of the reservation
-     * @returna reservationDTO which includes the id
+     * @return a reservationDTO which includes the id
      * @throws DataAccessException in case something goes wrong while trying to create and set the reservation to paid in the db
      */
     ReservationDTO createAndPayReservation(CreateReservationDTO createReservationDTO) throws DataAccessException;
@@ -66,7 +66,7 @@ public interface ReservationService {
      * Finds a not yet purchased reservation with the full name of the customer and name of the performance
      *
      * @param reservationSearchDTO the DTO object with the search parameters
-     * @return the found reservations
+     * @return a page of the found reservations
      * @throws DataAccessException in case something went wrong during the action
      */
     PageResponseDTO<ReservationDTO> findAllByPaidFalseByCustomerNameAndPerformanceName(ReservationSearchDTO reservationSearchDTO)

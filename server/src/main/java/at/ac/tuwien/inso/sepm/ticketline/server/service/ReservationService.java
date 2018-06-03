@@ -39,7 +39,7 @@ public interface ReservationService {
      * which the customer did not yet purchase
      *
      * @param reservationSearch the object holding the search
-     * @return the reservations belonging to the performance with the given name and owned by the customer
+     * @return a page of the reservations belonging to the performance with the given name and owned by the customer
      */
     Page<Reservation> findAllByPaidFalseAndCustomerNameAndPerformanceName(ReservationSearch reservationSearch, Pageable pageable);
 
