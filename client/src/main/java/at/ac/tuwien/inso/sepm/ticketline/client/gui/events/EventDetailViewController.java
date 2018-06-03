@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -143,7 +144,8 @@ public class EventDetailViewController {
 
     private void intializeTableView() {
         startTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPerformanceStart().toString()));
-        endTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPerformanceEnd().toString()));
+
+        endTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDuration().toString()));
         locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLocationAddress().getCity()));
         performanceData = FXCollections.observableArrayList(performances);
         performanceDatesTableView.setItems(performanceData);

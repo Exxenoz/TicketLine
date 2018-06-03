@@ -5,8 +5,7 @@ import java.util.List;
 public class CreateReservationDTO {
 
     //TODO: Customer
-    private long customerID;
-
+    private Long customerID;
     private long performanceID;
     private List<Long> seatIDs;
     private boolean paid;
@@ -35,18 +34,18 @@ public class CreateReservationDTO {
         this.paid = paid;
     }
 
-    public long getCustomerID() {
+    public Long getCustomerID() {
         return customerID;
     }
 
-    public void setCustomerID(long customerID) {
+    public void setCustomerID(Long customerID) {
         this.customerID = customerID;
     }
 
 
     public static final class CreateReservationDTOBuilder {
         //TODO: Customer
-        private long customerID;
+        private Long customerID;
         private long performanceID;
         private List<Long> seatIDs;
         private boolean paid;

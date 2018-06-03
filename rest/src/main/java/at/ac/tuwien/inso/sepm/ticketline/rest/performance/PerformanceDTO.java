@@ -7,6 +7,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -22,23 +23,20 @@ public class PerformanceDTO {
     private BigDecimal price;
     @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime performanceStart;
-    @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
-    private LocalDateTime performanceEnd;
-
+    private Duration duration;
     private LocationAddressDTO address;
-
     private HallDTO hall;
 
     public PerformanceDTO() {
     }
 
-    public PerformanceDTO(EventDTO event, Set<ArtistDTO> artists, String name, BigDecimal price, LocalDateTime performanceStart, LocalDateTime performanceEnd, LocationAddressDTO address) {
+    public PerformanceDTO(EventDTO event, Set<ArtistDTO> artists, String name, BigDecimal price, LocalDateTime performanceStart, Duration duration, LocationAddressDTO address) {
         this.event = event;
         this.artists = artists;
         this.name = name;
         this.price = price;
         this.performanceStart = performanceStart;
-        this.performanceEnd = performanceEnd;
+        this.duration = duration;
         this.address = address;
     }
 
@@ -90,12 +88,12 @@ public class PerformanceDTO {
         this.performanceStart = performanceStart;
     }
 
-    public LocalDateTime getPerformanceEnd() {
-        return performanceEnd;
+    public Duration getDuration() {
+        return duration;
     }
 
-    public void setPerformanceEnd(LocalDateTime performanceEnd) {
-        this.performanceEnd = performanceEnd;
+    public void setDuration(Duration duration) {
+        this.duration = duration;
     }
 
     public LocationAddressDTO getLocationAddress() {
@@ -127,7 +125,7 @@ public class PerformanceDTO {
             ", name='" + name + '\'' +
             ", price=" + price +
             ", performanceStart=" + performanceStart +
-            ", performanceEnd=" + performanceEnd +
+            ", duration=" + duration +
             ", address=" + address +
             ", hall=" + hall +
             '}';
@@ -144,7 +142,7 @@ public class PerformanceDTO {
             Objects.equals(name, that.name) &&
             Objects.equals(price, that.price) &&
             Objects.equals(performanceStart, that.performanceStart) &&
-            Objects.equals(performanceEnd, that.performanceEnd) &&
+            Objects.equals(duration, that.duration) &&
             Objects.equals(address, that.address) &&
             Objects.equals(hall, that.hall);
     }
@@ -152,6 +150,6 @@ public class PerformanceDTO {
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, event, artists, name, price, performanceStart, performanceEnd, address, hall);
+        return Objects.hash(id, event, artists, name, price, performanceStart, duration, address, hall);
     }
 }

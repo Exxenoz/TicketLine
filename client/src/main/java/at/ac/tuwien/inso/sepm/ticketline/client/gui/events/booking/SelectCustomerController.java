@@ -210,8 +210,6 @@ public class SelectCustomerController {
     }
 
     public void goNextWithoutCustomer(ActionEvent actionEvent) {
-        chosenCustomer.setFirstName("Anonymous");
-        reservation.setCustomer(chosenCustomer);
         continueOrReserve();
     }
 
