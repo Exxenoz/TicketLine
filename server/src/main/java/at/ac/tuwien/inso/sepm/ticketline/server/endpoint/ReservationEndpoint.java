@@ -85,15 +85,18 @@ public class ReservationEndpoint {
     @PostMapping("/findNotPaid")
     @PreAuthorize("hasRole('USER')")
     @ApiOperation("Finds Reservations which wasn't purchased yet with the given customername and performancename")
-    public List<ReservationDTO> findAllByPaidFalseByCustomerNameAndPerformanceName(
+    public PageResponseDTO<ReservationDTO> findAllByPaidFalseByCustomerNameAndPerformanceName(
         @RequestBody ReservationSearchDTO reservationSearchDTO) {
         try {
             ReservationSearchValidator.validateReservationSearchDTO(reservationSearchDTO);
-            var reservations = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
-                reservationSearchMapper.reservationSearchDTOToReservationSearch(reservationSearchDTO)
+            Page<Reservation> reservationPage = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
+                reservationSearchMapper.reservationSearchDTOToReservationSearch(reservationSearchDTO),
+                reservationSearchDTO.getPageable()
             );
 
-            return reservationMapper.reservationToReservationDTO(reservations);
+            List<ReservationDTO> reservationDTOList = reservationMapper.reservationToReservationDTO(reservationPage.getContent());
+
+            return new PageResponseDTO<>(reservationDTOList, reservationPage.getTotalPages());
         } catch (ReservationSearchValidationException e) {
             throw new HttpBadRequestException();
         }

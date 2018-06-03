@@ -41,7 +41,7 @@ public interface ReservationService {
      * @param reservationSearch the object holding the search
      * @return the reservations belonging to the performance with the given name and owned by the customer
      */
-    List<Reservation> findAllByPaidFalseAndCustomerNameAndPerformanceName(ReservationSearch reservationSearch);
+    Page<Reservation> findAllByPaidFalseAndCustomerNameAndPerformanceName(ReservationSearch reservationSearch, Pageable pageable);
 
     /**
      * Get paid reservation count by event id.

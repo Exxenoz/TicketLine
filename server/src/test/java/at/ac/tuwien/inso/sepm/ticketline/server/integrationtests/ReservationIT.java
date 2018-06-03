@@ -136,7 +136,7 @@ public class ReservationIT extends BaseIT {
             var reservationSearchDTO = ReservationSearchDTO.Builder.aReservationSearchDTO()
                 .withFirstName(customerDTO.getFirstName())
                 .withLastName(customerDTO.getLastName())
-                .withPerfomanceName(performanceDTO.getName())
+                .withPerformanceName(performanceDTO.getName())
                 .build();
 
             //create and send request - find not yet purchased reservation from the customer and for the performance

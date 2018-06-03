@@ -1,6 +1,8 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.repository;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -69,9 +71,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
         "WHERE c.id = r.customer_id AND p.id = r.performance_id AND r.paid = false " +
         "AND c.first_name = :firstName AND c.last_name = :lastName AND p.name  = :performanceName",
         nativeQuery = true)
-    List<Reservation> findAllByPaidFalseAndCustomerNameAndPerformnceName(@Param("firstName") String firstName,
+    Page<Reservation> findAllByPaidFalseAndCustomerNameAndPerformnceName(@Param("firstName") String firstName,
                                                                          @Param("lastName") String lastName,
-                                                                         @Param("performanceName") String performanceName);
+                                                                         @Param("performanceName") String performanceName,
+                                                                         Pageable pageable);
 
     /**
      * Finds a non invoiced reservation by the unique reservationNr

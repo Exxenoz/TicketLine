@@ -1,8 +1,11 @@
 package at.ac.tuwien.inso.sepm.ticketline.rest.reservation;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
+import org.springframework.data.domain.Sort;
+
 import java.util.Objects;
 
-public class ReservationSearchDTO {
+public class ReservationSearchDTO extends PageRequestDTO {
     private String firstName;
     private String lastName;
     private String performanceName;
@@ -35,35 +38,30 @@ public class ReservationSearchDTO {
     }
 
     @Override
-    public String toString() {
-        return "ReservationSearchDTO{" +
-            "customerFirstName=" + "\'" + firstName + "\'," +
-            "customerLastName=" + "\'" + lastName + "\'," +
-            "performanceName=" + "\'" + performanceName + "\'" +
-            "}";
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-
-        ReservationSearchDTO that = (ReservationSearchDTO) obj;
-        return (this.firstName.equals(that.getFirstName()))
-            && (this.lastName.equals(that.getLastName()))
-            && (this.performanceName.equals(that.getPerformanceName()));
-
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ReservationSearchDTO)) return false;
+        if (!super.equals(o)) return false;
+        ReservationSearchDTO that = (ReservationSearchDTO) o;
+        return Objects.equals(getFirstName(), that.getFirstName()) &&
+            Objects.equals(getLastName(), that.getLastName()) &&
+            Objects.equals(getPerformanceName(), that.getPerformanceName());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, performanceName);
+        return Objects.hash(super.hashCode(), getFirstName(), getLastName(), getPerformanceName());
     }
+
 
     public static final class Builder {
         private String firstName;
         private String lastName;
-        private String perfomanceName;
+        private String performanceName;
+        private int page;
+        private int size;
+        private Sort.Direction sortDirection;
+        private String sortColumnName;
 
         private Builder() {
         }
@@ -82,8 +80,28 @@ public class ReservationSearchDTO {
             return this;
         }
 
-        public Builder withPerfomanceName(String perfomanceName) {
-            this.perfomanceName = perfomanceName;
+        public Builder withPerformanceName(String performanceName) {
+            this.performanceName = performanceName;
+            return this;
+        }
+
+        public Builder withPage(int page) {
+            this.page = page;
+            return this;
+        }
+
+        public Builder withSize(int size) {
+            this.size = size;
+            return this;
+        }
+
+        public Builder withSortDirection(Sort.Direction sortDirection) {
+            this.sortDirection = sortDirection;
+            return this;
+        }
+
+        public Builder withSortColumnName(String sortColumnName) {
+            this.sortColumnName = sortColumnName;
             return this;
         }
 
@@ -91,7 +109,11 @@ public class ReservationSearchDTO {
             ReservationSearchDTO reservationSearchDTO = new ReservationSearchDTO();
             reservationSearchDTO.setFirstName(firstName);
             reservationSearchDTO.setLastName(lastName);
-            reservationSearchDTO.setPerformanceName(perfomanceName);
+            reservationSearchDTO.setPerformanceName(performanceName);
+            reservationSearchDTO.setPage(page);
+            reservationSearchDTO.setSize(size);
+            reservationSearchDTO.setSortDirection(sortDirection);
+            reservationSearchDTO.setSortColumnName(sortColumnName);
             return reservationSearchDTO;
         }
     }

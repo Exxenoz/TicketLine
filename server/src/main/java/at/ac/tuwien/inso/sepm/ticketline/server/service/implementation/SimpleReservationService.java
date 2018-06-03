@@ -1,9 +1,11 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationSearch;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.Seat;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.SeatRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
@@ -16,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolationException;
 import java.lang.invoke.MethodHandles;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,11 +53,13 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
-    public List<Reservation> findAllByPaidFalseAndCustomerNameAndPerformanceName(ReservationSearch reservationSearch) {
+    public Page<Reservation> findAllByPaidFalseAndCustomerNameAndPerformanceName(ReservationSearch reservationSearch,
+                                                                                 Pageable pageable) {
         String firstName = reservationSearch.getFirstName();
         String lastName = reservationSearch.getLastName();
         String performanceName = reservationSearch.getPerformanceName();
-        return reservationRepository.findAllByPaidFalseAndCustomerNameAndPerformnceName(firstName, lastName, performanceName);
+        return reservationRepository.findAllByPaidFalseAndCustomerNameAndPerformnceName(firstName, lastName, performanceName,
+            pageable);
     }
 
     @Override

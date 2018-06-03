@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -25,7 +26,8 @@ import java.util.List;
 
 import static java.math.BigDecimal.ONE;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -134,9 +136,10 @@ public class ReservationServiceTests {
 
 
             //search
+            Pageable pageable = Pageable.unpaged();
             var reservations = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
-                reservationSearch);
-            Assert.assertEquals(1, reservations.size());
+                reservationSearch, pageable);
+            Assert.assertEquals(1, reservations.getSize());
             //purchase said reservations
             for (Reservation reservation : reservations) {
                 reservationService.purchaseReservation(reservation);
@@ -144,8 +147,8 @@ public class ReservationServiceTests {
 
             //assert result
             reservations = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
-                reservationSearch);
-            Assert.assertEquals(0, reservations.size());
+                reservationSearch, pageable);
+            Assert.assertEquals(0, reservations.getSize());
         } else {
             Assert.fail("Either the customer or the performance weren't found!");
         }
@@ -169,12 +172,13 @@ public class ReservationServiceTests {
 
 
             //search
+            Pageable pageable = Pageable.unpaged();
             var reservations = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
-                reservationSearch);
+                reservationSearch, pageable);
 
             //assert result
-            Assert.assertEquals(1, reservations.size());
-            var reservation = reservations.get(0);
+            Assert.assertEquals(1, reservations.getSize());
+            var reservation = reservations.getContent().get(0);
             var actualCustomer = reservation.getCustomer();
             var actualReservationId = reservation.getId();
             Assert.assertEquals(customer, actualCustomer);
