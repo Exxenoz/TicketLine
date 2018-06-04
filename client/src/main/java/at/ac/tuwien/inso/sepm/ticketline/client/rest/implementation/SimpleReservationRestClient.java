@@ -147,7 +147,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     @Override
     public PageResponseDTO<ReservationDTO> findAllByPaidFalseByCustomerNameAndByPerformanceName(ReservationSearchDTO reservationSearchDTO) throws DataAccessException {
         try {
-            LOGGER.debug("Entering findAllByPaidFalseByCustomerName method with URI {}", reservationFindNotPaidUri);
+            LOGGER.debug("Entering findAllByPaidFalseByCustomerNameAndByPerformanceName method with URI {}", reservationFindNotPaidUri);
             final var response =
                 restClient.exchange(
                     new RequestEntity<>(reservationSearchDTO, POST, reservationFindNotPaidUri),
