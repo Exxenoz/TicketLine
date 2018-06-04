@@ -179,11 +179,13 @@ public class ReservationsController {
 
     private String getColumnNameBy(TableColumn<ReservationDTO, ?> sortedColumn) {
         if (sortedColumn == eventColumn) {
-            return "eventName";
+            return "performance.event.name";
         } else if (sortedColumn == customerColumn) {
-            return "customerName";
+            return "customer.lastName";
         } else if (sortedColumn == paidColumn) {
-            return "status";
+            return "paid";
+        } else if (sortedColumn == reservationIDColumn) {
+            return "reservationNumber";
         }
         return "id";
     }
@@ -242,6 +244,9 @@ public class ReservationsController {
         stage.initOwner(showReservationDetailsButton.getScene().getWindow());
 
         stage.showAndWait();
+
+        clear();
+        loadData();
     }
 
     public void searchForReservations() {
