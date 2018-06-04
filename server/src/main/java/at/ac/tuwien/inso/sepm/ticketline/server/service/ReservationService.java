@@ -74,7 +74,7 @@ public interface ReservationService {
      * @param reservation existing reservation with the new data
      * @return the edited reservation
      */
-    Reservation editReservation(Reservation reservation) throws InvalidReservationException;
+    Reservation editReservation(Reservation reservation);
 
     /**
      * create a new reservation and set paid true

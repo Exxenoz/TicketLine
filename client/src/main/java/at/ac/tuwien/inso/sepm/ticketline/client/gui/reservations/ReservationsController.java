@@ -70,6 +70,7 @@ public class ReservationsController {
     private int page = 0;
     private int totalPages = 0;
     private static final int RESERVATIONS_PER_PAGE = 25;
+    private static final int RESERVATION_FIRST_PAGE = 0;
     @FXML
     public TextField reservationNrField;
     private String activeFilters = "";
@@ -101,7 +102,7 @@ public class ReservationsController {
     public void loadReservations() {
         foundReservationsTableView.sortPolicyProperty().set(t -> {
             clear();
-            loadPerformanceTable(0);
+            loadPerformanceTable(RESERVATION_FIRST_PAGE);
             return true;
         });
 
@@ -282,7 +283,7 @@ public class ReservationsController {
                     .build();
             } else {
                 reservationSearchDTO = ReservationSearchDTO.Builder.aReservationSearchDTO()
-                    .withPage(0)
+                    .withPage(RESERVATION_FIRST_PAGE)
                     .withSize(RESERVATIONS_PER_PAGE)
                     .withSortColumnName(null)
                     .withSortDirection(Sort.Direction.ASC)
