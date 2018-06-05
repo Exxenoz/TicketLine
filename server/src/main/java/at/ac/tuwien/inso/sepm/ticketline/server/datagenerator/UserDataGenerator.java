@@ -39,12 +39,16 @@ public class UserDataGenerator implements DataGenerator {
                     appendix++;
                     username += appendix;
                 }
+
+                HashSet roles = new HashSet();
+                roles.add("USER");
+
                 var user = User.builder()
                     .username(username)
                     .password("$2a$10$hXJx1IBhxH2fcTa/NR2ZMetAKy.4w3SoWeJm7FiEjK6XjOOtyRQmO")
                     .enabled(true)
                     .strikes(0)
-                    .roles(new HashSet<>()).build();
+                    .roles(roles).build();
                 userRepository.save(user);
             }
         }
