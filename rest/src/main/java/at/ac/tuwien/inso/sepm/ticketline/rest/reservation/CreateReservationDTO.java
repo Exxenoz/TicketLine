@@ -4,7 +4,6 @@ import java.util.List;
 
 public class CreateReservationDTO {
 
-    //TODO: Customer
     private Long customerID;
     private long performanceID;
     private List<Long> seatIDs;
@@ -44,7 +43,7 @@ public class CreateReservationDTO {
 
 
     public static final class CreateReservationDTOBuilder {
-        //TODO: Customer
+
         private Long customerID;
         private long performanceID;
         private List<Long> seatIDs;

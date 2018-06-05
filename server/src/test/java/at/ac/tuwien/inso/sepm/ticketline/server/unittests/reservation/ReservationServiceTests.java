@@ -215,6 +215,7 @@ public class ReservationServiceTests {
         assertThat(reservation.getCustomer(), is(returned.getCustomer()));
         assertThat(reservation.getSeats(), is(returned.getSeats()));
         assertThat(reservation.getPerformance(), is(returned.getPerformance()));
+        assertThat(reservation.getReservationNumber(), is(returned.getReservationNumber()));
         assertThat(reservation.getPaid(), is(false));
 
     }
