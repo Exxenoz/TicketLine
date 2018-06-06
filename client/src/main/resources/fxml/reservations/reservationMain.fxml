@@ -35,13 +35,13 @@
                                     <children>
                                         <TableView fx:id="foundReservationsTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS">
                                             <columns>
-                                                <TableColumn fx:id="reservationIDColumn" sortable="true"
+                                                <TableColumn fx:id="reservationIDColumn" sortable="false"
                                                              text="%bookings.table.reservationID"/>
-                                                <TableColumn fx:id="eventColumn" sortable="true"
+                                                <TableColumn fx:id="eventColumn" sortable="false"
                                                              text="%bookings.table.event"/>
-                                                <TableColumn fx:id="customerColumn" sortable="true"
+                                                <TableColumn fx:id="customerColumn" sortable="false"
                                                              text="%bookings.table.customer"/>
-                                                <TableColumn fx:id="paidColumn" sortable="true"
+                                                <TableColumn fx:id="paidColumn" sortable="false"
                                                              text="%bookings.table.paid"/>
                                             </columns>
                                             <columnResizePolicy>
