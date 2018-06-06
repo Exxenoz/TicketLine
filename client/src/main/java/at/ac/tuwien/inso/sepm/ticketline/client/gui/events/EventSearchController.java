@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
@@ -28,6 +29,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.CALENDAR_ALT;
 
@@ -214,26 +217,29 @@ public class EventSearchController {
 
     @FXML
     void searchForPerformances(ActionEvent event) {
+        ResourceBundle labels = BundleManager.getBundle();
+
+
         String artistFirstName = artistFirstNameTextField.getText();
-        addToCurrentSearchParameters(artistFirstName);
+        addToCurrentSearchParameters(labels.getString("events.search.artistfirstname") + " " + artistFirstName);
         String artistLastName = artistLastNameTextField.getText();
-        addToCurrentSearchParameters(artistLastName);
+        addToCurrentSearchParameters(labels.getString("events.search.artistlastname") + " " + artistLastName);
 
         String eventName = eventNameTextField.getText();
-        addToCurrentSearchParameters(eventName);
+        addToCurrentSearchParameters(labels.getString("events.search.eventname") + " " + eventName);
         EventTypeDTO eventType = null;
         if (seatingYesButton.isSelected()) {
             eventType = EventTypeDTO.SEAT;
-            addToCurrentSearchParameters(eventType.toString());
+            addToCurrentSearchParameters(labels.getString("events.search.seating") + " " + eventType.toString());
         } else if (seatingNoButton.isSelected()) {
             eventType = EventTypeDTO.SECTOR;
-            addToCurrentSearchParameters(eventType.toString());
+            addToCurrentSearchParameters(labels.getString("events.search.seating") + " " + eventType.toString());
         }
         String durationString = lengthInMinutesTextField.getText();
         Duration duration = null;
 
         if (durationString.matches("[0-9]+")) {
-            addToCurrentSearchParameters(durationString + " min");
+            addToCurrentSearchParameters(labels.getString("events.search.length") + " " + durationString + " min");
             duration = Duration.ofMinutes(Integer.parseInt(durationString));
         }
 
@@ -245,27 +251,27 @@ public class EventSearchController {
             beginTimeHours = beginTimeHourSpinner.getValue();
             beginTimeMinutes = beginTimeMinuteSpinner.getValue();
             beginDateAndTime = LocalDateTime.of(beginDate, LocalTime.of(beginTimeHours, beginTimeMinutes));
-            addToCurrentSearchParameters(beginDateAndTime.toString());
+            addToCurrentSearchParameters(labels.getString("events.search.begintime") + " " + beginDateAndTime.toString());
         }
 
         String priceString = priceTextField.getText();
         BigDecimal price = null;
         try {
             price = new BigDecimal(priceString);
-            addToCurrentSearchParameters(priceString);
+            addToCurrentSearchParameters(labels.getString("events.search.price") + " " + priceString);
         } catch (NumberFormatException ignored) {
         }
 
         String locationName = locationNameTextField.getText();
-        addToCurrentSearchParameters(locationName);
+        addToCurrentSearchParameters(labels.getString("events.search.locationname") + " " + locationName);
         String street = streetTextField.getText();
-        addToCurrentSearchParameters(street);
+        addToCurrentSearchParameters(labels.getString("events.search.street") + " " + street);
         String city = cityTextField.getText();
-        addToCurrentSearchParameters(city);
+        addToCurrentSearchParameters(labels.getString("events.search.city") + " " + city);
         String country = countryTextField.getText();
-        addToCurrentSearchParameters(country);
+        addToCurrentSearchParameters(labels.getString("events.search.contry") + " " + country);
         String postalCode = postalCodeTextField.getText();
-        addToCurrentSearchParameters(postalCode);
+        addToCurrentSearchParameters(labels.getString("events.search.postalcode") + " " + postalCode);
 
 
         //String performanceName, String eventName, String artistFirstName,

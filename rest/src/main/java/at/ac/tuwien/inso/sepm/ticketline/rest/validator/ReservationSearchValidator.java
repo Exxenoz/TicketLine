@@ -6,7 +6,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
 public abstract class ReservationSearchValidator {
 
 
-    private static final String letterRegex = "^[a-zA-Z]+$";
+    private static final String letterRegex = "^[-a-zA-Z ]+$";
 
     public static void validateReservationSearchDTO(ReservationSearchDTO reservationSearchDTO) throws ReservationSearchValidationException {
         validateDTO(reservationSearchDTO);

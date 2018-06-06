@@ -75,43 +75,37 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
 
     @Override
     public AuthenticationToken authenticate(String username, CharSequence password) throws InternalUserNotFoundException, InternalUserDisabledException, InternalPasswordResetException, InternalUserPasswordWrongException {
+        UserDTO userDTO = null;
+        try {
+            userDTO = userService.findUserByName(username);
+        } catch (InternalUserNotFoundException e) {
+            LOGGER.debug("Could not authenticate user '{}', because user could not be found!", username);
+            throw new InternalUserNotFoundException();
+        }
+
+        if (userService.isPasswordChangeKeySet(userDTO)) {
+            LOGGER.debug("Could not authenticate user '{}', because password change key is set!", username);
+            throw new InternalPasswordResetException();
+        }
 
         Authentication authentication = null;
         try {
             authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password));
 
+            // Logged in successfully
+
+            // Reset strikes
+            userService.resetStrikes(userDTO);
+
         } catch (AuthenticationException a) {
-            LOGGER.error(String.format("Failed to authenticate user with name: %s", username), a);
+            LOGGER.debug("Could not authenticate user '{}', because authentication failed: {}", username, a.getMessage());
 
-            UserDTO userDTO = null;
-            try {
-                userDTO = userService.findUserByName(username);
-            } catch (InternalUserNotFoundException e) {
-                throw new InternalUserNotFoundException();
-            }
-
-            if(userDTO != null) {
-                if (userService.isPasswordChangeKeySet(userDTO)) {
-                    throw new InternalPasswordResetException();
-                }
-
-                boolean isDisabled = false;
-
-                try {
-                    isDisabled = userService.increaseStrikes(userDTO);
-                } catch (InternalUserValidationException e) {
-                    throw new InternalUserNotFoundException();
-                }
-
-                if (!isDisabled) {
-                    throw new InternalUserPasswordWrongException();
-                } else {
-                    LOGGER.info("User will been informed that he was disabled.");
-                    throw new InternalUserDisabledException("User is disabled");
-                }
+            if (!userService.increaseStrikes(userDTO)) {
+                throw new InternalUserPasswordWrongException();
             } else {
-               throw new InternalUserNotFoundException();
+                LOGGER.debug("User '{}' was disabled automatically, because he got too many strikes!", username);
+                throw new InternalUserDisabledException("User is disabled");
             }
         }
 

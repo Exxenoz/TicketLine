@@ -191,6 +191,7 @@ public class CustomerController {
     }
 
     public void refreshCustomerTable() {
+        // TODO: fix sorting
         customerTable.sort();
         customerTable.refresh();
     }

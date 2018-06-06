@@ -39,14 +39,22 @@ public interface UserService {
     void disableUser(UserDTO userDTO) throws InternalUserValidationException, InternalForbiddenException, InternalUserNotFoundException;
 
     /**
-     * Increasing the strike counter for a users.
+     * Increasing the strike counter for the specified user.
      *
      * @param userDTO The user that earns a strike
      * @throws InternalUserValidationException in case the user validation failed
      * @throws InternalUserNotFoundException in case the user was not found
      * @return Boolean that indicates whether or not the users is disabled
      */
-    boolean increaseStrikes(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException;
+    boolean increaseStrikes(UserDTO userDTO) throws InternalUserNotFoundException;
+
+    /**
+     * Resets the strike counter for the specified user.
+     *
+     * @param userDTO The user, whose strike counter will be reset
+     * @throws InternalUserNotFoundException in case the user was not found
+     */
+    void resetStrikes(UserDTO userDTO) throws InternalUserNotFoundException;
 
     /**
      * Searching for a user by name

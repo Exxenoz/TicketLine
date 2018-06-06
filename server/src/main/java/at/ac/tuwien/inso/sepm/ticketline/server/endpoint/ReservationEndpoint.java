@@ -1,7 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.ReservationSearchValidationException;
-import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
@@ -13,10 +12,12 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.Reserv
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationSearchMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpBadRequestException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpNotFoundException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,14 +72,20 @@ public class ReservationEndpoint {
     @ApiOperation("Finds a Reservation which wasn't purchased yet with the given id")
     public ReservationDTO findOneByPaidFalseById(@PathVariable Long reservationId) {
         final var reservation = reservationService.findOneByPaidFalseAndId(reservationId);
+        if (reservation == null) {
+            throw new HttpNotFoundException();
+        }
         return reservationMapper.reservationToReservationDTO(reservation);
     }
 
-    @PostMapping("/findNotPaid/ReservationNumber")
+    @GetMapping("/findNotPaid/reservationNr/{reservationNumber}")
     @PreAuthorize("hasRole('USER')")
     @ApiOperation("Finds a Reservation which wasn't purchased yet with the given id")
-    public ReservationDTO findOneByPaidFalseAndReservationNumber(@RequestBody String reservationNr) {
+    public ReservationDTO findOneByPaidFalseAndReservationNumber(@PathVariable("reservationNumber") String reservationNr) {
         final var reservation = reservationService.findOneByPaidFalseAndReservationNumber(reservationNr);
+        if (reservation == null) {
+            throw new HttpNotFoundException();
+        }
         return reservationMapper.reservationToReservationDTO(reservation);
     }
 
@@ -95,8 +102,11 @@ public class ReservationEndpoint {
             );
 
             List<ReservationDTO> reservationDTOList = reservationMapper.reservationToReservationDTO(reservationPage.getContent());
-
-            return new PageResponseDTO<>(reservationDTOList, reservationPage.getTotalPages());
+            if (reservationDTOList.isEmpty()) {
+                throw new HttpNotFoundException();
+            } else {
+                return new PageResponseDTO<>(reservationDTOList, reservationPage.getTotalPages());
+            }
         } catch (ReservationSearchValidationException e) {
             throw new HttpBadRequestException();
         }
@@ -131,11 +141,11 @@ public class ReservationEndpoint {
         return reservationMapper.reservationToReservationDTO(createdReservation);
     }
 
-    @PostMapping("/findAll")
+    @GetMapping("/{page}/{size}")
     @PreAuthorize("hasRole('USER')")
     @ApiOperation("Finds a page of all exisiting Reservations")
-    public PageResponseDTO<ReservationDTO> findAll(@RequestBody final PageRequestDTO pageRequestDTO) {
-        Page<Reservation> reservationPage = reservationService.findAll(pageRequestDTO.getPageable());
+    public PageResponseDTO<ReservationDTO> findAll(@PathVariable("page") int page, @PathVariable("size") int size) {
+        Page<Reservation> reservationPage = reservationService.findAll(PageRequest.of(page, size));
         List<ReservationDTO> reservationDTOList = reservationMapper.reservationToReservationDTO(
             reservationPage.getContent()
         );
