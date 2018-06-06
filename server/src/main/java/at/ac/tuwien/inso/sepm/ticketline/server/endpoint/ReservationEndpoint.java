@@ -1,7 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.ReservationSearchValidationException;
-import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
@@ -18,6 +17,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -141,11 +141,11 @@ public class ReservationEndpoint {
         return reservationMapper.reservationToReservationDTO(createdReservation);
     }
 
-    @PostMapping("/findAll")
+    @GetMapping("/{page}/{size}")
     @PreAuthorize("hasRole('USER')")
     @ApiOperation("Finds a page of all exisiting Reservations")
-    public PageResponseDTO<ReservationDTO> findAll(@RequestBody final PageRequestDTO pageRequestDTO) {
-        Page<Reservation> reservationPage = reservationService.findAll(pageRequestDTO.getPageable());
+    public PageResponseDTO<ReservationDTO> findAll(@PathVariable("page") int page, @PathVariable("size") int size) {
+        Page<Reservation> reservationPage = reservationService.findAll(PageRequest.of(page, size));
         List<ReservationDTO> reservationDTOList = reservationMapper.reservationToReservationDTO(
             reservationPage.getContent()
         );

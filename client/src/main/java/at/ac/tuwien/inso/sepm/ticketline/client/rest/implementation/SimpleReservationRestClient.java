@@ -34,6 +34,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     private final URI reservationCreateUri;
     private final URI reservationCreateAndPayUri;
     private final URI reservationFindAllUri;
+    private final String reservation;
     private final URI reservationEditUri;
     private final URI reservationPurchaseUri;
     private final URI reservationFindNotPaidUri;
@@ -45,12 +46,13 @@ public class SimpleReservationRestClient implements ReservationRestClient {
         this.reservationTopTenUri = restClient.getServiceURI("/reservation/top_ten/");
         this.reservationCreateUri = restClient.getServiceURI("/reservation/");
         this.reservationCreateAndPayUri = restClient.getServiceURI("/reservation/createAndPay/");
-        this.reservationFindAllUri = restClient.getServiceURI("/reservation/findAll");
+        this.reservationFindAllUri = restClient.getServiceURI("/reservation");
         this.reservationEditUri = restClient.getServiceURI("/reservation/edit");
         this.reservationPurchaseUri = restClient.getServiceURI("/reservation/purchase");
         this.reservationFindNotPaidUri = restClient.getServiceURI("/reservation/findNotPaid");
         this.reservationFindNotPaidByReservationNumberUri =
             restClient.getServiceURI("reservation/findNotPaid/ReservationNumber");
+        this.reservation = "/reservation";
     }
 
     @Override
@@ -220,10 +222,11 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     @Override
     public PageResponseDTO<ReservationDTO> findAll(PageRequestDTO pageRequestDTO) throws DataAccessException {
         try {
-            LOGGER.debug("Entering findAll method with URI {}", reservationFindAllUri);
+            URI uri = restClient.getServiceURI(reservation + "/" + pageRequestDTO.getPage() + "/" + pageRequestDTO.getSize());
+            LOGGER.debug("Entering findAll method with URI {}", uri);
             final var response =
                 restClient.exchange(
-                    new RequestEntity<>(pageRequestDTO, POST, reservationFindAllUri),
+                    new RequestEntity<>(GET, uri),
                     new ParameterizedTypeReference<PageResponseDTO<ReservationDTO>>() {
                     });
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
