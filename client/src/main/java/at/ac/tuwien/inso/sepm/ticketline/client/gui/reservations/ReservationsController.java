@@ -69,7 +69,7 @@ public class ReservationsController {
     private ObservableList<ReservationDTO> reservationDTOS = FXCollections.observableArrayList();
     private int page = 0;
     private int totalPages = 0;
-    private static final int RESERVATIONS_PER_PAGE = 25;
+    private static final int RESERVATIONS_PER_PAGE = 50;
     private static final int RESERVATION_FIRST_PAGE = 0;
     @FXML
     public TextField reservationNrField;
