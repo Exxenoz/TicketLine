@@ -27,66 +27,16 @@ import static org.controlsfx.glyphfont.FontAwesome.Glyph.NEWSPAPER_ALT;
 @Component
 public class NewsController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    @FXML
+    private NewsUnreadController newsUnreadController;
 
     @FXML
-    private VBox vbNewsElements;
+    private NewsCreateController newsCreateController;
 
     @FXML
-    private TabHeaderController tabHeaderController;
-
-    private final MainController mainController;
-    private final SpringFxmlLoader springFxmlLoader;
-    private final NewsService newsService;
-
-    public NewsController(MainController mainController, SpringFxmlLoader springFxmlLoader, NewsService newsService) {
-        this.mainController = mainController;
-        this.springFxmlLoader = springFxmlLoader;
-        this.newsService = newsService;
-    }
-
-    @FXML
-    private void initialize() {
-        tabHeaderController.setIcon(NEWSPAPER_ALT);
-        tabHeaderController.setTitle("News");
-    }
+    private void initialize() { }
 
     public void loadNews() {
-        ObservableList<Node> vbNewsBoxChildren = vbNewsElements.getChildren();
-        vbNewsBoxChildren.clear();
-        final var task = new Task<List<SimpleNewsDTO>>() {
-            @Override
-            protected List<SimpleNewsDTO> call() throws DataAccessException {
-                return newsService.findAll();
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                for (Iterator<SimpleNewsDTO> iterator = getValue().iterator(); iterator.hasNext(); ) {
-                    SimpleNewsDTO news = iterator.next();
-                    SpringFxmlLoader.Wrapper<NewsElementController> wrapper =
-                        springFxmlLoader.loadAndWrap("/fxml/news/newsElement.fxml");
-                    wrapper.getController().initializeData(news);
-                    vbNewsBoxChildren.add(wrapper.getLoadedObject());
-                    if (iterator.hasNext()) {
-                        Separator separator = new Separator();
-                        vbNewsBoxChildren.add(separator);
-                    }
-                }
-            }
-
-            @Override
-            protected void failed() {
-                super.failed();
-                JavaFXUtils.createExceptionDialog(getException(),
-                    vbNewsElements.getScene().getWindow()).showAndWait();
-            }
-        };
-        task.runningProperty().addListener((observable, oldValue, running) ->
-            mainController.setProgressbarProgress(running ? INDETERMINATE_PROGRESS : 0)
-        );
-        new Thread(task).start();
+        newsUnreadController.loadNews();
     }
-
 }
