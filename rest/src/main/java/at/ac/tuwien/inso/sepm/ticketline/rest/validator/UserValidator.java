@@ -7,6 +7,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.util.RestBundleManager;
 
 public abstract class UserValidator {
 
+    public static final String nameRegex = "^[-' a-zA-ZöüöäÜÖÄ0-9]+$";
 
     //validates newly created user
     public static void validateNewUser(UserDTO userDTO) throws UserValidatorException {
@@ -55,11 +56,16 @@ public abstract class UserValidator {
                 "User Validation failed: username is null"
             );
         } else {
+            if(!userDTO.getUsername().matches(nameRegex)) {
+                throw new UserValidatorException(
+                  "User Validation failed: does not fit regex"
+                );
+            }
             if (userDTO.getUsername().length() < 3) {
                 throw new UserValidatorException(
                     "User Validation failed: username too short"
                 );
-            } else  if (userDTO.getUsername().length() > 30) {
+            } else if (userDTO.getUsername().length() > 30) {
                 throw new UserValidatorException(
                     "User Validation failed: username too long"
                 );

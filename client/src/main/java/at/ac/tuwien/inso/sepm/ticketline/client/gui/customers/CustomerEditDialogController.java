@@ -266,7 +266,12 @@ public class CustomerEditDialogController {
                 return;
             }
 
-            customerController.refreshCustomerTable();
+            // old version: sorting bugged
+            //customerController.refreshCustomerTable();
+
+            // new version: workaround
+            customerController.clearCustomerList();
+            customerController.loadCustomerTable(CustomerController.FIRST_CUSTOMER_TABLE_PAGE);
 
             LOGGER.debug("Customer editing successfully completed!");
 
