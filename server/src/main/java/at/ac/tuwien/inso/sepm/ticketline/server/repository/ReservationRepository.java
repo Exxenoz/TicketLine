@@ -66,11 +66,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      * @param performanceName name of the performance
      * @return a page of the found  not yet purchased reservations
      */
-    @Query(value = "SELECT r.* " +
-        "FROM reservation r, customer c, performance p " +
-        "WHERE c.id = r.customer_id AND p.id = r.performance_id AND r.paid = false " +
-        "AND c.first_name = :firstName AND c.last_name = :lastName AND p.name  = :performanceName",
-        nativeQuery = true)
+    @Query(value = "SELECT r " +
+        "FROM Reservation r, Customer c, Performance p " +
+        "WHERE c.id = r.customer.id AND p.id = r.performance.id AND r.paid = false " +
+        "AND c.firstName = :firstName AND c.lastName = :lastName AND p.name  = :performanceName")
     Page<Reservation> findAllByPaidFalseAndCustomerNameAndPerformanceName(@Param("firstName") String firstName,
                                                                           @Param("lastName") String lastName,
                                                                           @Param("performanceName") String performanceName,
