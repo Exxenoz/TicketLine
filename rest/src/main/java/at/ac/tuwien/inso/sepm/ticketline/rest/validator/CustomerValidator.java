@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class CustomerValidator {
 
-    public static final String letterRegex = "^[a-zA-Z]+$";
+    public static final String nameRegex = "^[-' a-zA-ZöüöäÜÖÄ]+$";
 
     // validate whole customer without id
     public static void validateNewCustomer(CustomerDTO customerDTO) throws CustomerValidationException {
@@ -53,7 +53,7 @@ public class CustomerValidator {
             throw new CustomerValidationException("Customer validation failed, because first name is too long!");
         }
 
-        if(!customerDTO.getFirstName().matches(letterRegex)) {
+        if(!customerDTO.getFirstName().matches(nameRegex)) {
             throw new CustomerValidationException("Customer validation failed, because first name contains invalid characters!");
         }
     }
@@ -72,7 +72,7 @@ public class CustomerValidator {
             throw new CustomerValidationException("Customer validation failed, because last name is too long!");
         }
 
-        if(!customerDTO.getLastName().matches(letterRegex)) {
+        if(!customerDTO.getLastName().matches(nameRegex)) {
             throw new CustomerValidationException("Customer validation failed, because last name contains invalid characters!");
         }
     }
