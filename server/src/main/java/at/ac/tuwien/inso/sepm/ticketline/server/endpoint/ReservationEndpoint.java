@@ -78,10 +78,10 @@ public class ReservationEndpoint {
         return reservationMapper.reservationToReservationDTO(reservation);
     }
 
-    @PostMapping("/findNotPaid/ReservationNumber")
+    @GetMapping("/findNotPaid/reservationNr/{reservationNumber}")
     @PreAuthorize("hasRole('USER')")
     @ApiOperation("Finds a Reservation which wasn't purchased yet with the given id")
-    public ReservationDTO findOneByPaidFalseAndReservationNumber(@RequestBody String reservationNr) {
+    public ReservationDTO findOneByPaidFalseAndReservationNumber(@PathVariable("reservationNumber") String reservationNr) {
         final var reservation = reservationService.findOneByPaidFalseAndReservationNumber(reservationNr);
         if (reservation == null) {
             throw new HttpNotFoundException();

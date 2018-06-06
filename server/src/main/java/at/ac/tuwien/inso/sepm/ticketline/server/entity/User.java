@@ -29,7 +29,7 @@ public class User implements Serializable {
     @Column(nullable = true)
     private String passwordChangeKey;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(name = "authorities", joinColumns = {
         @JoinColumn(name = "username", referencedColumnName = "username")
     })
