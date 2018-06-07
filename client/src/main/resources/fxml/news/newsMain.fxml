@@ -7,16 +7,16 @@
 
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tab?>
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="800.0" spacing="5.0" styleClass="vbox" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.news.NewsController">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="vbox" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.news.NewsController">
     <children>
-        <TabPane VBox.vgrow="ALWAYS" fx:id="eventTabPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="800.0" stylesheets="@/css/secondLevelTabs.css" tabClosingPolicy="UNAVAILABLE">
+        <TabPane VBox.vgrow="ALWAYS" fx:id="eventTabPane" stylesheets="@/css/secondLevelTabs.css" tabClosingPolicy="UNAVAILABLE">
             <tabs>
                 <Tab text="%news.main.tab1">
                     <fx:include fx:id="newsUnread" source="newsTabUnread.fxml" />
                 </Tab>
-                <!--<Tab text="%news.main.tab3">
+                <Tab text="%news.main.tab3">
                     <fx:include fx:id="newsCreate" source="newsTabCreate.fxml" />
-                </Tab>-->
+                </Tab>
             </tabs>
         </TabPane>
     </children>
