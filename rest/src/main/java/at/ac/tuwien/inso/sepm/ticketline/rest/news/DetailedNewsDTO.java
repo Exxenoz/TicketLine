@@ -20,6 +20,9 @@ public class DetailedNewsDTO {
     @ApiModelProperty(required = true, name = "The text content of the news")
     private String text;
 
+    @ApiModelProperty(name = "The optional image of the news")
+    private byte[] imageData;
+
     public Long getId() {
         return id;
     }
@@ -52,6 +55,14 @@ public class DetailedNewsDTO {
         this.text = text;
     }
 
+    public byte[] getImageData() {
+        return imageData;
+    }
+
+    public void setImageData(byte[] imageData) {
+        this.imageData = imageData;
+    }
+
     @Override
     public String toString() {
         return "DetailedNewsDTO{" +
@@ -59,6 +70,7 @@ public class DetailedNewsDTO {
             ", publishedAt=" + publishedAt +
             ", title='" + title + '\'' +
             ", text='" + text + '\'' +
+            ", imageData='" + imageData + '\'' +
             '}';
     }
 
@@ -72,6 +84,7 @@ public class DetailedNewsDTO {
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (publishedAt != null ? !publishedAt.equals(that.publishedAt) : that.publishedAt != null) return false;
         if (title != null ? !title.equals(that.title) : that.title != null) return false;
+        if (imageData != null ? !imageData.equals(that.imageData) : that.imageData != null) return false;
         return text != null ? text.equals(that.text) : that.text == null;
 
     }
@@ -82,6 +95,7 @@ public class DetailedNewsDTO {
         result = 31 * result + (publishedAt != null ? publishedAt.hashCode() : 0);
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (text != null ? text.hashCode() : 0);
+        result = 31 * result + (imageData != null ? imageData.hashCode() : 0);
         return result;
     }
 
@@ -95,6 +109,7 @@ public class DetailedNewsDTO {
         private LocalDateTime publishedAt;
         private String title;
         private String text;
+        private byte[] imageData;
 
         public NewsDTOBuilder id(Long id) {
             this.id = id;
@@ -116,12 +131,18 @@ public class DetailedNewsDTO {
             return this;
         }
 
+        public NewsDTOBuilder imageData(byte[] imageData) {
+            this.imageData = imageData;
+            return this;
+        }
+
         public DetailedNewsDTO build() {
             DetailedNewsDTO newsDTO = new DetailedNewsDTO();
             newsDTO.setId(id);
             newsDTO.setPublishedAt(publishedAt);
             newsDTO.setTitle(title);
             newsDTO.setText(text);
+            newsDTO.setImageData(imageData);
             return newsDTO;
         }
     }
