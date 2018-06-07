@@ -1,6 +1,8 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.news.DetailedNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.News;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalNewsValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalNotFoundException;
 
 import java.util.List;
@@ -27,9 +29,10 @@ public interface NewsService {
     /**
      * Publish a single news entry
      *
-     * @param news to publish
+     * @param detailedNewsDTO to publish
+     * @throws InternalNewsValidationException in case the news validation failed
      * @return published news entry
      */
-    News publishNews(News news);
+    DetailedNewsDTO publishNews(DetailedNewsDTO detailedNewsDTO) throws InternalNewsValidationException;
 
 }

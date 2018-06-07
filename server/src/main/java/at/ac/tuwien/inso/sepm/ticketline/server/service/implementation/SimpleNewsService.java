@@ -1,6 +1,11 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.exception.NewsValidationException;
+import at.ac.tuwien.inso.sepm.ticketline.rest.news.DetailedNewsDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.validator.NewsValidator;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.News;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.news.NewsMapper;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalNewsValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalNotFoundException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.NewsRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.NewsService;
@@ -13,9 +18,11 @@ import java.util.List;
 public class SimpleNewsService implements NewsService {
 
     private final NewsRepository newsRepository;
+    private final NewsMapper newsMapper;
 
-    public SimpleNewsService(NewsRepository newsRepository) {
+    public SimpleNewsService(NewsRepository newsRepository, NewsMapper newsMapper) {
         this.newsRepository = newsRepository;
+        this.newsMapper = newsMapper;
     }
 
     @Override
@@ -29,9 +36,15 @@ public class SimpleNewsService implements NewsService {
     }
 
     @Override
-    public News publishNews(News news) {
-        news.setPublishedAt(LocalDateTime.now());
-        return newsRepository.save(news);
-    }
+    public DetailedNewsDTO publishNews(DetailedNewsDTO detailedNewsDTO) throws InternalNewsValidationException {
+        try {
+            NewsValidator.validateNews(detailedNewsDTO);
+        } catch (NewsValidationException e) {
+            throw new InternalNewsValidationException();
+        }
 
+        News news = newsMapper.detailedNewsDTOToNews(detailedNewsDTO);
+        news.setPublishedAt(LocalDateTime.now());
+        return newsMapper.newsToDetailedNewsDTO(newsRepository.save(news));
+    }
 }

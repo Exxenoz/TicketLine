@@ -4,7 +4,9 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.news.DetailedNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.SimpleNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.News;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.news.NewsMapper;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpBadRequestException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpNotFoundException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalNewsValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalNotFoundException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.NewsService;
 import io.swagger.annotations.Api;
@@ -54,9 +56,10 @@ public class NewsEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Publish a new news entry")
     public DetailedNewsDTO publishNews(@RequestBody DetailedNewsDTO detailedNewsDTO) {
-        var news = newsMapper.detailedNewsDTOToNews(detailedNewsDTO);
-        news = newsService.publishNews(news);
-        return newsMapper.newsToDetailedNewsDTO(news);
+        try {
+            return newsService.publishNews(detailedNewsDTO);
+        } catch (InternalNewsValidationException e) {
+            throw new HttpBadRequestException();
+        }
     }
-
 }
