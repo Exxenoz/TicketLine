@@ -1,10 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
@@ -27,6 +23,9 @@ public class News {
 
     @Column(nullable = false, length = 10_000)
     private String text;
+
+    @Column(nullable = true, length = 8000000)
+    private byte[] imageData;
 
     public Long getId() {
         return id;
@@ -60,6 +59,14 @@ public class News {
         this.text = text;
     }
 
+    public byte[] getImageData() {
+        return imageData;
+    }
+
+    public void setImageData(byte[] imageData) {
+        this.imageData = imageData;
+    }
+
     public static NewsBuilder builder() {
         return new NewsBuilder();
     }
@@ -71,6 +78,7 @@ public class News {
             ", publishedAt=" + publishedAt +
             ", title='" + title + '\'' +
             ", text='" + text + '\'' +
+            ", imageData='" + imageData + '\'' +
             '}';
     }
 
@@ -94,6 +102,9 @@ public class News {
         if (title != null ? !title.equals(news.title) : news.title != null) {
             return false;
         }
+        if (imageData != null ? !imageData.equals(news.imageData) : news.imageData != null) {
+            return false;
+        }
         return text != null ? text.equals(news.text) : news.text == null;
 
     }
@@ -104,6 +115,7 @@ public class News {
         result = 31 * result + (publishedAt != null ? publishedAt.hashCode() : 0);
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (text != null ? text.hashCode() : 0);
+        result = 31 * result + (imageData != null ? imageData.hashCode() : 0);
         return result;
     }
 
@@ -112,6 +124,7 @@ public class News {
         private LocalDateTime publishedAt;
         private String title;
         private String text;
+        private byte[] imageData;
 
         private NewsBuilder() {
         }
@@ -136,12 +149,18 @@ public class News {
             return this;
         }
 
+        public NewsBuilder imageData(byte[] imageData) {
+            this.imageData = imageData;
+            return this;
+        }
+
         public News build() {
             News news = new News();
             news.setId(id);
             news.setPublishedAt(publishedAt);
             news.setTitle(title);
             news.setText(text);
+            news.setImageData(imageData);
             return news;
         }
     }
