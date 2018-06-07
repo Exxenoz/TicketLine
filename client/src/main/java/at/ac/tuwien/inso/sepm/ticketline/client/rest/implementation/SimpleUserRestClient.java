@@ -130,15 +130,16 @@ public class SimpleUserRestClient implements UserRestClient {
     }
 
     @Override
-    public void resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws DataAccessException {
+    public UserDTO resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws DataAccessException {
         try {
             LOGGER.debug("Resetting password of user with {}", resetUserPasswordUri);
             final var user =
                 restClient.exchange(
                     new RequestEntity<>(userPasswordResetRequestDTO, POST, resetUserPasswordUri),
-                    new ParameterizedTypeReference<UserPasswordResetRequestDTO>() {
+                    new ParameterizedTypeReference<UserDTO>() {
                     });
             LOGGER.debug("Result status was {} with content {}", user.getStatusCode(), user.getBody());
+            return user.getBody();
         } catch (HttpStatusCodeException e) {
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {

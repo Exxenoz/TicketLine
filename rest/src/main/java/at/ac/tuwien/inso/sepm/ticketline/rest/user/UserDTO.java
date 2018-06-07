@@ -79,6 +79,15 @@ public class UserDTO {
         this.roles = roles;
     }
 
+    public void update(UserDTO userDTO) {
+        this.id = userDTO.id;
+        this.username = userDTO.username;
+        this.password = userDTO.password;
+        this.enabled = userDTO.enabled;
+        this.strikes = userDTO.strikes;
+        this.roles = new HashSet<>(userDTO.roles);
+    }
+
     @Override
     public String toString() {
         return "UserDTO{" +

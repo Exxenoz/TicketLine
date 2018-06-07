@@ -87,6 +87,7 @@ public interface UserService {
      * @return created user
      * @throws InternalUserValidationException in case user validation failed
      * @throws InternalUsernameConflictException in case the username is already taken
+     * @return the saved user
      */
     UserDTO save(UserDTO userDTO) throws InternalUserValidationException, InternalUsernameConflictException;
 
@@ -97,8 +98,9 @@ public interface UserService {
      * @throws InternalUserValidationException in case user validation failed
      * @throws InternalUserNotFoundException in case the user was not found
      * @throws InternalBadRequestException in case the password change key was invalid
+     * @return the updated user
      */
-    void resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws InternalUserValidationException, InternalUserNotFoundException, InternalBadRequestException;
+    UserDTO resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws InternalUserValidationException, InternalUserNotFoundException, InternalBadRequestException;
 
     /**
      * Checks if the password change key for the specified user is set

@@ -336,8 +336,15 @@ public class UserController {
                 build();
 
         try {
-            userService.resetPassword(userPasswordResetRequestDTO);
+            UserDTO updatedUserDTO = userService.resetPassword(userPasswordResetRequestDTO);
+
+            if (updatedUserDTO != null) {
+                userDTO.update(updatedUserDTO);
+                userTable.refresh();
+            }
+
             LOGGER.error("Password reset was successful");
+
             JavaFXUtils.createCopyTextDialog(
                 BundleManager.getBundle().getString("usertab.password_reset.dialog.success.title"),
                 BundleManager.getBundle().getString("usertab.password_reset.dialog.success.header_text") + " " + userDTO.getUsername(),
