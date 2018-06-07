@@ -86,6 +86,14 @@ public interface ReservationService {
     Reservation createAndPayReservation(Reservation reservation) throws InvalidReservationException;
 
     /**
+     * cancel existing reservation
+     *
+     * @param reservation
+     * @return canceled reservation
+     */
+    Reservation cancelReservation(Reservation reservation);
+
+    /**
      * Finds a page of all reservations
      *
      * @param pageable the object specifing the page

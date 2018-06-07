@@ -270,6 +270,29 @@ public class ReservationServiceTests {
 
     }
 
+    @Test
+    public void cancel() {
+        Performance performance = performanceRepository.save(newPerformance());
+        Seat seat = seatRepository.save(newSeat());
+        Customer customer = customerRepository.save(newCustomer());
+
+        Reservation reservation = new Reservation();
+        reservation.setCustomer(customer);
+        reservation.setPerformance(performance);
+        reservation.setSeats(List.of(seat));
+        reservation.setReservationNumber("000005");
+
+        Reservation returned = null;
+        try {
+            reservationService.createReservation(reservation);
+            returned = reservationService.cancelReservation(reservation);
+        } catch (InvalidReservationException e) {
+            fail();
+        }
+
+        assertThat(returned.isCanceled(), is(true));
+    }
+
     private Performance newPerformance() {
         Performance performance = new Performance();
         performance.setName("test");

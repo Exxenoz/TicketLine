@@ -177,4 +177,12 @@ public class SimpleReservationService implements ReservationService {
         }
         return reservationNumber;
     }
+
+    @Override
+    public Reservation cancelReservation(Reservation reservation) {
+        //TODO: remove Seats from database
+        reservation.setCanceled(true);
+        return reservationRepository.save(reservation);
+
+    }
 }

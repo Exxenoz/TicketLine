@@ -15,4 +15,6 @@ public interface CustomerMapper {
     List<CustomerDTO> customerToCustomerDTO(List<Customer> all);
 
     List<Customer> customerDTOToCustomer(List<CustomerDTO> all);
+
+
 }
