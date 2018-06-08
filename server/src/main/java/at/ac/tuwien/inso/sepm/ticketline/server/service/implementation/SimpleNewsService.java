@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.NewsValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.DetailedNewsDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.news.SimpleNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.NewsValidator;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.News;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.news.NewsMapper;
@@ -36,7 +37,7 @@ public class SimpleNewsService implements NewsService {
     }
 
     @Override
-    public DetailedNewsDTO publishNews(DetailedNewsDTO detailedNewsDTO) throws InternalNewsValidationException {
+    public SimpleNewsDTO publishNews(DetailedNewsDTO detailedNewsDTO) throws InternalNewsValidationException {
         try {
             NewsValidator.validateNews(detailedNewsDTO);
         } catch (NewsValidationException e) {
@@ -45,6 +46,6 @@ public class SimpleNewsService implements NewsService {
 
         News news = newsMapper.detailedNewsDTOToNews(detailedNewsDTO);
         news.setPublishedAt(LocalDateTime.now());
-        return newsMapper.newsToDetailedNewsDTO(newsRepository.save(news));
+        return newsMapper.newsToSimpleNewsDTO(newsRepository.save(news));
     }
 }

@@ -51,7 +51,7 @@ public class NewsEndpoint {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Publish a new news entry")
-    public DetailedNewsDTO publishNews(@RequestBody DetailedNewsDTO detailedNewsDTO) {
+    public SimpleNewsDTO publishNews(@RequestBody DetailedNewsDTO detailedNewsDTO) {
         try {
             return newsService.publishNews(detailedNewsDTO);
         } catch (InternalNewsValidationException e) {
