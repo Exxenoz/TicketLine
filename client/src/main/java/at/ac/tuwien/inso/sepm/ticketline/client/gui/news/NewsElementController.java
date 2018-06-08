@@ -48,11 +48,12 @@ public class NewsElementController {
 
     public void toggleDetailView(MouseEvent mouseEvent) {
         VBox vbox = (VBox) mouseEvent.getSource();
+
         if(vbox != null) {
             String idString = vbox.getId();
             if(idString.startsWith("unreadNews")) {
                 int id = Integer.valueOf(idString.substring(10));
-                newsUnreadController.toggleDetailView(id);
+                newsUnreadController.toggleDetailView(vbox, id);
             }
         }
     }

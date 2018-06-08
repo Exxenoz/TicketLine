@@ -50,6 +50,7 @@ public class NewsUnreadController {
 
     private SimpleNewsDTO currentlySelectedNews;
     private List<SimpleNewsDTO> loadedNews;
+    ObservableList<Node> vbNewsBoxChildren;
 
     public NewsUnreadController(MainController mainController, SpringFxmlLoader springFxmlLoader, NewsService newsService) {
         this.mainController = mainController;
@@ -66,7 +67,7 @@ public class NewsUnreadController {
     }
 
     public void loadNews() {
-        ObservableList<Node> vbNewsBoxChildren = vbNewsElements.getChildren();
+        vbNewsBoxChildren = vbNewsElements.getChildren();
         vbNewsBoxChildren.clear();
         loadedNews.clear();
         final var task = new Task<List<SimpleNewsDTO>>() {
@@ -108,7 +109,11 @@ public class NewsUnreadController {
         new Thread(task).start();
     }
 
-    public void toggleDetailView(int id) {
+    public void toggleDetailView(VBox vbox, int id) {
+        for(Node node : vbNewsBoxChildren) {
+            node.getStyleClass().remove("vbox-selected");
+        }
+
         SimpleNewsDTO clickedNews = loadedNews.get(id);
         if(clickedNews.equals(currentlySelectedNews)) {
             column1.setPercentWidth(100);
@@ -118,6 +123,7 @@ public class NewsUnreadController {
             column1.setPercentWidth(30);
             column2.setPercentWidth(70);
             currentlySelectedNews = clickedNews;
+            vbox.getStyleClass().add("vbox-selected");
         }
     }
 }
