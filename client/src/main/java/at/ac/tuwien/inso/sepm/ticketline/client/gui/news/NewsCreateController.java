@@ -9,6 +9,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
 import at.ac.tuwien.inso.sepm.ticketline.client.validator.NewsValidator;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.DetailedNewsDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.news.SimpleNewsDTO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -64,10 +65,12 @@ public class NewsCreateController {
     private TabHeaderController tabHeaderController;
 
     private final MainController mainController;
+    private final NewsUnreadController newsUnreadController;
     private final NewsService newsService;
 
-    public NewsCreateController(MainController mainController, NewsService newsService) {
+    public NewsCreateController(MainController mainController, NewsUnreadController newsUnreadController, NewsService newsService) {
         this.mainController = mainController;
+        this.newsUnreadController = newsUnreadController;
         this.newsService = newsService;
     }
 
@@ -161,8 +164,10 @@ public class NewsCreateController {
 
         detailedNewsDTO.setPublishedAt(LocalDateTime.now());
 
+        // TODO: add manually instead of reloading all news?
+        SimpleNewsDTO simpleNewsDTO = null;
         try {
-            newsService.publish(detailedNewsDTO);
+            simpleNewsDTO = newsService.publish(detailedNewsDTO);
         } catch (DataAccessException e) {
             JavaFXUtils.createErrorDialog(
                 BundleManager.getBundle().getString("news.dialog.create.dialog.error.title"),
@@ -182,6 +187,8 @@ public class NewsCreateController {
             BundleManager.getBundle().getString("news.dialog.create.dialog.success.content_text"),
             titleTextField.getScene().getWindow()
         ).showAndWait();
+
+        newsUnreadController.loadNews();
 
         clearInputs();
     }

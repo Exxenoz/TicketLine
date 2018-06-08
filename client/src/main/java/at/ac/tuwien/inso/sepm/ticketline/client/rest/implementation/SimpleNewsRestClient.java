@@ -51,7 +51,7 @@ public class SimpleNewsRestClient implements NewsRestClient {
     }
 
     @Override
-    public void publish(DetailedNewsDTO detailedNewsDTO) throws DataAccessException {
+    public SimpleNewsDTO publish(DetailedNewsDTO detailedNewsDTO) throws DataAccessException {
         try {
             LOGGER.debug("Publish news with {}", newsUri);
             final var news =
@@ -60,6 +60,7 @@ public class SimpleNewsRestClient implements NewsRestClient {
                     new ParameterizedTypeReference<SimpleNewsDTO>() {
                     });
             LOGGER.debug("Result status was {} with content {}", news.getStatusCode(), news.getBody());
+            return news.getBody();
         } catch (HttpStatusCodeException e) {
             throw new DataAccessException("Failed to publish news with status code " + e.getStatusCode().toString());
         } catch (RestClientException e) {

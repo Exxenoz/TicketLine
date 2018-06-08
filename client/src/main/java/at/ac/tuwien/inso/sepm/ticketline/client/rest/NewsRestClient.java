@@ -20,7 +20,8 @@ public interface NewsRestClient {
      * Publish new news
      *
      * @param detailedNewsDTO news dto containing title, image and article
+     * @return published news
      * @throws DataAccessException in case something went wrong
      */
-    void publish(DetailedNewsDTO detailedNewsDTO) throws DataAccessException;
+    SimpleNewsDTO publish(DetailedNewsDTO detailedNewsDTO) throws DataAccessException;
 }

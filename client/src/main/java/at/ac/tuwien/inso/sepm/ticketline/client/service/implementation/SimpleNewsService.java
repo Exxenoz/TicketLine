@@ -29,8 +29,8 @@ public class SimpleNewsService implements NewsService {
     }
 
     @Override
-    public void publish(DetailedNewsDTO detailedNewsDTO) throws DataAccessException {
-        newsRestClient.publish(detailedNewsDTO);
+    public SimpleNewsDTO publish(DetailedNewsDTO detailedNewsDTO) throws DataAccessException {
+        return newsRestClient.publish(detailedNewsDTO);
     }
 
 }
