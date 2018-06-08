@@ -224,7 +224,7 @@ public class CustomerEditDialogController {
 
         if (customerToEdit == null) { // Create customer
             try {
-                customerService.create(customerDTO);
+                customerController.addCustomer(customerService.create(customerDTO));
             } catch (DataAccessException e) {
                 LOGGER.error("Customer creation failed: " + e.getMessage());
 
@@ -238,8 +238,7 @@ public class CustomerEditDialogController {
                 return;
             }
 
-            customerController.clearCustomerList();
-            customerController.loadCustomerTable(CustomerController.FIRST_CUSTOMER_TABLE_PAGE);
+            ((Stage)firstNameTextfield.getScene().getWindow()).close();
 
             LOGGER.debug("Customer creation successfully completed!");
 
@@ -266,12 +265,9 @@ public class CustomerEditDialogController {
                 return;
             }
 
-            // old version: sorting bugged
-            //customerController.refreshCustomerTable();
+            ((Stage)firstNameTextfield.getScene().getWindow()).close();
 
-            // new version: workaround
-            customerController.clearCustomerList();
-            customerController.loadCustomerTable(CustomerController.FIRST_CUSTOMER_TABLE_PAGE);
+            customerController.refreshAndSortCustomerTable();
 
             LOGGER.debug("Customer editing successfully completed!");
 
@@ -282,7 +278,5 @@ public class CustomerEditDialogController {
                 firstNameTextfield.getScene().getWindow()
             ).showAndWait();
         }
-
-        ((Stage)firstNameTextfield.getScene().getWindow()).close();
     }
 }

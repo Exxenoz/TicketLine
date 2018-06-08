@@ -8,6 +8,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -121,12 +122,17 @@ public class CustomerController {
             });
         }
 
-        // Setting event handler for sort policy property calls it automatically
-        customerTable.sortPolicyProperty().set(t -> {
-            customerList.clear();
+        ChangeListener<TableColumn.SortType> tableColumnSortChangeListener = (observable, oldValue, newValue) -> {
+            clearCustomerList();
             loadCustomerTable(FIRST_CUSTOMER_TABLE_PAGE);
-            return true;
-        });
+        };
+
+        customerTableColumnFirstName.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        customerTableColumnLastName.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        customerTableColumnEMail.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        customerTableColumnTelephoneNumber.sortTypeProperty().addListener(tableColumnSortChangeListener);
+
+        loadCustomerTable(FIRST_CUSTOMER_TABLE_PAGE);
     }
 
     private ScrollBar getVerticalScrollbar(TableView<?> table) {
@@ -182,18 +188,27 @@ public class CustomerController {
         try {
             PageResponseDTO<CustomerDTO> response = customerService.findAll(pageRequestDTO);
             customerTablePageCount = response.getTotalPages() > 0 ? response.getTotalPages() : 1;
-            customerList.addAll(response.getContent());
+            for (CustomerDTO customerDTO : response.getContent()) {
+                customerList.remove(customerDTO); // New created entries must be removed first, so they can be re-added at their sorted location in the next line
+                customerList.add(customerDTO);
+            }
         } catch (DataAccessException e) {
             LOGGER.warn("Could not access customers!");
         }
-
-        customerTable.refresh();
     }
 
-    public void refreshCustomerTable() {
-        // TODO: fix sorting
+    public void addCustomer(CustomerDTO customerDTO) {
+        if (customerDTO == null) {
+            LOGGER.warn("Could not add customer to table, because object reference is null!");
+            return;
+        }
+        customerList.add(customerDTO);
         customerTable.sort();
+    }
+
+    public void refreshAndSortCustomerTable() {
         customerTable.refresh();
+        customerTable.sort();
     }
 
     public void clearCustomerList() {
