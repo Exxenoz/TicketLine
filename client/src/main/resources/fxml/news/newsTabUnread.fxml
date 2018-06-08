@@ -4,11 +4,13 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
 
 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" style="-fx-background-color: derive(#3c3f41, 25%);" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.news.NewsUnreadController">
@@ -19,8 +21,8 @@
                 <Separator />
             <GridPane VBox.vgrow="ALWAYS">
               <columnConstraints>
-                <ColumnConstraints fx:id="column1" hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" />
-                <ColumnConstraints fx:id="column2" hgrow="SOMETIMES" minWidth="10.0" percentWidth="0.0" />
+                <ColumnConstraints fx:id="column1" hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                <ColumnConstraints fx:id="column2" hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -41,11 +43,28 @@
                           </children>
                       </VBox>
                   </ScrollPane>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" minHeight="0.0" minWidth="0.0" style="-fx-background-color: transparent;" vbarPolicy="AS_NEEDED" GridPane.columnIndex="1">
+                  <ScrollPane fitToHeight="true" fitToWidth="true" minHeight="0.0" minWidth="0.0" style="-fx-background-color: transparent;" GridPane.columnIndex="1">
                      <content>
-                        <VBox fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                        <VBox>
                            <children>
-                              <WebView fx:id="webview" VBox.vgrow="ALWAYS"/>
+                              <HBox alignment="CENTER">
+                                 <children>
+                                     <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308">
+                                       <font>
+                                          <Font size="36.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <WebView fx:id="webView" VBox.vgrow="ALWAYS" />
+                              <HBox fx:id="imageBox" alignment="CENTER" VBox.vgrow="ALWAYS">
+                                 <children>
+                                     <ImageView fx:id="imageView">
+                                       <HBox.margin>
+                                          <Insets top="10.0" />
+                                       </HBox.margin></ImageView>
+                                </children>
+                               </HBox>
                            </children>
                         </VBox>
                      </content>
