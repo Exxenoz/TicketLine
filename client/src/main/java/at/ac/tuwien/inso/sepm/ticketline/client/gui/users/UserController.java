@@ -15,6 +15,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -79,7 +80,7 @@ public class UserController {
     private final MainController mainController;
     private final UserService userService;
 
-    private ObservableList<UserDTO> items;
+    private ObservableList<UserDTO> userList;
     private int page = 0;
     private int totalPages = 1;
 
@@ -87,7 +88,7 @@ public class UserController {
         this.springFxmlLoader = springFxmlLoader;
         this.mainController = mainController;
         this.userService = userService;
-        this.items = FXCollections.observableArrayList();
+        this.userList = FXCollections.observableArrayList();
     }
 
     @FXML
@@ -134,7 +135,7 @@ public class UserController {
             cellData.getValue().getStrikes()).asObject()
         );
 
-        userTable.setItems(items);
+        userTable.setItems(userList);
     }
 
     // TODO: call when ui was loaded/currently ther visibility wont be updated until authentication is done
@@ -153,9 +154,9 @@ public class UserController {
             scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
                 double scrollValue = newValue.doubleValue();
                 if (scrollValue == scrollBar.getMax() && (page + 1) < totalPages) {
-                    double targetValue = scrollValue * items.size();
+                    double targetValue = scrollValue * userList.size();
                     loadUserTable(page + 1);
-                    scrollBar.setValue(targetValue / items.size());
+                    scrollBar.setValue(targetValue / userList.size());
                 }
             });
 
@@ -167,12 +168,16 @@ public class UserController {
             });
         }
 
-        // Setting event handler for sort policy property calls it automatically
-        userTable.sortPolicyProperty().set(t -> {
-            items.clear();
+        ChangeListener<TableColumn.SortType> tableColumnSortChangeListener = (observable, oldValue, newValue) -> {
+            clearUserList();
             loadUserTable(FIRST_USER_TABLE_PAGE);
-            return true;
-        });
+        };
+
+        usernameCol.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        useraccountStatusCol.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        userAuthTriesCol.sortTypeProperty().addListener(tableColumnSortChangeListener);
+
+        loadUserTable(FIRST_USER_TABLE_PAGE);
     }
 
     private ScrollBar getVerticalScrollbar(TableView<?> table) {
@@ -228,7 +233,10 @@ public class UserController {
         try {
             PageResponseDTO<UserDTO> response = userService.findAll(pageRequestDTO);
             this.totalPages = response.getTotalPages() > 0 ? response.getTotalPages() : 1;
-            items.addAll(response.getContent());
+            for (UserDTO userDTO : response.getContent()) {
+                userList.remove(userDTO); // New created entries must be removed first, so they can be re-added at their sorted location in the next line
+                userList.add(userDTO);
+            }
         } catch (DataAccessException e) {
             if ((e.getCause().getClass()) == HttpClientErrorException.class) {
                 var httpErrorCode = ((HttpStatusCodeException) e.getCause()).getStatusCode();
@@ -245,16 +253,25 @@ public class UserController {
             }
         }
 
-        userTable.refresh();
         return true;
     }
 
-    public void refreshUserTable() {
+    public void addUser(UserDTO userDTO) {
+        if (userDTO == null) {
+            LOGGER.warn("Could not add user to table, because object reference is null!");
+            return;
+        }
+        userList.add(userDTO);
+        userTable.sort();
+    }
+
+    public void refreshAndSortUserTable() {
         userTable.refresh();
+        userTable.sort();
     }
 
     public void clearUserList() {
-        items.clear();
+        userList.clear();
 
         ScrollBar scrollBar = getVerticalScrollbar(userTable);
         if (scrollBar != null) {
@@ -296,7 +313,7 @@ public class UserController {
                 content.getScene().getWindow()).showAndWait();
         }
 
-        userTable.refresh();
+        refreshAndSortUserTable();
     }
 
     public void onClickCreateUserButton(ActionEvent actionEvent) {
@@ -340,7 +357,7 @@ public class UserController {
 
             if (updatedUserDTO != null) {
                 userDTO.update(updatedUserDTO);
-                userTable.refresh();
+                refreshAndSortUserTable();
             }
 
             LOGGER.error("Password reset was successful");
