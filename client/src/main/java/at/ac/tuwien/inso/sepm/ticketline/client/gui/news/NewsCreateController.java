@@ -1,5 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.news;
 
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.NewsValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.MainController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
@@ -110,7 +111,7 @@ public class NewsCreateController {
         }
 
         try {
-            detailedNewsDTO.setTitle(NewsValidator.validateArticle(htmlEditor));
+            detailedNewsDTO.setText(NewsValidator.validateArticle(htmlEditor));
             articleErrorLabel.setText("");
         } catch (NewsValidationException e) {
             valid = false;
@@ -124,7 +125,18 @@ public class NewsCreateController {
 
         detailedNewsDTO.setPublishedAt(LocalDateTime.now());
 
-        //newsService.publish(detailedNewsDTO);
+        try {
+            newsService.publish(detailedNewsDTO);
+        } catch (DataAccessException e) {
+            JavaFXUtils.createErrorDialog(
+                BundleManager.getBundle().getString("news.dialog.create.dialog.error.title"),
+                BundleManager.getBundle().getString("news.dialog.create.dialog.error.header_text"),
+                e.getMessage(),
+                titleTextField.getScene().getWindow()
+            ).showAndWait();
+
+            return;
+        }
 
         LOGGER.debug("News creation successfully completed!");
 

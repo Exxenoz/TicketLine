@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.rest.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.NewsRestClient;
+import at.ac.tuwien.inso.sepm.ticketline.rest.news.DetailedNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.SimpleNewsDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import java.net.URI;
 import java.util.List;
 
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 
 @Component
 public class SimpleNewsRestClient implements NewsRestClient {
@@ -43,6 +45,23 @@ public class SimpleNewsRestClient implements NewsRestClient {
             return news.getBody();
         } catch (HttpStatusCodeException e) {
             throw new DataAccessException("Failed retrieve news with status code " + e.getStatusCode().toString());
+        } catch (RestClientException e) {
+            throw new DataAccessException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void publish(DetailedNewsDTO detailedNewsDTO) throws DataAccessException {
+        try {
+            LOGGER.debug("Publish news with {}", newsUri);
+            final var news =
+                restClient.exchange(
+                    new RequestEntity<>(detailedNewsDTO, POST, newsUri),
+                    new ParameterizedTypeReference<SimpleNewsDTO>() {
+                    });
+            LOGGER.debug("Result status was {} with content {}", news.getStatusCode(), news.getBody());
+        } catch (HttpStatusCodeException e) {
+            throw new DataAccessException("Failed to publish news with status code " + e.getStatusCode().toString());
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }
