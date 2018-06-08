@@ -11,6 +11,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.validator.NewsValidator;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.DetailedNewsDTO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
@@ -33,6 +34,9 @@ public class NewsCreateController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @FXML
+    public Button clearImageButton;
+
+    @FXML
     public Label imageFileLabel;
 
     @FXML
@@ -43,6 +47,12 @@ public class NewsCreateController {
 
     @FXML
     public Label titleErrorLabel;
+
+    @FXML
+    public Label imageErrorLabel;
+
+    @FXML
+    public Label summaryErrorLabel;
 
     @FXML
     public Label articleErrorLabel;
@@ -66,6 +76,7 @@ public class NewsCreateController {
 
     private void clearInputs() {
         // TODO
+        clearImageButton.setDisable(true);
     }
 
     public void onClickChooseImageFileButton(ActionEvent actionEvent) {
@@ -81,6 +92,7 @@ public class NewsCreateController {
         if(imageFile != null) {
             imageFileLabel.setText(imageFile.getAbsolutePath());
             imageFileLabel.setTextFill(Color.BLACK);
+            clearImageButton.setDisable(false);
             LOGGER.info("User chose image for news article");
         }
     }
@@ -103,11 +115,11 @@ public class NewsCreateController {
 
         try {
             detailedNewsDTO.setImageData(NewsValidator.validateImage(imageFileLabel.getText()));
+            imageErrorLabel.setText("");
         } catch (NewsValidationException e) {
             valid = false;
             LOGGER.debug("News validation failed: " + e.getMessage());
-            imageFileLabel.setText(e.getMessage());
-            imageFileLabel.setTextFill(Color.RED);
+            imageErrorLabel.setText(e.getMessage());
         }
 
         try {
@@ -148,5 +160,11 @@ public class NewsCreateController {
         ).showAndWait();
 
         clearInputs();
+    }
+
+    public void onClickClearImageButton(ActionEvent actionEvent) {
+        clearImageButton.setDisable(true);
+        imageFileLabel.setText("");
+        imageErrorLabel.setText("");
     }
 }

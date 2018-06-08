@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.validator;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.NewsValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.web.HTMLEditor;
 
@@ -15,6 +16,8 @@ public class NewsValidator {
 
     public static final int MIN_CHARS_TITLE = 1;
     public static final int MAX_CHARS_TITLE = 100;
+    public static final int MIN_CHARS_SUMMARY = 1;
+    public static final int MAX_CHARS_SUMMARY = 50;
     public static final String EMPTY_ARTICLE_REGEX = ".*<body contenteditable=\"true\">.*>\\s*[a-zA-Z0-9]+\\s*<.*<\\/body>.*";
     public static final int MAX_CHARS_TEXT = 10000;
     public static final int MIN_IMG_WIDTH = 300;
@@ -35,9 +38,8 @@ public class NewsValidator {
 
     public static byte[] validateImage(String path) throws NewsValidationException {
         if (path.isEmpty()) {
-            throw new NewsValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.news.image_not_found")
-            );
+            // Image is optional
+            return null;
         }
 
         validateFileName(path);
@@ -106,6 +108,18 @@ public class NewsValidator {
                 BundleManager.getExceptionBundle().getString("exception.validator.news.image_not_found")
             );
         }
+    }
+
+    public static String validateSummary(TextArea summaryTextArea) throws NewsValidationException {
+        String summary = summaryTextArea.getText();
+
+        if (summary == null || summary.length() < MIN_CHARS_SUMMARY || summary.length() > MAX_CHARS_SUMMARY) {
+            throw new NewsValidationException(
+                BundleManager.getExceptionBundle().getString("exception.validator.news.summary_length_invalid")
+            );
+        }
+
+        return summary;
     }
 
     public static String validateArticle(HTMLEditor articleHTMLEditor) throws NewsValidationException {
