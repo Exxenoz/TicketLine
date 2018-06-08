@@ -110,8 +110,8 @@ public class NewsValidator {
         }
     }
 
-    public static String validateSummary(TextArea summaryTextArea) throws NewsValidationException {
-        String summary = summaryTextArea.getText();
+    public static String validateSummary(TextField summaryTextField) throws NewsValidationException {
+        String summary = summaryTextField.getText();
 
         if (summary == null || summary.length() < MIN_CHARS_SUMMARY || summary.length() > MAX_CHARS_SUMMARY) {
             throw new NewsValidationException(

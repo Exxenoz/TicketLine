@@ -46,6 +46,9 @@ public class NewsCreateController {
     public TextField titleTextField;
 
     @FXML
+    public TextField summaryTextField;
+
+    @FXML
     public Label titleErrorLabel;
 
     @FXML
@@ -75,8 +78,18 @@ public class NewsCreateController {
     }
 
     private void clearInputs() {
-        // TODO
+        titleErrorLabel.setText("");
+        imageErrorLabel.setText("");
+        summaryErrorLabel.setText("");
+        articleErrorLabel.setText("");
+
+        titleTextField.setText("");
+        imageFileLabel.setText("");
+        summaryTextField.setText("");
+        htmlEditor.setHtmlText("");
+
         clearImageButton.setDisable(true);
+        summaryErrorLabel.setMinHeight(0);
     }
 
     public void onClickChooseImageFileButton(ActionEvent actionEvent) {
@@ -120,6 +133,17 @@ public class NewsCreateController {
             valid = false;
             LOGGER.debug("News validation failed: " + e.getMessage());
             imageErrorLabel.setText(e.getMessage());
+        }
+
+        try {
+            detailedNewsDTO.setSummary(NewsValidator.validateSummary(summaryTextField));
+            summaryErrorLabel.setText("");
+            summaryErrorLabel.setMinHeight(0);
+        } catch (NewsValidationException e) {
+            valid = false;
+            LOGGER.debug("News validation failed: " + e.getMessage());
+            summaryErrorLabel.setText(e.getMessage());
+            summaryErrorLabel.setMinHeight(16);
         }
 
         try {

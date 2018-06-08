@@ -46,7 +46,10 @@
                            </HBox.margin></Label>
                             </children>
                         </HBox>
-                        <Label fx:id="titleErrorLabel" prefHeight="26.0" textFill="RED" GridPane.rowIndex="2" />
+                        <Label fx:id="titleErrorLabel" prefHeight="26.0" textFill="RED" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" top="10.0" />
+                     </GridPane.margin></Label>
                         <TextField fx:id="titleTextField" prefWidth="200.0" GridPane.rowIndex="1">
                             <GridPane.margin>
                                 <Insets />
@@ -59,12 +62,15 @@
                                 <Insets top="5.0" />
                             </GridPane.margin>
                         </Label>
-                        <Label fx:id="imageErrorLabel" prefHeight="26.0" textFill="RED" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label fx:id="imageErrorLabel" prefHeight="26.0" textFill="RED" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                            <GridPane.margin>
+                                <Insets bottom="5.0" top="10.0" />
+                            </GridPane.margin></Label>
                         <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                             <children>
                                 <Button fx:id="clearImageButton" disable="true" mnemonicParsing="false" onAction="#onClickClearImageButton" style="-fx-background-color: #F88379;" text="X">
                                     <HBox.margin>
-                                        <Insets top="2.0" />
+                                        <Insets right="5.0" top="2.0" />
                                     </HBox.margin></Button>
                                 <Button mnemonicParsing="false" onAction="#onClickChooseImageFileButton" text="%news.create.choose">
                                     <HBox.margin>
@@ -85,9 +91,9 @@
                             <font>
                                 <Font name="System Bold" size="19.0" />
                             </font>
-                            <padding>
-                                <Insets bottom="5.0" top="5.0" />
-                            </padding>
+                     <HBox.margin>
+                        <Insets top="7.0" />
+                     </HBox.margin>
                         </Label>
                         <Label text="*" textFill="#cc0000">
                      <HBox.margin>
@@ -103,9 +109,6 @@
                             <font>
                                 <Font name="System Bold" size="19.0" />
                             </font>
-                            <padding>
-                                <Insets bottom="5.0" />
-                            </padding>
                      <HBox.margin>
                         <Insets top="5.0" />
                      </HBox.margin>
