@@ -7,7 +7,7 @@ public abstract class NewsValidator {
 
     public static final int MIN_CHARS_TITLE = 1;
     public static final int MAX_CHARS_TITLE = 100;
-    public static final int MIN_CHARS_TEXT = 1;
+    public static final String EMPTY_ARTICLE_REGEX = ".*<body contenteditable=\"true\">.*>\\s*[a-zA-Z0-9]+\\s*<.*<\\/body>.*";
     public static final int MAX_CHARS_TEXT = 10000;
     public static final int MAX_SIZE_IMAGE_DATA = 8000000;
 
@@ -36,7 +36,7 @@ public abstract class NewsValidator {
             throw new NewsValidationException("News validation failed, because object reference is null!");
         }
 
-        if (detailedNewsDTO.getText() == null || detailedNewsDTO.getText().length() < MIN_CHARS_TEXT) {
+        if (detailedNewsDTO.getText() == null || !detailedNewsDTO.getText().matches(EMPTY_ARTICLE_REGEX)) {
             throw new NewsValidationException("News validation failed, because text contains not enough characters!");
         }
 
