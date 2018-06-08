@@ -78,7 +78,7 @@
                   </Label>
                </children>
             </HBox>
-                <HTMLEditor fx:id="htmlEditor" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" VBox.vgrow="ALWAYS" />
+                <HTMLEditor fx:id="htmlEditor" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;" VBox.vgrow="ALWAYS" />
                 <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onClickSaveNewsClicked" text="%news.create.save" />
             </children>
             <padding>

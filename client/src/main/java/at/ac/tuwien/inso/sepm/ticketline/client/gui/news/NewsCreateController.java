@@ -93,6 +93,7 @@ public class NewsCreateController {
 
         try {
             detailedNewsDTO.setTitle(NewsValidator.validateTitle(titleTextField));
+            titleErrorLabel.setText("");
         } catch (NewsValidationException e) {
             valid = false;
             LOGGER.debug("News validation failed: " + e.getMessage());
@@ -100,7 +101,17 @@ public class NewsCreateController {
         }
 
         try {
+            detailedNewsDTO.setImageData(NewsValidator.validateImage(imageFileLabel.getText()));
+        } catch (NewsValidationException e) {
+            valid = false;
+            LOGGER.debug("News validation failed: " + e.getMessage());
+            imageFileLabel.setText(e.getMessage());
+            imageFileLabel.setTextFill(Color.RED);
+        }
+
+        try {
             detailedNewsDTO.setTitle(NewsValidator.validateArticle(htmlEditor));
+            articleErrorLabel.setText("");
         } catch (NewsValidationException e) {
             valid = false;
             LOGGER.debug("News validation failed: " + e.getMessage());
@@ -112,7 +123,7 @@ public class NewsCreateController {
         }
 
         detailedNewsDTO.setPublishedAt(LocalDateTime.now());
-        
+
         //newsService.publish(detailedNewsDTO);
 
         LOGGER.debug("News creation successfully completed!");
