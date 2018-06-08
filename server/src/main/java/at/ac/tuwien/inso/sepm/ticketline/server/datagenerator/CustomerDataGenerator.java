@@ -31,7 +31,16 @@ public class CustomerDataGenerator implements DataGenerator {
             LOGGER.info("customers already generated");
         } else {
             LOGGER.info("generating {} customer entries", NUMBER_OF_CUSTOMERS_TO_GENERATE);
-            for (int i = 0; i < NUMBER_OF_CUSTOMERS_TO_GENERATE; i++) {
+            final var anonymous = Customer.builder()
+                .firstName("anonymous")
+                .lastName("anonymous")
+                .telephoneNumber(faker.phoneNumber().phoneNumber())
+                .email(faker.internet().emailAddress())
+                .address(new BaseAddress(faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(4, 5)))
+                .build();
+
+            customerRepository.save(anonymous);
+            for (int i = 1; i < NUMBER_OF_CUSTOMERS_TO_GENERATE; i++) {
                 final var customer = Customer.builder()
                     .firstName(faker.name().firstName())
                     .lastName(faker.name().lastName())
@@ -44,6 +53,7 @@ public class CustomerDataGenerator implements DataGenerator {
 
                 customerRepository.save(customer);
             }
+
         }
     }
 }
