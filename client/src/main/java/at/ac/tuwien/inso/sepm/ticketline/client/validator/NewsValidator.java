@@ -18,7 +18,7 @@ public class NewsValidator {
     public static final int MAX_CHARS_TITLE = 100;
     public static final int MIN_CHARS_SUMMARY = 1;
     public static final int MAX_CHARS_SUMMARY = 50;
-    public static final String EMPTY_ARTICLE_REGEX = ".*<body contenteditable=\"true\">.*>\\s*[a-zA-Z0-9]+\\s*<.*<\\/body>.*";
+    public static final String EMPTY_ARTICLE_REGEX = ".*>\\s*[a-zA-Z0-9]+\\s*<.*";
     public static final int MAX_CHARS_TEXT = 10000;
     public static final int MIN_IMG_WIDTH = 300;
     public static final int MIN_IMG_HEIGHT = 300;

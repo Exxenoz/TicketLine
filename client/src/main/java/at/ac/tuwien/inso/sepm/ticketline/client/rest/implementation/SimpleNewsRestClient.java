@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.rest.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.NewsRestClient;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.DetailedNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.SimpleNewsDTO;
 import org.slf4j.Logger;
@@ -44,9 +45,29 @@ public class SimpleNewsRestClient implements NewsRestClient {
             LOGGER.debug("Result status was {} with content {}", news.getStatusCode(), news.getBody());
             return news.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed retrieve news with status code " + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
-            throw new DataAccessException(e.getMessage(), e);
+            throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
+        }
+    }
+
+    @Override
+    public DetailedNewsDTO find(Long id) throws DataAccessException {
+        try {
+            URI uri = restClient.getServiceURI(newsUri.getPath() + "/" + id);
+
+            LOGGER.debug("Retrieving specific news from {}", uri);
+            final var news =
+                restClient.exchange(
+                    new RequestEntity<>(GET, uri),
+                    new ParameterizedTypeReference<DetailedNewsDTO>() {
+                    });
+            LOGGER.debug("Result status was {} with content {}", news.getStatusCode(), news.getBody());
+            return news.getBody();
+        } catch (HttpStatusCodeException e) {
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
+        } catch (RestClientException e) {
+            throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
         }
     }
 
@@ -62,9 +83,9 @@ public class SimpleNewsRestClient implements NewsRestClient {
             LOGGER.debug("Result status was {} with content {}", news.getStatusCode(), news.getBody());
             return news.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed to publish news with status code " + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
-            throw new DataAccessException(e.getMessage(), e);
+            throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
         }
     }
 }
