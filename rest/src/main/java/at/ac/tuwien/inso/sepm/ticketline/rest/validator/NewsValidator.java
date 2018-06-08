@@ -7,12 +7,15 @@ public abstract class NewsValidator {
 
     public static final int MIN_CHARS_TITLE = 1;
     public static final int MAX_CHARS_TITLE = 100;
+    public static final int MIN_CHARS_SUMMARY = 1;
+    public static final int MAX_CHARS_SUMMARY = 50;
     public static final String EMPTY_ARTICLE_REGEX = ".*<body contenteditable=\"true\">.*>\\s*[a-zA-Z0-9]+\\s*<.*<\\/body>.*";
     public static final int MAX_CHARS_TEXT = 10000;
     public static final int MAX_SIZE_IMAGE_DATA = 8000000;
 
     public static void validateNews(DetailedNewsDTO detailedNewsDTO) throws NewsValidationException {
         validateTitle(detailedNewsDTO);
+        validateSummary(detailedNewsDTO);
         validateText(detailedNewsDTO);
         validateImageData(detailedNewsDTO);
     }
@@ -28,6 +31,20 @@ public abstract class NewsValidator {
 
         if (detailedNewsDTO.getTitle().length() > MAX_CHARS_TITLE) {
             throw new NewsValidationException("News validation failed, because title contains too many characters!");
+        }
+    }
+
+    public static void validateSummary(DetailedNewsDTO detailedNewsDTO) throws NewsValidationException {
+        if (detailedNewsDTO == null) {
+            throw new NewsValidationException("News validation failed, because object reference is null!");
+        }
+
+        if (detailedNewsDTO.getSummary() == null || detailedNewsDTO.getSummary().length() < MIN_CHARS_SUMMARY) {
+            throw new NewsValidationException("News validation failed, because summary contains not enough characters!");
+        }
+
+        if (detailedNewsDTO.getSummary().length() > MAX_CHARS_SUMMARY) {
+            throw new NewsValidationException("News validation failed, because summary contains too many characters!");
         }
     }
 
