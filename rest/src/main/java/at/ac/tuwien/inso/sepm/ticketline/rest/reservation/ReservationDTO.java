@@ -34,6 +34,9 @@ public class ReservationDTO {
     @ApiModelProperty(required = true, readOnly = true, name = "The date and time when the reservation was paid")
     private String reservationNumber;
 
+    @ApiModelProperty(required = true, readOnly = true, name = "The cancelation state of the reservation")
+    private boolean canceled;
+
     public Long getId() {
         return id;
     }
@@ -82,15 +85,18 @@ public class ReservationDTO {
         this.reservationNumber = reservationNumber;
     }
 
+
     @Override
     public String toString() {
         return "ReservationDTO{" +
             "id=" + id +
-            ", reservationNumber=" + reservationNumber +
+            ", customer=" + customer +
             ", performance=" + performance +
-            ", seat=" + seats +
+            ", seats=" + seats +
             ", isPaid=" + isPaid +
             ", paidAt=" + paidAt +
+            ", reservationNumber='" + reservationNumber + '\'' +
+            ", canceled=" + canceled +
             '}';
     }
 
@@ -98,21 +104,21 @@ public class ReservationDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         ReservationDTO that = (ReservationDTO) o;
-
-        return Objects.equals(id, that.id) &&
+        return canceled == that.canceled &&
+            Objects.equals(id, that.id) &&
+            Objects.equals(customer, that.customer) &&
             Objects.equals(performance, that.performance) &&
             Objects.equals(seats, that.seats) &&
             Objects.equals(isPaid, that.isPaid) &&
-            Objects.equals(reservationNumber, that.reservationNumber) &&
-            Objects.equals(paidAt, that.paidAt);
+            Objects.equals(paidAt, that.paidAt) &&
+            Objects.equals(reservationNumber, that.reservationNumber);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, performance, seats, isPaid, paidAt, reservationNumber);
+        return Objects.hash(id, customer, performance, seats, isPaid, paidAt, reservationNumber, canceled);
     }
 
     public static Builder builder() {
@@ -134,6 +140,7 @@ public class ReservationDTO {
         private List<SeatDTO> seats;
         private Boolean isPaid;
         private LocalDateTime paidAt;
+
 
         private Builder() {
         }
