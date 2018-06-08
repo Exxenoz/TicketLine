@@ -17,6 +17,9 @@ public class DetailedNewsDTO {
     @ApiModelProperty(required = true, name = "The title of the news")
     private String title;
 
+    @ApiModelProperty(required = true, name = "The summary of the news")
+    private String summary;
+
     @ApiModelProperty(required = true, name = "The text content of the news")
     private String text;
 
@@ -47,6 +50,14 @@ public class DetailedNewsDTO {
         this.title = title;
     }
 
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
     public String getText() {
         return text;
     }
@@ -69,6 +80,7 @@ public class DetailedNewsDTO {
             "id=" + id +
             ", publishedAt=" + publishedAt +
             ", title='" + title + '\'' +
+            ", summary='" + summary + '\'' +
             ", text='" + text + '\'' +
             ", imageData='" + imageData + '\'' +
             '}';
@@ -84,6 +96,7 @@ public class DetailedNewsDTO {
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (publishedAt != null ? !publishedAt.equals(that.publishedAt) : that.publishedAt != null) return false;
         if (title != null ? !title.equals(that.title) : that.title != null) return false;
+        if (summary != null ? !summary.equals(that.summary) : that.summary != null) return false;
         if (imageData != null ? !imageData.equals(that.imageData) : that.imageData != null) return false;
         return text != null ? text.equals(that.text) : that.text == null;
 
@@ -94,6 +107,7 @@ public class DetailedNewsDTO {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (publishedAt != null ? publishedAt.hashCode() : 0);
         result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (summary != null ? summary.hashCode() : 0);
         result = 31 * result + (text != null ? text.hashCode() : 0);
         result = 31 * result + (imageData != null ? imageData.hashCode() : 0);
         return result;
@@ -108,6 +122,7 @@ public class DetailedNewsDTO {
         private Long id;
         private LocalDateTime publishedAt;
         private String title;
+        private String summary;
         private String text;
         private byte[] imageData;
 
@@ -126,6 +141,11 @@ public class DetailedNewsDTO {
             return this;
         }
 
+        public NewsDTOBuilder summary(String summary) {
+            this.summary = summary;
+            return this;
+        }
+
         public NewsDTOBuilder text(String text) {
             this.text = text;
             return this;
@@ -141,6 +161,7 @@ public class DetailedNewsDTO {
             newsDTO.setId(id);
             newsDTO.setPublishedAt(publishedAt);
             newsDTO.setTitle(title);
+            newsDTO.setSummary(summary);
             newsDTO.setText(text);
             newsDTO.setImageData(imageData);
             return newsDTO;
