@@ -4,6 +4,8 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.PerformanceRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
 import org.slf4j.Logger;
@@ -25,16 +27,16 @@ public class SimplePerformanceService implements PerformanceService {
     }
 
     @Override
-    public List<PerformanceDTO> findAll() throws DataAccessException {
-        return performanceRestClient.findAllPerformances();
+    public PageResponseDTO<PerformanceDTO> findAll(PageRequestDTO pageRequestDTO) throws DataAccessException {
+        return performanceRestClient.findAllPerformances(pageRequestDTO);
     }
 
-    public List<PerformanceDTO> findAll(SearchDTO searchDTO) throws DataAccessException {
-        return performanceRestClient.findAll(searchDTO);
+    public PageResponseDTO<PerformanceDTO> findAll(SearchDTO searchDTO, PageRequestDTO pageRequestDTO) throws DataAccessException {
+        return performanceRestClient.findAll(searchDTO, pageRequestDTO);
     }
 
     @Override
-    public List<PerformanceDTO> findByEventID(Long eventID) throws DataAccessException {
-        return performanceRestClient.findByEventID(eventID);
+    public PageResponseDTO<PerformanceDTO> findByEventID(Long eventID, PageRequestDTO pageRequestDTO) throws DataAccessException {
+        return performanceRestClient.findByEventID(eventID, pageRequestDTO);
     }
 }

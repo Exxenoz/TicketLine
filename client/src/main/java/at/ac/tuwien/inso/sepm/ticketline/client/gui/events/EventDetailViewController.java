@@ -4,6 +4,9 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.EventService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.property.SimpleStringProperty;
@@ -22,8 +25,12 @@ import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO.SEAT;
 
 @Component
 public class EventDetailViewController {
@@ -60,6 +67,7 @@ public class EventDetailViewController {
     private List<PerformanceDTO> performances;
 
     private ObservableList<PerformanceDTO> performanceData = FXCollections.observableArrayList();
+    private static final int PERFORMANCES_PER_PAGE = 10;
 
     private final SpringFxmlLoader fxmlLoader;
     private final PerformanceDetailViewController performanceDetailViewController;
@@ -113,15 +121,27 @@ public class EventDetailViewController {
         stage.close();
     }
 
-    public void fill(PerformanceService performanceService, EventDTO event, Stage stage) throws DataAccessException {
+    public void fill(PerformanceService performanceService, EventDTO event, Stage stage) {
         this.stage = stage;
         eventHeading.setText(event.getName());
         eventNameEvent.setText(event.getName());
 
         //find all performances for the given event
-        List<PerformanceDTO> performancesOfEvent = performanceService.findByEventID(event.getId());
+        List<PerformanceDTO> performanceDTOs;
+        performances = new ArrayList<>();
+        try {
+            PageRequestDTO pageRequestDTO = new PageRequestDTO();
+            pageRequestDTO.setPage(0);
+            pageRequestDTO.setSize(PERFORMANCES_PER_PAGE);
+            PageResponseDTO<PerformanceDTO> performancesOfEvent;
+            performancesOfEvent = performanceService.findByEventID(event.getId(), pageRequestDTO);
+            performanceDTOs = performancesOfEvent.getContent();
+        } catch (DataAccessException e) {
+            LOGGER.error("Access error while loading performances of event!", e);
+            return;
+        }
 
-        final var artistString = performancesOfEvent.stream()
+        final var artistString = performanceDTOs.stream()
             .flatMap(performance -> performance.getArtists().stream())
             .map(artist -> artist.getFirstName() + " " + artist.getLastName())
             .distinct()
@@ -129,16 +149,9 @@ public class EventDetailViewController {
 
         artistNameEvent.setText(artistString);
         descriptionEvent.setText(event.getDescription());
-        if (event.getEventType().toString().equals("SEATS")) {
-            eventTypeEvent.setText("yes");
-        } else {
-            eventTypeEvent.setText("no");
-        }
-        try {
-            performances = performanceService.findByEventID(event.getId());
-        } catch (DataAccessException e) {
-            LOGGER.error("Access error while loading performances of event!", e);
-        }
+        eventTypeEvent.setText(event.getEventType() == SEAT ? "yes" : "no");
+
+        performances.addAll(performanceDTOs);
         intializeTableView();
     }
 
