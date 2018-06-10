@@ -2,10 +2,9 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationToken;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationTokenInfo;
-import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.configuration.properties.AuthenticationConfigurationProperties;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpLockedException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpBadRequestException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.HeaderTokenAuthenticationService;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
@@ -74,44 +73,59 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
     }
 
     @Override
-    public AuthenticationToken authenticate(String username, CharSequence password) throws InternalUserNotFoundException, InternalUserDisabledException, InternalPasswordResetException, InternalUserPasswordWrongException {
+    public AuthenticationToken authenticate(String username, CharSequence password) throws InternalUserNotFoundException,
+        InternalUserDisabledException, InternalPasswordResetException, InternalUserPasswordWrongException {
 
         Authentication authentication = null;
         try {
             authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password));
 
-        } catch (AuthenticationException a) {
-            LOGGER.error(String.format("Failed to authenticate user with name: %s", username), a);
-
-            UserDTO userDTO = null;
+            // If no exception is thrown at this point, reset the strikes again
             try {
-                userDTO = userService.findUserByName(username);
-            } catch (InternalUserNotFoundException e) {
+                userService.resetStrikes(userService.findUserByName(username));
+            } catch (InternalUserValidationException e) {
                 throw new InternalUserNotFoundException();
             }
 
-            if(userDTO != null) {
-                if (userService.isPasswordChangeKeySet(userDTO)) {
-                    throw new InternalPasswordResetException();
-                }
+        } catch (AuthenticationException a) {
+            //User could not be successfully authenticated
+            LOGGER.error("Failed to authenticate user with name: {}", username);
 
-                boolean isDisabled = false;
+            //Find the user entity that was used to authenticate
+            UserDTO userDTO = null;
 
-                try {
-                    isDisabled = userService.increaseStrikes(userDTO);
-                } catch (InternalUserValidationException e) {
-                    throw new InternalUserNotFoundException();
-                }
+            try {
+                userDTO = userService.findUserByName(username);
+                // And increase the strikes of that user if there is no password reset going on
+                if (userDTO != null) {
+                    if (userService.isPasswordChangeKeySet(userDTO)) {
+                        throw new InternalPasswordResetException();
+                    }
+                    //Purely increase stikes
+                    userService.increaseStrikes(userDTO);
 
-                if (!isDisabled) {
-                    throw new InternalUserPasswordWrongException();
-                } else {
-                    LOGGER.info("User will been informed that he was disabled.");
-                    throw new InternalUserDisabledException("User is disabled");
+                    //Then check status of user and disable if necessary
+                    if(!userService.isUserBelowAllowedStrikes(userDTO)) {
+                        userService.disableUser(userDTO);
+                    }
+
+                    if (userService.findUserByName(username).isEnabled()) {
+                        throw new InternalUserPasswordWrongException();
+
+                    } else {
+                        LOGGER.info("User will been informed that he was disabled.");
+                        throw new InternalUserDisabledException("User is disabled");
+                    }
                 }
-            } else {
-               throw new InternalUserNotFoundException();
+            } catch (InternalUserNotFoundException n) {
+                throw new InternalUserNotFoundException();
+
+            } catch (InternalUserValidationException v) {
+                throw new InternalUserNotFoundException();
+
+            } catch(InternalForbiddenException f) {
+                throw new HttpBadRequestException();
             }
         }
 
