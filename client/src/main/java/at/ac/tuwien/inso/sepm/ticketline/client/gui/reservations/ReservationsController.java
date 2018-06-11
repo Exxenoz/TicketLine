@@ -61,6 +61,7 @@ public class ReservationsController {
     private int totalPages = 0;
     private static final int RESERVATIONS_PER_PAGE = 50;
     private static final int RESERVATION_NUMBER_LENGTH = 7;
+    private static final int RESERVATION_FIRST_PAGE = 0;
 
     private String activeFilters = "";
     private String performanceName = null;
@@ -90,7 +91,7 @@ public class ReservationsController {
     public void loadReservations() {
         foundReservationsTableView.sortPolicyProperty().set(t -> {
             clear();
-            loadPerformanceTable(0);
+            loadPerformanceTable(RESERVATION_FIRST_PAGE);
             return true;
         });
 
@@ -173,11 +174,13 @@ public class ReservationsController {
 
     private String getColumnNameBy(TableColumn<ReservationDTO, ?> sortedColumn) {
         if (sortedColumn == eventColumn) {
-            return "eventName";
+            return "performance.event.name";
         } else if (sortedColumn == customerColumn) {
-            return "customerName";
+            return "customer.lastName";
         } else if (sortedColumn == paidColumn) {
-            return "status";
+            return "paid";
+        } else if(sortedColumn == reservationIDColumn){
+            return "reservationNumber";
         }
         return "id";
     }
@@ -236,6 +239,9 @@ public class ReservationsController {
         stage.initOwner(showReservationDetailsButton.getScene().getWindow());
 
         stage.showAndWait();
+
+        clear();
+        loadData();
     }
 
     public void searchForReservations() {

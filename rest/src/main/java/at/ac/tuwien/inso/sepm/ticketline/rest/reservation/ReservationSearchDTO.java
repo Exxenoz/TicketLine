@@ -62,7 +62,6 @@ public class ReservationSearchDTO extends PageRequestDTO {
         return Objects.hash(super.hashCode(), getFirstName(), getLastName(), getPerformanceName());
     }
 
-
     public static final class Builder {
         private String firstName;
         private String lastName;
