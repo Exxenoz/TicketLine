@@ -50,14 +50,16 @@ public interface UserRestClient {
      * @param userDTO the user to create
      * @return the created user
      * @throws DataAccessException in case something went wrong
+     * @return the created user
      */
     UserDTO create(UserDTO userDTO) throws DataAccessException;
 
     /**
      * Reset a users password, so he has to specify a new one at his next login
      * @throws DataAccessException in case something went wrong
+     * @return the updated user
      */
-    void resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws DataAccessException;
+    UserDTO resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws DataAccessException;
 
     /**
      * Change a users password, with a given token to authenticate

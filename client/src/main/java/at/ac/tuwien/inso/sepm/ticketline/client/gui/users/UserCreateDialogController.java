@@ -100,7 +100,7 @@ public class UserCreateDialogController {
         }
 
         try {
-            userService.create(userDTO);
+            userController.addUser(userService.create(userDTO));
         } catch (DataAccessException e) {
             LOGGER.error("User creation failed: " + e.getMessage());
 
@@ -114,8 +114,7 @@ public class UserCreateDialogController {
             return;
         }
 
-        userController.clearUserList();
-        userController.loadUserTable(UserController.FIRST_USER_TABLE_PAGE);
+        ((Stage) usernameTextField.getScene().getWindow()).close();
 
         LOGGER.debug("User creation successfully completed!");
 
@@ -125,8 +124,6 @@ public class UserCreateDialogController {
             BundleManager.getBundle().getString("users.dialog.create.dialog.success.content_text"),
             usernameTextField.getScene().getWindow()
         ).showAndWait();
-
-        ((Stage) usernameTextField.getScene().getWindow()).close();
     }
 
     private Set<String> getRoles() {

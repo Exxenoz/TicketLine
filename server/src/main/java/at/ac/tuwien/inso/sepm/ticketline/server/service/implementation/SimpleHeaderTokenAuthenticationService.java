@@ -74,58 +74,46 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
 
     @Override
     public AuthenticationToken authenticate(String username, CharSequence password) throws InternalUserNotFoundException,
-        InternalUserDisabledException, InternalPasswordResetException, InternalUserPasswordWrongException {
+        InternalUserDisabledException, InternalPasswordResetException, InternalUserPasswordWrongException,
+        InternalUserValidationException, InternalForbiddenException {
+        UserDTO userDTO = null;
+
+        //First of all find user, to check if he is in the password change key set
+        try {
+            userDTO = userService.findUserByName(username);
+        } catch (InternalUserNotFoundException e) {
+            LOGGER.debug("Could not authenticate user '{}', because user could not be found!", username);
+            throw new InternalUserNotFoundException();
+        }
+
+        if (userService.isPasswordChangeKeySet(userDTO)) {
+            LOGGER.debug("Could not authenticate user '{}', because password change key is set!", username);
+            throw new InternalPasswordResetException();
+        }
 
         Authentication authentication = null;
         try {
             authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password));
-
-            // If no exception is thrown at this point, reset the strikes again
-            try {
-                userService.resetStrikes(userService.findUserByName(username));
-            } catch (InternalUserValidationException e) {
-                throw new InternalUserNotFoundException();
-            }
+            // Reset strikes when authentication was successful
+            userService.resetStrikes(userDTO);
 
         } catch (AuthenticationException a) {
-            //User could not be successfully authenticated
-            LOGGER.error("Failed to authenticate user with name: {}", username);
+            LOGGER.debug("Could not authenticate user '{}', because authentication failed: {}", username, a.getMessage());
 
-            //Find the user entity that was used to authenticate
-            UserDTO userDTO = null;
+            //Purely increase stikes
+            userService.increaseStrikes(userDTO);
 
-            try {
-                userDTO = userService.findUserByName(username);
-                // And increase the strikes of that user if there is no password reset going on
-                if (userDTO != null) {
-                    if (userService.isPasswordChangeKeySet(userDTO)) {
-                        throw new InternalPasswordResetException();
-                    }
-                    //Purely increase stikes
-                    userService.increaseStrikes(userDTO);
+            //Then check status of user and disable if necessary
+            if(!userService.isUserBelowAllowedStrikes(userDTO)) {
+                userService.disableUser(userDTO);
+            }
 
-                    //Then check status of user and disable if necessary
-                    if(!userService.isUserBelowAllowedStrikes(userDTO)) {
-                        userService.disableUser(userDTO);
-                    }
-
-                    if (userService.findUserByName(username).isEnabled()) {
-                        throw new InternalUserPasswordWrongException();
-
-                    } else {
-                        LOGGER.info("User will been informed that he was disabled.");
-                        throw new InternalUserDisabledException("User is disabled");
-                    }
-                }
-            } catch (InternalUserNotFoundException n) {
-                throw new InternalUserNotFoundException();
-
-            } catch (InternalUserValidationException v) {
-                throw new InternalUserNotFoundException();
-
-            } catch(InternalForbiddenException f) {
-                throw new HttpBadRequestException();
+            if (userService.findUserByName(username).isEnabled()) {
+                throw new InternalUserPasswordWrongException();
+            } else {
+                LOGGER.info("User will been informed that he was disabled.");
+                throw new InternalUserDisabledException("User is disabled");
             }
         }
 

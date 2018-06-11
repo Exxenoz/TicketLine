@@ -12,8 +12,16 @@ public class UserValidator {
     // all extended ascii characters allowed
     public static final String passwordRegex = "^[\\x00-\\xFF]*$";
 
+    public static final String nameRegex = "^[-' a-zA-ZöüöäÜÖÄ0-9]+$";
+
     public static String validateUsername(TextField usernameTextField) throws UserValidationException {
         String username = usernameTextField.getText();
+
+        if(!username.matches(nameRegex)) {
+            throw new UserValidationException(
+                BundleManager.getExceptionBundle().getString("exception.validator.user.username.invalid_characters")
+            );
+        }
 
         try {
             at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator.validateUsername(

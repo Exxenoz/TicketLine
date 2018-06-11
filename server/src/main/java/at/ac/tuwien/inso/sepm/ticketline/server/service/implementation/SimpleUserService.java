@@ -92,12 +92,6 @@ public class SimpleUserService implements UserService {
     InternalUserDisabledException {
         LOGGER.info("Increase strikes for user {}", userDTO.getUsername());
 
-        try {
-            UserValidator.validateExistingUser(userDTO);
-        } catch (UserValidatorException e) {
-            throw new InternalUserValidationException();
-        }
-
         User user = userRepository.findByUsername(userDTO.getUsername());
         if (user == null) {
             throw new InternalUserNotFoundException();
@@ -209,7 +203,7 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public void resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws InternalUserValidationException, InternalUserNotFoundException, InternalBadRequestException {
+    public UserDTO resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws InternalUserValidationException, InternalUserNotFoundException, InternalBadRequestException {
         LOGGER.info("Reset password for user {}", userPasswordResetRequestDTO.getUserDTO());
 
         try {
@@ -230,8 +224,10 @@ public class SimpleUserService implements UserService {
 
         user.setPassword("");
         user.setPasswordChangeKey(new BCryptPasswordEncoder(10).encode(passwordChangeKey));
+        user.setEnabled(true);
+        user.setStrikes(0);
 
-        userRepository.save(user);
+        return userMapper.userToUserDTO(userRepository.save(user));
     }
 
     @Override

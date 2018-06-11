@@ -49,10 +49,18 @@ public class ReservationSearchDTO extends PageRequestDTO {
     }
 
     @Override
+    public String toString() {
+        return "ReservationSearchDTO{" +
+            "firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
+            ", performanceName='" + performanceName + '\'' +
+            ", " + super.toString() + "} ";
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), getFirstName(), getLastName(), getPerformanceName());
     }
-
 
     public static final class Builder {
         private String firstName;
