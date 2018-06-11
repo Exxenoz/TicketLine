@@ -6,7 +6,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
 public abstract class ReservationSearchValidator {
 
 
-    private static final String letterRegex = "^[-a-zA-Z ]+$";
+    private static final String NAME_REGEX = "^[-a-zA-Z ]+$";
 
     public static void validateReservationSearchDTO(ReservationSearchDTO reservationSearchDTO) throws ReservationSearchValidationException {
         validateDTO(reservationSearchDTO);
@@ -33,7 +33,7 @@ public abstract class ReservationSearchValidator {
             throw new ReservationSearchValidationException("first name of the customer for the search can not be longer than 50 characters");
         }
 
-        if (!reservationSearchDTO.getFirstName().matches(letterRegex)) {
+        if (!reservationSearchDTO.getFirstName().matches(NAME_REGEX)) {
             throw new ReservationSearchValidationException("the first name of the customer can only be letters");
         }
 
@@ -51,7 +51,7 @@ public abstract class ReservationSearchValidator {
             throw new ReservationSearchValidationException("last name of the customer for the search can not be longer than 50 characters");
         }
 
-        if (!reservationSearchDTO.getLastName().matches(letterRegex)) {
+        if (!reservationSearchDTO.getLastName().matches(NAME_REGEX)) {
             throw new ReservationSearchValidationException("the last name of the customer can only be letters");
         }
 
@@ -69,7 +69,7 @@ public abstract class ReservationSearchValidator {
             throw new ReservationSearchValidationException("the performance name for the search can not be longer than 50 characters");
         }
 
-        if (!reservationSearchDTO.getPerformanceName().matches(letterRegex)) {
+        if (!reservationSearchDTO.getPerformanceName().matches(NAME_REGEX)) {
             throw new ReservationSearchValidationException("the performance name can only be letters");
         }
 

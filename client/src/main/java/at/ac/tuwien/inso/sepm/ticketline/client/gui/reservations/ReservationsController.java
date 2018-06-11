@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.awt.event.MouseEvent;
 import java.lang.invoke.MethodHandles;
 import java.util.ResourceBundle;
 
@@ -117,7 +116,7 @@ public class ReservationsController {
     public void loadReservations() {
         foundReservationsTableView.sortPolicyProperty().set(t -> {
             clear();
-            loadPerformanceTable(RESERVATION_FIRST_PAGE);
+            loadReservationTable(RESERVATION_FIRST_PAGE);
             return true;
         });
 
@@ -125,27 +124,27 @@ public class ReservationsController {
         if (scrollBar != null) {
             scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
                 double value = newValue.doubleValue();
-                if ((value == scrollBar.getMax()) && (!(page >= totalPages))) {
+                if ((value == scrollBar.getMax()) && (!(page >= (totalPages - 1)))) {
                     page++;
                     LOGGER.debug("Getting next Page: {}", page);
                     double targetValue = value * reservationDTOS.size();
-                    loadPerformanceTable(page);
+                    loadReservationTable(page);
                     scrollBar.setValue(targetValue / reservationDTOS.size());
                 }
             });
         }
     }
 
-    private void loadPerformanceTable(int page) {
+    private void loadReservationTable(int page) {
         if (filtered) {
-            loadFilteredPerformanceTable(page);
+            loadFilteredReservationsTable(page);
         } else {
-            loadUnfilteredPerformanceTable(page);
+            loadUnfilteredReservationsTable(page);
         }
         foundReservationsTableView.refresh();
     }
 
-    private void loadUnfilteredPerformanceTable(int page) {
+    private void loadUnfilteredReservationsTable(int page) {
         PageRequestDTO pageRequestDTO;
         if (foundReservationsTableView.getSortOrder().size() > 0) {
             TableColumn<ReservationDTO, ?> sortedColumn = foundReservationsTableView.getSortOrder().get(0);
@@ -165,7 +164,7 @@ public class ReservationsController {
         }
     }
 
-    private void loadFilteredPerformanceTable(int page) {
+    private void loadFilteredReservationsTable(int page) {
         if (performanceName == null || customerFirstName == null || customerLastName == null) {
             return;
         }
@@ -187,7 +186,7 @@ public class ReservationsController {
 
         try {
             PageResponseDTO<ReservationDTO> response =
-                reservationService.findAllByPaidFalseByCustomerNameAndPerformanceName(reservationSearchBuilder.build());
+                reservationService.findAllByCustomerNameAndPerformanceName(reservationSearchBuilder.build());
             reservationDTOS.addAll(response.getContent());
             this.page = page;
             totalPages = response.getTotalPages();
@@ -289,7 +288,7 @@ public class ReservationsController {
                 + " " + customerFirstName
                 + " " + customerLastName;
 
-            loadFilteredPerformanceTable(0);
+            loadFilteredReservationsTable(0);
             foundReservationsTableView.refresh();
             filtered = true;
             LOGGER.debug("Found {} page(s) satisfying the given criteria", totalPages);
@@ -311,7 +310,7 @@ public class ReservationsController {
                     + reservationNumber;
                 try {
                     ReservationDTO response =
-                        reservationService.findOneByPaidFalseAndReservationNumber(reservationNumber);
+                        reservationService.findOneByReservationNumber(reservationNumber);
                     reservationDTOS.clear();
                     reservationDTOS.addAll(response);
                 } catch (DataAccessException e) {
@@ -334,7 +333,7 @@ public class ReservationsController {
 
     public void clearFilters(ActionEvent actionEvent) {
         filtered = false;
-        activeFiltersListLabel.setText(BundleManager.getBundle().getString("bookings.main.criteria.placeholder"));
+        activeFiltersListLabel.setText("");
         performanceNameField.setText("");
         customerFirstNameField.setText("");
         customerLastNameField.setText("");

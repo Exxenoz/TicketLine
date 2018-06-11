@@ -29,7 +29,7 @@ public class UserEndpointIT extends BaseIT {
             .build();
 
         //try to login with bad credentials 5 times so that the user is disabled
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i <= 4; i++) {
             var response = RestAssured
                 .given()
                 .contentType(io.restassured.http.ContentType.JSON)

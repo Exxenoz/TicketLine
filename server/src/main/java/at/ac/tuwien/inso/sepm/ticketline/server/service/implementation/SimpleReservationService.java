@@ -48,17 +48,17 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
-    public Reservation findOneByPaidFalseAndReservationNumber(String reservationNr) {
-        return reservationRepository.findByPaidFalseAndReservationNumber(reservationNr);
+    public Reservation findOneByReservationNumber(String reservationNr) {
+        return reservationRepository.findByReservationNumber(reservationNr);
     }
 
     @Override
-    public Page<Reservation> findAllByPaidFalseAndCustomerNameAndPerformanceName(ReservationSearch reservationSearch,
-                                                                                 Pageable pageable) {
+    public Page<Reservation> findAllByCustomerNameAndPerformanceName(ReservationSearch reservationSearch,
+                                                                     Pageable pageable) {
         String firstName = reservationSearch.getFirstName();
         String lastName = reservationSearch.getLastName();
         String performanceName = reservationSearch.getPerformanceName();
-        return reservationRepository.findAllByPaidFalseAndCustomerNameAndPerformanceName(firstName, lastName, performanceName,
+        return reservationRepository.findAllByCustomerNameAndPerformanceName(firstName, lastName, performanceName,
             pageable);
     }
 

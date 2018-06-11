@@ -27,21 +27,20 @@ public interface ReservationService {
     Reservation findOneByPaidFalseAndId(Long reservationId);
 
     /**
-     * finds One not yet purchased Reservation
+     * finds one reservation with the given reservationnumber
      *
      * @param reservationNr the id of the reservation
      * @return said reservation
      */
-    Reservation findOneByPaidFalseAndReservationNumber(String reservationNr);
+    Reservation findOneByReservationNumber(String reservationNr);
 
     /**
      * Finds all the existing Reservation owned by the User with the given full name for the given performance
-     * which the customer did not yet purchase
      *
      * @param reservationSearch the object holding the search
      * @return a page of the reservations belonging to the performance with the given name and owned by the customer
      */
-    Page<Reservation> findAllByPaidFalseAndCustomerNameAndPerformanceName(ReservationSearch reservationSearch, Pageable pageable);
+    Page<Reservation> findAllByCustomerNameAndPerformanceName(ReservationSearch reservationSearch, Pageable pageable);
 
     /**
      * Get paid reservation count by event id.
