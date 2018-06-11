@@ -11,3 +11,7 @@
 .newsText {
     -fx-font-size: 12px;
 }
+
+.vbox-selected {
+    -fx-background-color: #d2d2d2;
+}

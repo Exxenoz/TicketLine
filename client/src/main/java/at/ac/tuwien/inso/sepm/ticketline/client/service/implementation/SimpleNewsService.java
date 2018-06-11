@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.service.implementation;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.NewsRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.NewsService;
+import at.ac.tuwien.inso.sepm.ticketline.rest.news.DetailedNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.SimpleNewsDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,16 @@ public class SimpleNewsService implements NewsService {
     @Override
     public List<SimpleNewsDTO> findAll() throws DataAccessException {
         return newsRestClient.findAll();
+    }
+
+    @Override
+    public DetailedNewsDTO find(Long id) throws DataAccessException {
+        return newsRestClient.find(id);
+    }
+
+    @Override
+    public SimpleNewsDTO publish(DetailedNewsDTO detailedNewsDTO) throws DataAccessException {
+        return newsRestClient.publish(detailedNewsDTO);
     }
 
 }
