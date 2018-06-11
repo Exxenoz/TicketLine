@@ -31,7 +31,7 @@
                         <Label fx:id="activeFiltersListLabel" prefHeight="27.0" text="Criteria 1, Criteria 2,...." />
                         <ButtonBar HBox.hgrow="ALWAYS">
                             <buttons>
-                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#showAllPerformances" text="%events.main.button.clear" textAlignment="CENTER" HBox.hgrow="ALWAYS">
+                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAndReloadButton" text="%events.main.button.clear" textAlignment="CENTER" HBox.hgrow="ALWAYS">
                                     <VBox.margin>
                                         <Insets right="16.0" />
                                     </VBox.margin>
@@ -59,7 +59,7 @@
                                         </TableView>
                                         <ButtonBar maxHeight="35.0" prefHeight="35.0" VBox.vgrow="ALWAYS">
                                             <buttons>
-                                                <Button fx:id="bookButton" disable="false" mnemonicParsing="false" onAction="#bookPerformance" text="%events.main.button.book" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                                                <Button fx:id="bookButton" disable="false" mnemonicParsing="false" onAction="#bookPerformanceButton" text="%events.main.button.book" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                                                     <VBox.margin>
                                                         <Insets bottom="16.0" />
                                                     </VBox.margin>
@@ -166,7 +166,7 @@
                                         </Accordion>
                                         <ButtonBar maxHeight="35.0" prefHeight="35.0">
                                             <buttons>
-                                                <Button fx:id="searchButton" mnemonicParsing="false" onAction="#searchForPerformances" text="%events.main.button.search" VBox.vgrow="ALWAYS">
+                                                <Button fx:id="searchButton" mnemonicParsing="false" onAction="#searchForPerformancesButton" text="%events.main.button.search" VBox.vgrow="ALWAYS">
                                                     <VBox.margin>
                                                         <Insets right="16.0" />
                                                     </VBox.margin>

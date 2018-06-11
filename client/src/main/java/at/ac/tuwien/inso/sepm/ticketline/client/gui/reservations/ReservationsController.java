@@ -29,8 +29,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.awt.event.MouseEvent;
 import java.lang.invoke.MethodHandles;
+import java.util.ResourceBundle;
 
+import static javafx.scene.control.ButtonType.OK;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.TICKET;
 
 
@@ -38,30 +41,22 @@ import static org.controlsfx.glyphfont.FontAwesome.Glyph.TICKET;
 public class ReservationsController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private static final int RESERVATION_NUMBER_LENGTH = 7;
-    @FXML
+
     public VBox content;
-    @FXML
-    private TabHeaderController tabHeaderController;
+    public TabHeaderController tabHeaderController;
     public Label activeFiltersListLabel;
-    @FXML
     public TableColumn<ReservationDTO, String> reservationIDColumn;
-    @FXML
     public TableColumn<ReservationDTO, String> eventColumn;
-    @FXML
     public TableColumn<ReservationDTO, String> customerColumn;
-    @FXML
     public TableColumn<ReservationDTO, String> paidColumn;
-    @FXML
     public TableView<ReservationDTO> foundReservationsTableView;
-    @FXML
+    public TextField performanceNameField;
+    public TextField customerFirstNameField;
+    public TextField customerLastNameField;
+    public TextField reservationNrField;
     public Button showReservationDetailsButton;
     @FXML
-    public TextField performanceNameField;
-    @FXML
-    public TextField customerFirstNameField;
-    @FXML
-    public TextField customerLastNameField;
+    public Button cancelReservationButton;
 
     private final SpringFxmlLoader fxmlLoader;
     private final ReservationService reservationService;
@@ -70,9 +65,9 @@ public class ReservationsController {
     private int page = 0;
     private int totalPages = 0;
     private static final int RESERVATIONS_PER_PAGE = 50;
+    private static final int RESERVATION_NUMBER_LENGTH = 7;
     private static final int RESERVATION_FIRST_PAGE = 0;
-    @FXML
-    public TextField reservationNrField;
+
     private String activeFilters = "";
     private String performanceName = null;
     private String customerFirstName = null;
@@ -99,6 +94,26 @@ public class ReservationsController {
     }
 
 
+    public void cancelReservation(ActionEvent event) {
+        ResourceBundle ex = BundleManager.getExceptionBundle();
+        int row = foundReservationsTableView.getSelectionModel().getFocusedIndex();
+        ReservationDTO selected = reservationDTOS.get(row);
+        if (!selected.isPaid()) {
+            try {
+                ReservationDTO reservationDTO = reservationService.cancelReservation(selected.getId());
+                reservationDTOS.remove(reservationDTO);
+                foundReservationsTableView.getItems().remove(row);
+            } catch (DataAccessException e) {
+                LOGGER.debug(ex.getString("exception.reservation.cancel.alreadypaid"), e);
+            }
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR, ex.getString("exception.reservation.cancel.alreadypaid"), OK);
+            alert.showAndWait();
+        }
+    }
+
+
+
     public void loadReservations() {
         foundReservationsTableView.sortPolicyProperty().set(t -> {
             clear();
@@ -122,60 +137,65 @@ public class ReservationsController {
     }
 
     private void loadPerformanceTable(int page) {
-        if (!filtered) {
-            PageRequestDTO pageRequestDTO = null;
-            if (foundReservationsTableView.getSortOrder().size() > 0) {
-                TableColumn<ReservationDTO, ?> sortedColumn = foundReservationsTableView.getSortOrder().get(0);
-                Sort.Direction sortDirection = (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
-                pageRequestDTO = new PageRequestDTO(page, RESERVATIONS_PER_PAGE, sortDirection, getColumnNameBy(sortedColumn));
-            } else {
-                pageRequestDTO = new PageRequestDTO(page, RESERVATIONS_PER_PAGE, Sort.Direction.ASC, null);
-            }
-            try {
-                PageResponseDTO<ReservationDTO> response = reservationService.findAll(pageRequestDTO);
-                reservationDTOS.addAll(response.getContent());
-                totalPages = response.getTotalPages();
-            } catch (DataAccessException e) {
-                LOGGER.error("Couldn't fetch reservations from server!");
-
-            }
+        if (filtered) {
+            loadFilteredPerformanceTable(page);
         } else {
-            if ((performanceName != null) && (customerFirstName != null) && (customerLastName != null)) {
-                ReservationSearchDTO reservationSearchDTO = null;
-                if (foundReservationsTableView.getSortOrder().size() > 0) {
-                    TableColumn<ReservationDTO, ?> sortedColumn = foundReservationsTableView.getSortOrder().get(0);
-                    Sort.Direction sortDirection = (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
-                    reservationSearchDTO = ReservationSearchDTO.Builder.aReservationSearchDTO()
-                        .withPage(page)
-                        .withSize(RESERVATIONS_PER_PAGE)
-                        .withSortColumnName(getColumnNameBy(sortedColumn))
-                        .withSortDirection(sortDirection)
-                        .withPerformanceName(performanceName)
-                        .withFirstName(customerFirstName)
-                        .withLastName(customerLastName)
-                        .build();
-                } else {
-                    reservationSearchDTO = ReservationSearchDTO.Builder.aReservationSearchDTO()
-                        .withPage(page)
-                        .withSize(RESERVATIONS_PER_PAGE)
-                        .withSortColumnName(null)
-                        .withSortDirection(Sort.Direction.ASC)
-                        .withPerformanceName(performanceName)
-                        .withFirstName(customerFirstName)
-                        .withLastName(customerLastName)
-                        .build();
-                }
-                try {
-                    PageResponseDTO<ReservationDTO> response =
-                        reservationService.findAllByPaidFalseByCustomerNameAndPerformanceName(reservationSearchDTO);
-                    reservationDTOS.addAll(response.getContent());
-                    totalPages = response.getTotalPages();
-                } catch (DataAccessException e) {
-                    LOGGER.error("Couldn't fetch reservations from server!");
-                }
-            }
+            loadUnfilteredPerformanceTable(page);
         }
         foundReservationsTableView.refresh();
+    }
+
+    private void loadUnfilteredPerformanceTable(int page) {
+        PageRequestDTO pageRequestDTO;
+        if (foundReservationsTableView.getSortOrder().size() > 0) {
+            TableColumn<ReservationDTO, ?> sortedColumn = foundReservationsTableView.getSortOrder().get(0);
+            Sort.Direction sortDirection = (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageRequestDTO = new PageRequestDTO(page, RESERVATIONS_PER_PAGE, sortDirection, getColumnNameBy(sortedColumn));
+        } else {
+            pageRequestDTO = new PageRequestDTO(page, RESERVATIONS_PER_PAGE, Sort.Direction.ASC, null);
+        }
+
+        try {
+            PageResponseDTO<ReservationDTO> response = reservationService.findAll(pageRequestDTO);
+            reservationDTOS.addAll(response.getContent());
+            totalPages = response.getTotalPages();
+        } catch (DataAccessException e) {
+            LOGGER.error("Couldn't fetch reservations from server!");
+
+        }
+    }
+
+    private void loadFilteredPerformanceTable(int page) {
+        if (performanceName == null || customerFirstName == null || customerLastName == null) {
+            return;
+        }
+
+        ReservationSearchDTO.Builder reservationSearchBuilder = ReservationSearchDTO.Builder.aReservationSearchDTO()
+            .withPage(page)
+            .withSize(RESERVATIONS_PER_PAGE)
+            .withSortDirection(Sort.Direction.ASC)
+            .withPerformanceName(performanceName)
+            .withFirstName(customerFirstName)
+            .withLastName(customerLastName);
+
+        if (foundReservationsTableView.getSortOrder().size() > 0) {
+            TableColumn<ReservationDTO, ?> sortedColumn = foundReservationsTableView.getSortOrder().get(0);
+            Sort.Direction sortDirection = (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
+            reservationSearchBuilder.withSortColumnName(getColumnNameBy(sortedColumn));
+            reservationSearchBuilder.withSortDirection(sortDirection);
+        }
+
+        try {
+            PageResponseDTO<ReservationDTO> response =
+                reservationService.findAllByPaidFalseByCustomerNameAndPerformanceName(reservationSearchBuilder.build());
+            reservationDTOS.addAll(response.getContent());
+            this.page = page;
+            totalPages = response.getTotalPages();
+        } catch (DataAccessException e) {
+            LOGGER.error("Couldn't fetch reservations from server!");
+            JavaFXUtils.createErrorDialog(e.getMessage(),
+                content.getScene().getWindow()).showAndWait();
+        }
     }
 
     private String getColumnNameBy(TableColumn<ReservationDTO, ?> sortedColumn) {
@@ -185,7 +205,7 @@ public class ReservationsController {
             return "customer.lastName";
         } else if (sortedColumn == paidColumn) {
             return "paid";
-        } else if (sortedColumn == reservationIDColumn) {
+        } else if(sortedColumn == reservationIDColumn){
             return "reservationNumber";
         }
         return "id";
@@ -268,41 +288,8 @@ public class ReservationsController {
                 + BundleManager.getBundle().getString("bookings.main.activefilters.customername")
                 + " " + customerFirstName
                 + " " + customerLastName;
-            ReservationSearchDTO reservationSearchDTO = null;
-            if (foundReservationsTableView.getSortOrder().size() > 0) {
-                TableColumn<ReservationDTO, ?> sortedColumn = foundReservationsTableView.getSortOrder().get(0);
-                Sort.Direction sortDirection = (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
-                reservationSearchDTO = ReservationSearchDTO.Builder.aReservationSearchDTO()
-                    .withPage(0)
-                    .withSize(RESERVATIONS_PER_PAGE)
-                    .withSortColumnName(getColumnNameBy(sortedColumn))
-                    .withSortDirection(sortDirection)
-                    .withPerformanceName(performanceName)
-                    .withFirstName(customerFirstName)
-                    .withLastName(customerLastName)
-                    .build();
-            } else {
-                reservationSearchDTO = ReservationSearchDTO.Builder.aReservationSearchDTO()
-                    .withPage(RESERVATION_FIRST_PAGE)
-                    .withSize(RESERVATIONS_PER_PAGE)
-                    .withSortColumnName(null)
-                    .withSortDirection(Sort.Direction.ASC)
-                    .withPerformanceName(performanceName)
-                    .withFirstName(customerFirstName)
-                    .withLastName(customerLastName)
-                    .build();
-            }
-            try {
-                PageResponseDTO<ReservationDTO> response =
-                    reservationService.findAllByPaidFalseByCustomerNameAndPerformanceName(reservationSearchDTO);
-                reservationDTOS.addAll(response.getContent());
-                page = 0;
-                totalPages = response.getTotalPages();
-            } catch (DataAccessException e) {
-                LOGGER.error("Couldn't fetch reservations from server!");
-                JavaFXUtils.createErrorDialog(e.getMessage(),
-                    content.getScene().getWindow()).showAndWait();
-            }
+
+            loadFilteredPerformanceTable(0);
             foundReservationsTableView.refresh();
             filtered = true;
             LOGGER.debug("Found {} page(s) satisfying the given criteria", totalPages);
