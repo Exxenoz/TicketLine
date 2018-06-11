@@ -99,4 +99,5 @@ public interface ReservationService {
      */
     ReservationDTO editReservation(ReservationDTO reservationDTO) throws DataAccessException;
 
+    ReservationDTO cancelReservation(Long id) throws DataAccessException;
 }

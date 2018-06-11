@@ -179,4 +179,13 @@ public class SimpleReservationService implements ReservationService {
         }
         return reservationNumber;
     }
+
+    @Override
+    public Reservation cancelReservation(Long id) {
+        //TODO: remove Seats from database
+        Reservation reservation = reservationRepository.findById(id).get();
+        reservation.setCanceled(true);
+        return reservationRepository.save(reservation);
+
+    }
 }
