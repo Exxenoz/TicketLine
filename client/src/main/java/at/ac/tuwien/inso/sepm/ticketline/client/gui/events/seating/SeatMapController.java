@@ -106,7 +106,7 @@ public class SeatMapController {
         List<SectorDTO> sectors = performance.getHall().getSectors();
         legendList = new ArrayList<>(sectors.size());
 
-        double currentY = findMaxY(sectors) * CanvasLegend.HEIGHT;
+        double currentY = findMaxSectorY(sectors, false) * CanvasLegend.HEIGHT;
         double currentX = CanvasLegend.OFFSET_LEFT;
 
         for(int i = 0; i < sectors.size(); i++) {
@@ -127,18 +127,46 @@ public class SeatMapController {
         }
     }
 
-    public int findMaxY(List<SectorDTO> sectorDTOs) {
+    public int findMaxSectorY(List<SectorDTO> sectorDTOs, boolean withSectorHeight) {
         int maxY = 0;
+        int sectorHeight = 0;
+
         for(SectorDTO sector: sectorDTOs) {
             int checkY = sector.getStartPositionY() + sector.getRows();
 
             if(checkY > maxY) {
                 maxY = checkY;
+                sectorHeight = sector.getRows();
             }
+        }
+
+        if(withSectorHeight) {
+            maxY += sectorHeight;
         }
 
         return maxY;
     }
+
+    public int findMaxSectorX(List<SectorDTO> sectorDTOs, boolean withSectorWidth) {
+        int maxX = 0;
+        int sectorWidth = 0;
+
+        for(SectorDTO sector: sectorDTOs) {
+            int checkY = sector.getStartPositionX() + sector.getSeatsPerRow();
+
+            if(checkY > maxX) {
+                maxX = checkY;
+                sectorWidth = sector.getSeatsPerRow();
+            }
+        }
+
+        if(withSectorWidth) {
+            maxX += sectorWidth;
+        }
+
+        return maxX;
+    }
+
     public void fill(PerformanceDTO performance) {
         this.performance = performance;
         resizeCanvas(performance);
@@ -150,20 +178,17 @@ public class SeatMapController {
     }
 
     public void resizeCanvas(PerformanceDTO performanceDTO) {
-
         double estimatedWidth = 0.0f;
         double estimatedHeight = 0.0f;
 
-        for(SectorDTO s: performanceDTO.getHall().getSectors()) {
-            estimatedHeight += s.getRows() * CanvasSeat.HEIGHT;
-            estimatedWidth += s.getSeatsPerRow() * CanvasSeat.WIDTH;
+        estimatedHeight += findMaxSectorY(performanceDTO.getHall().getSectors(), true) * CanvasSeat.HEIGHT;
+        //Add extra height for sector legend
+        estimatedHeight += ((performanceDTO.getHall().getSectors().size() / CanvasLegend.LEGEND_ROW_SIZE) + 1) *
+            (CanvasLegend.HEIGHT + CanvasLegend.REGULAR_MARGIN);
 
-            estimatedHeight += CanvasSeat.HEIGHT + CanvasSeat.REGULAR_MARGIN;
-            estimatedWidth += CanvasSeat.WIDTH + CanvasSeat.REGULAR_MARGIN;
-        }
+        estimatedWidth += findMaxSectorX(performanceDTO.getHall().getSectors(), true) * CanvasSeat.WIDTH;
 
         seatMapCanvas.setHeight(estimatedHeight);
         seatMapCanvas.setWidth(estimatedWidth);
     }
-
 }
