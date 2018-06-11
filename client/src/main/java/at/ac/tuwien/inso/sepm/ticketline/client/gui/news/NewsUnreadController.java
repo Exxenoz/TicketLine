@@ -17,6 +17,7 @@ import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -55,6 +56,9 @@ public class NewsUnreadController {
 
     @FXML
     public ImageView imageView;
+
+    @FXML
+    public ScrollPane detailScrollPane;
 
     @FXML
     private VBox vbNewsElements;
@@ -138,12 +142,14 @@ public class NewsUnreadController {
             column1.setPercentWidth(100);
             column2.setPercentWidth(0);
             currentlySelectedNews = null;
+            detailScrollPane.setVisible(false);
         } else {
             column1.setPercentWidth(30);
             column2.setPercentWidth(70);
             currentlySelectedNews = clickedNews;
             vbox.getStyleClass().add("vbox-selected");
             fillDetailView();
+            detailScrollPane.setVisible(true);
         }
     }
 

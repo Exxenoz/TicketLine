@@ -21,8 +21,8 @@
                 <Separator />
             <GridPane VBox.vgrow="ALWAYS">
               <columnConstraints>
-                <ColumnConstraints fx:id="column1" hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
-                <ColumnConstraints fx:id="column2" hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                <ColumnConstraints fx:id="column1" hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" />
+                <ColumnConstraints fx:id="column2" hgrow="SOMETIMES" minWidth="10.0" percentWidth="0.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -45,7 +45,7 @@
                   </ScrollPane>
                    <VBox GridPane.columnIndex="1">
                        <children>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-background-color: transparent;" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
+                  <ScrollPane fx:id="detailScrollPane" fitToHeight="true" fitToWidth="true" style="-fx-background-color: transparent;" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
                         <VBox fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                            <children>
                               <HBox alignment="CENTER">
