@@ -214,6 +214,7 @@ public class ReservationServiceTests {
         assertThat(reservation.getCustomer(), is(returned.getCustomer()));
         assertThat(reservation.getSeats(), is(returned.getSeats()));
         assertThat(reservation.getPerformance(), is(returned.getPerformance()));
+        assertThat(reservation.getReservationNumber(), is(returned.getReservationNumber()));
         assertThat(reservation.getPaid(), is(false));
 
     }
@@ -267,6 +268,29 @@ public class ReservationServiceTests {
         assertThat(reservation.getPerformance(), is(returned.getPerformance()));
         assertThat(reservation.getPaid(), is(true));
 
+    }
+
+    @Test
+    public void cancel() {
+        Performance performance = performanceRepository.save(newPerformance());
+        Seat seat = seatRepository.save(newSeat());
+        Customer customer = customerRepository.save(newCustomer());
+
+        Reservation reservation = new Reservation();
+        reservation.setCustomer(customer);
+        reservation.setPerformance(performance);
+        reservation.setSeats(List.of(seat));
+        reservation.setReservationNumber("000005");
+
+        Reservation returned = null;
+        try {
+            reservation = reservationService.createReservation(reservation);
+            returned = reservationService.cancelReservation(reservation.getId());
+        } catch (InvalidReservationException e) {
+            fail();
+        }
+
+        assertThat(returned.isCanceled(), is(true));
     }
 
     private Performance newPerformance() {

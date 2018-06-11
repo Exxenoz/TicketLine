@@ -36,6 +36,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     private final URI reservationFindAllUri;
     private final String RESERVATION = "/reservation";
     private final URI reservationEditUri;
+    private final String reservationCancelUri;
     private final URI reservationPurchaseUri;
     private final URI reservationFindNotPaidUri;
     private final String RESERVATION_FINDNOTPAID = "/reservation/findNotPaid";
@@ -50,6 +51,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
         this.reservationCreateAndPayUri = restClient.getServiceURI("/reservation/createAndPay/");
         this.reservationFindAllUri = restClient.getServiceURI(RESERVATION);
         this.reservationEditUri = restClient.getServiceURI("/reservation/edit");
+        this.reservationCancelUri = "/reservation/cancel/id";
         this.reservationPurchaseUri = restClient.getServiceURI("/reservation/purchase");
         this.reservationFindNotPaidUri = restClient.getServiceURI(RESERVATION_FINDNOTPAID);
         this.reservationFindNotPaidByReservationNumberUri =
@@ -203,6 +205,28 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     }
 
     @Override
+    public ReservationDTO cancelReservation(Long id) throws DataAccessException {
+        try {
+            final URI uri = restClient.getServiceURI(
+                reservationCancelUri + "/" + id
+            );
+            LOGGER.debug("Entering cancelReservation method with URI {}", uri);
+            final var response =
+                restClient.exchange(
+                    new RequestEntity<>(POST, uri),
+                    new ParameterizedTypeReference<ReservationDTO>() {
+                    });
+            LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
+            return response.getBody();
+        } catch (HttpStatusCodeException e) {
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
+        } catch (RestClientException e) {
+            throw new DataAccessException(e.getMessage(), e);
+        }
+    }
+
+
+    @Override
     public ReservationDTO findOneByPaidFalseAndReservationNumber(String reservationNr) throws DataAccessException {
         try {
             final URI uri = restClient.getServiceURI(
@@ -222,6 +246,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             throw new DataAccessException(e.getMessage(), e);
         }
     }
+
 
     @Override
     public PageResponseDTO<ReservationDTO> findAll(PageRequestDTO pageRequestDTO) throws DataAccessException {

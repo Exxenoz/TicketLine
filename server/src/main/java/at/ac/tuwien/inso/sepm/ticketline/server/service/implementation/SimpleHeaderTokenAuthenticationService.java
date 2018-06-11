@@ -2,10 +2,9 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationToken;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationTokenInfo;
-import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.configuration.properties.AuthenticationConfigurationProperties;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpLockedException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpBadRequestException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.HeaderTokenAuthenticationService;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
@@ -74,8 +73,12 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
     }
 
     @Override
-    public AuthenticationToken authenticate(String username, CharSequence password) throws InternalUserNotFoundException, InternalUserDisabledException, InternalPasswordResetException, InternalUserPasswordWrongException {
+    public AuthenticationToken authenticate(String username, CharSequence password) throws InternalUserNotFoundException,
+        InternalUserDisabledException, InternalPasswordResetException, InternalUserPasswordWrongException,
+        InternalUserValidationException, InternalForbiddenException {
         UserDTO userDTO = null;
+
+        //First of all find user, to check if he is in the password change key set
         try {
             userDTO = userService.findUserByName(username);
         } catch (InternalUserNotFoundException e) {
@@ -92,19 +95,24 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
         try {
             authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password));
-
-            // Logged in successfully
-
-            // Reset strikes
+            // Reset strikes when authentication was successful
             userService.resetStrikes(userDTO);
 
         } catch (AuthenticationException a) {
             LOGGER.debug("Could not authenticate user '{}', because authentication failed: {}", username, a.getMessage());
 
-            if (!userService.increaseStrikes(userDTO)) {
+            //Purely increase stikes
+            userService.increaseStrikes(userDTO);
+
+            //Then check status of user and disable if necessary
+            if(!userService.isUserBelowAllowedStrikes(userDTO)) {
+                userService.disableUser(userDTO);
+            }
+
+            if (userService.findUserByName(username).isEnabled()) {
                 throw new InternalUserPasswordWrongException();
             } else {
-                LOGGER.debug("User '{}' was disabled automatically, because he got too many strikes!", username);
+                LOGGER.info("User will been informed that he was disabled.");
                 throw new InternalUserDisabledException("User is disabled");
             }
         }

@@ -256,15 +256,6 @@ public class EventTop10Controller {
         final var parent = fxmlLoader.<Parent>load("/fxml/events/eventDetailView.fxml");
         int selectedIndex = topTenEventChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? topTenEventChoiceBox.getSelectionModel().getSelectedIndex() : 0;
         Stage stage = new Stage();
-        try {
-            eventDetailViewController.fill(performanceService, currentEvents.get(selectedIndex), stage);
-        } catch (DataAccessException e) {
-            e.printStackTrace();
-        }
-        stage.setScene(new Scene(parent));
-        stage.setTitle("Event Details");
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(bookTopTenEventButton.getScene().getWindow());
-        stage.showAndWait();
+        eventDetailViewController.fill(performanceService, currentEvents.get(selectedIndex), stage);
     }
 }

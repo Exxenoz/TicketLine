@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<VBox prefHeight="700.0" prefWidth="1100.0" spacing="5.0" style="-fx-background-color: derive(#3c3f41, 25%);" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.reservations.ReservationsController">
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="700.0" prefWidth="1100.0" spacing="5.0" style="-fx-background-color: derive(#3c3f41, 25%);"
+      xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.reservations.ReservationsController">
     <children>
         <VBox fx:id="content" prefHeight="700.0" prefWidth="1100.0" spacing="5.0" style="-fx-background-color: #f4f4f4; -fx-background-radius: 3 3 3 3;" VBox.vgrow="ALWAYS">
             <children>
@@ -33,7 +46,9 @@
                             <children>
                                 <VBox alignment="TOP_RIGHT" spacing="10.0" HBox.hgrow="ALWAYS">
                                     <children>
-                                        <TableView fx:id="foundReservationsTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS">
+                                        <TableView fx:id="foundReservationsTableView" maxHeight="1.7976931348623157E308"
+                                                   maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS"
+                                                   VBox.vgrow="ALWAYS">
                                             <columns>
                                                 <TableColumn fx:id="reservationIDColumn" sortable="false"
                                                              text="%bookings.table.reservationID"/>
@@ -50,11 +65,17 @@
                                         </TableView>
                                         <ButtonBar maxHeight="35.0" prefHeight="35.0" VBox.vgrow="ALWAYS">
                                             <buttons>
-                                                <Button fx:id="showReservationDetailsButton" disable="false" mnemonicParsing="false" onAction="#showReservationDetailsButton" text="%bookings.main.button.details" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS">
+                                                <Button fx:id="showReservationDetailsButton" disable="false"
+                                                        mnemonicParsing="false" onAction="#showReservationDetailsButton"
+                                                        text="%bookings.main.button.details" HBox.hgrow="ALWAYS"
+                                                        VBox.vgrow="ALWAYS">
                                                     <VBox.margin>
                                                         <Insets right="16.0" />
                                                     </VBox.margin>
                                                 </Button>
+                                                <Button fx:id="cancelReservationButton" mnemonicParsing="false"
+                                                        onAction="#cancelReservation"
+                                                        text="%bookings.main.cancelReservationsButton"/>
                                             </buttons>
                                         </ButtonBar>
                                     </children>
