@@ -285,8 +285,8 @@ public class ReservationServiceTests {
 
         Reservation returned = null;
         try {
-            reservationService.createReservation(reservation);
-            returned = reservationService.cancelReservation(reservation);
+            reservation = reservationService.createReservation(reservation);
+            returned = reservationService.cancelReservation(reservation.getId());
         } catch (InvalidReservationException e) {
             fail();
         }

@@ -82,6 +82,11 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
+    public ReservationDTO cancelReservation(Long id) throws DataAccessException {
+        return reservationRestClient.cancelReservation(id);
+    }
+
+    @Override
     public PageResponseDTO<ReservationDTO> findAll(PageRequestDTO pageRequestDTO) throws DataAccessException {
         return reservationRestClient.findAll(pageRequestDTO);
     }

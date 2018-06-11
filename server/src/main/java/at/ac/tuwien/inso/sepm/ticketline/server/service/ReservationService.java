@@ -88,10 +88,10 @@ public interface ReservationService {
     /**
      * cancel existing reservation
      *
-     * @param reservation
+     * @param id
      * @return canceled reservation
      */
-    Reservation cancelReservation(Reservation reservation);
+    Reservation cancelReservation(Long id);
 
     /**
      * Finds a page of all reservations

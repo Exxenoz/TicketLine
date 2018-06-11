@@ -293,7 +293,12 @@ public class EventSearchController {
 
     private void addToCurrentSearchParameters(String searchParameter) {
         if (searchParameter != null && !searchParameter.equals("")) {
-            activeFilters += searchParameter + ", ";
+            char last = searchParameter.charAt(searchParameter.length() - 1);
+            if (last == ':' || last == ' ') {
+                activeFilters = activeFilters;
+            } else {
+                activeFilters += ", " + searchParameter;
+            }
         }
     }
 

@@ -152,11 +152,11 @@ public class ReservationEndpoint {
         return new PageResponseDTO<>(reservationDTOList, reservationPage.getTotalPages());
     }
 
-    @PostMapping("/cancel")
+    @PostMapping("/cancel/id/{id}")
     @PreAuthorize("hasRole('USER')")
     @ApiOperation("Cancel created reservation")
-    public ReservationDTO cancelReservation(ReservationDTO reservationDTO) {
-        var reservation = reservationService.cancelReservation(reservationMapper.reservationDTOToReservation(reservationDTO));
+    public ReservationDTO cancelReservation(@PathVariable("id") Long id) {
+        var reservation = reservationService.cancelReservation(id);
         return reservationMapper.reservationToReservationDTO(reservation);
     }
 }
