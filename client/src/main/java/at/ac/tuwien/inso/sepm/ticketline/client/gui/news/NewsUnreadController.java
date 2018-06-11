@@ -8,6 +8,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.DetailedNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.SimpleNewsDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -17,7 +18,6 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
-import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -175,16 +175,18 @@ public class NewsUnreadController {
 
         resizeWebView();
 
-        webView.widthProperty().addListener(new ChangeListener<Object>() {
-            @Override
-            public void changed(ObservableValue<?> observable, Object oldValue, Object newValue) {
-                resizeWebView();
-            }
+        webView.widthProperty().addListener((ChangeListener<Object>) (observable, oldValue, newValue) -> resizeWebView());
+
+        webView.heightProperty().addListener((ChangeListener<Object>) (observable, oldValue, newValue) -> resizeWebView());
+
+        webView.getScene().getWindow().heightProperty().addListener((ChangeListener<Object>) (observable, oldValue, newValue) -> {
+            LOGGER.debug("STAGE HEIGHT ");
+            resizeWebView();
         });
 
         webView.getEngine().getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
             @Override
-            public void changed(ObservableValue<? extends Worker.State> arg0, Worker.State oldState, Worker.State newState)         {
+            public void changed(ObservableValue<? extends Worker.State> arg0, Worker.State oldState, Worker.State newState) {
                 if (newState == Worker.State.SUCCEEDED) {
                     resizeWebView();
                 }
@@ -193,12 +195,15 @@ public class NewsUnreadController {
     }
 
     private void resizeWebView() {
-        try {
-            double height = Double.parseDouble(webView.getEngine().executeScript("document.getElementById('container').clientHeight").toString());
-            height += 50;
-            webView.setPrefHeight(height);
-        } catch (Exception e) {
+        Platform.runLater(() -> {
+            try {
+                double height = Double.parseDouble(webView.getEngine().executeScript("document.getElementById('container').clientHeight").toString());
+                height += 50;
+                webView.setMinHeight(height);
+                webView.setPrefHeight(height);
+            } catch (Exception e) {
 
-        }
+            }
+        });
     }
 }
