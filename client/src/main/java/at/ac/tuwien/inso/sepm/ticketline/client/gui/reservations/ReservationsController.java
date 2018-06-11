@@ -29,8 +29,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.awt.event.MouseEvent;
 import java.lang.invoke.MethodHandles;
+import java.util.ResourceBundle;
 
+import static javafx.scene.control.ButtonType.OK;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.TICKET;
 
 
@@ -62,6 +65,8 @@ public class ReservationsController {
     public TextField customerFirstNameField;
     @FXML
     public TextField customerLastNameField;
+    @FXML
+    public Button cancelReservationButton;
 
     private final SpringFxmlLoader fxmlLoader;
     private final ReservationService reservationService;
@@ -97,6 +102,26 @@ public class ReservationsController {
         tabHeaderController.setTitle(BundleManager.getBundle().getString("bookings.tab.header"));
         initializeTableView();
     }
+
+
+    public void cancelReservation(ActionEvent event) {
+        ResourceBundle ex = BundleManager.getExceptionBundle();
+        int row = foundReservationsTableView.getSelectionModel().getFocusedIndex();
+        ReservationDTO selected = reservationDTOS.get(row);
+        if (!selected.isPaid()) {
+            try {
+                ReservationDTO reservationDTO = reservationService.cancelReservation(selected.getId());
+                reservationDTOS.remove(reservationDTO);
+                foundReservationsTableView.getItems().remove(row);
+            } catch (DataAccessException e) {
+                LOGGER.debug(ex.getString("exception.reservation.cancel.alreadypaid"), e);
+            }
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR, ex.getString("exception.reservation.cancel.alreadypaid"), OK);
+            alert.showAndWait();
+        }
+    }
+
 
 
     public void loadReservations() {

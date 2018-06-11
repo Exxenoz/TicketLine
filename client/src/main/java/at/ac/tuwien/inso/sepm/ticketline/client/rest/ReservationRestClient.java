@@ -98,4 +98,12 @@ public interface ReservationRestClient {
      * @throws DataAccessException in case something went wrong during the action
      */
     ReservationDTO findOneByPaidFalseAndReservationNumber(String reservationNr) throws DataAccessException;
+
+    /**
+     * sets state of reservation to canceled
+     *
+     * @param id
+     * @return canceled Reservation
+     */
+    ReservationDTO cancelReservation(Long id) throws DataAccessException;
 }

@@ -148,17 +148,19 @@ public class SimpleReservationService implements ReservationService {
         reservation.setPaid(false);
 
         boolean unique = false;
+        Reservation createdReservation = null;
 
         while (unique == false) {
             try {
                 reservation.setReservationNumber(generateReservationNumber());
+                createdReservation = reservationRepository.save(reservation);
                 unique = true;
             } catch (ConstraintViolationException e) {
                 unique = false;
             }
         }
 
-        Reservation createdReservation = reservationRepository.save(reservation);
+
      /*   String reservationNumber = LocalDate.now().toString() + createdReservation.getId().toString();
         createdReservation.setReservationNumber(reservationNumber); */
 
@@ -176,5 +178,14 @@ public class SimpleReservationService implements ReservationService {
             reservationNumber += ALPHA_NUMERIC_STRING.charAt(character);
         }
         return reservationNumber;
+    }
+
+    @Override
+    public Reservation cancelReservation(Long id) {
+        //TODO: remove Seats from database
+        Reservation reservation = reservationRepository.findById(id).get();
+        reservation.setCanceled(true);
+        return reservationRepository.save(reservation);
+
     }
 }
