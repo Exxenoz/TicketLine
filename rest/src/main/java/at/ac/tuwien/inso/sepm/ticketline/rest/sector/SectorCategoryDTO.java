@@ -3,7 +3,6 @@ package at.ac.tuwien.inso.sepm.ticketline.rest.sector;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 
 @ApiModel(value = "SectorCategoryDTO", description = "The sector category DTO for sector category entries via rest")
@@ -16,7 +15,7 @@ public class SectorCategoryDTO {
     private String name;
 
     @ApiModelProperty(required = true, readOnly = true, name = "The base price modifier of the sector category")
-    private BigDecimal basePriceMod;
+    private Long basePriceMod;
 
     public Long getId() {
         return id;
@@ -34,11 +33,11 @@ public class SectorCategoryDTO {
         this.name = name;
     }
 
-    public BigDecimal getBasePriceMod() {
+    public Long getBasePriceMod() {
         return basePriceMod;
     }
 
-    public void setBasePriceMod(BigDecimal basePriceMod) {
+    public void setBasePriceMod(Long basePriceMod) {
         this.basePriceMod = basePriceMod;
     }
 

@@ -3,14 +3,12 @@ package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.GenerationType.AUTO;
 
 @Entity
@@ -33,8 +31,7 @@ public class Performance {
     private String name;
 
     @Column(nullable = false)
-    @NotNull
-    private BigDecimal price;
+    private Long price;
 
     @Column(nullable = false)
     @NotNull
@@ -53,7 +50,7 @@ public class Performance {
     public Performance() {
     }
 
-    public Performance(Event event, Set<Artist> artists, @Size(max = 100) String name, BigDecimal price, LocalDateTime performanceStart, Duration duration, LocationAddress locationAddress) {
+    public Performance(Event event, Set<Artist> artists, @Size(max = 100) String name, long price, LocalDateTime performanceStart, Duration duration, LocationAddress locationAddress) {
         this.event = event;
         this.artists = artists;
         this.name = name;
@@ -110,11 +107,11 @@ public class Performance {
         this.name = name;
     }
 
-    public BigDecimal getPrice() {
+    public Long getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(Long price) {
         this.price = price;
     }
 

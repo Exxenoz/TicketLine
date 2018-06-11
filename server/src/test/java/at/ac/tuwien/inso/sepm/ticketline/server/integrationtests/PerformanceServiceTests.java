@@ -1,4 +1,4 @@
-package at.ac.tuwien.inso.sepm.ticketline.server.unittests.events;
+package at.ac.tuwien.inso.sepm.ticketline.server.integrationtests;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
@@ -13,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -48,8 +47,7 @@ public class PerformanceServiceTests {
         "1010");
     private static final Performance PERFORMANCE_1 = new Performance(EVENT, ARTISTS_1,
         "Zauberflöte",
-        //be careful with BigDecimal - 20 != 20.00 - equals will fail
-        new BigDecimal("20.00"),
+        2000L,
         LocalDateTime.now().plusDays(5).withNano(0),
         Duration.ofMinutes(40),
         ADDRESS_1
@@ -62,8 +60,7 @@ public class PerformanceServiceTests {
         "1010");
     private static final Performance PERFORMANCE_2 = new Performance(EVENT, ARTISTS_2,
         "Vulfpeck Live",
-        //be careful with BigDecimal - 20 != 20.00 - equals will fail
-        new BigDecimal("20.00"),
+        2000L,
         LocalDateTime.now().plusDays(20).withNano(0),
         Duration.ofMinutes(40),
         ADDRESS_2
@@ -76,8 +73,7 @@ public class PerformanceServiceTests {
         "1010");
     private static final Performance PERFORMANCE_3 = new Performance(EVENT, ARTISTS_1,
         "Avishai Cohen",
-        //be careful with BigDecimal - 20 != 20.00 - equals will fail
-        new BigDecimal("20.00"),
+       2000L,
         LocalDateTime.now().plusDays(10).withNano(0),
         Duration.ofMinutes(40),
         ADDRESS_3

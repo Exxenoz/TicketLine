@@ -6,10 +6,8 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.artist.ArtistDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -19,7 +17,11 @@ public class PerformanceDTO {
     private EventDTO event;
     private Set<ArtistDTO> artists = new HashSet<>();
     private String name;
-    private BigDecimal price;
+
+    /**
+     * The base price of the performance, mapped in cents
+     */
+    private Long price;
     @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime performanceStart;
     @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
@@ -32,7 +34,7 @@ public class PerformanceDTO {
     public PerformanceDTO() {
     }
 
-    public PerformanceDTO(EventDTO event, Set<ArtistDTO> artists, String name, BigDecimal price, LocalDateTime performanceStart, LocalDateTime performanceEnd, LocationAddressDTO address) {
+    public PerformanceDTO(EventDTO event, Set<ArtistDTO> artists, String name, Long price, LocalDateTime performanceStart, LocalDateTime performanceEnd, LocationAddressDTO address) {
         this.event = event;
         this.artists = artists;
         this.name = name;
@@ -74,11 +76,11 @@ public class PerformanceDTO {
         this.name = name;
     }
 
-    public BigDecimal getPrice() {
+    public Long getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(Long price) {
         this.price = price;
     }
 

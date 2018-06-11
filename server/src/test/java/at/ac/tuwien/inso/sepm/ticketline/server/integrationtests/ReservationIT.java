@@ -22,7 +22,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -256,7 +255,7 @@ public class ReservationIT extends BaseIT {
     private Performance newPerformance() {
         Performance performance = new Performance();
         performance.setName("test");
-        performance.setPrice(new BigDecimal("1.00"));
+        performance.setPrice(100L);
         performance.setPerformanceStart(LocalDateTime.now());
         performance.setDuration(Duration.ofMinutes(30));
 

@@ -23,13 +23,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.CALENDAR_ALT;
@@ -255,9 +253,9 @@ public class EventSearchController {
         }
 
         String priceString = priceTextField.getText();
-        BigDecimal price = null;
+        Long price = null;
         try {
-            price = new BigDecimal(priceString);
+            price = Long.valueOf(priceString);
             addToCurrentSearchParameters(labels.getString("events.search.price") + " " + priceString);
         } catch (NumberFormatException ignored) {
         }

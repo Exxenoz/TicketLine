@@ -4,7 +4,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 public class CanvasLegend implements CanvasComponent {
@@ -26,12 +25,12 @@ public class CanvasLegend implements CanvasComponent {
     private double xPos;
     private double yPos;
 
-    private BigDecimal price;
+    private Long price;
     private Paint paint;
 
     private final static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
 
-    public CanvasLegend(double xPos, double yPos, Paint sectorPaint, BigDecimal price) {
+    public CanvasLegend(double xPos, double yPos, Paint sectorPaint, Long price) {
         this.xPos = xPos;
         this.yPos = yPos + LEGEND_OFFSET_TOP;
         this.paint = sectorPaint;

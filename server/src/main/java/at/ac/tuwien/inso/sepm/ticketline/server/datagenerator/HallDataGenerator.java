@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import java.lang.invoke.MethodHandles;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,7 +91,7 @@ public class HallDataGenerator implements DataGenerator {
                     if(sectorCategoryRepository.count() == 0) {
                         LOGGER.debug("Could net set sector category since the corresponding repository is empty");
                         SectorCategory sectorCategory = new SectorCategory();
-                        sectorCategory.setBasePriceMod(new BigDecimal(0.5));
+                        sectorCategory.setBasePriceMod(new Long(500L));
                         sectorCategory.setName(faker.hipster().word());
                         s.setCategory(sectorCategory);
                         sectorCategoryRepository.save(sectorCategory);

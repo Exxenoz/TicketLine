@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
-import static java.math.BigDecimal.ONE;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -273,7 +272,7 @@ public class ReservationServiceTests {
     private Performance newPerformance() {
         Performance performance = new Performance();
         performance.setName("test");
-        performance.setPrice(ONE);
+        performance.setPrice(100L);
         performance.setPerformanceStart(LocalDateTime.now());
         performance.setDuration(Duration.ofMinutes(20));
 
