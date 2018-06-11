@@ -186,7 +186,6 @@ public class NewsUnreadController {
         webView.heightProperty().addListener((ChangeListener<Object>) (observable, oldValue, newValue) -> resizeWebView());
 
         webView.getScene().getWindow().heightProperty().addListener((ChangeListener<Object>) (observable, oldValue, newValue) -> {
-            LOGGER.debug("STAGE HEIGHT ");
             resizeWebView();
         });
 
