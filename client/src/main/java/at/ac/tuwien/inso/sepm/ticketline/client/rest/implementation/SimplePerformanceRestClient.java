@@ -89,22 +89,43 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
     @Override
     public PageResponseDTO<PerformanceDTO> findAll(SearchDTO search, PageRequestDTO pageRequestDTO) throws DataAccessException {
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromUri(restClient.getServiceURI("/performance/search/"))
-                .queryParam("performanceName", search.getPerformanceName())
-                .queryParam("eventName", search.getEventName())
-                .queryParam("firstName", search.getFirstName())
-                .queryParam("lastName", search.getLastName())
-                .queryParam("eventType", search.getEventType())
-                .queryParam("performanceStart", search.getPerformanceStart().format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm")))
-                .queryParam("price", search.getPrice())
-                .queryParam("locationName", search.getLocationName())
-                .queryParam("street", search.getStreet())
-                .queryParam("city", search.getCity())
-                .queryParam("country", search.getCountry())
-                .queryParam("postalCode", search.getPostalCode())
-                .queryParam("duration", search.getDuration())
-                .queryParam("page", pageRequestDTO.getPage())
-                .queryParam("size", pageRequestDTO.getSize());
+            UriComponentsBuilder builder;
+            if(search.getPerformanceStart() != null) {
+                builder = UriComponentsBuilder.fromUri(restClient.getServiceURI("/performance/search/"))
+                    .queryParam("performanceName", search.getPerformanceName())
+                    .queryParam("eventName", search.getEventName())
+                    .queryParam("firstName", search.getFirstName())
+                    .queryParam("lastName", search.getLastName())
+                    .queryParam("eventType", search.getEventType())
+                    .queryParam("performanceStart", search.getPerformanceStart().format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm")))
+                    .queryParam("price", search.getPrice())
+                    .queryParam("locationName", search.getLocationName())
+                    .queryParam("street", search.getStreet())
+                    .queryParam("city", search.getCity())
+                    .queryParam("country", search.getCountry())
+                    .queryParam("postalCode", search.getPostalCode())
+                    .queryParam("duration", search.getDuration())
+                    .queryParam("page", pageRequestDTO.getPage())
+                    .queryParam("size", pageRequestDTO.getSize());
+            } else
+            {
+                builder = UriComponentsBuilder.fromUri(restClient.getServiceURI("/performance/search/"))
+                    .queryParam("performanceName", search.getPerformanceName())
+                    .queryParam("eventName", search.getEventName())
+                    .queryParam("firstName", search.getFirstName())
+                    .queryParam("lastName", search.getLastName())
+                    .queryParam("eventType", search.getEventType())
+                    .queryParam("performanceStart", search.getPerformanceStart())
+                    .queryParam("price", search.getPrice())
+                    .queryParam("locationName", search.getLocationName())
+                    .queryParam("street", search.getStreet())
+                    .queryParam("city", search.getCity())
+                    .queryParam("country", search.getCountry())
+                    .queryParam("postalCode", search.getPostalCode())
+                    .queryParam("duration", search.getDuration())
+                    .queryParam("page", pageRequestDTO.getPage())
+                    .queryParam("size", pageRequestDTO.getSize());
+            }
 
             URI uri = builder.build().toUri();
 
