@@ -60,8 +60,8 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public void resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws DataAccessException {
-        userRestClient.resetPassword(userPasswordResetRequestDTO);
+    public UserDTO resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws DataAccessException {
+        return userRestClient.resetPassword(userPasswordResetRequestDTO);
     }
 
     @Override

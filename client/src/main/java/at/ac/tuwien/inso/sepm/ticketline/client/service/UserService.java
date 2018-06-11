@@ -56,8 +56,9 @@ public interface UserService {
     /**
      * Reset a users password, so he has to specify a new one at his next login
      * @throws DataAccessException in case something went wrong
+     * @return the updated user
      */
-    void resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws DataAccessException;
+    UserDTO resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws DataAccessException;
 
     /**
      * Change a users password, with a given token to authenticate

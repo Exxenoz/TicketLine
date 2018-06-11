@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CustomerValidator {
-    public static final String letterRegex = "^[a-zA-Z]+$";
+    public static final String nameRegex = "^[-' a-zA-ZöüöäÜÖÄ]+$";
 
     public static String validateFirstName(TextField firstNameTextField) throws CustomerValidationException {
         String firstName = firstNameTextField.getText();
@@ -31,7 +31,7 @@ public class CustomerValidator {
             );
         }
 
-        if(!firstName.matches(letterRegex)) {
+        if(!firstName.matches(nameRegex)) {
             throw new CustomerValidationException(
                 BundleManager.getExceptionBundle().getString("exception.validator.customer.firstname.invalid_characters")
             );
@@ -61,7 +61,7 @@ public class CustomerValidator {
             );
         }
 
-        if(!lastName.matches(letterRegex)) {
+        if(!lastName.matches(nameRegex)) {
             throw new CustomerValidationException(
                 BundleManager.getExceptionBundle().getString("exception.validator.customer.lastname.invalid_characters")
             );

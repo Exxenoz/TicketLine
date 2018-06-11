@@ -88,14 +88,8 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public boolean increaseStrikes(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException {
+    public boolean increaseStrikes(UserDTO userDTO) throws InternalUserNotFoundException {
         LOGGER.info("Increase strikes for user {}", userDTO);
-
-        try {
-            UserValidator.validateExistingUser(userDTO);
-        } catch (UserValidatorException e) {
-            throw new InternalUserValidationException();
-        }
 
         User user = userRepository.findByUsername(userDTO.getUsername());
         if (user == null) {
@@ -119,7 +113,22 @@ public class SimpleUserService implements UserService {
         }
 
         userRepository.save(user);
+
         return false;
+    }
+
+    @Override
+    public void resetStrikes(UserDTO userDTO) throws InternalUserNotFoundException {
+        LOGGER.info("Reset strikes for user {}", userDTO);
+
+        User user = userRepository.findByUsername(userDTO.getUsername());
+        if (user == null) {
+            throw new InternalUserNotFoundException();
+        }
+
+        user.setStrikes(0);
+
+        userRepository.save(user);
     }
 
     @Override
@@ -172,7 +181,7 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public void resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws InternalUserValidationException, InternalUserNotFoundException, InternalBadRequestException {
+    public UserDTO resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws InternalUserValidationException, InternalUserNotFoundException, InternalBadRequestException {
         LOGGER.info("Reset password for user {}", userPasswordResetRequestDTO.getUserDTO());
 
         try {
@@ -193,8 +202,10 @@ public class SimpleUserService implements UserService {
 
         user.setPassword("");
         user.setPasswordChangeKey(new BCryptPasswordEncoder(10).encode(passwordChangeKey));
+        user.setEnabled(true);
+        user.setStrikes(0);
 
-        userRepository.save(user);
+        return userMapper.userToUserDTO(userRepository.save(user));
     }
 
     @Override

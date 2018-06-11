@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @ApiModel(value = "UserDTO", description = "A User DTO")
@@ -79,6 +80,15 @@ public class UserDTO {
         this.roles = roles;
     }
 
+    public void update(UserDTO userDTO) {
+        this.id = userDTO.id;
+        this.username = userDTO.username;
+        this.password = userDTO.password;
+        this.enabled = userDTO.enabled;
+        this.strikes = userDTO.strikes;
+        this.roles = new HashSet<>(userDTO.roles);
+    }
+
     @Override
     public String toString() {
         return "UserDTO{" +
@@ -89,6 +99,25 @@ public class UserDTO {
             ", strikes=" + strikes +
             ", roles=" + roles +
             '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserDTO userDTO = (UserDTO) o;
+        return enabled == userDTO.enabled &&
+            Objects.equals(id, userDTO.id) &&
+            Objects.equals(username, userDTO.username) &&
+            Objects.equals(password, userDTO.password) &&
+            Objects.equals(strikes, userDTO.strikes) &&
+            Objects.equals(roles, userDTO.roles);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, username, password, enabled, strikes, roles);
     }
 
     public static final class UserDTOBuilder {
