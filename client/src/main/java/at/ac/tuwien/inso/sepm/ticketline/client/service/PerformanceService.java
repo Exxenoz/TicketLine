@@ -2,8 +2,11 @@ package at.ac.tuwien.inso.sepm.ticketline.client.service;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -14,7 +17,7 @@ public interface PerformanceService {
      * @return list of all performances
      * @throws DataAccessException
      */
-    List<PerformanceDTO> findAll() throws DataAccessException;
+    PageResponseDTO<PerformanceDTO> findAll(PageRequestDTO pageRequestDTO) throws DataAccessException;
 
     /**
      * Find all performances of given event
@@ -22,7 +25,7 @@ public interface PerformanceService {
      * @return list of performances
      * @throws DataAccessException in case something went wrong
      */
-    List<PerformanceDTO> findByEventID(Long eventID) throws DataAccessException;
+    PageResponseDTO<PerformanceDTO> findByEventID(Long eventID, PageRequestDTO pageRequestDTO) throws DataAccessException;
 
     /**
      * Finds a list of all performances that match the given search criteria.
@@ -30,6 +33,6 @@ public interface PerformanceService {
      * @return returns a list of the matching performances
      * @throws DataAccessException in case something went wrong while trying to retrieve the performances from the database
      */
-    List<PerformanceDTO> findAll(SearchDTO searchDTO) throws DataAccessException;
+    PageResponseDTO<PerformanceDTO> findAll(SearchDTO searchDTO, PageRequestDTO pageRequestDTO) throws DataAccessException;
 
 }

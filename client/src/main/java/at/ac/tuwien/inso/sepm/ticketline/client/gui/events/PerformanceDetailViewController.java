@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking.HallPlanController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.PriceUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
@@ -75,7 +76,7 @@ public class PerformanceDetailViewController {
             .map(artist -> artist.getFirstName() + " " + artist.getLastName())
             .collect(Collectors.joining(", "));
         artistNamePerformance.setText(artistList);
-        performancePrice.setText(performance.getPrice().toString());
+        performancePrice.setText(PriceUtils.priceToRepresentation(performance.getPrice()));
     }
 
     @FXML

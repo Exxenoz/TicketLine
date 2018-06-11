@@ -16,9 +16,9 @@
               <Separator />
                   <TableView fx:id="userTable" prefWidth="1000.0" VBox.vgrow="ALWAYS">
                       <columns>
-                          <TableColumn fx:id="usernameCol" sortable="false" text="%usertab.usertable.username" />
-                          <TableColumn fx:id="useraccountStatusCol" sortable="false" text="%usertab.usertable.user_is_enabled" />
-                          <TableColumn fx:id="userAuthTriesCol" sortable="false" text="%usertab.usertable.user_auth_tries" />
+                          <TableColumn fx:id="usernameCol" text="%usertab.usertable.username" />
+                          <TableColumn fx:id="useraccountStatusCol" text="%usertab.usertable.user_is_enabled" />
+                          <TableColumn fx:id="userAuthTriesCol" text="%usertab.usertable.user_auth_tries" />
                       </columns>
                       <columnResizePolicy>
                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

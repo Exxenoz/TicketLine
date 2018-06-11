@@ -87,8 +87,41 @@ public class SimpleReservationService implements ReservationService {
 
     @Override
     public Reservation editReservation(Reservation reservation) {
+        /*List<Seat> newSeats = reservation.getSeats();
+        List<Seat> oldSeats = reservationRepository.findByPaidFalseAndId(reservation.getId()).getSeats();
+
+        if(newSeats.containsAll(oldSeats)){
+            List<Seat> onlyNewSeats = getNewSeats(newSeats);
+
+            checkIfAllSeatsAreFree(onlyNewSeats);
+        }else{
+
+        }
+        List<Seat> existingSeats = getExistingSeats(newSeats);*/
+
         return reservationRepository.save(reservation);
     }
+
+    private List<Seat> getNewSeats(List<Seat> seats) {
+        List<Seat> newSeats = new LinkedList<>();
+        for (Seat seat : seats) {
+            if (seat.getId() == null) {
+                newSeats.add(seat);
+            }
+        }
+        return newSeats;
+    }
+
+    private List<Seat> getExistingSeats(List<Seat> seats) {
+        List<Seat> existingSeats = new LinkedList<>();
+        for (Seat seat : seats) {
+            if (seat.getId() != null) {
+                existingSeats.add(seat);
+            }
+        }
+        return existingSeats;
+    }
+
 
     private void checkIfAllSeatsAreFree(List<Seat> seatsToCheck) throws InvalidReservationException {
         List<Reservation> allReservations = reservationRepository.findAll();
@@ -115,17 +148,19 @@ public class SimpleReservationService implements ReservationService {
         reservation.setPaid(false);
 
         boolean unique = false;
+        Reservation createdReservation = null;
 
         while (unique == false) {
             try {
                 reservation.setReservationNumber(generateReservationNumber());
+                createdReservation = reservationRepository.save(reservation);
                 unique = true;
             } catch (ConstraintViolationException e) {
                 unique = false;
             }
         }
 
-        Reservation createdReservation = reservationRepository.save(reservation);
+
      /*   String reservationNumber = LocalDate.now().toString() + createdReservation.getId().toString();
         createdReservation.setReservationNumber(reservationNumber); */
 
@@ -143,5 +178,14 @@ public class SimpleReservationService implements ReservationService {
             reservationNumber += ALPHA_NUMERIC_STRING.charAt(character);
         }
         return reservationNumber;
+    }
+
+    @Override
+    public Reservation cancelReservation(Long id) {
+        //TODO: remove Seats from database
+        Reservation reservation = reservationRepository.findById(id).get();
+        reservation.setCanceled(true);
+        return reservationRepository.save(reservation);
+
     }
 }

@@ -90,7 +90,7 @@ public class PurchaseReservationSummaryController {
     public void buyTicketsButton(ActionEvent event) throws DataAccessException {
 
         CreateReservationDTO createReservationDTO = new CreateReservationDTO();
-        createReservationDTO.setCustomerID(reservation.getCustomer().getId());
+        createReservationDTO.setCustomerID(reservation.getCustomer() != null ? reservation.getCustomer().getId() : null);
         createReservationDTO.setPerformanceID(reservation.getPerformance().getId());
         List<Long> seatsID = new LinkedList<>();
         reservation.getSeats().forEach(seatDTO -> seatsID.add(seatDTO.getId()));
@@ -169,5 +169,6 @@ public class PurchaseReservationSummaryController {
         this.showDetails = true;
 
     }
+
 
 }

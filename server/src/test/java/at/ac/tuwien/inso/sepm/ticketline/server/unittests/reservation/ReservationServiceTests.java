@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
-import static java.math.BigDecimal.ONE;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -215,6 +214,7 @@ public class ReservationServiceTests {
         assertThat(reservation.getCustomer(), is(returned.getCustomer()));
         assertThat(reservation.getSeats(), is(returned.getSeats()));
         assertThat(reservation.getPerformance(), is(returned.getPerformance()));
+        assertThat(reservation.getReservationNumber(), is(returned.getReservationNumber()));
         assertThat(reservation.getPaid(), is(false));
 
     }
@@ -270,10 +270,33 @@ public class ReservationServiceTests {
 
     }
 
+    @Test
+    public void cancel() {
+        Performance performance = performanceRepository.save(newPerformance());
+        Seat seat = seatRepository.save(newSeat());
+        Customer customer = customerRepository.save(newCustomer());
+
+        Reservation reservation = new Reservation();
+        reservation.setCustomer(customer);
+        reservation.setPerformance(performance);
+        reservation.setSeats(List.of(seat));
+        reservation.setReservationNumber("000005");
+
+        Reservation returned = null;
+        try {
+            reservation = reservationService.createReservation(reservation);
+            returned = reservationService.cancelReservation(reservation.getId());
+        } catch (InvalidReservationException e) {
+            fail();
+        }
+
+        assertThat(returned.isCanceled(), is(true));
+    }
+
     private Performance newPerformance() {
         Performance performance = new Performance();
         performance.setName("test");
-        performance.setPrice(ONE);
+        performance.setPrice(100L);
         performance.setPerformanceStart(LocalDateTime.now());
         performance.setDuration(Duration.ofMinutes(20));
 

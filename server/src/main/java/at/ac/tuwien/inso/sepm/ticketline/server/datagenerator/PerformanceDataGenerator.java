@@ -13,7 +13,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
-import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -63,7 +62,9 @@ public class PerformanceDataGenerator implements DataGenerator {
 
                 final var address = new LocationAddress(faker.lordOfTheRings().location(), faker.address().streetName(), faker.address().city(), faker.address().country(), faker.address().zipCode());
 
-                BigDecimal price = new BigDecimal(2.2);
+                //Base price is around 2.20€
+                long price = 220;
+
                 LocalDateTime startTime = LocalDateTime.ofInstant(faker.date().between(Date.from(now().toInstant(ZoneOffset.UTC)), Date.from(now().plusYears(5).toInstant(ZoneOffset.UTC))).toInstant(), ZoneId.of("UTC"));
 
                 final var performance = new Performance(

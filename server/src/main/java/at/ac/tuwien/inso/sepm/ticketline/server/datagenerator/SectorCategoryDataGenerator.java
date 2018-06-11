@@ -10,7 +10,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
-import java.math.BigDecimal;
 
 @Profile("generateData")
 @Component
@@ -38,7 +37,8 @@ public class SectorCategoryDataGenerator implements DataGenerator {
             for (int i = 0; i < NUMBER_OF_SECTOR_CATEGORIES_TO_GENERATE && sectorChar <= 'Z'; i++, sectorChar++) {
                 final var sectorCategory = new SectorCategory();
                 sectorCategory.setName(String.valueOf(sectorChar));
-                sectorCategory.setBasePriceMod(BigDecimal.valueOf(faker.number().randomDouble(4, 0, 2)));
+                //Setting price in cents
+                sectorCategory.setBasePriceMod(faker.number().randomNumber(3, false));
                 LOGGER.debug("Saving sector category {}", sectorCategory);
                 sectorCategoryRepository.save(sectorCategory);
             }

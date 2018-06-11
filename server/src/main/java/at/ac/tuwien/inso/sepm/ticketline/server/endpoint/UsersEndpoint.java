@@ -89,9 +89,9 @@ public class UsersEndpoint {
     @PostMapping("/password/reset")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation("Reset password of the specified user")
-    public void resetPassword(@RequestBody final UserPasswordResetRequestDTO userPasswordResetRequestDTO) {
+    public UserDTO resetPassword(@RequestBody final UserPasswordResetRequestDTO userPasswordResetRequestDTO) {
         try {
-            userService.resetPassword(userPasswordResetRequestDTO);
+            return userService.resetPassword(userPasswordResetRequestDTO);
         } catch (InternalUserNotFoundException e) {
             throw new HttpBadRequestException();
         } catch (InternalBadRequestException e) {

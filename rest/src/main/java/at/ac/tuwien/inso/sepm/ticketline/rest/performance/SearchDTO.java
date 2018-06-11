@@ -1,21 +1,24 @@
 package at.ac.tuwien.inso.sepm.ticketline.rest.performance;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-public class SearchDTO {
+public class SearchDTO extends PageResponseDTO {
     private String performanceName;
     private String eventName;
     private String firstName;
     private String lastName;
     private EventTypeDTO eventType;
-    @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime performanceStart;
-    private BigDecimal price;
+    private Long price;
     private String locationName;
     private String street;
     private String city;
@@ -28,7 +31,7 @@ public class SearchDTO {
 
     public SearchDTO(String performanceName, String eventName, String firstName,
                      String lastName, EventTypeDTO eventType, LocalDateTime performanceStart,
-                     BigDecimal price, String locationName, String street, String city, String country,
+                     Long price, String locationName, String street, String city, String country,
                      String postalCode, Duration duration) {
         this.performanceName = performanceName;
         this.eventName = eventName;
@@ -93,11 +96,11 @@ public class SearchDTO {
         this.performanceStart = performanceStart;
     }
 
-    public BigDecimal getPrice() {
+    public Long getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(Long price) {
         this.price = price;
     }
 
@@ -147,5 +150,42 @@ public class SearchDTO {
 
     public void setEventName(String eventName) {
         this.eventName = eventName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        SearchDTO searchDTO = (SearchDTO) o;
+        return Objects.equals(performanceName, searchDTO.performanceName) &&
+            Objects.equals(eventName, searchDTO.eventName) &&
+            Objects.equals(firstName, searchDTO.firstName) &&
+            Objects.equals(lastName, searchDTO.lastName) &&
+            eventType == searchDTO.eventType &&
+            Objects.equals(performanceStart, searchDTO.performanceStart) &&
+            Objects.equals(price, searchDTO.price) &&
+            Objects.equals(locationName, searchDTO.locationName) &&
+            Objects.equals(street, searchDTO.street) &&
+            Objects.equals(city, searchDTO.city) &&
+            Objects.equals(country, searchDTO.country) &&
+            Objects.equals(postalCode, searchDTO.postalCode) &&
+            Objects.equals(duration, searchDTO.duration);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(super.hashCode(),
+            performanceName, eventName, firstName,
+            lastName, eventType, performanceStart,
+            price, locationName, street,
+            city, country, postalCode, duration);
     }
 }

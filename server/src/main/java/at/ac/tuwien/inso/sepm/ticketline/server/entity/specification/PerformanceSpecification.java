@@ -1,14 +1,12 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.entity.specification;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
-import com.google.common.base.Strings;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,7 +15,17 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class PerformanceSpecification implements Specification<Performance> {
 
-    private final BigDecimal price;
+    /**
+     * Lower boundary for filtering by price, in this case up to 10€ less.
+     */
+    private final static Long PRICE_LOWER_BOUND_RANGE = 1000L;
+
+    /**
+     * Upper Boundary for filtering by price, in this case up to 10€ more
+     */
+    private final static Long PRICE_UPPER_BOUND_RANGE = 1000L;
+
+    private final Long price;
     private final LocalDateTime start;
     private final Duration duration;
     private final String locationName;
@@ -26,7 +34,7 @@ public class PerformanceSpecification implements Specification<Performance> {
     private final String country;
     private final String postalCode;
 
-    public PerformanceSpecification(BigDecimal price,
+    public PerformanceSpecification(long price,
                                     LocalDateTime start,
                                     Duration duration,
                                     String locationName,
@@ -64,8 +72,8 @@ public class PerformanceSpecification implements Specification<Performance> {
         }
 
         if (price != null) {
-            BigDecimal less = price.subtract(BigDecimal.valueOf(10.00));
-            BigDecimal more = price.add(BigDecimal.valueOf(10.00));
+            Long less = price - PRICE_LOWER_BOUND_RANGE;
+            Long more = price + PRICE_UPPER_BOUND_RANGE;
             predicates.add(builder.between(root.get("price"), less, more));
         }
 

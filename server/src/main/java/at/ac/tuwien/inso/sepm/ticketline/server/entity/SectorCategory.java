@@ -2,8 +2,6 @@ package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-
-import java.math.BigDecimal;
 import java.util.Objects;
 
 import static javax.persistence.GenerationType.AUTO;
@@ -21,7 +19,7 @@ public class SectorCategory {
     private String name;
 
     @Column(nullable = false)
-    private BigDecimal basePriceMod;
+    private Long basePriceMod;
 
     public Long getId() {
         return id;
@@ -39,11 +37,11 @@ public class SectorCategory {
         this.name = name;
     }
 
-    public BigDecimal getBasePriceMod() {
+    public Long getBasePriceMod() {
         return basePriceMod;
     }
 
-    public void setBasePriceMod(BigDecimal basePriceMod) {
+    public void setBasePriceMod(Long basePriceMod) {
         this.basePriceMod = basePriceMod;
     }
 

@@ -88,8 +88,9 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public boolean increaseStrikes(UserDTO userDTO) throws InternalUserNotFoundException {
-        LOGGER.info("Increase strikes for user {}", userDTO);
+    public void increaseStrikes(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException,
+    InternalUserDisabledException {
+        LOGGER.info("Increase strikes for user {}", userDTO.getUsername());
 
         User user = userRepository.findByUsername(userDTO.getUsername());
         if (user == null) {
@@ -97,38 +98,38 @@ public class SimpleUserService implements UserService {
         }
 
         if(!user.isEnabled()) {
-            return true;
+            throw new InternalUserDisabledException("User is already disabled.");
         }
 
-        int strike = user.getStrikes();
-        strike += 1;
-
-        user.setStrikes(strike);
-        LOGGER.info(String.format("Increasing strikes for user: %s to amount: %d", user.getUsername(), user.getStrikes()));
-
-        if(strike >= 5) {
-            user.setEnabled(false);
-            userRepository.save(user);
-            return true;
+        int userStrikes = user.getStrikes();
+        if(!(userStrikes > UserService.ALLOWED_STRIKES)) {
+            user.setStrikes(user.getStrikes() + 1);
+            LOGGER.info("Increasing strikes for user: {} to amount: {}", user.getUsername(), user.getStrikes());
         }
-
         userRepository.save(user);
-
-        return false;
     }
 
     @Override
-    public void resetStrikes(UserDTO userDTO) throws InternalUserNotFoundException {
-        LOGGER.info("Reset strikes for user {}", userDTO);
+    public boolean isUserBelowAllowedStrikes(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException {
+        try {
+            UserValidator.validateExistingUser(userDTO);
+        } catch(UserValidatorException e) {
+            throw new InternalUserValidationException();
+        }
 
         User user = userRepository.findByUsername(userDTO.getUsername());
-        if (user == null) {
+        if(user == null) {
             throw new InternalUserNotFoundException();
         }
 
-        user.setStrikes(0);
+        if(user.getStrikes() > UserService.ALLOWED_STRIKES) {
+            user.setEnabled(false);
+            userRepository.save(user);
+            return false;
+        } else {
+            return true;
+        }
 
-        userRepository.save(user);
     }
 
     @Override
@@ -181,7 +182,28 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public void resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws InternalUserValidationException, InternalUserNotFoundException, InternalBadRequestException {
+    public void resetStrikes(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException {
+        LOGGER.info("Reset strikes for user {}", userDTO.getUsername());
+
+        try {
+             UserValidator.validateDTO(userDTO);
+        } catch (UserValidatorException e) {
+            throw new InternalUserValidationException();
+        }
+        User u = userRepository.findByUsername(userDTO.getUsername());
+
+        if(u == null) {
+            throw new InternalUserNotFoundException();
+        } else {
+            u.setStrikes(STRIKE_RESET_VALUE);
+            userRepository.save(u);
+            LOGGER.info("Successfully reset strikes for {}.", u.getUsername());
+        }
+
+    }
+
+    @Override
+    public UserDTO resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws InternalUserValidationException, InternalUserNotFoundException, InternalBadRequestException {
         LOGGER.info("Reset password for user {}", userPasswordResetRequestDTO.getUserDTO());
 
         try {
@@ -202,9 +224,10 @@ public class SimpleUserService implements UserService {
 
         user.setPassword("");
         user.setPasswordChangeKey(new BCryptPasswordEncoder(10).encode(passwordChangeKey));
+        user.setEnabled(true);
         user.setStrikes(0);
 
-        userRepository.save(user);
+        return userMapper.userToUserDTO(userRepository.save(user));
     }
 
     @Override

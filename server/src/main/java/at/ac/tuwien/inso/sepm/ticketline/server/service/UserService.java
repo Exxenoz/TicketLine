@@ -12,6 +12,8 @@ import java.util.List;
 
 public interface UserService {
 
+    int ALLOWED_STRIKES = 5;
+    int STRIKE_RESET_VALUE = 0;
     /**
      * Enabling a user again, in order to allow him to authenticate
      *
@@ -38,6 +40,7 @@ public interface UserService {
      */
     void disableUser(UserDTO userDTO) throws InternalUserValidationException, InternalForbiddenException, InternalUserNotFoundException;
 
+
     /**
      * Increasing the strike counter for the specified user.
      *
@@ -46,15 +49,24 @@ public interface UserService {
      * @throws InternalUserNotFoundException in case the user was not found
      * @return Boolean that indicates whether or not the users is disabled
      */
-    boolean increaseStrikes(UserDTO userDTO) throws InternalUserNotFoundException;
+    void increaseStrikes(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException,
+       InternalUserDisabledException;
 
     /**
-     * Resets the strike counter for the specified user.
-     *
-     * @param userDTO The user, whose strike counter will be reset
-     * @throws InternalUserNotFoundException in case the user was not found
+     * Checks how many strikes a user has and if is he still allowed to authenticate regularly.
+     * @param userDTO the user whose strikes will be checked
+     * @return Returns true if the user is still below the allowed strikes amount, otherwise false
+     * @throws InternalUserValidationException in case the user could not be validated
+     * @throws InternalUserNotFoundException in cast the corresponding was
      */
-    void resetStrikes(UserDTO userDTO) throws InternalUserNotFoundException;
+    boolean isUserBelowAllowedStrikes(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException;
+    /**
+     * Resets the strikes of a given user.
+     * @param userDTO the DTO of the user, that whose strikes will be reset
+     * @throws InternalUserValidationException in case the user validation failed
+     * @throws InternalUserNotFoundException in the corresponding user for the DTO was not found
+     */
+    void resetStrikes(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException;
 
     /**
      * Searching for a user by name
@@ -87,6 +99,7 @@ public interface UserService {
      * @return created user
      * @throws InternalUserValidationException in case user validation failed
      * @throws InternalUsernameConflictException in case the username is already taken
+     * @return the saved user
      */
     UserDTO save(UserDTO userDTO) throws InternalUserValidationException, InternalUsernameConflictException;
 
@@ -97,8 +110,9 @@ public interface UserService {
      * @throws InternalUserValidationException in case user validation failed
      * @throws InternalUserNotFoundException in case the user was not found
      * @throws InternalBadRequestException in case the password change key was invalid
+     * @return the updated user
      */
-    void resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws InternalUserValidationException, InternalUserNotFoundException, InternalBadRequestException;
+    UserDTO resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws InternalUserValidationException, InternalUserNotFoundException, InternalBadRequestException;
 
     /**
      * Checks if the password change key for the specified user is set
