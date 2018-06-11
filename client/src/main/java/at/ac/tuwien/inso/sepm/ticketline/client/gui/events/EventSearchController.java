@@ -340,10 +340,12 @@ public class EventSearchController {
     private void addToCurrentSearchParameters(String searchParameter) {
         if (searchParameter != null && !searchParameter.equals("")) {
             char last = searchParameter.charAt(searchParameter.length() - 1);
-            if (last == ':' || last == ' ') {
-                activeFilters = activeFilters;
-            } else {
-                activeFilters += ", " + searchParameter;
+            if (!(last == ':' || last == ' ')) {
+                if (activeFilters.length() <= 1) {
+                    activeFilters += searchParameter;
+                } else {
+                    activeFilters += ", " + searchParameter;
+                }
             }
         }
     }
