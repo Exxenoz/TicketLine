@@ -8,17 +8,19 @@ import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.DetailedNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.SimpleNewsDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import org.slf4j.Logger;
@@ -158,9 +160,10 @@ public class NewsUnreadController {
         WebEngine webEngine = webView.getEngine();
         String html = detailedNewsDTO.getText();
         if(html.contains("contenteditable=\"true\"")){
-            html = html.replace("contenteditable=\"true\"", "contenteditable=\"false\" bgcolor=F4F4F4");
+            html = html.replace("contenteditable=\"true\"", "contenteditable=\"false\" bgcolor=F4F4F4> <div id='container'");
         }
 
+        html.replace("</body>", "</div></body>");
         webEngine.loadContent(html);
 
         if(detailedNewsDTO.getImageData() != null && detailedNewsDTO.getImageData().length > 0) {
@@ -168,6 +171,34 @@ public class NewsUnreadController {
             imageView.setImage(image);
         } else {
             imageView.setImage(null);
+        }
+
+        resizeWebView();
+
+        webView.widthProperty().addListener(new ChangeListener<Object>() {
+            @Override
+            public void changed(ObservableValue<?> observable, Object oldValue, Object newValue) {
+                resizeWebView();
+            }
+        });
+
+        webView.getEngine().getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
+            @Override
+            public void changed(ObservableValue<? extends Worker.State> arg0, Worker.State oldState, Worker.State newState)         {
+                if (newState == Worker.State.SUCCEEDED) {
+                    resizeWebView();
+                }
+            }
+        });
+    }
+
+    private void resizeWebView() {
+        try {
+            double height = Double.parseDouble(webView.getEngine().executeScript("document.getElementById('container').clientHeight").toString());
+            height += 50;
+            webView.setPrefHeight(height);
+        } catch (Exception e) {
+
         }
     }
 }

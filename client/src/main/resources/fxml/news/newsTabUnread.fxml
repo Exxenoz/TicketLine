@@ -15,7 +15,7 @@
 
 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" style="-fx-background-color: derive(#3c3f41, 25%);" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.news.NewsUnreadController">
     <children>
-        <VBox spacing="5.0" style="-fx-background-color: #f4f4f4; -fx-background-radius: 0 3 3 3;" VBox.vgrow="ALWAYS">
+        <VBox prefHeight="800.0" spacing="5.0" style="-fx-background-color: #f4f4f4; -fx-background-radius: 0 3 3 3;" VBox.vgrow="ALWAYS">
             <children>
                 <fx:include fx:id="tabHeader" source="../tabHeader.fxml" />
                 <Separator />
@@ -43,9 +43,10 @@
                           </children>
                       </VBox>
                   </ScrollPane>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" minHeight="0.0" minWidth="0.0" style="-fx-background-color: transparent;" GridPane.columnIndex="1">
-                     <content>
-                        <VBox>
+                   <VBox GridPane.columnIndex="1">
+                       <children>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-background-color: transparent;" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
+                        <VBox fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                            <children>
                               <HBox alignment="CENTER">
                                  <children>
@@ -56,8 +57,18 @@
                                     </Label>
                                  </children>
                               </HBox>
-                              <WebView fx:id="webView" VBox.vgrow="ALWAYS" />
-                              <HBox fx:id="imageBox" alignment="CENTER" VBox.vgrow="ALWAYS">
+                               <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" VBox.vgrow="ALWAYS">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="ALWAYS" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints vgrow="ALWAYS" />
+                                </rowConstraints>
+                                 <children>
+                                    <WebView fx:id="webView" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+                                 </children>
+                              </GridPane>
+                              <HBox fx:id="imageBox" alignment="CENTER">
                                  <children>
                                      <ImageView fx:id="imageView">
                                        <HBox.margin>
@@ -67,8 +78,9 @@
                                </HBox>
                            </children>
                         </VBox>
-                     </content>
                   </ScrollPane>
+                       </children>
+                   </VBox>
                </children>
             </GridPane>
             </children>
