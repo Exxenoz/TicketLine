@@ -23,6 +23,8 @@ public class CanvasLegend implements CanvasComponent {
     private final static double ARC_WIDTH = 8;
     private final static double ARC_HEIGHT = 8;
 
+    private final static double VERTICAL_ESTIMATE = 1.5;
+
     private double xPos;
     private double yPos;
 
@@ -47,7 +49,7 @@ public class CanvasLegend implements CanvasComponent {
 
         //And draw text with it
         gc.setFill(Color.BLACK);
-        gc.fillText(String.format("%s €", DECIMAL_FORMAT.format(price)), xPos + LEGEND_OFFSET_LEFT, yPos + HEIGHT / 1.5);
+        gc.fillText(String.format("%s €", DECIMAL_FORMAT.format(price)), xPos + LEGEND_OFFSET_LEFT, yPos + HEIGHT / VERTICAL_ESTIMATE);
     }
 
     @Override

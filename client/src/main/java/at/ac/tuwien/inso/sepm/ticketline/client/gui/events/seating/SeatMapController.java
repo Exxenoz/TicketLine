@@ -23,6 +23,8 @@ import java.util.List;
 public class SeatMapController {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private final static double VERTICAL_ESTIMATE = 1.5;
+    private final static double OFFSET_LEFT = 2.5;
 
     @FXML
     private Canvas seatMapCanvas;
@@ -53,7 +55,7 @@ public class SeatMapController {
             for(int i = 0; i < sector.getSeatsPerRow(); i++) {
                 for(int j = 0; j < sector.getRows(); j++) {
                     //Draw the row labels
-                    gc.fillText("" + (j + 1), 0, (CanvasSeat.HEIGHT / 1.5)
+                    gc.fillText("" + (j + 1), OFFSET_LEFT, (CanvasSeat.HEIGHT / VERTICAL_ESTIMATE)
                         + (sector.getStartPositionY() * CanvasSeat.HEIGHT + CanvasSeat.REGULAR_MARGIN * j + j * CanvasSeat.HEIGHT)
                         + (CanvasSeat.OFFSET_TOP));
 
@@ -139,11 +141,29 @@ public class SeatMapController {
     }
     public void fill(PerformanceDTO performance) {
         this.performance = performance;
+        resizeCanvas(performance);
         drawSeatMap(performance);
     }
 
     public void setSeatSelectionListener(SeatSelectionListener seatSelectionListener) {
         this.seatSelectionListener = seatSelectionListener;
+    }
+
+    public void resizeCanvas(PerformanceDTO performanceDTO) {
+
+        double estimatedWidth = 0.0f;
+        double estimatedHeight = 0.0f;
+
+        for(SectorDTO s: performanceDTO.getHall().getSectors()) {
+            estimatedHeight += s.getRows() * CanvasSeat.HEIGHT;
+            estimatedWidth += s.getSeatsPerRow() * CanvasSeat.WIDTH;
+
+            estimatedHeight += CanvasSeat.HEIGHT + CanvasSeat.REGULAR_MARGIN;
+            estimatedWidth += CanvasSeat.WIDTH + CanvasSeat.REGULAR_MARGIN;
+        }
+
+        seatMapCanvas.setHeight(estimatedHeight);
+        seatMapCanvas.setWidth(estimatedWidth);
     }
 
 }
