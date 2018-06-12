@@ -33,6 +33,9 @@ public class Reservation {
     @Column(nullable = false, unique = true)
     private String reservationNumber;
 
+    @Column
+    private boolean canceled = true;
+
     public Long getId() {
         return id;
     }
@@ -85,6 +88,14 @@ public class Reservation {
         this.customer = customer;
     }
 
+    public boolean isCanceled() {
+        return canceled;
+    }
+
+    public void setCanceled(boolean canceled) {
+        this.canceled = canceled;
+    }
+
     public String getReservationNumber() {
         return reservationNumber;
     }
@@ -97,12 +108,13 @@ public class Reservation {
     public String toString() {
         return "Reservation{" +
             "id=" + id +
-            ", reservationNumber=" + reservationNumber +
             ", customer=" + customer +
             ", performance=" + performance +
             ", seats=" + seats +
             ", paid=" + paid +
             ", paidAt=" + paidAt +
+            ", reservationNumber='" + reservationNumber + '\'' +
+            ", canceled=" + canceled +
             '}';
     }
 
@@ -111,19 +123,20 @@ public class Reservation {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Reservation that = (Reservation) o;
-        return Objects.equals(id, that.id) &&
-            Objects.equals(reservationNumber, that.reservationNumber) &&
+        return canceled == that.canceled &&
+            Objects.equals(id, that.id) &&
             Objects.equals(customer, that.customer) &&
             Objects.equals(performance, that.performance) &&
             Objects.equals(seats, that.seats) &&
             Objects.equals(paid, that.paid) &&
-            Objects.equals(paidAt, that.paidAt);
+            Objects.equals(paidAt, that.paidAt) &&
+            Objects.equals(reservationNumber, that.reservationNumber);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, customer, performance, seats, paid, paidAt, reservationNumber);
+        return Objects.hash(id, customer, performance, seats, paid, paidAt, reservationNumber, canceled);
     }
 
     public static final class Builder {

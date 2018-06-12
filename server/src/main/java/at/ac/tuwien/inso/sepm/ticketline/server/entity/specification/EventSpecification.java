@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.entity.specification;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Event;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.EventType;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
@@ -34,7 +35,7 @@ public class EventSpecification implements Specification<Event> {
         }
 
         if(eventType != null){
-            predicates.add(builder.equal(root.get("eventType"), eventType));
+            predicates.add(builder.equal(root.get("eventType"), EventType.from(eventType)));
         }
 
         return builder.and(predicates.toArray(new Predicate[]{}));

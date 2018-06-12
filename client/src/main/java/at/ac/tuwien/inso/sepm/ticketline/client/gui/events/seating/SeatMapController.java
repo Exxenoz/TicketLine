@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.List;
 
@@ -49,7 +48,7 @@ public class SeatMapController {
     public void drawSeatMap(PerformanceDTO performance) {
         LOGGER.debug("Performance to draw seatmap for {}", performance.toString());
         for(SectorDTO sector: performance.getHall().getSectors()) {
-            BigDecimal price = sector.getCategory().getBasePriceMod().multiply(performance.getPrice());
+            Long price = sector.getCategory().getBasePriceMod() * performance.getPrice();
 
             List<CanvasSeat> canvasSeats = new ArrayList<>(sector.getSeatsPerRow() * sector.getRows());
             for(int i = 0; i < sector.getSeatsPerRow(); i++) {
@@ -112,7 +111,7 @@ public class SeatMapController {
         for(int i = 0; i < sectors.size(); i++) {
             SectorDTO s = performance.getHall().getSectors().get(i);
             //Determine price of sector
-            BigDecimal price = s.getCategory().getBasePriceMod().multiply(performance.getPrice());
+            Long price = s.getCategory().getBasePriceMod() * performance.getPrice();
             CanvasLegend c = new CanvasLegend(currentX, currentY, CanvasColorUtil.priceToPaint(price), price);
             legendList.add(c);
             c.draw(gc);

@@ -19,7 +19,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
      * @param performanceId performance id
      * @return the associated event
      */
-    @Query(value = "SELECT e.* FROM event e, performance p WHERE e.id = p.event_id AND p.id = :performanceId", nativeQuery = true)
+    @Query(value = "SELECT e FROM Performance p JOIN p.event AS e WHERE p.id = :performanceId")
     Event findByPerformanceId(@Param("performanceId")Long performanceId);
 
     /**

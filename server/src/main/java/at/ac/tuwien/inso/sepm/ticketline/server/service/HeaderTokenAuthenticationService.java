@@ -17,9 +17,13 @@ public interface HeaderTokenAuthenticationService {
      * @throws InternalUserDisabledException in case the user was disabled
      * @throws InternalPasswordResetException in case the password of the user was reset
      * @throws InternalUserPasswordWrongException in case the password of the user did not match
+     * @throws InternalForbiddenException in case the user disables himself
+     * @throws InternalUserValidationException in case the user is invalid
      * @return an authentication token
      */
-    AuthenticationToken authenticate(String username, CharSequence password) throws InternalUserNotFoundException, InternalUserDisabledException, InternalPasswordResetException, InternalUserPasswordWrongException;
+    AuthenticationToken authenticate(String username, CharSequence password) throws InternalUserNotFoundException,
+        InternalUserDisabledException, InternalPasswordResetException, InternalUserPasswordWrongException,
+        InternalUserValidationException, InternalForbiddenException;
 
     /**
      * Get informations about a header token.

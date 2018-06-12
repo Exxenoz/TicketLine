@@ -6,12 +6,12 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.specification.ArtistSpeci
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.specification.EventSpecification;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.specification.PerformanceSpecification;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.specification.SearchSpecBuilder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.query.QueryByExampleExecutor;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface PerformanceRepository extends JpaRepository<Performance, Long>, QueryByExampleExecutor<Performance>, JpaSpecificationExecutor<Performance> {
@@ -22,9 +22,14 @@ public interface PerformanceRepository extends JpaRepository<Performance, Long>,
      * @param eventID event id
      * @return all performances of the given event
      */
-    List<Performance> findByEventId(Long eventID);
+    Page<Performance> findByEventId(Long eventID, Pageable pageable);
 
-    default List<Performance> findAll(SearchDTO searchDTO) {
+    /**
+     * Finds a list of all performances that match the given criteria
+     * @param searchDTO holds all given criterias
+     * @return all performances that match the given criteria
+     */
+    default Page<Performance> findAll(SearchDTO searchDTO, Pageable pageable) {
         var artistSpecs = new ArtistSpecification(searchDTO.getFirstName(), searchDTO.getLastName());
         var eventSpecs = new EventSpecification(searchDTO.getEventName(), searchDTO.getEventType());
         var performanceSpecs = new PerformanceSpecification(
@@ -39,6 +44,6 @@ public interface PerformanceRepository extends JpaRepository<Performance, Long>,
 
         SearchSpecBuilder searchSpecBuilder = new SearchSpecBuilder(artistSpecs, eventSpecs, performanceSpecs);
 
-        return findAll(searchSpecBuilder);
+        return findAll(searchSpecBuilder, pageable);
     }
 }
