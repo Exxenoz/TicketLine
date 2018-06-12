@@ -65,6 +65,7 @@ public class SelectCustomerController {
     private Stage stage;
     private boolean isReservation;
     private boolean reservationWithNewCustomer = true;
+    private boolean NoAnonymousCustomer;
     private ReservationDTO reservation;
     private CustomerDTO chosenCustomer;
     private final PurchaseReservationSummaryController PRSController;
@@ -102,7 +103,6 @@ public class SelectCustomerController {
         ));
 
         customerTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-
         LOGGER.debug("loading the page into the table");
         customerTable.setItems(items);
 
@@ -178,6 +178,7 @@ public class SelectCustomerController {
         try {
             PageResponseDTO<CustomerDTO> response = customerService.findAll(pageRequestDTO);
             items.addAll(response.getContent());
+            items.removeIf(customer -> customer.getLastName().equals("anonymous") && customer.getFirstName().equals("anonymous"));
             totalPages = response.getTotalPages();
         } catch (DataAccessException e) {
             LOGGER.warn("Could not access customers!");
