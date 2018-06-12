@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
+import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
@@ -39,6 +40,7 @@ public class PurchaseReservationSummaryController {
     public Label performanceHeader;
 
     private final SpringFxmlLoader fxmlLoader;
+    public Label customerName;
     private Stage stage;
 
     private ReservationDTO reservation;
@@ -63,6 +65,7 @@ public class PurchaseReservationSummaryController {
         performanceName.setText(reservation.getPerformance().getName());
         String totalAmountTickets = "" + reservation.getSeats().size();
         ticketsNr.setText(totalAmountTickets);
+        customerName.setText(reservation.getCustomer().getFirstName() + " " +reservation.getCustomer().getLastName());
         performancePrice.setText(reservation.getPerformance().getPrice().toString());
 
         if (isReservation) {
@@ -110,6 +113,8 @@ public class PurchaseReservationSummaryController {
             closeWindow();
         } else if (!showDetails){
             //reserve and buy tickets
+
+
             reservationService.createAndPayReservation(createReservationDTO);
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -169,6 +174,4 @@ public class PurchaseReservationSummaryController {
         this.showDetails = true;
 
     }
-
-
 }

@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.customers;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.AddressValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.CustomerValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking.PurchaseReservationSummaryController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.CustomerService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
@@ -10,8 +11,12 @@ import at.ac.tuwien.inso.sepm.ticketline.client.validator.AddressValidator;
 import at.ac.tuwien.inso.sepm.ticketline.client.validator.CustomerValidator;
 import at.ac.tuwien.inso.sepm.ticketline.rest.address.LocationAddressDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
+import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -76,11 +81,22 @@ public class CustomerEditDialogController {
 
     private final CustomerController customerController;
     private final CustomerService customerService;
-
     private CustomerDTO customerToEdit = null;
 
-    public CustomerEditDialogController(CustomerController customerController, CustomerService customerService) {
+    private final PurchaseReservationSummaryController PRSController;
+    private boolean reservationWithNewCustomer = false;
+    private boolean isReservation;
+    private final SpringFxmlLoader fxmlLoader;
+    private ReservationDTO reservation;
+    private Stage stage;
+
+    public CustomerEditDialogController(CustomerController customerController,
+                                        PurchaseReservationSummaryController PRSController,
+                                        SpringFxmlLoader fxmlLoader,
+                                        CustomerService customerService) {
+        this.PRSController = PRSController;
         this.customerController = customerController;
+        this.fxmlLoader = fxmlLoader;
         this.customerService = customerService;
     }
 
@@ -103,15 +119,13 @@ public class CustomerEditDialogController {
                 postalCodeTextfield.setText(customerToEdit.getBaseAddress().getPostalCode());
                 cityTextfield.setText(customerToEdit.getBaseAddress().getCity());
                 countryTextfield.setText(customerToEdit.getBaseAddress().getCountry());
-            }
-            else {
+            } else {
                 streetTextfield.setText("");
                 postalCodeTextfield.setText("");
                 cityTextfield.setText("");
                 countryTextfield.setText("");
             }
-        }
-        else {
+        } else {
             firstNameTextfield.setText("");
             lastNameTextfield.setText("");
             telephoneNumberTextfield.setText("");
@@ -125,6 +139,7 @@ public class CustomerEditDialogController {
 
     @FXML
     private void onClickSaveCustomerButton(ActionEvent actionEvent) {
+
         LOGGER.debug("Clicked save customer button");
 
         CustomerDTO customerDTO = new CustomerDTO();
@@ -141,8 +156,7 @@ public class CustomerEditDialogController {
         try {
             customerDTO.setFirstName(CustomerValidator.validateFirstName(firstNameTextfield));
             firstNameErrorLabel.setText("");
-        }
-        catch (CustomerValidationException e) {
+        } catch (CustomerValidationException e) {
             valid = false;
             LOGGER.debug("Customer validation failed: " + e.getMessage());
             firstNameErrorLabel.setText(e.getMessage());
@@ -151,8 +165,7 @@ public class CustomerEditDialogController {
         try {
             customerDTO.setLastName(CustomerValidator.validateLastName(lastNameTextfield));
             lastNameErrorLabel.setText("");
-        }
-        catch (CustomerValidationException e) {
+        } catch (CustomerValidationException e) {
             valid = false;
             LOGGER.debug("Customer validation failed: " + e.getMessage());
             lastNameErrorLabel.setText(e.getMessage());
@@ -161,8 +174,7 @@ public class CustomerEditDialogController {
         try {
             customerDTO.setTelephoneNumber(CustomerValidator.validateTelephoneNumber(telephoneNumberTextfield));
             telephoneNumberErrorLabel.setText("");
-        }
-        catch (CustomerValidationException e) {
+        } catch (CustomerValidationException e) {
             valid = false;
             LOGGER.debug("Customer validation failed: " + e.getMessage());
             telephoneNumberErrorLabel.setText(e.getMessage());
@@ -171,8 +183,7 @@ public class CustomerEditDialogController {
         try {
             customerDTO.setEmail(CustomerValidator.validateEmail(emailTextfield));
             emailErrorLabel.setText("");
-        }
-        catch (CustomerValidationException e) {
+        } catch (CustomerValidationException e) {
             valid = false;
             LOGGER.debug("Customer validation failed: " + e.getMessage());
             emailErrorLabel.setText(e.getMessage());
@@ -181,8 +192,7 @@ public class CustomerEditDialogController {
         try {
             locationAddressDTO.setStreet(AddressValidator.validateStreet(streetTextfield));
             streetErrorLabel.setText("");
-        }
-        catch (AddressValidationException e) {
+        } catch (AddressValidationException e) {
             valid = false;
             LOGGER.debug("Customer validation failed: " + e.getMessage());
             streetErrorLabel.setText(e.getMessage());
@@ -191,8 +201,7 @@ public class CustomerEditDialogController {
         try {
             locationAddressDTO.setPostalCode(AddressValidator.validatePostalCode(postalCodeTextfield));
             postalCodeErrorLabel.setText("");
-        }
-        catch (AddressValidationException e) {
+        } catch (AddressValidationException e) {
             valid = false;
             LOGGER.debug("Customer validation failed: " + e.getMessage());
             postalCodeErrorLabel.setText(e.getMessage());
@@ -201,8 +210,7 @@ public class CustomerEditDialogController {
         try {
             locationAddressDTO.setCity(AddressValidator.validateCity(cityTextfield));
             cityErrorLabel.setText("");
-        }
-        catch (AddressValidationException e) {
+        } catch (AddressValidationException e) {
             valid = false;
             LOGGER.debug("Customer validation failed: " + e.getMessage());
             cityErrorLabel.setText(e.getMessage());
@@ -211,8 +219,7 @@ public class CustomerEditDialogController {
         try {
             locationAddressDTO.setCountry(AddressValidator.validateCountry(countryTextfield));
             countryErrorLabel.setText("");
-        }
-        catch (AddressValidationException e) {
+        } catch (AddressValidationException e) {
             valid = false;
             LOGGER.debug("Customer validation failed: " + e.getMessage());
             countryErrorLabel.setText(e.getMessage());
@@ -224,6 +231,12 @@ public class CustomerEditDialogController {
 
         if (customerToEdit == null) { // Create customer
             try {
+                //buy/reserve tickets for a performance with a new customer
+                if (reservationWithNewCustomer) {
+                    CustomerDTO newCustomer = customerService.create(customerDTO);
+                    reserveWithNewCustomer(newCustomer);
+                    return;
+                }
                 customerController.addCustomer(customerService.create(customerDTO));
             } catch (DataAccessException e) {
                 LOGGER.error("Customer creation failed: " + e.getMessage());
@@ -238,7 +251,7 @@ public class CustomerEditDialogController {
                 return;
             }
 
-            ((Stage)firstNameTextfield.getScene().getWindow()).close();
+            ((Stage) firstNameTextfield.getScene().getWindow()).close();
 
             LOGGER.debug("Customer creation successfully completed!");
 
@@ -248,8 +261,8 @@ public class CustomerEditDialogController {
                 BundleManager.getBundle().getString("customers.dialog.create.dialog.success.content_text"),
                 firstNameTextfield.getScene().getWindow()
             ).showAndWait();
-        }
-        else { // Edit customer
+
+        } else { // Edit customer
             try {
                 customerToEdit.update(customerService.update(customerDTO));
             } catch (DataAccessException e) {
@@ -265,7 +278,7 @@ public class CustomerEditDialogController {
                 return;
             }
 
-            ((Stage)firstNameTextfield.getScene().getWindow()).close();
+            ((Stage) firstNameTextfield.getScene().getWindow()).close();
 
             customerController.refreshAndSortCustomerTable();
 
@@ -278,5 +291,20 @@ public class CustomerEditDialogController {
                 firstNameTextfield.getScene().getWindow()
             ).showAndWait();
         }
+    }
+
+    private void reserveWithNewCustomer(CustomerDTO newCustomer) {
+        reservation.setCustomer(newCustomer);
+        PRSController.fill(reservation, isReservation, stage);
+        Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
+        stage.setScene(new Scene(parent));
+        stage.centerOnScreen();
+    }
+
+    public void fill(boolean reservationWithNewCustomer, ReservationDTO reservation, boolean isReservation, Stage stage) {
+        this.reservationWithNewCustomer = reservationWithNewCustomer;
+        this.reservation = reservation;
+        this.isReservation = isReservation;
+        this.stage = stage;
     }
 }
