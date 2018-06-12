@@ -65,7 +65,7 @@ public class PurchaseReservationSummaryController {
         performanceName.setText(reservation.getPerformance().getName());
         String totalAmountTickets = "" + reservation.getSeats().size();
         ticketsNr.setText(totalAmountTickets);
-        customerName.setText(reservation.getCustomer().getFirstName() + " " +reservation.getCustomer().getLastName());
+        customerName.setText(reservation.getCustomer().getFirstName() + " " + reservation.getCustomer().getLastName());
         performancePrice.setText(reservation.getPerformance().getPrice().toString());
 
         if (isReservation) {
@@ -78,7 +78,7 @@ public class PurchaseReservationSummaryController {
             //make sure the reservation is still unpaid
             if (!reservation.isPaid()) {
                 cancelButtonPRS.setText("Edit Reservation");
-            } else{
+            } else {
                 cancelButtonPRS.setDisable(true);
                 cancelButtonPRS.setVisible(false);
                 cancelButtonPRS.setManaged(false);
@@ -102,19 +102,18 @@ public class PurchaseReservationSummaryController {
 
         //only reserve tickets
         if (!showDetails && isReservation) {
-            //ReservationDTO reservationDTO = reservationService.createNewReservation(createReservationDTO);
+            ReservationDTO reservationDTO = reservationService.createNewReservation(createReservationDTO);
 
-            //Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            //alert.setTitle("Print Invoice");
-           // alert.setHeaderText("Congratulations! Your Reservation was successful!" + reservationDTO.getReservationNumber());
-           // alert.showAndWait();
-           // closeWindow();
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Print Invoice");
+            alert.setHeaderText("Congratulations! Your reservation was successful!" + '\n' + "Your reservation number is: " + reservationDTO.getReservationNumber());
+            alert.showAndWait();
+            closeWindow();
 
             closeWindow();
-        } else if (!showDetails){
+
             //reserve and buy tickets
-
-
+        } else if (!showDetails) {
             reservationService.createAndPayReservation(createReservationDTO);
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -122,8 +121,9 @@ public class PurchaseReservationSummaryController {
             alert.setHeaderText("Congratulations! Your Purchase was successful!" + "\n" + "Do you want to print the invoice?");
             alert.showAndWait();
             closeWindow();
-        } else {
+
             //buy already reserved tickets
+        } else {
             reservationService.purchaseReservation(reservation);
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -146,9 +146,9 @@ public class PurchaseReservationSummaryController {
     }
 
     public void backButton(ActionEvent event) {
-        if(showDetails){
+        if (showDetails) {
             closeWindow();
-        }else {
+        } else {
             Parent parent = fxmlLoader.load("/fxml/events/book/selectCustomerView.fxml");
             stage.setScene(new Scene(parent));
             stage.setTitle("Customer Details");
