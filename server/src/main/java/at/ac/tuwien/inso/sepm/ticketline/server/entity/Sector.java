@@ -38,10 +38,6 @@ public class Sector {
     @Max(30)
     private int rows;
 
-    @OneToMany
-    @JoinColumn(name="seat_id")
-    private List<Seat> seats;
-
     public Long getId() {
         return id;
     }
@@ -88,14 +84,6 @@ public class Sector {
 
     public void setRows(int rows) {
         this.rows = rows;
-    }
-
-    public List<Seat> getSeats() {
-        return seats;
-    }
-
-    public void setSeats(List<Seat> seats) {
-        this.seats = seats;
     }
 
     @Override
