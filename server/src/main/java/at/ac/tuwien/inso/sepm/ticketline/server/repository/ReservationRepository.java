@@ -82,4 +82,11 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      * @return the not yet purchased reservation
      */
     Reservation findByPaidFalseAndReservationNumber(String reservationNr);
+
+    /**
+     * Finds all the reservations for a given performance
+     * @param performanceId the id of the performance for which the reservations will be returned
+     * @return the list of found reservations
+     */
+    List<Reservation> findAllByPerformanceId(Long performanceId);
 }

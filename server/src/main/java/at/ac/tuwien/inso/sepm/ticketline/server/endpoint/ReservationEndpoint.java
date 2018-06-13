@@ -159,4 +159,12 @@ public class ReservationEndpoint {
         var reservation = reservationService.cancelReservation(id);
         return reservationMapper.reservationToReservationDTO(reservation);
     }
+
+    @GetMapping("/performance/{performanceId}")
+    @PreAuthorize("hasRole('USER')")
+    @ApiOperation("Find all reservations for a given performance id")
+    public List<ReservationDTO> findReservationsForPerformance(@PathVariable("performanceId") long performanceId) {
+        List<Reservation> reservations = reservationService.findReservationsForPerformance(performanceId);
+        return reservationMapper.reservationToReservationDTO(reservations);
+    }
 }
