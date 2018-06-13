@@ -105,6 +105,22 @@ public class ReservationServiceTests {
         Assert.assertEquals(seat, seatOpt.get());
     }
 
+    @Test(expected = InvalidReservationException.class)
+    public void addLockedSeatToReservation() {
+        //get reservation
+        var reservation = reservationService.findOneByPaidFalseAndId(RESERVATION_TEST_ID);
+        Assert.assertNotNull(reservation);
+        Assert.assertEquals(false, reservation.isPaid());
+
+        //remove seats
+        List<Seat> seats = reservation.getSeats();
+        Assert.assertEquals(1, seats.size());
+        seats.add(newSeat());
+        reservation.setSeats(seats);
+        reservation = reservationService.editReservation(reservation);
+    }
+
+
     @Test
     public void purchaseReservationWithId() {
         //get reservation
