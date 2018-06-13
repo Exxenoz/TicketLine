@@ -3,6 +3,9 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas.CanvasColorUtil;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas.CanvasLegend;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas.CanvasSeat;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.NewsService;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.SeatMapService;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.implementation.SimpleSeatMapService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.sector.SectorDTO;
@@ -12,6 +15,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
@@ -24,6 +28,8 @@ public class SeatMapController {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final static double VERTICAL_ESTIMATE = 1.5;
     private final static double OFFSET_LEFT = 2.5;
+
+    private SeatMapService seatMapService;
 
     @FXML
     private Canvas seatMapCanvas;
@@ -39,6 +45,9 @@ public class SeatMapController {
     private SeatSelectionListener seatSelectionListener;
     private PerformanceDTO performance;
 
+    public SeatMapController(SeatMapService seatMapService) {
+        this.seatMapService = seatMapService;
+    }
     @FXML
     public void initialize() {
         this.gc = seatMapCanvas.getGraphicsContext2D();
@@ -105,7 +114,7 @@ public class SeatMapController {
         List<SectorDTO> sectors = performance.getHall().getSectors();
         legendList = new ArrayList<>(sectors.size());
 
-        double currentY = findMaxSectorY(sectors, false) * CanvasLegend.HEIGHT;
+        double currentY = seatMapService.findMaxSectorY(sectors, false) * CanvasLegend.HEIGHT;
         double currentX = CanvasLegend.OFFSET_LEFT;
 
         for(int i = 0; i < sectors.size(); i++) {
@@ -126,46 +135,6 @@ public class SeatMapController {
         }
     }
 
-    public int findMaxSectorY(List<SectorDTO> sectorDTOs, boolean withSectorHeight) {
-        int maxY = 0;
-        int sectorHeight = 0;
-
-        for(SectorDTO sector: sectorDTOs) {
-            int checkY = sector.getStartPositionY() + sector.getRows();
-
-            if(checkY > maxY) {
-                maxY = checkY;
-                sectorHeight = sector.getRows();
-            }
-        }
-
-        if(withSectorHeight) {
-            maxY += sectorHeight;
-        }
-
-        return maxY;
-    }
-
-    public int findMaxSectorX(List<SectorDTO> sectorDTOs, boolean withSectorWidth) {
-        int maxX = 0;
-        int sectorWidth = 0;
-
-        for(SectorDTO sector: sectorDTOs) {
-            int checkY = sector.getStartPositionX() + sector.getSeatsPerRow();
-
-            if(checkY > maxX) {
-                maxX = checkY;
-                sectorWidth = sector.getSeatsPerRow();
-            }
-        }
-
-        if(withSectorWidth) {
-            maxX += sectorWidth;
-        }
-
-        return maxX;
-    }
-
     public void fill(PerformanceDTO performance) {
         this.performance = performance;
         resizeCanvas(performance);
@@ -180,12 +149,12 @@ public class SeatMapController {
         double estimatedWidth = 0.0f;
         double estimatedHeight = 0.0f;
 
-        estimatedHeight += findMaxSectorY(performanceDTO.getHall().getSectors(), true) * CanvasSeat.HEIGHT;
+        estimatedHeight += seatMapService.findMaxSectorY(performanceDTO.getHall().getSectors(), true) * CanvasSeat.HEIGHT;
         //Add extra height for sector legend
         estimatedHeight += ((performanceDTO.getHall().getSectors().size() / CanvasLegend.LEGEND_ROW_SIZE) + 1) *
             (CanvasLegend.HEIGHT + CanvasLegend.REGULAR_MARGIN);
 
-        estimatedWidth += findMaxSectorX(performanceDTO.getHall().getSectors(), true) * CanvasSeat.WIDTH;
+        estimatedWidth += seatMapService.findMaxSectorX(performanceDTO.getHall().getSectors(), true) * CanvasSeat.WIDTH;
 
         seatMapCanvas.setHeight(estimatedHeight);
         seatMapCanvas.setWidth(estimatedWidth);
