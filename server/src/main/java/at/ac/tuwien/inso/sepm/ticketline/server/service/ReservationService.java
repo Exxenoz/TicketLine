@@ -1,5 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationSearch;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
@@ -106,4 +107,11 @@ public interface ReservationService {
      * @return reservationnumber
      */
     String generateReservationNumber();
+
+    /**
+     *
+     * @param id the id of the performance with the according reservations we are looking for
+     * @return the list of reservations we found
+     */
+    List<Reservation> findReservationsForPerformance(Long id);
 }

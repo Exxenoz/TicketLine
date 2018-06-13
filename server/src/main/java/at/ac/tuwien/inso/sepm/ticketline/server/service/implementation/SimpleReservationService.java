@@ -1,5 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationSearch;
@@ -165,7 +166,7 @@ public class SimpleReservationService implements ReservationService {
     @Override
     public Reservation createReservation(Reservation reservation) throws InvalidReservationException {
         List<Long> seatIDs = new LinkedList<>();
-        for (Seat seat: reservation.getSeats()) {
+        for (Seat seat : reservation.getSeats()) {
             seatIDs.add(seat.getId());
         }
 
@@ -215,5 +216,10 @@ public class SimpleReservationService implements ReservationService {
         reservation.setCanceled(true);
         return reservationRepository.save(reservation);
 
+    }
+
+    @Override
+    public List<Reservation> findReservationsForPerformance(Long id) {
+        return reservationRepository.findAllByPerformanceId(id);
     }
 }
