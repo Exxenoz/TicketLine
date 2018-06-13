@@ -6,9 +6,11 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationSearch;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Seat;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalHallValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.SeatRepository;
+import at.ac.tuwien.inso.sepm.ticketline.server.service.HallPlanService;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,17 +28,14 @@ import java.util.List;
 @Service
 public class SimpleReservationService implements ReservationService {
 
-    private final ReservationRepository reservationRepository;
-    private final SeatRepository seatRepository;
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
-    private PerformanceRepository repo;
-
-    public SimpleReservationService(ReservationRepository reservationRepository, SeatRepository seatRepository) {
-        this.reservationRepository = reservationRepository;
-        this.seatRepository = seatRepository;
-    }
+    private PerformanceRepository performanceRepository;
+    @Autowired
+    private ReservationRepository reservationRepository;
+    @Autowired
+    private HallPlanService hallPlanService;
 
     @Override
     public List<Reservation> findAllByEventId(Long eventId) {
@@ -137,21 +136,32 @@ public class SimpleReservationService implements ReservationService {
 
     @Override
     public Reservation createReservation(Reservation reservation) throws InvalidReservationException {
-        List<Long> seatIDs = new LinkedList<>();
-        for (Seat seat : reservation.getSeats()) {
-            seatIDs.add(seat.getId());
+        //First, get the picked performance for this reservation
+        Performance performance = performanceRepository.findById(reservation.getPerformance().getId()).get();
+
+
+        //Then, too fail fast, we check the integrity of the seats according to the hall plan and the sectors
+        try {
+            hallPlanService.checkSeatsAgainstSectors(reservation.getSeats(), performance.getHall().getSectors());
+        } catch (InternalHallValidationException i) {
+            throw new InvalidReservationException("Hall plan is not coherent with sectors or seats.");
         }
 
-        List<Seat> seatsForReservation = seatRepository.findAllById(seatIDs);
-        checkIfAllSeatsAreFree(seatsForReservation);
+        //Then we check the seats against all reservations, and if they actually exist
+        List<Reservation> reservations = reservationRepository.findAllByPerformanceId(reservation.getPerformance().getId());
 
-        Performance currentPerformance = repo.findById(reservation.getPerformance().getId()).get();
+        for(Reservation r: reservations) {
+            for(Seat s: r.getSeats()) {
+
+            }
+        }
+
         reservation.setPaid(false);
-
-        boolean unique = false;
         Reservation createdReservation = null;
 
-        while (unique == false) {
+        //Generate a unique ID for the reservation
+        boolean unique;
+        do {
             try {
                 reservation.setReservationNumber(generateReservationNumber());
                 createdReservation = reservationRepository.save(reservation);
@@ -159,14 +169,10 @@ public class SimpleReservationService implements ReservationService {
             } catch (ConstraintViolationException e) {
                 unique = false;
             }
-        }
+        } while (!unique);
 
-
-     /*   String reservationNumber = LocalDate.now().toString() + createdReservation.getId().toString();
-        createdReservation.setReservationNumber(reservationNumber); */
-
-        createdReservation.setSeats(seatsForReservation);
-        createdReservation.setPerformance(currentPerformance);
+//        createdReservation.setSeats(seatsForReservation);
+//        createdReservation.setPerformance(currentPerformance);
 
         return createdReservation;
     }

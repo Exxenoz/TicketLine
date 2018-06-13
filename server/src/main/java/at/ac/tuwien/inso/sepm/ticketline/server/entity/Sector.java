@@ -116,6 +116,4 @@ public class Sector {
             ", rows=" + rows +
             '}';
     }
-
-
 }
