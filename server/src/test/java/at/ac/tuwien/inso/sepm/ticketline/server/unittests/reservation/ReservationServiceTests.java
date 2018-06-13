@@ -82,7 +82,7 @@ public class ReservationServiceTests {
 
 
     @Test
-    public void removeSeatFromReservation() {
+    public void removeSeatFromReservation() throws InvalidReservationException {
         //get reservation
         var reservation = reservationService.findOneByPaidFalseAndId(RESERVATION_TEST_ID);
         Assert.assertNotNull(reservation);
@@ -101,12 +101,11 @@ public class ReservationServiceTests {
         seats = reservation.getSeats();
         Assert.assertEquals(0, seats.size());
         var seatOpt = seatRepository.findById(SEAT_TEST_ID);
-        Assert.assertTrue(seatOpt.isPresent());
-        Assert.assertEquals(seat, seatOpt.get());
+        Assert.assertFalse(seatOpt.isPresent());
     }
 
     @Test(expected = InvalidReservationException.class)
-    public void addLockedSeatToReservation() {
+    public void addLockedSeatToReservation() throws InvalidReservationException {
         //get reservation
         var reservation = reservationService.findOneByPaidFalseAndId(RESERVATION_TEST_ID);
         Assert.assertNotNull(reservation);

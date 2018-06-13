@@ -12,6 +12,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.Reserv
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationSearchMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpBadRequestException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpConflictException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpNotFoundException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import io.swagger.annotations.Api;
@@ -126,9 +127,14 @@ public class ReservationEndpoint {
     @PreAuthorize("hasRole('USER')")
     @ApiOperation("Edit an existing Reservation")
     public ReservationDTO editReservation(@RequestBody ReservationDTO reservationDTO) {
-        var reservation = reservationService.editReservation(
-            reservationMapper.reservationDTOToReservation(reservationDTO)
-        );
+        Reservation reservation = null;
+        try {
+            reservation = reservationService.editReservation(
+                reservationMapper.reservationDTOToReservation(reservationDTO)
+            );
+        } catch (InvalidReservationException e) {
+            throw new HttpConflictException(e.getMessage());
+        }
         return reservationMapper.reservationToReservationDTO(reservation);
     }
 

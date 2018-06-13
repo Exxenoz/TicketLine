@@ -220,7 +220,7 @@ public class ReservationIT extends BaseIT {
             .then().extract().response();
 
         //assert result
-        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatusCode());
+        Assert.assertEquals(HttpStatus.CONFLICT.value(), response.getStatusCode());
     }
 
     @Test

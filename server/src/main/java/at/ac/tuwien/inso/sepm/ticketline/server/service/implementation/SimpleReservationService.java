@@ -86,20 +86,35 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
-    public Reservation editReservation(Reservation reservation) {
-        /*List<Seat> newSeats = reservation.getSeats();
-        List<Seat> oldSeats = reservationRepository.findByPaidFalseAndId(reservation.getId()).getSeats();
+    public Reservation editReservation(Reservation reservation) throws InvalidReservationException {
+        List<Seat> changedSeats = reservation.getSeats();
+        List<Seat> savedSeats = reservationRepository.findByPaidFalseAndId(reservation.getId()).getSeats();
 
-        if(newSeats.containsAll(oldSeats)){
-            List<Seat> onlyNewSeats = getNewSeats(newSeats);
+        List<Seat> onlyNewSeats = getNewSeats(changedSeats);
+        checkIfAllSeatsAreFreeIgnoreId(onlyNewSeats);
 
-            checkIfAllSeatsAreFree(onlyNewSeats);
-        }else{
+        onlyNewSeats = seatRepository.saveAll(onlyNewSeats);
+        List<Seat> onlyExistingSeats = getExistingSeats(changedSeats);
 
+        List<Seat> seats = new LinkedList<>();
+        seats.addAll(onlyNewSeats);
+        seats.addAll(onlyExistingSeats);
+
+
+        reservation.setSeats(seats);
+        reservation = reservationRepository.save(reservation);
+
+        if (!changedSeats.containsAll(savedSeats)) {
+            List<Seat> removedSeats = new LinkedList<>();
+            for (Seat seat : savedSeats) {
+                if (!changedSeats.contains(seat)) {
+                    removedSeats.add(seat);
+                }
+            }
+            seatRepository.deleteAll(removedSeats);
         }
-        List<Seat> existingSeats = getExistingSeats(newSeats);*/
 
-        return reservationRepository.save(reservation);
+        return reservation;
     }
 
     private List<Seat> getNewSeats(List<Seat> seats) {
@@ -122,6 +137,19 @@ public class SimpleReservationService implements ReservationService {
         return existingSeats;
     }
 
+
+    private void checkIfAllSeatsAreFreeIgnoreId(List<Seat> seatsToCheck) throws InvalidReservationException {
+        List<Reservation> allReservations = reservationRepository.findAll();
+        for (Reservation reservation : allReservations) {
+            for (Seat seat : seatsToCheck) {
+                for (Seat otherSeat : reservation.getSeats()) {
+                    if (seat.equalsWithoutId(otherSeat)) {
+                        throw new InvalidReservationException("Seats are already reserved!");
+                    }
+                }
+            }
+        }
+    }
 
     private void checkIfAllSeatsAreFree(List<Seat> seatsToCheck) throws InvalidReservationException {
         List<Reservation> allReservations = reservationRepository.findAll();
