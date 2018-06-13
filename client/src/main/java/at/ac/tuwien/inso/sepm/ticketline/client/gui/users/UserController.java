@@ -138,16 +138,6 @@ public class UserController {
         userTable.setItems(userList);
     }
 
-    // TODO: call when ui was loaded/currently ther visibility wont be updated until authentication is done
-    private void loadPageUntilTableIsFilled(int page) {
-        if(loadUserTable(page)) {
-            var scrollbar = getVerticalScrollbar(userTable);
-            if (!scrollbar.visibleProperty().get()) {
-                loadPageUntilTableIsFilled(page + 1);
-            }
-        }
-    }
-
     public void loadUsers() {
         final ScrollBar scrollBar = getVerticalScrollbar(userTable);
         if (scrollBar != null) {

@@ -188,7 +188,7 @@ public class NewsCreateController {
             titleTextField.getScene().getWindow()
         ).showAndWait();
 
-        newsUnreadController.loadNews();
+        newsUnreadController.reloadNews();
 
         clearInputs();
     }
