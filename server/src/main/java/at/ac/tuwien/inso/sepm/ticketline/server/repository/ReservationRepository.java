@@ -20,9 +20,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      * @param eventId the id of the event
      * @return list of all reservation entries with the passed event id
      */
-    @Query(value = "SELECT r.*" +
-        " FROM performance p, reservation r" +
-        " WHERE p.id = r.performance_id AND p.event_id = :eventId", nativeQuery = true)
+    @Query(value = "SELECT r" +
+        " FROM Performance p, Reservation r" +
+        " WHERE p.id = r.performance.id AND p.event.id = :eventId")
     List<Reservation> findAllByEventId(@Param("eventId")Long eventId);
 
     /**
@@ -31,24 +31,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      * @param eventId the id of the event
      * @return count of paid reservation entries with the passed event id
      */
-    @Query(value = "SELECT COUNT(r.id)" +
-        " FROM performance p, reservation r" +
-        " WHERE p.id = r.performance_id AND p.event_id = :eventId AND r.is_paid = true", nativeQuery = true)
+    @Query(value = "SELECT COUNT(r)" +
+        " FROM Performance p, Reservation r" +
+        " WHERE p.id = r.performance.id AND p.event.id = :eventId AND r.paid = true")
     Long getPaidReservationCountByEventId(@Param("eventId")Long eventId);
-
-    /**
-     * Get paid reservation count by event id and time frame.
-     *
-     * @param eventId the id of the event
-     * @param startTime the start of the time frame
-     * @param endTime the end of the time frame
-     * @return count of paid reservation entries with the passed event id and time frame
-     */
-    @Query(value = "SELECT COUNT(r.id)" +
-        " FROM performance p, reservation r" +
-        " WHERE p.id = r.performance_id AND p.event_id = :eventId" +
-        " AND r.is_paid = true AND r.paid_at >= :startTime AND r.paid_at <= :endTime", nativeQuery = true)
-    Long getPaidReservationCountByEventIdAndTimeFrame(@Param("eventId")Long eventId, @Param("startTime")Timestamp startTime, @Param("endTime")Timestamp endTime);
 
     /**
      * Finds a non invoiced reservation by reservation id
