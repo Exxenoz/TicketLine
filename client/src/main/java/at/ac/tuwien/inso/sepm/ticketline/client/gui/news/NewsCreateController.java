@@ -77,7 +77,7 @@ public class NewsCreateController {
     @FXML
     private void initialize() {
         tabHeaderController.setIcon(NEWSPAPER_ALT);
-        tabHeaderController.setTitle("Create News");
+        tabHeaderController.setTitle(BundleManager.getBundle().getString("news.header.create"));
     }
 
     private void clearInputs() {
