@@ -36,8 +36,11 @@ public class NewsElementController {
 
     private final NewsUnreadController newsUnreadController;
 
-    public NewsElementController(NewsUnreadController newsUnreadController) {
+    private final NewsReadController newsReadController;
+
+    public NewsElementController(NewsUnreadController newsUnreadController, NewsReadController newsReadController) {
         this.newsUnreadController = newsUnreadController;
+        this.newsReadController = newsReadController;
     }
 
     public void initializeData(SimpleNewsDTO simpleNewsDTO) {
@@ -54,6 +57,9 @@ public class NewsElementController {
             if(idString.startsWith("unreadNews")) {
                 int id = Integer.valueOf(idString.substring(10));
                 newsUnreadController.toggleDetailView(vbox, id);
+            } else if(idString.startsWith("readNews")) {
+                int id = Integer.valueOf(idString.substring(8));
+                newsReadController.toggleDetailView(vbox, id);
             }
         }
     }
