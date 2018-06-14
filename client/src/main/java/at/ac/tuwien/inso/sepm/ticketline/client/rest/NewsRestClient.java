@@ -11,13 +11,22 @@ import java.util.List;
 public interface NewsRestClient {
 
     /**
-     * Find all news entries.
+     * Find a page of news entries, which are already read by the user
      *
      * @param request the object that specifies the request
      * @return page of news entries
      * @throws DataAccessException in case something went wrong
      */
     PageResponseDTO<SimpleNewsDTO> findAllUnread(PageRequestDTO request) throws DataAccessException;
+
+    /**
+     * Find a page of news entries, which aren't read by the user yet
+     *
+     * @param request object specifing the request
+     * @return a page of news entries
+     * @throws DataAccessException in case something went wrong
+     */
+    PageResponseDTO<SimpleNewsDTO> findAllRead(PageRequestDTO request) throws DataAccessException;
 
     /**
      * Retrieve detailed information for a specific news entry

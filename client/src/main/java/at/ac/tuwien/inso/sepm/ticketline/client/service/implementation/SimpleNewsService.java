@@ -31,6 +31,11 @@ public class SimpleNewsService implements NewsService {
     }
 
     @Override
+    public PageResponseDTO<SimpleNewsDTO> findAllRead(PageRequestDTO request) throws DataAccessException {
+        return newsRestClient.findAllRead(request);
+    }
+
+    @Override
     public DetailedNewsDTO find(Long id) throws DataAccessException {
         return newsRestClient.find(id);
     }

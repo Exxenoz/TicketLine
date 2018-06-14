@@ -42,12 +42,36 @@ public class SimpleNewsRestClient implements NewsRestClient {
     public PageResponseDTO<SimpleNewsDTO> findAllUnread(PageRequestDTO request) throws DataAccessException {
         try {
             UriComponentsBuilder builder = UriComponentsBuilder.fromUri(restClient.getServiceURI("/news"))
+                .queryParam("read", false)
+                .queryParam("page", request.getPage())
+                .queryParam("size", request.getSize());
+
+            URI uri = builder.build().toUri();
+            LOGGER.debug("Retrieving all unread news from {}", uri);
+            final var news =
+                restClient.exchange(
+                    new RequestEntity<>(request, POST, uri),
+                    new ParameterizedTypeReference<PageResponseDTO<SimpleNewsDTO>>() {
+                    });
+            LOGGER.debug("Result status was {} with content {}", news.getStatusCode(), news.getBody());
+            return news.getBody();
+        } catch (HttpStatusCodeException e) {
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
+        } catch (RestClientException e) {
+            throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
+        }
+    }
+
+    @Override
+    public PageResponseDTO<SimpleNewsDTO> findAllRead(PageRequestDTO request) throws DataAccessException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUri(restClient.getServiceURI("/news"))
                 .queryParam("read", true)
                 .queryParam("page", request.getPage())
                 .queryParam("size", request.getSize());
 
             URI uri = builder.build().toUri();
-            LOGGER.debug("Retrieving all news from {}", uri);
+            LOGGER.debug("Retrieving all read news from {}", uri);
             final var news =
                 restClient.exchange(
                     new RequestEntity<>(request, POST, uri),
