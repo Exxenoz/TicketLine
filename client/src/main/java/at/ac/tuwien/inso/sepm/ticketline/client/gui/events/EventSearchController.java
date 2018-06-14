@@ -137,7 +137,23 @@ public class EventSearchController {
         tabHeaderController.setIcon(CALENDAR_ALT);
         tabHeaderController.setTitle("Events");
         initializeTableView();
+
+
     }
+
+    /**
+     * @FXML
+     *     private TextField artistFirstNameTextField;
+     *     @FXML
+     *     private TextField artistLastNameTextField;
+     *     @FXML
+     *     private TextField eventNameTextField;
+     *     @FXML
+     *     private TextField lengthInMinutesTextField;
+     *     @FXML
+     *     private RadioButton seatingYesButton;
+     *
+     */
 
     private void initializeTableView() {
         nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
@@ -146,10 +162,11 @@ public class EventSearchController {
             cellData.getValue().getEvent().getName()));
         startTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
             cellData.getValue().getPerformanceStart().toString()));
-        locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
+        locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty( cellData.getValue().getLocationAddress().getCountry() + ", " +
             cellData.getValue().getLocationAddress().getCity()));
 
         foundEventsTableView.setItems(performanceData);
+
     }
 
 

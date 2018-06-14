@@ -55,6 +55,7 @@ public class HallPlanController implements SeatSelectionListener {
     private boolean isReservation = false;
     private boolean changeDetails = false;
 
+
     public HallPlanController(SpringFxmlLoader fxmlLoader,
                               SelectCustomerController selectCustomerController,
                               @Lazy PerformanceDetailViewController performanceDetailViewController,
@@ -162,6 +163,7 @@ public class HallPlanController implements SeatSelectionListener {
     }
 
     public void fill(ReservationDTO reservation, Stage stage) {
+        this.changeDetails = false;
         this.reservation = reservation;
         this.stage = stage;
     }
