@@ -11,10 +11,12 @@ import at.ac.tuwien.inso.sepm.ticketline.client.validator.NewsValidator;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.DetailedNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.SimpleNewsDTO;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.InputEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.web.HTMLEditor;
@@ -78,6 +80,17 @@ public class NewsCreateController {
     private void initialize() {
         tabHeaderController.setIcon(NEWSPAPER_ALT);
         tabHeaderController.setTitle(BundleManager.getBundle().getString("news.header.create"));
+        htmlEditor.addEventHandler(InputEvent.ANY, new EventHandler<InputEvent>() {
+            @Override
+            public void handle(InputEvent event) {
+                try {
+                    NewsValidator.validateArticle(htmlEditor);
+                    articleErrorLabel.setText("");
+                } catch (NewsValidationException e) {
+                    articleErrorLabel.setText(e.getMessage());
+                }
+            }
+        });
     }
 
     private void clearInputs() {
