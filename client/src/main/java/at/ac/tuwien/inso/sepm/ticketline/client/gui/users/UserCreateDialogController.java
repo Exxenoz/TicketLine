@@ -93,6 +93,8 @@ public class UserCreateDialogController {
             passwordErrorLabel.setText(e.getMessage());
         }
 
+        usernameTextField.getScene().getWindow().sizeToScene();
+
         userDTO.setRoles(getRoles());
 
         if (!valid) {
