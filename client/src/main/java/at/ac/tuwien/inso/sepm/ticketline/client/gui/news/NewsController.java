@@ -31,6 +31,9 @@ public class NewsController {
     private NewsUnreadController newsUnreadController;
 
     @FXML
+    private NewsUnreadController newsReadController;
+
+    @FXML
     private NewsCreateController newsCreateController;
 
     @FXML
@@ -38,5 +41,6 @@ public class NewsController {
 
     public void loadNews() {
         newsUnreadController.loadNews();
+        newsReadController.loadNews();
     }
 }
