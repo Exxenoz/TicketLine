@@ -246,20 +246,17 @@ public class SimpleUserService implements UserService {
     public void changePassword(UserPasswordChangeRequestDTO userPasswordChangeRequestDTO) throws InternalUserNotFoundException, InternalBadRequestException {
         LOGGER.info("Change password for user {}", userPasswordChangeRequestDTO.getUsername());
 
-        if (userPasswordChangeRequestDTO.getPassword() == null ||
-            userPasswordChangeRequestDTO.getPassword().length() < 3 ||
-            userPasswordChangeRequestDTO.getPassword().length() > 30 ||
-            !userPasswordChangeRequestDTO.getPassword().matches("^[\\x00-\\xFF]*$")) {
+        try {
+            UserValidator.validateUsername(userPasswordChangeRequestDTO.getUsername());
+            UserValidator.validatePlainTextPassword(userPasswordChangeRequestDTO.getPassword());
+            UserValidator.validatePasswordChangeKey(userPasswordChangeRequestDTO.getPasswordChangeKey());
+        } catch (UserValidatorException e) {
             throw new InternalBadRequestException();
         }
 
         User user = userRepository.findByUsername(userPasswordChangeRequestDTO.getUsername());
         if (user == null) {
             throw new InternalUserNotFoundException();
-        }
-
-        if (user.getPasswordChangeKey() == null) {
-            throw new InternalBadRequestException();
         }
 
         if (!new BCryptPasswordEncoder(10).matches(userPasswordChangeRequestDTO.getPasswordChangeKey(), user.getPasswordChangeKey())) {
