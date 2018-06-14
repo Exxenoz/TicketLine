@@ -54,12 +54,14 @@ public class NewsElementController {
 
         if(vbox != null) {
             String idString = vbox.getId();
-            if(idString.startsWith("unreadNews")) {
-                int id = Integer.valueOf(idString.substring(10));
-                newsUnreadController.toggleDetailView(vbox, id);
-            } else if(idString.startsWith("readNews")) {
-                int id = Integer.valueOf(idString.substring(8));
-                newsReadController.toggleDetailView(vbox, id);
+            if(idString != null) {
+                if (idString.startsWith("unreadNews")) {
+                    int id = Integer.valueOf(idString.substring(10));
+                    newsUnreadController.toggleDetailView(vbox, id);
+                } else if (idString.startsWith("readNews")) {
+                    int id = Integer.valueOf(idString.substring(8));
+                    newsReadController.toggleDetailView(vbox, id);
+                }
             }
         }
     }

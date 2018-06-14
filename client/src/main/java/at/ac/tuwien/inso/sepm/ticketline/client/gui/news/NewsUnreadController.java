@@ -101,14 +101,17 @@ public class NewsUnreadController {
     }
 
     public void loadNews() {
+        vbNewsBoxChildren = vbNewsElements.getChildren();
+        vbNewsBoxChildren.clear();
+
         final ScrollBar scrollBar = getVerticalScrollbar();
         if (scrollBar != null) {
             scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
                 double scrollValue = newValue.doubleValue();
                 if (scrollValue == scrollBar.getMax() && (page + 1) < totalPages) {
-                    double targetValue = scrollValue * vbNewsBoxChildren.size();
+                    double targetValue = scrollValue * loadedNews.size();
                     loadNewsList(page + 1);
-                    scrollBar.setValue(targetValue / vbNewsBoxChildren.size());
+                    scrollBar.setValue(targetValue / loadedNews.size());
                 }
             });
 
