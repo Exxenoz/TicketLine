@@ -7,12 +7,11 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.NewsValidator;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.News;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.news.NewsMapper;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalBadRequestException;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalForbiddenException;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalNewsValidationException;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalNotFoundException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.NewsRepository;
+import at.ac.tuwien.inso.sepm.ticketline.server.repository.UserRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.security.IAuthenticationFacade;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +29,15 @@ import java.util.List;
 public class SimpleNewsService implements NewsService {
 
     private final NewsRepository newsRepository;
+    private final UserRepository userRepository;
     private final NewsMapper newsMapper;
 
     @Autowired
     private IAuthenticationFacade authenticationFacade;
 
-    public SimpleNewsService(NewsRepository newsRepository, NewsMapper newsMapper) {
+    public SimpleNewsService(NewsRepository newsRepository, UserRepository userRepository, NewsMapper newsMapper) {
         this.newsRepository = newsRepository;
+        this.userRepository = userRepository;
         this.newsMapper = newsMapper;
     }
 
@@ -96,8 +97,9 @@ public class SimpleNewsService implements NewsService {
     }
 
     @Override
-    public News findOne(Long id) throws InternalNotFoundException {
-        return newsRepository.findOneById(id).orElseThrow(InternalNotFoundException::new);
+    public DetailedNewsDTO findOne(Long id) throws InternalNotFoundException {
+        News news = newsRepository.findOneById(id).orElseThrow(InternalNotFoundException::new);
+        return newsMapper.newsToDetailedNewsDTO(news);
     }
 
     @Override
@@ -111,5 +113,25 @@ public class SimpleNewsService implements NewsService {
         News news = newsMapper.detailedNewsDTOToNews(detailedNewsDTO);
         news.setPublishedAt(LocalDateTime.now());
         return newsMapper.newsToSimpleNewsDTO(newsRepository.save(news));
+    }
+
+    @Override
+    public void markAsRead(Long id) throws InternalNotFoundException, InternalForbiddenException, InternalUserNotFoundException {
+        News news = newsRepository.findOneById(id).orElseThrow(InternalNotFoundException::new);
+        Authentication authentication = authenticationFacade.getAuthentication();
+
+        if (authentication == null) {
+            throw new InternalForbiddenException();
+        }
+
+        User user = userRepository.findByUsername(authentication.getName());
+
+        if (user == null) {
+            throw new InternalUserNotFoundException();
+        }
+
+        user.getReadNews().add(news);
+
+        userRepository.save(user);
     }
 }
