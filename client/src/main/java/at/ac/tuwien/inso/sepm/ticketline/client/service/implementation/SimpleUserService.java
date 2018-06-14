@@ -12,6 +12,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.List;
 
 @Service
@@ -61,11 +62,24 @@ public class SimpleUserService implements UserService {
 
     @Override
     public UserDTO resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws DataAccessException {
+        String resetKey = generateResetKey();
+        userPasswordResetRequestDTO.setPasswordChangeKey(resetKey);
         return userRestClient.resetPassword(userPasswordResetRequestDTO);
     }
 
     @Override
     public void changePassword(UserPasswordChangeRequestDTO userPasswordChangeRequestDTO) throws DataAccessException {
         userRestClient.changePassword(userPasswordChangeRequestDTO);
+    }
+
+    // https://stackoverflow.com/a/157202
+    private String generateResetKey() {
+        final String AB = "123456789ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        SecureRandom rnd = new SecureRandom();
+
+        StringBuilder sb = new StringBuilder(8);
+        for(int i = 0; i < 8; i++)
+            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+        return sb.toString();
     }
 }
