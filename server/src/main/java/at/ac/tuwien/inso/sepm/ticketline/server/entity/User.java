@@ -36,6 +36,9 @@ public class User implements Serializable {
     @Column(name = "authority", nullable = false)
     private Set<String> roles;
 
+    @ManyToMany
+    private Set<News> readNews;
+
     public Long getId() {
         return id;
     }
@@ -92,6 +95,14 @@ public class User implements Serializable {
         this.roles = roles;
     }
 
+    public Set<News> getReadNews() {
+        return readNews;
+    }
+
+    public void setReadNews(Set<News> readNews) {
+        this.readNews = readNews;
+    }
+
     public static UserBuilder builder() {
         return new UserBuilder();
     }
@@ -104,6 +115,7 @@ public class User implements Serializable {
         private int strikes;
         private String passwordChangeKey;
         private Set<String> roles = new HashSet<>();
+        private Set<News> readNews = new HashSet<>();
 
         public UserBuilder id(Long id) {
             this.id = id;
@@ -140,6 +152,11 @@ public class User implements Serializable {
             return this;
         }
 
+        public UserBuilder readNews(Set<News> readNews) {
+            this.readNews = readNews;
+            return this;
+        }
+
         public User build() {
             User user = new User();
             user.setId(id);
@@ -149,6 +166,7 @@ public class User implements Serializable {
             user.setStrikes(strikes);
             user.setPasswordChangeKey(passwordChangeKey);
             user.setRoles(new HashSet<>(roles));
+            user.setReadNews(new HashSet<>(readNews));
             return user;
         }
     }
