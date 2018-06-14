@@ -2,10 +2,15 @@ package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.DetailedNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.SimpleNewsDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.News;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.news.NewsMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpBadRequestException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpForbiddenException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpNotFoundException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalBadRequestException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalForbiddenException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalNewsValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalNotFoundException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.NewsService;
@@ -30,11 +35,18 @@ public class NewsEndpoint {
         this.newsMapper = newsMapper;
     }
 
-    @GetMapping
+    @GetMapping()
     @PreAuthorize("hasRole('USER')")
     @ApiOperation("Get list of simple news entries")
-    public List<SimpleNewsDTO> findAll() {
-        return newsMapper.newsToSimpleNewsDTO(newsService.findAll());
+    public PageResponseDTO<SimpleNewsDTO> findAll(@RequestParam("read") Boolean read, PageRequestDTO pageRequestDTO) {
+        try {
+            return read ? newsService.findAllRead(pageRequestDTO) :
+                newsService.findAllUnread(pageRequestDTO);
+        } catch (InternalForbiddenException e) {
+            throw new HttpForbiddenException();
+        } catch (InternalBadRequestException e) {
+            throw new HttpBadRequestException();
+        }
     }
 
     @GetMapping("/{id}")
