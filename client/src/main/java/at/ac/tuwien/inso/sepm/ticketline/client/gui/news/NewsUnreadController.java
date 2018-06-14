@@ -148,7 +148,7 @@ public class NewsUnreadController {
                 SimpleNewsDTO news = response.getContent().get(i);
                 SpringFxmlLoader.Wrapper<NewsElementController> wrapper =
                     springFxmlLoader.loadAndWrap("/fxml/news/newsElement.fxml");
-                wrapper.getLoadedObject().setId("unreadNews" + i);
+                wrapper.getLoadedObject().setId("unreadNews" + loadedNews.size() + i);
                 wrapper.getController().initializeData(news);
                 vbNewsBoxChildren.add(wrapper.getLoadedObject());
                 if (i + 1 < response.getContent().size()) {
@@ -156,7 +156,7 @@ public class NewsUnreadController {
                     vbNewsBoxChildren.add(separator);
                 }
             }
-            loadedNews = response.getContent();
+            loadedNews.addAll(response.getContent());
         } catch (DataAccessException e) {
             JavaFXUtils.createErrorDialog(e.getMessage(),
                 vbNewsElements.getScene().getWindow()).showAndWait();
