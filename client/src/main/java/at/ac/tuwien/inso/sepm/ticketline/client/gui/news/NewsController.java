@@ -31,7 +31,7 @@ public class NewsController {
     private NewsUnreadController newsUnreadController;
 
     @FXML
-    private NewsUnreadController newsReadController;
+    private NewsReadController newsReadController;
 
     @FXML
     private NewsCreateController newsCreateController;

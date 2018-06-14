@@ -50,7 +50,7 @@ public class SimpleNewsRestClient implements NewsRestClient {
             LOGGER.debug("Retrieving all unread news from {}", uri);
             final var news =
                 restClient.exchange(
-                    new RequestEntity<>(request, POST, uri),
+                    new RequestEntity<>(request, GET, uri),
                     new ParameterizedTypeReference<PageResponseDTO<SimpleNewsDTO>>() {
                     });
             LOGGER.debug("Result status was {} with content {}", news.getStatusCode(), news.getBody());
@@ -74,7 +74,7 @@ public class SimpleNewsRestClient implements NewsRestClient {
             LOGGER.debug("Retrieving all read news from {}", uri);
             final var news =
                 restClient.exchange(
-                    new RequestEntity<>(request, POST, uri),
+                    new RequestEntity<>(request, GET, uri),
                     new ParameterizedTypeReference<PageResponseDTO<SimpleNewsDTO>>() {
                     });
             LOGGER.debug("Result status was {} with content {}", news.getStatusCode(), news.getBody());
