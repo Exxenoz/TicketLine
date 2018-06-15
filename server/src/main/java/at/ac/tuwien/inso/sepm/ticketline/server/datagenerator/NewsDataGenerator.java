@@ -35,9 +35,9 @@ public class NewsDataGenerator implements DataGenerator {
             LOGGER.info("Generating {} news entries", NUMBER_OF_NEWS_TO_GENERATE);
             for (int i = 0; i < NUMBER_OF_NEWS_TO_GENERATE; i++) {
                 final var news = News.builder()
-                    .title(faker.lorem().characters(25, 100))
-                    .summary(faker.lorem().characters(20, 50))
-                    .text(faker.lorem().paragraph(faker.number().numberBetween(5, 10)))
+                    .title(faker.lorem().word())
+                    .summary(faker.lorem().word() + " " + faker.lorem().word() + " " + faker.lorem().word())
+                    .text("<html><head></head><body contenteditable=\"true\"><p>" + faker.lorem().paragraph(faker.number().numberBetween(5, 10)) + "</p></body></html>")
                     .publishedAt(
                         LocalDateTime.ofInstant(
                             faker.date()

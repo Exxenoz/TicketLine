@@ -60,7 +60,7 @@ public interface ReservationRestClient {
      * @return a page of the found reservations
      * @throws DataAccessException in case something went wrong during the action
      */
-    PageResponseDTO<ReservationDTO> findAllByPaidFalseByCustomerNameAndByPerformanceName(ReservationSearchDTO reservationSearchDTO)
+    PageResponseDTO<ReservationDTO> findAllByCustomerNameAndByPerformanceName(ReservationSearchDTO reservationSearchDTO)
         throws DataAccessException;
 
     /**
@@ -97,7 +97,7 @@ public interface ReservationRestClient {
      * @return the found reservation
      * @throws DataAccessException in case something went wrong during the action
      */
-    ReservationDTO findOneByPaidFalseAndReservationNumber(String reservationNr) throws DataAccessException;
+    ReservationDTO findOneByReservationNumber(String reservationNr) throws DataAccessException;
 
     /**
      * sets state of reservation to canceled

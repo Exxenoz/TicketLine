@@ -18,6 +18,6 @@ public class SimpleSectorCategoryService implements SectorCategoryService {
 
     @Override
     public List<SectorCategory> findAllOrderByBasePriceModAsc() {
-        return sectorCategoryRepository.findAllOrderByBasePriceModAsc();
+        return sectorCategoryRepository.findAllByOrderByBasePriceModAsc();
     }
 }

@@ -15,8 +15,5 @@ public interface SectorCategoryRepository extends JpaRepository<SectorCategory, 
      *
      * @return ordered list of all sector category entries
      */
-    @Query(value = "SELECT *" +
-        " FROM sector_category" +
-        " ORDER BY base_price_mod ASC", nativeQuery = true)
-    List<SectorCategory> findAllOrderByBasePriceModAsc();
+    List<SectorCategory> findAllByOrderByBasePriceModAsc();
 }

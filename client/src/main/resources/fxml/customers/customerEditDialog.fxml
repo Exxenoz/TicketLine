@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.text.TextFlow?>
 <HBox prefWidth="600.0" spacing="5.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.customers.CustomerEditDialogController">
    <children>
       <VBox prefWidth="300.0">
@@ -20,10 +21,11 @@
                         <Label text="*" textFill="#cc0000" />
                      </children></HBox>
                   <TextField fx:id="firstNameTextfield" />
-                  <Label fx:id="firstNameErrorLabel" textFill="#cc0000">
-                     <font>
-                        <Font size="9.0" />
-                     </font></Label>
+                   <TextFlow VBox.vgrow="ALWAYS">
+                       <children>
+                           <Label VBox.vgrow="ALWAYS" fx:id="firstNameErrorLabel" prefWidth="280.0" textFill="RED" wrapText="true" />
+                       </children>
+                   </TextFlow>
                </children>
                <VBox.margin>
                   <Insets bottom="8.0" />
@@ -37,10 +39,11 @@
                         <Label text="*" textFill="#cc0000" />
                      </children></HBox>
                   <TextField fx:id="lastNameTextfield" />
-                  <Label fx:id="lastNameErrorLabel" textFill="#cc0000">
-                      <font>
-                          <Font size="9.0" />
-                      </font></Label>
+                   <TextFlow VBox.vgrow="ALWAYS">
+                       <children>
+                           <Label VBox.vgrow="ALWAYS" fx:id="lastNameErrorLabel" prefWidth="280.0" textFill="RED" wrapText="true" />
+                       </children>
+                   </TextFlow>
                </children>
                <VBox.margin>
                   <Insets bottom="8.0" />
@@ -55,10 +58,11 @@
                      </children>
                   </HBox>
                   <TextField fx:id="telephoneNumberTextfield" />
-                  <Label fx:id="telephoneNumberErrorLabel" textFill="#cc0000">
-                      <font>
-                          <Font size="9.0" />
-                      </font></Label>
+                   <TextFlow VBox.vgrow="ALWAYS">
+                       <children>
+                           <Label VBox.vgrow="ALWAYS" fx:id="telephoneNumberErrorLabel" prefWidth="280.0" textFill="RED" wrapText="true" />
+                       </children>
+                   </TextFlow>
                </children>
                <VBox.margin>
                   <Insets bottom="8.0" />
@@ -68,10 +72,11 @@
                <children>
                   <Label text="%customers.dialog.create.email" />
                   <TextField fx:id="emailTextfield" />
-                  <Label fx:id="emailErrorLabel" textFill="#cc0000">
-                      <font>
-                          <Font size="9.0" />
-                      </font></Label>
+                   <TextFlow VBox.vgrow="ALWAYS">
+                       <children>
+                           <Label VBox.vgrow="ALWAYS" fx:id="emailErrorLabel" prefWidth="280.0" textFill="RED" wrapText="true" />
+                       </children>
+                   </TextFlow>
                </children>
                <VBox.margin>
                   <Insets bottom="8.0" />

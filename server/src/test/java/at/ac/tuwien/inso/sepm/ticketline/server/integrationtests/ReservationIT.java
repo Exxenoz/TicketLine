@@ -127,6 +127,7 @@ public class ReservationIT extends BaseIT {
         //get findAll parameters
         var customerOpt = customerRepository.findById(CUSTOMER_TEST_ID);
         var performanceOpt = performanceRepository.findById(PERFORMANCE_TEST_ID);
+
         if (customerOpt.isPresent() && performanceOpt.isPresent()) {
             var customerDTO = customerMapper.customerToCustomerDTO(customerOpt.get());
             var performanceDTO = performanceMapper.performanceToPerformanceDTO(performanceOpt.get());
@@ -151,7 +152,7 @@ public class ReservationIT extends BaseIT {
                 .contentType(ContentType.JSON)
                 .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
                 .body(reservationSearchDTO)
-                .when().post(RESERVATION_ENDPOINT + "/findNotPaid")
+                .when().post(RESERVATION_ENDPOINT + "/find")
                 .then().statusCode(HttpStatus.OK.value())
                 .assertThat().body("content.id", Matchers.hasItem(PERFORMANCE_TEST_ID.intValue()))
                 .assertThat().body("content.paid", Matchers.hasItem(false));

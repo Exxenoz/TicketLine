@@ -34,9 +34,9 @@ public class CustomerDataGenerator implements DataGenerator {
             final var anonymous = Customer.builder()
                 .firstName("anonymous")
                 .lastName("anonymous")
-                .telephoneNumber(faker.phoneNumber().phoneNumber())
+                .telephoneNumber("+" + faker.number().digits(2) + " " + faker.number().digits(3) + " " + faker.number().digits(4) + " " + faker.number().digits(4) )
                 .email(faker.internet().emailAddress())
-                .address(new BaseAddress(faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(4, 5)))
+                .address(new BaseAddress(faker.address().streetAddress(), faker.address().city(), faker.address().country(), faker.address().zipCode()))
                 .build();
 
             customerRepository.save(anonymous);
@@ -44,9 +44,9 @@ public class CustomerDataGenerator implements DataGenerator {
                 final var customer = Customer.builder()
                     .firstName(faker.name().firstName())
                     .lastName(faker.name().lastName())
-                    .telephoneNumber(faker.phoneNumber().phoneNumber())
+                    .telephoneNumber("+" + faker.number().digits(2) + " " + faker.number().digits(3) + " " + faker.number().digits(4) + " " + faker.number().digits(4) )
                     .email(faker.internet().emailAddress())
-                    .address(new BaseAddress(faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(3, 25), faker.lorem().characters(4, 5)))
+                    .address(new BaseAddress(faker.address().streetAddress(), faker.address().city(), faker.address().country(), faker.address().zipCode()))
                     .build();
 
                 LOGGER.debug("saving customer {}", customer);

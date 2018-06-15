@@ -61,14 +61,14 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
-    public ReservationDTO findOneByPaidFalseAndReservationNumber(String reservationNr) throws DataAccessException {
-        return reservationRestClient.findOneByPaidFalseAndReservationNumber(reservationNr);
+    public ReservationDTO findOneByReservationNumber(String reservationNr) throws DataAccessException {
+        return reservationRestClient.findOneByReservationNumber(reservationNr);
     }
 
     @Override
-    public PageResponseDTO<ReservationDTO> findAllByPaidFalseByCustomerNameAndPerformanceName(ReservationSearchDTO reservationSearchDTO)
+    public PageResponseDTO<ReservationDTO> findAllByCustomerNameAndPerformanceName(ReservationSearchDTO reservationSearchDTO)
         throws DataAccessException {
-        return reservationRestClient.findAllByPaidFalseByCustomerNameAndByPerformanceName(reservationSearchDTO);
+        return reservationRestClient.findAllByCustomerNameAndByPerformanceName(reservationSearchDTO);
     }
 
     @Override

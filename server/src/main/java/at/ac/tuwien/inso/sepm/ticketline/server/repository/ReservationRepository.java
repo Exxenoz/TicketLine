@@ -20,9 +20,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      * @param eventId the id of the event
      * @return list of all reservation entries with the passed event id
      */
-    @Query(value = "SELECT r.*" +
-        " FROM performance p, reservation r" +
-        " WHERE p.id = r.performance_id AND p.event_id = :eventId", nativeQuery = true)
+    @Query(value = "SELECT r" +
+        " FROM Performance p, Reservation r" +
+        " WHERE p.id = r.performance.id AND p.event.id = :eventId")
     List<Reservation> findAllByEventId(@Param("eventId")Long eventId);
 
     /**
@@ -31,24 +31,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      * @param eventId the id of the event
      * @return count of paid reservation entries with the passed event id
      */
-    @Query(value = "SELECT COUNT(r.id)" +
-        " FROM performance p, reservation r" +
-        " WHERE p.id = r.performance_id AND p.event_id = :eventId AND r.is_paid = true", nativeQuery = true)
+    @Query(value = "SELECT COUNT(r)" +
+        " FROM Performance p, Reservation r" +
+        " WHERE p.id = r.performance.id AND p.event.id = :eventId AND r.paid = true")
     Long getPaidReservationCountByEventId(@Param("eventId")Long eventId);
-
-    /**
-     * Get paid reservation count by event id and time frame.
-     *
-     * @param eventId the id of the event
-     * @param startTime the start of the time frame
-     * @param endTime the end of the time frame
-     * @return count of paid reservation entries with the passed event id and time frame
-     */
-    @Query(value = "SELECT COUNT(r.id)" +
-        " FROM performance p, reservation r" +
-        " WHERE p.id = r.performance_id AND p.event_id = :eventId" +
-        " AND r.is_paid = true AND r.paid_at >= :startTime AND r.paid_at <= :endTime", nativeQuery = true)
-    Long getPaidReservationCountByEventIdAndTimeFrame(@Param("eventId")Long eventId, @Param("startTime")Timestamp startTime, @Param("endTime")Timestamp endTime);
 
     /**
      * Finds a non invoiced reservation by reservation id
@@ -59,7 +45,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     Reservation findByPaidFalseAndId(Long reservationId);
 
     /**
-     * Finds a not yet purchased reservation by the name of the customer and performance
+     * Finds a reservation by the name of the customer and performance
      *
      * @param firstName       first name of the customer
      * @param lastName        last name of the customer
@@ -68,18 +54,18 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      */
     @Query(value = "SELECT r " +
         "FROM Reservation r, Customer c, Performance p " +
-        "WHERE c.id = r.customer.id AND p.id = r.performance.id AND r.paid = false " +
+        "WHERE c.id = r.customer.id AND p.id = r.performance.id " +
         "AND c.firstName = :firstName AND c.lastName = :lastName AND p.name  = :performanceName")
-    Page<Reservation> findAllByPaidFalseAndCustomerNameAndPerformanceName(@Param("firstName") String firstName,
-                                                                          @Param("lastName") String lastName,
-                                                                          @Param("performanceName") String performanceName,
-                                                                          Pageable pageable);
+    Page<Reservation> findAllByCustomerNameAndPerformanceName(@Param("firstName") String firstName,
+                                                              @Param("lastName") String lastName,
+                                                              @Param("performanceName") String performanceName,
+                                                              Pageable pageable);
 
     /**
-     * Finds a non invoiced reservation by the unique reservationNr
+     * Finds reservation by the unique reservationNr
      *
      * @param reservationNr the unique number of the reservation to be found
      * @return the not yet purchased reservation
      */
-    Reservation findByPaidFalseAndReservationNumber(String reservationNr);
+    Reservation findByReservationNumber(String reservationNr);
 }
