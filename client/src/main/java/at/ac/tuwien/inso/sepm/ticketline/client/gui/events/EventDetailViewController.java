@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.EventService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
@@ -112,7 +113,7 @@ public class EventDetailViewController {
         performanceDetailViewController.fill(chosenPerformance, stage);
         Parent parent = fxmlLoader.load("/fxml/events/performanceDetailView.fxml");
         stage.setScene(new Scene(parent));
-        stage.setTitle("Performance Details");
+        stage.setTitle(BundleManager.getBundle().getString("bookings.performance.details.title"));
         stage.centerOnScreen();
     }
 

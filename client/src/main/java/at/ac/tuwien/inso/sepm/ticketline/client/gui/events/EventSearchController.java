@@ -135,7 +135,7 @@ public class EventSearchController {
         beginTimeMinuteSpinner.setValueFactory(beginTimeMinutesFactory);
 
         tabHeaderController.setIcon(CALENDAR_ALT);
-        tabHeaderController.setTitle("Events");
+        tabHeaderController.setTitle(BundleManager.getBundle().getString("bookings.table.event"));
         initializeTableView();
     }
 
@@ -244,7 +244,7 @@ public class EventSearchController {
         final var parent = fxmlLoader.<Parent>load("/fxml/events/performanceDetailView.fxml");
 
         stage.setScene(new Scene(parent));
-        stage.setTitle("Performance Details");
+        stage.setTitle(BundleManager.getBundle().getString("bookings.performance.details.title"));
 
 
         stage.initModality(Modality.WINDOW_MODAL);

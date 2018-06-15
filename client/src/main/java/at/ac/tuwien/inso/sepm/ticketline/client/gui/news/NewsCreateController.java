@@ -110,7 +110,7 @@ public class NewsCreateController {
 
     public void onClickChooseImageFileButton(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choose Image");
+        fileChooser.setTitle(BundleManager.getBundle().getString("news.filechooser.title"));
 
         //Only Allow .jpg and .png files
         fileChooser.getExtensionFilters().addAll(

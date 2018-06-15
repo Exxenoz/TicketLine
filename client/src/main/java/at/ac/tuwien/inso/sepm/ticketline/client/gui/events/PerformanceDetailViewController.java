@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking.HallPlanController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.PriceUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
@@ -96,9 +97,9 @@ public class PerformanceDetailViewController {
 
         // Setting stage name
         if (performance.getEvent().getEventType() == EventTypeDTO.SEAT) {
-            stage.setTitle("Seat Selection");
+            stage.setTitle(BundleManager.getBundle().getString("bookings.hallplan.title"));
         } else {
-            stage.setTitle("Sector Selection");
+            stage.setTitle(BundleManager.getBundle().getString("bookings.sectorplan.title"));
         }
         stage.centerOnScreen();
     }
@@ -108,7 +109,7 @@ public class PerformanceDetailViewController {
         Parent parent = fxmlLoader.<Parent>load("/fxml/events/eventDetailView.fxml");
         eventDetailViewController.fill(performanceService, performance.getEvent(), stage);
         stage.setScene(new Scene(parent));
-        stage.setTitle("Event Details");
+        stage.setTitle(BundleManager.getBundle().getString("bookings.event.details.title"));
         stage.centerOnScreen();
     }
 

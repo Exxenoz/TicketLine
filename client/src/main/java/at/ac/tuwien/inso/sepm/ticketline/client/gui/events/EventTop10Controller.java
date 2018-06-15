@@ -105,7 +105,7 @@ public class EventTop10Controller {
 
         //Initialize tab header
         tabHeaderController.setIcon(CALENDAR_ALT);
-        tabHeaderController.setTitle("Events");
+        tabHeaderController.setTitle(BundleManager.getBundle().getString("events.topten.title"));
     }
 
     private void initYearChoiceBox() {
