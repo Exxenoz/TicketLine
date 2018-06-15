@@ -24,7 +24,7 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     @Query(value = "SELECT n" +
             " FROM News n, Users u" +
             " WHERE u.username = :username AND n NOT MEMBER OF u.readNews")
-    Page<News> findAllUnreadByUsernameByOrderByPublishedAtDesc(@Param("username") String username, Pageable pageable);
+    Page<News> findAllUnreadByUsername(@Param("username") String username, Pageable pageable);
 
     /**
      * Find all read news entries for the given username.
@@ -36,7 +36,7 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     @Query(value = "SELECT n" +
         " FROM News n, Users u" +
         " WHERE u.username = :username AND n MEMBER OF u.readNews")
-    Page<News> findAllReadByUsernameByOrderByPublishedAtDesc(@Param("username") String username, Pageable pageable);
+    Page<News> findAllReadByUsername(@Param("username") String username, Pageable pageable);
 
     /**
      * Find a single news entry by id.

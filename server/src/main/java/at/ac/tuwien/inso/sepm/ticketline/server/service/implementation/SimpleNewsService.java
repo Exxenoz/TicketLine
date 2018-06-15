@@ -67,7 +67,7 @@ public class SimpleNewsService implements NewsService {
         }
 
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage(), pageRequestDTO.getSize(), Sort.by(Sort.Direction.DESC, "publishedAt"));
-        Page<News> newsPage = newsRepository.findAllUnreadByUsernameByOrderByPublishedAtDesc(authentication.getName(), pageable);
+        Page<News> newsPage = newsRepository.findAllUnreadByUsername(authentication.getName(), pageable);
         return new PageResponseDTO<>(newsMapper.newsToSimpleNewsDTO(newsPage.getContent()), newsPage.getTotalPages());
     }
 
@@ -92,7 +92,7 @@ public class SimpleNewsService implements NewsService {
         }
 
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage(), pageRequestDTO.getSize(), Sort.by(Sort.Direction.DESC, "publishedAt"));
-        Page<News> newsPage = newsRepository.findAllReadByUsernameByOrderByPublishedAtDesc(authentication.getName(), pageable);
+        Page<News> newsPage = newsRepository.findAllReadByUsername(authentication.getName(), pageable);
         return new PageResponseDTO<>(newsMapper.newsToSimpleNewsDTO(newsPage.getContent()), newsPage.getTotalPages());
     }
 
