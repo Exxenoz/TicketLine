@@ -5,12 +5,14 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.user.UserMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalForbiddenException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalUserNotFoundException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalUserValidationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.security.IAuthenticationFacade;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,6 +20,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -75,6 +78,7 @@ public class UserServiceTest {
     }
 
     @Test
+    @WithMockUser(username = TEST_USERNAME, password = TEST_PASSWORD, roles = "USER")
     public void disableUserTest() throws InternalUserNotFoundException, InternalForbiddenException, InternalUserValidationException {
         setTestUserEnabled(true);
         var userDTO = userService.findUserByName(TEST_USERNAME);

@@ -10,9 +10,11 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.user.UserMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.UserRepository;
+import at.ac.tuwien.inso.sepm.ticketline.server.security.IAuthenticationFacade;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -26,12 +28,14 @@ import java.util.List;
 @Service
 public class SimpleUserService implements UserService {
 
+    private IAuthenticationFacade authenticationFacade;
     private UserRepository userRepository;
     private UserMapper userMapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public SimpleUserService(UserRepository userRepository, UserMapper userMapper) {
+    public SimpleUserService(IAuthenticationFacade authenticationFacade, UserRepository userRepository, UserMapper userMapper) {
+        this.authenticationFacade = authenticationFacade;
         this.userRepository = userRepository;
         this.userMapper = userMapper;
     }
@@ -72,7 +76,7 @@ public class SimpleUserService implements UserService {
             throw new InternalUserValidationException();
         }
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = authenticationFacade.getAuthentication();
         if (authentication.getName().equals(userDTO.getUsername())) {
             throw new InternalForbiddenException();
         }
