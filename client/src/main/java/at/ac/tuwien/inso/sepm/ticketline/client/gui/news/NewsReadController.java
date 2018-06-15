@@ -21,8 +21,11 @@ import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -34,6 +37,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
@@ -178,6 +182,20 @@ public class NewsReadController {
         return null;
     }
 
+    private ScrollBar getVerticalScrollbarDetails() {
+        ScrollBar scrollbar = null;
+        for (Node n : detailScrollPane.lookupAll(".scroll-bar")) {
+            if (n instanceof ScrollBar) {
+                ScrollBar bar = (ScrollBar) n;
+                if (bar.getOrientation().equals(Orientation.VERTICAL)) {
+                    scrollbar = bar;
+                }
+            }
+        }
+
+        return scrollbar;
+    }
+
     public void toggleDetailView(VBox vbox, int id) {
         for(Node node : vbNewsBoxChildren) {
             node.getStyleClass().remove("vbox-selected");
@@ -256,5 +274,9 @@ public class NewsReadController {
 
             }
         });
+    }
+
+    public void detailViewScrolled(ScrollEvent scrollEvent) {
+        getVerticalScrollbarDetails().adjustValue(-scrollEvent.getDeltaY());
     }
 }
