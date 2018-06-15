@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class NewsDataGenerator implements DataGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private static final int NUMBER_OF_NEWS_TO_GENERATE = 25;
+    private static final int NUMBER_OF_NEWS_TO_GENERATE = 150;
     private final NewsRepository newsRepository;
     private final Faker faker;
 

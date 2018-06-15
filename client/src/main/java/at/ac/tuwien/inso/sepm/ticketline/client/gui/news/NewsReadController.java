@@ -70,6 +70,9 @@ public class NewsReadController {
     public ScrollPane detailScrollPane;
 
     @FXML
+    public ScrollPane simpleNewsScrollPane;
+
+    @FXML
     private VBox vbNewsElements;
 
     @FXML
@@ -163,7 +166,7 @@ public class NewsReadController {
     }
 
     private ScrollBar getVerticalScrollbar() {
-        for (Node n : vbNewsElements.lookupAll(".scroll-bar")) {
+        for (Node n : simpleNewsScrollPane.lookupAll(".scroll-bar")) {
             if (n instanceof ScrollBar) {
                 ScrollBar bar = (ScrollBar) n;
                 if (bar.getOrientation().equals(Orientation.VERTICAL)) {
