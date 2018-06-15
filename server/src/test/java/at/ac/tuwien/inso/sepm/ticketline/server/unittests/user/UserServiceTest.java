@@ -31,6 +31,7 @@ import java.util.ArrayList;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("unit-test")
 public class UserServiceTest {
+    private static final String AUTH_USERNAME = "hans";
     private static final String TEST_USERNAME = "test";
     private static final String TEST_PASSWORD = "test";
 
@@ -78,7 +79,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @WithMockUser(username = TEST_USERNAME, password = TEST_PASSWORD, roles = "USER")
+    @WithMockUser(username = AUTH_USERNAME, roles = "ADMIN")
     public void disableUserTest() throws InternalUserNotFoundException, InternalForbiddenException, InternalUserValidationException {
         setTestUserEnabled(true);
         var userDTO = userService.findUserByName(TEST_USERNAME);
