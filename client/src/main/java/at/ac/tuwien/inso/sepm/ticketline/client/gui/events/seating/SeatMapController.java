@@ -7,6 +7,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.service.NewsService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.SeatMapService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.implementation.SimpleSeatMapService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.sector.SectorDTO;
 import javafx.fxml.FXML;
@@ -33,17 +34,16 @@ public class SeatMapController {
 
     @FXML
     private Canvas seatMapCanvas;
-
     @FXML
     private ScrollPane seatMapScrollPane;
 
     private GraphicsContext gc;
-
     private Map<SectorDTO, List<CanvasSeat>> sectorSeatMap;
     private List<CanvasLegend> legendList;
-
     private SeatSelectionListener seatSelectionListener;
+
     private PerformanceDTO performance;
+    private List<ReservationDTO> reservationDTOS;
 
     public SeatMapController(SeatMapService seatMapService) {
         this.seatMapService = seatMapService;
@@ -54,11 +54,12 @@ public class SeatMapController {
         sectorSeatMap = new HashMap<>();
     }
 
-    public void drawSeatMap(PerformanceDTO performance) {
+    public void drawSeatMap(PerformanceDTO performance, List<ReservationDTO> reservationDTOS) {
         LOGGER.debug("Performance to draw seatmap for {}", performance.toString());
         for(SectorDTO sector: performance.getHall().getSectors()) {
             Long price = sector.getCategory().getBasePriceMod() * performance.getPrice();
 
+            //First draw all sectors and seats of this hall and check if these seats are in any reservation
             List<CanvasSeat> canvasSeats = new ArrayList<>(sector.getSeatsPerRow() * sector.getRows());
             for(int i = 0; i < sector.getSeatsPerRow(); i++) {
                 for(int j = 0; j < sector.getRows(); j++) {
@@ -67,10 +68,21 @@ public class SeatMapController {
                         + (sector.getStartPositionY() * CanvasSeat.HEIGHT + CanvasSeat.REGULAR_MARGIN * j + j * CanvasSeat.HEIGHT)
                         + (CanvasSeat.OFFSET_TOP));
 
+                    boolean isReserved = false;
+                    //Check if this seat might be in a reservation
+                    for(ReservationDTO r: reservationDTOS) {
+                        for(SeatDTO s: r.getSeats()) {
+                            if(s.getSector().getId() == sector.getId()
+                                && s.getPositionX() == i
+                                && s.getPositionY() == j) {
+                                isReserved = true;
+                            }
+                        }
+                    }
                     CanvasSeat canvasSeat = new CanvasSeat(i, j,
                         sector.getStartPositionX() * CanvasSeat.WIDTH + CanvasSeat.REGULAR_MARGIN * i + i * CanvasSeat.WIDTH,
                         sector.getStartPositionY() * CanvasSeat.HEIGHT + CanvasSeat.REGULAR_MARGIN * j + j * CanvasSeat.HEIGHT,
-                        CanvasColorUtil.priceToPaint(price));
+                        CanvasColorUtil.priceToPaint(price), isReserved);
                     canvasSeats.add(canvasSeat);
                 }
             }
@@ -87,6 +99,7 @@ public class SeatMapController {
         //Draw the legend
         drawLegend(gc);
 
+        //Add mouse click event handler
         seatMapCanvas.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             double eventX = event.getX();
             double eventY = event.getY();
@@ -95,14 +108,16 @@ public class SeatMapController {
                 for(CanvasSeat seat: entry.getValue()) {
                     // Check if the seat was clicked
                     if(seat.isClicked(eventX, eventY)) {
-                        if(seat.isSelected()) {
-                            seat.drawDeselected(gc);
-                            seatSelectionListener.onSeatDeselected(new SeatDTO(seat.getPlanX(), seat.getPlanY(),
-                                entry.getKey()));
-                        } else {
-                            seat.drawSelected(gc);
-                            seatSelectionListener.onSeatSelected(new SeatDTO(seat.getPlanX(), seat.getPlanY(),
-                                entry.getKey()));
+                        if(!seat.isAlreadyReserved()) {
+                            if (seat.isSelected()) {
+                                seat.drawDeselected(gc);
+                                seatSelectionListener.onSeatDeselected(new SeatDTO(seat.getPlanX(), seat.getPlanY(),
+                                    entry.getKey()));
+                            } else {
+                                seat.drawSelected(gc);
+                                seatSelectionListener.onSeatSelected(new SeatDTO(seat.getPlanX(), seat.getPlanY(),
+                                    entry.getKey()));
+                            }
                         }
                     }
                 }
@@ -135,10 +150,12 @@ public class SeatMapController {
         }
     }
 
-    public void fill(PerformanceDTO performance) {
+    public void fill(PerformanceDTO performance, List<ReservationDTO> reservationDTOS) {
         this.performance = performance;
+        this.reservationDTOS = reservationDTOS;
+
         resizeCanvas(performance);
-        drawSeatMap(performance);
+        drawSeatMap(performance, reservationDTOS);
     }
 
     public void setSeatSelectionListener(SeatSelectionListener seatSelectionListener) {

@@ -1,9 +1,9 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service;
 
-import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationSearch;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -59,8 +59,7 @@ public interface ReservationService {
      * @return created reservation
      * @throws InvalidReservationException
      */
-    Reservation createReservation(Reservation reservation) throws InvalidReservationException;
-
+    Reservation createReservation(Reservation reservation) throws InvalidReservationException, InternalSeatReservationException;
     /**
      * Invoices an existing Reservation
      *
@@ -84,7 +83,7 @@ public interface ReservationService {
      * @return created Reservation
      * @throws InvalidReservationException
      */
-    Reservation createAndPayReservation(Reservation reservation) throws InvalidReservationException;
+    Reservation createAndPayReservation(Reservation reservation) throws InvalidReservationException, InternalSeatReservationException;
 
     /**
      * cancel existing reservation
@@ -115,4 +114,12 @@ public interface ReservationService {
      * @return the list of reservations we found
      */
     List<Reservation> findReservationsForPerformance(Long id);
+
+
+    /**
+     * Calculates the price of a reservation
+     * @param reservation the reservation whose price will be checked
+     * @return the price of this reservation in cents
+     */
+    Long calculatePrice(Reservation reservation);
 }

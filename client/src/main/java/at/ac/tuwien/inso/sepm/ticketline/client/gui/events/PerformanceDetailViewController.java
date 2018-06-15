@@ -96,7 +96,7 @@ public class PerformanceDetailViewController {
 
         // Setting stage name
         if (performance.getEvent().getEventType() == EventTypeDTO.SEAT) {
-            stage.setTitle("Seat Selection");
+            stage.setTitle("seat Selection");
         } else {
             stage.setTitle("Sector Selection");
         }

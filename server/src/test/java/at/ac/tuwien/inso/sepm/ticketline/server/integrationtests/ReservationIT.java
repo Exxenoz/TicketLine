@@ -7,6 +7,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.performance.PerformanceMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationMapper;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.seat.SeatMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.integrationtests.base.BaseIT;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.*;
 import io.restassured.RestAssured;
@@ -54,6 +55,8 @@ public class ReservationIT extends BaseIT {
     private ArtistRepository artistRepository;
     @Autowired
     private PerformanceMapper performanceMapper;
+    @Autowired
+    private SeatMapper seatMapper;
 
 
     @Before
@@ -206,7 +209,7 @@ public class ReservationIT extends BaseIT {
                 .withCustomerID(customer.getId())
                 .withPaid(false)
                 .withPerformanceID(performance.getId())
-                .withSeatIDs(List.of(seat.getId()))
+                .withSeats(List.of(seatMapper.seatToSeatDTO(seat)))
                 .build())
             .when().post(RESERVATION_ENDPOINT)
             .then().extract().response();
@@ -236,7 +239,7 @@ public class ReservationIT extends BaseIT {
                 .withCustomerID(customer.getId())
                 .withPaid(false)
                 .withPerformanceID(performance.getId())
-                .withSeatIDs(List.of(seat.getId()))
+                .withSeats(List.of(seatMapper.seatToSeatDTO(seat)))
                 .build())
             .when().post(RESERVATION_ENDPOINT + "/createAndPay")
             .then().extract().response();

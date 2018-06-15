@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.unittests.reservation;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.CustomerRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
@@ -208,6 +209,8 @@ public class ReservationServiceTests {
             returned = reservationService.createReservation(reservation);
         } catch (InvalidReservationException e) {
             fail();
+        } catch (InternalSeatReservationException e) {
+            e.printStackTrace();
         }
 
         assertThat(reservation.getId(), is(returned.getId()));
@@ -220,7 +223,7 @@ public class ReservationServiceTests {
     }
 
     @Test(expected = InvalidReservationException.class)
-    public void createInvalidReservation() throws InvalidReservationException {
+    public void createInvalidReservation() throws InvalidReservationException, InternalSeatReservationException {
         Performance performance = performanceRepository.save(newPerformance());
         Seat seat = seatRepository.save(newSeat());
         Customer customer = customerRepository.save(newCustomer());
@@ -260,6 +263,8 @@ public class ReservationServiceTests {
             returned = reservationService.createAndPayReservation(reservation);
         } catch (InvalidReservationException e) {
             fail();
+        } catch (InternalSeatReservationException e) {
+            fail();
         }
 
         assertThat(reservation.getId(), is(returned.getId()));
@@ -287,6 +292,8 @@ public class ReservationServiceTests {
             reservation = reservationService.createReservation(reservation);
             returned = reservationService.cancelReservation(reservation.getId());
         } catch (InvalidReservationException e) {
+            fail();
+        } catch (InternalSeatReservationException e) {
             fail();
         }
 

@@ -191,7 +191,7 @@ public class SelectCustomerController {
         Parent parent = fxmlLoader.load("/fxml/events/book/hallPlanView.fxml");
         stage.setScene(new Scene(parent));
         if (reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SEAT) {
-            stage.setTitle("Seat Selection");
+            stage.setTitle("seat Selection");
         } else {
             stage.setTitle("Sector Selection");
         }

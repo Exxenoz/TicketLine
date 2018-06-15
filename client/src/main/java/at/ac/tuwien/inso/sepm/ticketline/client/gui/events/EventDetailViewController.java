@@ -100,7 +100,6 @@ public class EventDetailViewController {
 
     @FXML
     public void changeToPerformanceDetailView(ActionEvent event) {
-
         if (chosenPerformance == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");

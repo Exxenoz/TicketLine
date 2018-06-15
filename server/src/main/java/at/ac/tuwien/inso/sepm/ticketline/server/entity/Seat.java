@@ -75,7 +75,7 @@ public class Seat {
 
     @Override
     public String toString() {
-        return "Seat{" +
+        return "seat{" +
             "id=" + id +
             ", positionX=" + positionX +
             ", positionY=" + positionY +

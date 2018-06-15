@@ -4,6 +4,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Seat;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationMapper;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.seat.SeatMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class ReservationMapperTest {
     // Suppress warning cause inspection does not know that the cdi annotations are added in the code generation step
     private ReservationMapper reservationMapper;
 
+    @Autowired
+    private SeatMapper seatMapper;
+
     @Test
     public void createReservationDTOMapsToReservationWithIds() {
         // GIVEN
@@ -44,7 +48,9 @@ public class ReservationMapperTest {
         createReservationDTO.setPaid(true);
         createReservationDTO.setPerformanceID(PERFORMANCE_ID);
         createReservationDTO.setCustomerID(CUSTOMER_ID);
-        createReservationDTO.setSeatIDs(List.of(SEAT_1.getId(), SEAT_2.getId(), SEAT_3.getId()));
+
+        createReservationDTO.setSeats(List.of(seatMapper.seatToSeatDTO(SEAT_1), seatMapper.seatToSeatDTO(SEAT_1),
+            seatMapper.seatToSeatDTO(SEAT_3)));
 
         // WHEN
         Reservation reservation = reservationMapper.createReservationDTOToReservation(createReservationDTO);
