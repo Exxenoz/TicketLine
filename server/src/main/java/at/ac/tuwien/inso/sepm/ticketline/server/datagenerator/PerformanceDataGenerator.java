@@ -28,7 +28,7 @@ import static java.time.LocalDateTime.now;
 public class PerformanceDataGenerator implements DataGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private static final int NUMBER_OF_PERFORMANCES_TO_GENERATE = 25;
+    private static final int NUMBER_OF_PERFORMANCES_TO_GENERATE = 200;
     private final ArtistRepository artistRepository;
     private final PerformanceRepository performanceRepository;
     private final EventRepository eventRepository;

@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,6 +42,7 @@ public class PurchaseReservationSummaryController {
 
     private final SpringFxmlLoader fxmlLoader;
     public Label customerName;
+    public Label performanceDate;
     private Stage stage;
 
     private ReservationDTO reservation;
@@ -66,6 +68,8 @@ public class PurchaseReservationSummaryController {
         String totalAmountTickets = "" + reservation.getSeats().size();
         ticketsNr.setText(totalAmountTickets);
         customerName.setText(reservation.getCustomer().getFirstName() + " " + reservation.getCustomer().getLastName());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
+        performanceDate.setText(reservation.getPerformance().getPerformanceStart().format(formatter));
         performancePrice.setText(reservation.getPerformance().getPrice().toString());
 
         if (isReservation) {

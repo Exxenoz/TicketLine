@@ -33,6 +33,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -141,27 +142,14 @@ public class EventSearchController {
 
     }
 
-    /**
-     * @FXML
-     *     private TextField artistFirstNameTextField;
-     *     @FXML
-     *     private TextField artistLastNameTextField;
-     *     @FXML
-     *     private TextField eventNameTextField;
-     *     @FXML
-     *     private TextField lengthInMinutesTextField;
-     *     @FXML
-     *     private RadioButton seatingYesButton;
-     *
-     */
-
     private void initializeTableView() {
         nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
             cellData.getValue().getName()));
         eventColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
             cellData.getValue().getEvent().getName()));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
         startTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
-            cellData.getValue().getPerformanceStart().toString()));
+            cellData.getValue().getPerformanceStart().format(formatter)));
         locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty( cellData.getValue().getLocationAddress().getCountry() + ", " +
             cellData.getValue().getLocationAddress().getCity()));
 
