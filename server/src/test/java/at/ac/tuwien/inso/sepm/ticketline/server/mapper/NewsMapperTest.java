@@ -37,12 +37,13 @@ public class NewsMapperTest {
         LocalDateTime.of(2016, 1, 1, 12, 0, 0, 0);
 
     @Test
-    public void shouldMapNewsToSimpleNewsDTOShorteningTextToSummary() {
+    public void shouldMapNewsToSimpleNewsDTO() {
         News news = News.builder()
             .id(NEWS_ID)
             .publishedAt(NEWS_PUBLISHED_AT)
             .title(NEWS_TITLE)
             .text(NEWS_TEXT)
+            .summary(NEWS_SUMMARY)
             .build();
         SimpleNewsDTO simpleNewsDTO = newsMapper.newsToSimpleNewsDTO(news);
         assertThat(simpleNewsDTO).isNotNull();
@@ -53,19 +54,19 @@ public class NewsMapperTest {
     }
 
     @Test
-    public void shouldMapNewsToSimpleNewsDTONotShorteningTextToSummary() {
-        News news = News.builder()
-            .id(NEWS_ID)
+    public void shouldMapSimpleNewsDTOToNews() {
+        SimpleNewsDTO simpleNewsDTO = SimpleNewsDTO.builder()
+            .id(1L)
             .publishedAt(NEWS_PUBLISHED_AT)
             .title(NEWS_TITLE)
-            .text(NEWS_SUMMARY)
+            .summary(NEWS_SUMMARY)
             .build();
-        SimpleNewsDTO simpleNewsDTO = newsMapper.newsToSimpleNewsDTO(news);
-        assertThat(simpleNewsDTO).isNotNull();
-        assertThat(simpleNewsDTO.getId()).isEqualTo(1L);
-        assertThat(simpleNewsDTO.getPublishedAt()).isEqualTo(NEWS_PUBLISHED_AT);
-        assertThat(simpleNewsDTO.getTitle()).isEqualTo(NEWS_TITLE);
-        assertThat(simpleNewsDTO.getSummary()).isEqualTo(NEWS_SUMMARY);
+        News news = newsMapper.simpleNewsDTOToNews(simpleNewsDTO);
+        assertThat(news).isNotNull();
+        assertThat(news.getId()).isEqualTo(1L);
+        assertThat(news.getPublishedAt()).isEqualTo(NEWS_PUBLISHED_AT);
+        assertThat(news.getTitle()).isEqualTo(NEWS_TITLE);
+        assertThat(news.getSummary()).isEqualTo(NEWS_SUMMARY);
     }
 
     @Test
@@ -75,6 +76,7 @@ public class NewsMapperTest {
             .publishedAt(NEWS_PUBLISHED_AT)
             .title(NEWS_TITLE)
             .text(NEWS_TEXT)
+            .summary(NEWS_SUMMARY)
             .build();
         DetailedNewsDTO detailedNewsDTO = newsMapper.newsToDetailedNewsDTO(news);
         assertThat(detailedNewsDTO).isNotNull();
@@ -82,6 +84,7 @@ public class NewsMapperTest {
         assertThat(detailedNewsDTO.getPublishedAt()).isEqualTo(NEWS_PUBLISHED_AT);
         assertThat(detailedNewsDTO.getTitle()).isEqualTo(NEWS_TITLE);
         assertThat(detailedNewsDTO.getText()).isEqualTo(NEWS_TEXT);
+        assertThat(detailedNewsDTO.getSummary()).isEqualTo(NEWS_SUMMARY);
     }
 
     @Test
@@ -91,6 +94,7 @@ public class NewsMapperTest {
             .publishedAt(NEWS_PUBLISHED_AT)
             .title(NEWS_TITLE)
             .text(NEWS_TEXT)
+            .summary(NEWS_SUMMARY)
             .build();
         News news = newsMapper.detailedNewsDTOToNews(detailedNewsDTO);
         assertThat(news).isNotNull();
@@ -98,6 +102,7 @@ public class NewsMapperTest {
         assertThat(news.getPublishedAt()).isEqualTo(NEWS_PUBLISHED_AT);
         assertThat(news.getTitle()).isEqualTo(NEWS_TITLE);
         assertThat(news.getText()).isEqualTo(NEWS_TEXT);
+        assertThat(news.getSummary()).isEqualTo(NEWS_SUMMARY);
     }
 
 }
