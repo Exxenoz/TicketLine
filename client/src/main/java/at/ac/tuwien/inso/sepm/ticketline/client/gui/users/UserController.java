@@ -234,11 +234,11 @@ public class UserController {
                     LOGGER.debug("The current user doesnt have the authorization to load the users-list");
                     mainController.getTpContent().getTabs().get(4).setDisable(true);
                 } else {
-                    JavaFXUtils.createExceptionDialog(e,
+                    JavaFXUtils.createErrorDialog(e.getMessage(),
                         content.getScene().getWindow()).showAndWait();
                 }
             } else {
-                JavaFXUtils.createExceptionDialog(e,
+                JavaFXUtils.createErrorDialog(e.getMessage(),
                     content.getScene().getWindow()).showAndWait();
             }
         }
