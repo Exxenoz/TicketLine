@@ -4,6 +4,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.MainController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.NewsService;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.SimpleNewsDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
@@ -12,6 +13,7 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Separator;
+import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +39,24 @@ public class NewsController {
     private NewsCreateController newsCreateController;
 
     @FXML
-    private void initialize() { }
+    public Tab unreadNewsTab;
+
+    @FXML
+    public Tab readNewsTab;
+
+    @FXML
+    public Tab createNewsTab;
+
+    @FXML
+    private void initialize() {
+        initI18N();
+    }
+
+    private void initI18N() {
+        unreadNewsTab.textProperty().bind(BundleManager.getStringBinding("news.main.tab1"));
+        readNewsTab.textProperty().bind(BundleManager.getStringBinding("news.main.tab2"));
+        createNewsTab.textProperty().bind(BundleManager.getStringBinding("news.main.tab3"));
+    }
 
     public void loadNews() {
         newsUnreadController.loadNews();
