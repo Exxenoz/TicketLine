@@ -112,6 +112,7 @@ public class SimpleReservationService implements ReservationService {
         }
         //check if all new seats are free
         checkIfAllSeatsAreFreeIgnoreId(onlyNewSeats);
+        LOGGER.debug("The added seats are still free");
 
         //create the new Seats
         seatsService.createSeats(onlyNewSeats);
@@ -125,9 +126,11 @@ public class SimpleReservationService implements ReservationService {
                 }
             }
             seatsService.deleteAll(removedSeats);
+            LOGGER.debug("Delete removed Seats");
         }
 
         //save changes
+        LOGGER.debug("Update reservation");
         return reservationRepository.save(reservation);
     }
 
