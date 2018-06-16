@@ -313,6 +313,10 @@ public class ReservationIT extends BaseIT {
         return seat;
     }
 
+    private Sector newSector() {
+        return null;
+    }
+
     private Customer newCustomer() {
         Customer customer = new Customer();
         customer.setFirstName("firstname");

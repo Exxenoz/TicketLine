@@ -5,8 +5,8 @@ import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.PerformanceDetailView
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SeatMapController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SeatSelectionListener;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SectorController;
-import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
@@ -169,11 +169,17 @@ public class HallPlanController implements SeatSelectionListener {
             stage.setTitle("Customer Details");
             stage.centerOnScreen();
         } else {
-            PRSController.showReservationDetails(reservation, stage);
-            Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
-            stage.setScene(new Scene(parent));
-            stage.setTitle("Reservation Overview");
-            stage.centerOnScreen();
+            try {
+                reservation = reservationService.editReservation(reservation);
+
+                PRSController.showReservationDetails(reservation, stage);
+                Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
+                stage.setScene(new Scene(parent));
+                stage.setTitle("Reservation Overview");
+                stage.centerOnScreen();
+            } catch (DataAccessException e) {
+                JavaFXUtils.createErrorDialog(e.getMessage(), stage);
+            }
         }
     }
 
