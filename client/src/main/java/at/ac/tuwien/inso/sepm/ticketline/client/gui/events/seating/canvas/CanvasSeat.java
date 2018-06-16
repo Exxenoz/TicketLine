@@ -6,14 +6,7 @@ import javafx.scene.paint.Paint;
 
 public class CanvasSeat implements CanvasComponent {
 
-    //Positioning
-    private int planX;
-    private int planY;
-    private double xPos;
-    private double yPos;
-
     //Drawing
-    private Paint paint;
     public final static double WIDTH = 30.0;
     public final static double HEIGHT = 30;
     public final static double OFFSET_LEFT = 14;
@@ -22,6 +15,16 @@ public class CanvasSeat implements CanvasComponent {
     private final static double ARC_WIDTH = 8;
     private final static double ARC_HEIGHT = 8;
     private final static double LINE_MARGIN = 2;
+
+    public final static Color SELECTED_COLOR = Color.ROYALBLUE;
+    public final static Color ALREADY_RESERVED_COLOR = Color.GREY;
+    private Paint paint;
+
+    //Positioning
+    private int planX;
+    private int planY;
+    private double xPos;
+    private double yPos;
 
     //Seat state
     private boolean selected;
@@ -49,18 +52,7 @@ public class CanvasSeat implements CanvasComponent {
     public void draw(GraphicsContext gc) {
         if(isAlreadyReserved()) {
             //Draw seat background as usual
-            gc.setFill(Color.GREY);
-            gc.setLineWidth(1);
-            gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
-
-            //Draw a crossed line to symbolize reservation state
-            gc.setFill(Color.BLACK);
-            gc.setStroke(Color.BLACK);
-            gc.setLineWidth(2);
-            gc.strokeLine(xPos + LINE_MARGIN, yPos + LINE_MARGIN, xPos + WIDTH - LINE_MARGIN,
-                yPos + HEIGHT - LINE_MARGIN);
-            gc.strokeLine(xPos + LINE_MARGIN, yPos + HEIGHT - LINE_MARGIN, xPos + WIDTH - LINE_MARGIN,
-                yPos + LINE_MARGIN);
+           drawAlreadyReservedState(gc);
 
         } else {
             gc.setFill(this.paint);
@@ -80,8 +72,18 @@ public class CanvasSeat implements CanvasComponent {
     }
 
     public void drawAlreadyReservedState(GraphicsContext gc) {
-        gc.setFill(this.paint);
+        gc.setFill(ALREADY_RESERVED_COLOR);
+        gc.setLineWidth(1);
         gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
+
+        //Draw a crossed line to symbolize reservation state
+        gc.setFill(Color.BLACK);
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(2);
+        gc.strokeLine(xPos + LINE_MARGIN, yPos + LINE_MARGIN, xPos + WIDTH - LINE_MARGIN,
+            yPos + HEIGHT - LINE_MARGIN);
+        gc.strokeLine(xPos + LINE_MARGIN, yPos + HEIGHT - LINE_MARGIN, xPos + WIDTH - LINE_MARGIN,
+            yPos + LINE_MARGIN);
     }
 
 

@@ -1,9 +1,11 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas.CanvasColorUtil;
-import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas.CanvasLegend;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas.CanvasSectorLegend;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas.CanvasSeat;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas.CanvasStateLegend;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.SeatMapService;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
@@ -26,6 +28,7 @@ public class SeatMapController {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final static double VERTICAL_ESTIMATE = 1.5;
     private final static double OFFSET_LEFT = 2.5;
+    private final static int STATE_LEGEND_SIZE = 2;
 
     private SeatMapService seatMapService;
 
@@ -36,7 +39,8 @@ public class SeatMapController {
 
     private GraphicsContext gc;
     private Map<SectorDTO, List<CanvasSeat>> sectorSeatMap;
-    private List<CanvasLegend> legendList;
+    private List<CanvasSectorLegend> sectorLegendList;
+    private List<CanvasStateLegend> stateLegendList;
     private SeatSelectionListener seatSelectionListener;
 
     private PerformanceDTO performance;
@@ -126,25 +130,44 @@ public class SeatMapController {
 
     public void drawLegend(GraphicsContext gc) {
         List<SectorDTO> sectors = performance.getHall().getSectors();
-        legendList = new ArrayList<>(sectors.size());
+        sectorLegendList = new ArrayList<>(sectors.size());
+        stateLegendList = new ArrayList<>(STATE_LEGEND_SIZE);
 
-        double currentY = seatMapService.findMaxSectorY(sectors, false) * CanvasLegend.HEIGHT;
-        double currentX = CanvasLegend.OFFSET_LEFT;
+        double currentY = seatMapService.findMaxSectorY(sectors, false) * CanvasSectorLegend.HEIGHT;
+        double currentX = CanvasSectorLegend.OFFSET_LEFT;
 
-        for(int i = 0; i < sectors.size(); i++) {
-            SectorDTO s = performance.getHall().getSectors().get(i);
-            //Determine price of sector
-            Long price = s.getCategory().getBasePriceMod() * performance.getPrice();
-            CanvasLegend c = new CanvasLegend(currentX, currentY, CanvasColorUtil.priceToPaint(price), price);
-            legendList.add(c);
-            c.draw(gc);
+        for(int i = 0; i < sectors.size() + STATE_LEGEND_SIZE; i++) {
+            if(i < sectors.size()) {
+                SectorDTO s = performance.getHall().getSectors().get(i);
+                //Determine price of sector
+                Long price = s.getCategory().getBasePriceMod() * performance.getPrice();
+                CanvasSectorLegend c = new CanvasSectorLegend(currentX, currentY, CanvasColorUtil.priceToPaint(price), price);
+                sectorLegendList.add(c);
+                c.draw(gc);
+            } else {
+                if(i < sectors.size() + STATE_LEGEND_SIZE) {
+                    if(i == sectors.size()) {
+                        //Adding legend for reserved state
+                        CanvasStateLegend canvasStateLegend = new CanvasStateLegend(currentX, currentY,
+                            CanvasSeat.ALREADY_RESERVED_COLOR,
+                            BundleManager.getBundle().getString("events.seating.canvas.state.reserved"), true);
+                        canvasStateLegend.draw(gc);
+                    } else if(i == sectors.size() + 1) {
+                        //Add legend for selected state
+                        CanvasStateLegend canvasStateLegend = new CanvasStateLegend(currentX, currentY,
+                            CanvasSeat.SELECTED_COLOR,
+                            BundleManager.getBundle().getString("events.seating.canvas.state.selected"), false);
+                        canvasStateLegend.draw(gc);
+                    }
+                }
+            }
 
             //Create a new legend row for every few items
-            if(i % CanvasLegend.LEGEND_ROW_SIZE == 0 && i > 0) {
-                currentY += CanvasLegend.HEIGHT + CanvasLegend.REGULAR_MARGIN;
-                currentX = CanvasLegend.OFFSET_LEFT;
+            if(i % CanvasSectorLegend.LEGEND_ROW_SIZE == 0 && i > 0) {
+                currentY += CanvasSectorLegend.HEIGHT + CanvasSectorLegend.REGULAR_MARGIN;
+                currentX = CanvasSectorLegend.OFFSET_LEFT;
             } else {
-                currentX = CanvasLegend.OFFSET_LEFT + (i % CanvasLegend.LEGEND_ROW_SIZE) * CanvasLegend.ESTIMATED_WIDTH;
+                currentX = CanvasSectorLegend.OFFSET_LEFT + (i % CanvasSectorLegend.LEGEND_ROW_SIZE) * CanvasSectorLegend.ESTIMATED_WIDTH;
             }
         }
     }
@@ -167,8 +190,8 @@ public class SeatMapController {
 
         estimatedHeight += seatMapService.findMaxSectorY(performanceDTO.getHall().getSectors(), true) * CanvasSeat.HEIGHT;
         //Add extra height for sector legend
-        estimatedHeight += ((performanceDTO.getHall().getSectors().size() / CanvasLegend.LEGEND_ROW_SIZE) + 1) *
-            (CanvasLegend.HEIGHT + CanvasLegend.REGULAR_MARGIN);
+        estimatedHeight += ((performanceDTO.getHall().getSectors().size() / CanvasSectorLegend.LEGEND_ROW_SIZE) + 1) *
+            (CanvasSectorLegend.HEIGHT + CanvasSectorLegend.REGULAR_MARGIN);
 
         estimatedWidth += seatMapService.findMaxSectorX(performanceDTO.getHall().getSectors(), true) * CanvasSeat.WIDTH;
 

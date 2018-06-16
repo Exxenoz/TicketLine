@@ -133,7 +133,8 @@ public class SimpleReservationService implements ReservationService {
                 }
             }
         }
-        LOGGER.debug("seat reservation found no collisions.");
+        LOGGER.debug("Seat reservation found no collisions.");
+
         //The seats seem to be fine and there are no reservation conflicts, now we want to actually create our seats
         List<Seat> createdSeats = seatsService.createSeats(reservation.getSeats());
 
