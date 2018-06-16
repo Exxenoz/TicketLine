@@ -14,6 +14,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationExce
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpBadRequestException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpConflictException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpNotFoundException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -64,8 +65,13 @@ public class ReservationEndpoint {
     @ApiOperation("Create a new Reservation for Seats in a Performance")
     public ReservationDTO createNewReservation(@RequestBody CreateReservationDTO createReservationDTO) throws InvalidReservationException {
         final var reservationToCreate = reservationMapper.createReservationDTOToReservation(createReservationDTO);
-        final var createdReservation = reservationService.createReservation(reservationToCreate);
-        return reservationMapper.reservationToReservationDTO(createdReservation);
+        try {
+            final var createdReservation = reservationService.createReservation(reservationToCreate);
+            return reservationMapper.reservationToReservationDTO(createdReservation);
+        } catch (InternalSeatReservationException e) {
+            e.printStackTrace();
+            throw new HttpBadRequestException();
+        }
     }
 
     @GetMapping("/findNotPaid/{reservationId}")
@@ -143,8 +149,14 @@ public class ReservationEndpoint {
     @ApiOperation("Create and pay new Reservation for Seats in a Performance")
     public ReservationDTO createAndPayReservation(@RequestBody CreateReservationDTO createReservationDTO) throws InvalidReservationException {
         final var reservationToCreate = reservationMapper.createReservationDTOToReservation(createReservationDTO);
-        final var createdReservation = reservationService.createAndPayReservation(reservationToCreate);
-        return reservationMapper.reservationToReservationDTO(createdReservation);
+        try {
+            final var createdReservation = reservationService.createAndPayReservation(reservationToCreate);
+            return reservationMapper.reservationToReservationDTO(createdReservation);
+        } catch (InternalSeatReservationException e) {
+            e.printStackTrace();
+            throw new HttpBadRequestException();
+        }
+
     }
 
     @GetMapping("/{page}/{size}")

@@ -1,9 +1,12 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking;
 
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.PerformanceDetailViewController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SeatMapController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SeatSelectionListener;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SectorController;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
@@ -28,6 +31,8 @@ public class HallPlanController implements SeatSelectionListener {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    private Stage stage;
+
     public Label eventNameLabel;
     public Label performanceNameLabel;
     public Label amountOfTicketsLabel;
@@ -41,13 +46,13 @@ public class HallPlanController implements SeatSelectionListener {
     public Button continueButton;
     public Button backButton;
     public Button reserveButton;
-    private Stage stage;
 
     private final SpringFxmlLoader fxmlLoader;
     private final SelectCustomerController selectCustomerController;
     private final PurchaseReservationSummaryController PRSController;
     private final SeatMapController seatMapController;
     private final SectorController sectorController;
+    private final ReservationService reservationService;
 
     private ReservationDTO reservation;
     private List<SeatDTO> seats;
@@ -60,13 +65,16 @@ public class HallPlanController implements SeatSelectionListener {
                               @Lazy PerformanceDetailViewController performanceDetailViewController,
                               @Lazy PurchaseReservationSummaryController PRSController,
                               @Lazy SeatMapController seatMapController,
-                              @Lazy SectorController sectorController) {
+                              @Lazy SectorController sectorController,
+                               ReservationService reservationService) {
 
         this.fxmlLoader = fxmlLoader;
         this.selectCustomerController = selectCustomerController;
         this.PRSController = PRSController;
         this.seatMapController = seatMapController;
         this.sectorController = sectorController;
+
+        this.reservationService = reservationService;
     }
 
     @FXML
@@ -98,11 +106,19 @@ public class HallPlanController implements SeatSelectionListener {
             reserveButton.setManaged(false);
         }
 
+        List<ReservationDTO> reservationDTOS = null;
+        try {
+            reservationDTOS = this.reservationService.findReservationsForPerformance(reservation.getPerformance().getId());
+        } catch (DataAccessException d) {
+            d.printStackTrace();
+        }
         // Set performance detail to seat plan
         if(this.reservation != null && this.reservation.getPerformance() != null) {
-            //Set this controller als seat selection listener for the seat map
-            this.seatMapController.setSeatSelectionListener(this);
-            this.seatMapController.fill(this.reservation.getPerformance());
+            if(reservationDTOS != null) {
+                //Set this controller als seat selection listener for the seat map
+                this.seatMapController.setSeatSelectionListener(this);
+                this.seatMapController.fill(this.reservation.getPerformance(), reservationDTOS);
+            }
         }
     }
 
