@@ -25,4 +25,11 @@ public interface SeatsService {
      * @return the fully specified seat for the matching draft.
      */
     Seat findPersistedSeat(Seat seat) throws InternalSeatReservationException;
+
+    /**
+     * Removes all persisted seats equal to the seats in the given list
+     *
+     * @param seats the seats to be removed
+     */
+    void deleteAll(List<Seat> seats);
 }

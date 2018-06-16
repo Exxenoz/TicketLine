@@ -90,23 +90,33 @@ public class SimpleReservationService implements ReservationService {
 
     @Override
     public Reservation editReservation(Reservation reservation) throws InvalidReservationException {
-        List<Seat> changedSeats = reservation.getSeats();
-        List<Seat> savedSeats = reservationRepository.findByPaidFalseAndId(reservation.getId()).getSeats();
 
-        List<Seat> onlyNewSeats = getNewSeats(changedSeats);
+        List<Seat> changedSeats = reservation.getSeats();//the changed seats
+        List<Seat> savedSeats = reservationRepository.findByPaidFalseAndId(reservation.getId()).getSeats(); //the old seat config
+        List<Seat> onlyNewSeats = getNewSeats(changedSeats);//the not yet saved seats
+
+        //First, get the picked performance for this reservation
+        Performance performance = performanceRepository.findById(reservation.getPerformance().getId()).orElse(null);
+
+        //Then, too fail fast, we check the integrity of the seats according to the hall plan and the sectors
+        try {
+            if (performance != null) {
+                hallPlanService.checkSeatsAgainstSectors(onlyNewSeats, performance.getHall().getSectors());
+            } else {
+                LOGGER.error("Could not find the the Reservation");
+                throw new InvalidReservationException("The Performance was not set");
+            }
+        } catch (InternalHallValidationException i) {
+            LOGGER.warn("The sectors of the reservation do not match the hall '{}", performance.getHall());
+            throw new InvalidReservationException("Hall plan is not coherent with sectors or seats.");
+        }
+        //check if all new seats are free
         checkIfAllSeatsAreFreeIgnoreId(onlyNewSeats);
 
-        onlyNewSeats = seatRepository.saveAll(onlyNewSeats);
-        List<Seat> onlyExistingSeats = getExistingSeats(changedSeats);
+        //create the new Seats
+        seatsService.createSeats(onlyNewSeats);
 
-        List<Seat> seats = new LinkedList<>();
-        seats.addAll(onlyNewSeats);
-        seats.addAll(onlyExistingSeats);
-
-
-        reservation.setSeats(seats);
-        reservation = reservationRepository.save(reservation);
-
+        //delete Seats, if they were removed from the reservation
         if (!changedSeats.containsAll(savedSeats)) {
             List<Seat> removedSeats = new LinkedList<>();
             for (Seat seat : savedSeats) {
@@ -114,10 +124,11 @@ public class SimpleReservationService implements ReservationService {
                     removedSeats.add(seat);
                 }
             }
-            seatRepository.deleteAll(removedSeats);
+            seatsService.deleteAll(removedSeats);
         }
 
-        return reservation;
+        //save changes
+        return reservationRepository.save(reservation);
     }
 
     private List<Seat> getNewSeats(List<Seat> seats) {
@@ -147,7 +158,8 @@ public class SimpleReservationService implements ReservationService {
             for (Seat seat : seatsToCheck) {
                 for (Seat otherSeat : reservation.getSeats()) {
                     if (seat.equalsWithoutId(otherSeat)) {
-                        throw new InvalidReservationException("Seats are already reserved!");
+                        LOGGER.warn("The seat {} is already reserved", seat);
+                        throw new InvalidReservationException("Seat " + seat + " is already reserved!");
                     }
                 }
             }
