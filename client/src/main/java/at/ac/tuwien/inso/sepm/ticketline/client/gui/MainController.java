@@ -45,10 +45,25 @@ public class MainController {
     private MenuBar mbMain;
 
     @FXML
+    public Menu applicationMenu;
+
+    @FXML
+    public Menu languageMenu;
+
+    @FXML
     public CheckMenuItem checkMenuItemLanguageEnglish;
 
     @FXML
     public CheckMenuItem checkMenuItemLanguageGerman;
+
+    @FXML
+    public MenuItem applicationExitMenuItem;
+
+    @FXML
+    public Menu helpMenu;
+
+    @FXML
+    public MenuItem helpAboutMenuItem;
 
     private Node login;
     private Node loginNewPassword;
@@ -82,12 +97,23 @@ public class MainController {
         pbLoadingProgress.setProgress(0);
         login = springFxmlLoader.load("/fxml/authenticationComponent.fxml");
         spMainContent.getChildren().add(login);
+        initI18N();
         initLanguageMenu();
         initNewsTabPane();
         initEventsTabPane();
         initReservationTabPane();
         initCustomersTabPane();
         initUserManagementTabPane();
+    }
+
+    private void initI18N() {
+        applicationMenu.textProperty().bind(BundleManager.getStringBinding("menu.application"));
+        languageMenu.textProperty().bind(BundleManager.getStringBinding("menu.application.language"));
+        checkMenuItemLanguageEnglish.textProperty().bind(BundleManager.getStringBinding("menu.application.language.english"));
+        checkMenuItemLanguageGerman.textProperty().bind(BundleManager.getStringBinding("menu.application.language.german"));
+        applicationExitMenuItem.textProperty().bind(BundleManager.getStringBinding("menu.application.exit"));
+        helpMenu.textProperty().bind(BundleManager.getStringBinding("menu.help"));
+        helpAboutMenuItem.textProperty().bind(BundleManager.getStringBinding("menu.help.about"));
     }
 
     @FXML
