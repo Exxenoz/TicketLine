@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserCreateRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordChangeRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
@@ -165,22 +166,22 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public UserDTO save(UserDTO userDTO) throws InternalUserValidationException, InternalUsernameConflictException {
-        LOGGER.info("Save user {}", userDTO);
+    public UserDTO save(UserCreateRequestDTO userCreateRequestDTO) throws InternalUserValidationException, InternalUsernameConflictException {
+        LOGGER.info("Save user {}", userCreateRequestDTO.getUsername());
 
         try {
-            UserValidator.validateNewUser(userDTO);
+            UserValidator.validateNewUser(userCreateRequestDTO);
         } catch (UserValidatorException e) {
             throw new InternalUserValidationException();
         }
 
-        if (userRepository.findByUsername(userDTO.getUsername()) != null) {
+        if (userRepository.findByUsername(userCreateRequestDTO.getUsername()) != null) {
             throw new InternalUsernameConflictException();
         }
 
-        var user = userMapper.userDTOToUser(userDTO);
+        var user = userMapper.userDTOToUser(userCreateRequestDTO);
 
-        user.setPassword(new BCryptPasswordEncoder(10).encode(userDTO.getPassword()));
+        user.setPassword(new BCryptPasswordEncoder(10).encode(userCreateRequestDTO.getPassword()));
 
         return userMapper.userToUserDTO(userRepository.save(user));
     }

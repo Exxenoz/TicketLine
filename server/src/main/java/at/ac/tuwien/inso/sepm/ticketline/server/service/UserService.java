@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserCreateRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordChangeRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
@@ -95,13 +96,13 @@ public interface UserService {
     /**
      * Creates a new user
      *
-     * @param userDTO user to create
+     * @param userCreateRequestDTO information about the user to create
      * @return created user
      * @throws InternalUserValidationException in case user validation failed
      * @throws InternalUsernameConflictException in case the username is already taken
      * @return the saved user
      */
-    UserDTO save(UserDTO userDTO) throws InternalUserValidationException, InternalUsernameConflictException;
+    UserDTO save(UserCreateRequestDTO userCreateRequestDTO) throws InternalUserValidationException, InternalUsernameConflictException;
 
     /**
      * Resets the password of a user

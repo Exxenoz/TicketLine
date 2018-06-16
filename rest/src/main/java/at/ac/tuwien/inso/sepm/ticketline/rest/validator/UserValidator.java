@@ -1,28 +1,26 @@
 package at.ac.tuwien.inso.sepm.ticketline.rest.validator;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserCreateRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordChangeRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.util.DuplicateFinder;
-import at.ac.tuwien.inso.sepm.ticketline.rest.util.RestBundleManager;
 
 public abstract class UserValidator {
 
     public static final String nameRegex = "^[-' a-zA-ZöüöäÜÖÄ0-9]+$";
 
     //validates newly created user
-    public static void validateNewUser(UserDTO userDTO) throws UserValidatorException {
-        validateUsername(userDTO);
-        validatePlainTextPassword(userDTO);
-        validateStrikes(userDTO);
-        validateRoles(userDTO);
+    public static void validateNewUser(UserCreateRequestDTO userCreateRequestDTO) throws UserValidatorException {
+        validateUsername(userCreateRequestDTO);
+        validatePlainTextPassword(userCreateRequestDTO);
+        validateStrikes(userCreateRequestDTO);
+        validateRoles(userCreateRequestDTO);
     }
 
     //validates existing user
     public static void validateExistingUser(UserDTO userDTO) throws UserValidatorException {
         validateID(userDTO);
         validateUsername(userDTO);
-        validateEncryptedPassword(userDTO); // ToDo: Remove me
         validateStrikes(userDTO);
         validateRoles(userDTO);
     }
@@ -87,24 +85,9 @@ public abstract class UserValidator {
         }
     }
 
-    public static void validatePlainTextPassword(UserDTO userDTO) throws UserValidatorException {
-        validateDTO(userDTO);
-        validatePlainTextPassword(userDTO.getPassword());
-    }
-
-    public static void validateEncryptedPassword(UserDTO userDTO) throws UserValidatorException {
-        validateDTO(userDTO);
-        if (userDTO.getPassword() == null) {
-            throw new UserValidatorException(
-                "User Validation failed: password null"
-            );
-        } else {
-            if (userDTO.getPassword().length() != 60) {
-                throw new UserValidatorException(
-                    "User Validation failed: password faulty"
-                );
-            }
-        }
+    public static void validatePlainTextPassword(UserCreateRequestDTO userCreateRequestDTO) throws UserValidatorException {
+        validateDTO(userCreateRequestDTO);
+        validatePlainTextPassword(userCreateRequestDTO.getPassword());
     }
 
     public static void validatePasswordChangeKey(String passwordChangeKey) throws UserValidatorException {

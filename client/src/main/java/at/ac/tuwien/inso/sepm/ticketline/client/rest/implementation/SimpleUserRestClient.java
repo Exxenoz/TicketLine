@@ -6,6 +6,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserCreateRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordChangeRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
@@ -112,12 +113,12 @@ public class SimpleUserRestClient implements UserRestClient {
     }
 
     @Override
-    public UserDTO create(UserDTO userDTO) throws DataAccessException {
+    public UserDTO create(UserCreateRequestDTO userCreateRequestDTO) throws DataAccessException {
         try {
             LOGGER.debug("Creating a user with {}", createUserUri);
             final var user =
                 restClient.exchange(
-                    new RequestEntity<>(userDTO, POST, createUserUri),
+                    new RequestEntity<>(userCreateRequestDTO, POST, createUserUri),
                     new ParameterizedTypeReference<UserDTO>() {
                     });
             LOGGER.debug("Result status was {} with content {}", user.getStatusCode(), user.getBody());
