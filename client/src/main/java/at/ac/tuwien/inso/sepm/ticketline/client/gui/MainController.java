@@ -12,10 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -23,6 +20,8 @@ import javafx.stage.WindowEvent;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.springframework.stereotype.Component;
 
+import static java.util.Locale.ENGLISH;
+import static java.util.Locale.GERMAN;
 import static javafx.application.Platform.runLater;
 import static javafx.stage.Modality.APPLICATION_MODAL;
 import static javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST;
@@ -44,6 +43,12 @@ public class MainController {
 
     @FXML
     private MenuBar mbMain;
+
+    @FXML
+    public CheckMenuItem checkMenuItemLanguageEnglish;
+
+    @FXML
+    public CheckMenuItem checkMenuItemLanguageGerman;
 
     private Node login;
     private Node loginNewPassword;
@@ -77,6 +82,7 @@ public class MainController {
         pbLoadingProgress.setProgress(0);
         login = springFxmlLoader.load("/fxml/authenticationComponent.fxml");
         spMainContent.getChildren().add(login);
+        initLanguageMenu();
         initNewsTabPane();
         initEventsTabPane();
         initReservationTabPane();
@@ -100,6 +106,14 @@ public class MainController {
         dialog.setScene(new Scene(springFxmlLoader.load("/fxml/aboutDialog.fxml")));
         dialog.setTitle(BundleManager.getBundle().getString("dialog.about.title"));
         dialog.showAndWait();
+    }
+
+    private void initLanguageMenu() {
+        if (BundleManager.getLocale().getLanguage().equals(ENGLISH.getLanguage())) {
+            checkMenuItemLanguageEnglish.setSelected(true);
+        } else if (BundleManager.getLocale().getLanguage().equals(GERMAN.getLanguage())) {
+            checkMenuItemLanguageGerman.setSelected(true);
+        }
     }
 
     private void initNewsTabPane() {
@@ -198,5 +212,27 @@ public class MainController {
     public void switchBackToAuthentication() {
         spMainContent.getChildren().remove(loginNewPassword);
         spMainContent.getChildren().add(login);
+    }
+
+    public void onClickLanguageEnglish(ActionEvent actionEvent) {
+        if (BundleManager.getLocale().getLanguage().equals(ENGLISH.getLanguage())) {
+            checkMenuItemLanguageEnglish.setSelected(true);
+            return;
+        }
+
+        checkMenuItemLanguageGerman.setSelected(false);
+
+        BundleManager.changeLocale(ENGLISH);
+    }
+
+    public void onClickLanguageGerman(ActionEvent actionEvent) {
+        if (BundleManager.getLocale().getLanguage().equals(GERMAN.getLanguage())) {
+            checkMenuItemLanguageGerman.setSelected(true);
+            return;
+        }
+
+        checkMenuItemLanguageEnglish.setSelected(false);
+
+        BundleManager.changeLocale(GERMAN);
     }
 }
