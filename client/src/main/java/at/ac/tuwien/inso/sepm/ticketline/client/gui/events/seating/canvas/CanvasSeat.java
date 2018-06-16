@@ -6,25 +6,25 @@ import javafx.scene.paint.Paint;
 
 public class CanvasSeat implements CanvasComponent {
 
+    //Positioning
     private int planX;
     private int planY;
-
     private double xPos;
     private double yPos;
 
-    public final static double WIDTH = 30;
+    //Drawing
+    private Paint paint;
+    public final static double WIDTH = 30.0;
     public final static double HEIGHT = 30;
-
     public final static double OFFSET_LEFT = 14;
     public final static double OFFSET_TOP = 20;
     public final static double REGULAR_MARGIN = 2;
-    public final static double EXTRA_MARGIN = 4;
-
     private final static double ARC_WIDTH = 8;
     private final static double ARC_HEIGHT = 8;
+    private final static double LINE_MARGIN = 2;
 
+    //Seat state
     private boolean selected;
-    private Paint paint;
     private boolean alreadyReserved;
 
     public CanvasSeat(int planX, int planY, double xPos, double yPos, Paint paint, boolean alreadyReserved) {
@@ -47,11 +47,21 @@ public class CanvasSeat implements CanvasComponent {
 
     @Override
     public void draw(GraphicsContext gc) {
-
         if(isAlreadyReserved()) {
+            //Draw seat background as usual
             gc.setFill(Color.GREY);
             gc.setLineWidth(1);
             gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
+
+            //Draw a crossed line to symbolize reservation state
+            gc.setFill(Color.BLACK);
+            gc.setStroke(Color.BLACK);
+            gc.setLineWidth(2);
+            gc.strokeLine(xPos + LINE_MARGIN, yPos + LINE_MARGIN, xPos + WIDTH - LINE_MARGIN,
+                yPos + HEIGHT - LINE_MARGIN);
+            gc.strokeLine(xPos + LINE_MARGIN, yPos + HEIGHT - LINE_MARGIN, xPos + WIDTH - LINE_MARGIN,
+                yPos + LINE_MARGIN);
+
         } else {
             gc.setFill(this.paint);
             gc.setLineWidth(1);
@@ -59,17 +69,21 @@ public class CanvasSeat implements CanvasComponent {
         }
     }
 
-    public void drawSelected(GraphicsContext gc) {
-        selected = true;
+    public void drawSelectedState(GraphicsContext gc) {
         gc.setFill(Color.ROYALBLUE);
         gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
     }
 
-    public void drawDeselected(GraphicsContext gc) {
-        selected = false;
+    public void drawDeselectedState(GraphicsContext gc) {
         gc.setFill(this.paint);
         gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
     }
+
+    public void drawAlreadyReservedState(GraphicsContext gc) {
+        gc.setFill(this.paint);
+        gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
+    }
+
 
     public double getxPos() {
         return xPos;

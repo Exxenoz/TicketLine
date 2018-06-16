@@ -3,9 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas.CanvasColorUtil;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas.CanvasLegend;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas.CanvasSeat;
-import at.ac.tuwien.inso.sepm.ticketline.client.service.NewsService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.SeatMapService;
-import at.ac.tuwien.inso.sepm.ticketline.client.service.implementation.SimpleSeatMapService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
@@ -16,7 +14,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
@@ -110,11 +107,13 @@ public class SeatMapController {
                     if(seat.isClicked(eventX, eventY)) {
                         if(!seat.isAlreadyReserved()) {
                             if (seat.isSelected()) {
-                                seat.drawDeselected(gc);
+                                seat.setSelected(false);
+                                seat.drawDeselectedState(gc);
                                 seatSelectionListener.onSeatDeselected(new SeatDTO(seat.getPlanX(), seat.getPlanY(),
                                     entry.getKey()));
                             } else {
-                                seat.drawSelected(gc);
+                                seat.setSelected(true);
+                                seat.drawSelectedState(gc);
                                 seatSelectionListener.onSeatSelected(new SeatDTO(seat.getPlanX(), seat.getPlanY(),
                                     entry.getKey()));
                             }
