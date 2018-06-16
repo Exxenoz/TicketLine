@@ -1,6 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.InvoiceService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,15 +46,19 @@ public class PurchaseReservationSummaryController {
     private final ReservationService reservationService;
     private boolean isReservation = false;
     private boolean showDetails = false;
+    private static final String INVOICES_FOLDER = "invoices/";
+    private final InvoiceService invoiceService;
 
     PurchaseReservationSummaryController(
         SpringFxmlLoader fxmlLoader,
         ReservationService reservationService,
+        InvoiceService invoiceService,
         @Lazy HallPlanController hallPlanController
     ) {
         this.fxmlLoader = fxmlLoader;
         this.reservationService = reservationService;
         this.hallPlanController = hallPlanController;
+        this.invoiceService = invoiceService;
     }
 
     @FXML
@@ -101,11 +107,24 @@ public class PurchaseReservationSummaryController {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == buttonTypeYes) {
             LOGGER.debug("print invoice");
-            closeWindow();
+            File pdf = openPDFFile();
+            invoiceService.deletePDF(pdf);
         } else {
-            LOGGER.debug("do not print invoic");
-            closeWindow();
+            LOGGER.debug("do not print invoice");
         }
+        closeWindow();
+    }
+
+    private File openPDFFile() {
+        String filepath = INVOICES_FOLDER
+            + reservation.getReservationNumber()
+            + "_"
+            + reservation.getPaidAt()
+            + ".pdf";
+        File invoiceFile = new File(filepath);
+        invoiceService.downdloadAndStorePDF(reservation.getReservationNumber(), invoiceFile);
+        invoiceService.openPDF(invoiceFile);
+        return invoiceFile;
     }
 
     public void buyTicketsButton(ActionEvent event) throws DataAccessException {
