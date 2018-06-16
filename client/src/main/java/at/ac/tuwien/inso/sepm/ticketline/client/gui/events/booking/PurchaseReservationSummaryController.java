@@ -5,15 +5,12 @@ import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +20,7 @@ import org.springframework.stereotype.Component;
 import java.lang.invoke.MethodHandles;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class PurchaseReservationSummaryController {
@@ -88,6 +86,28 @@ public class PurchaseReservationSummaryController {
 
     }
 
+    private void printInvoiceDialog() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(BundleManager.getBundle().getString("bookings.purchase.print.title"));
+        alert.setHeaderText(BundleManager.getBundle().getString("bookings.purchase.print.text"));
+        ButtonType buttonTypeYes = new ButtonType(
+            BundleManager.getBundle().getString("bookings.purchase.print.yes")
+        );
+        ButtonType buttonTypeCancel = new ButtonType(
+            BundleManager.getBundle().getString("bookings.purchase.print.no"),
+            ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeCancel);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == buttonTypeYes) {
+            LOGGER.debug("print invoice");
+            closeWindow();
+        } else {
+            LOGGER.debug("do not print invoic");
+            closeWindow();
+        }
+    }
+
     public void buyTicketsButton(ActionEvent event) throws DataAccessException {
 
         CreateReservationDTO createReservationDTO = new CreateReservationDTO();
@@ -112,21 +132,11 @@ public class PurchaseReservationSummaryController {
         } else if (!showDetails){
             //reserve and buy tickets
             reservationService.createAndPayReservation(createReservationDTO);
-
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(BundleManager.getBundle().getString("bookings.purchase.print.title"));
-            alert.setHeaderText("Congratulations! Your Purchase was successful!" + "\n" + "Do you want to print the invoice?");
-            alert.showAndWait();
-            closeWindow();
+            printInvoiceDialog();
         } else {
             //buy already reserved tickets
             reservationService.purchaseReservation(reservation);
-
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(BundleManager.getBundle().getString("bookings.purchase.print.title"));
-            alert.setHeaderText("Congratulations! Your Purchase was successful!" + "\n" + "Do you want to print the invoice?");
-            alert.showAndWait();
-            closeWindow();
+            printInvoiceDialog();
         }
     }
 
