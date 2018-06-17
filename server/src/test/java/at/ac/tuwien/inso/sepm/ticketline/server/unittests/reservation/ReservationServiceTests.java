@@ -5,10 +5,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalCancelationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
-import at.ac.tuwien.inso.sepm.ticketline.server.repository.CustomerRepository;
-import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
-import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
-import at.ac.tuwien.inso.sepm.ticketline.server.repository.SeatRepository;
+import at.ac.tuwien.inso.sepm.ticketline.server.repository.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import org.junit.After;
 import org.junit.Assert;
@@ -49,6 +46,15 @@ public class ReservationServiceTests {
     private ReservationRepository reservationRepository;
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private SectorCategoryRepository sectorCategoryRepository;
+    @Autowired
+    private SectorRepository sectorRepository;
+    @Autowired
+    private HallRepository hallRepository;
+
+    private Hall hallforPerformances;
+
 
     @Before
     public void setUp() {
@@ -269,6 +275,7 @@ public class ReservationServiceTests {
         Seat seat = seatRepository.save(newSeat());
         Customer customer = customerRepository.save(newCustomer());
 
+
         Reservation reservation = new Reservation();
         reservation.setCustomer(customer);
         reservation.setPerformance(performance);
@@ -295,8 +302,10 @@ public class ReservationServiceTests {
     @Test
     public void cancel() throws InternalCancelationException {
         Performance performance = performanceRepository.save(newPerformance());
-        Seat seat = seatRepository.save(newSeat());
+        Seat seat = newSeat();
         Customer customer = customerRepository.save(newCustomer());
+        performance.setHall(hallforPerformances);
+        performanceRepository.save(performance);
 
         Reservation reservation = new Reservation();
         reservation.setCustomer(customer);
@@ -338,7 +347,8 @@ public class ReservationServiceTests {
         Seat seat = new Seat();
         seat.setPositionX(1);
         seat.setPositionY(2);
-        return seat;
+        seat.setSector(newSector());
+        return seatRepository.save(seat);
     }
 
     private Customer newCustomer() {
@@ -360,4 +370,41 @@ public class ReservationServiceTests {
         return customer;
     }
 
+    private Sector newSector() {
+        final var sector = new Sector();
+        sector.setCategory(newSectorCategory());
+        sector.setSeatsPerRow(10);
+        sector.setRows(3);
+        sector.setStartPositionY(0);
+        Sector sector1 = sectorRepository.save(sector);
+        Hall hall = newHall();
+        hall.setSectors(List.of(sector1));
+        hall.setAddress(newLocationAddress());
+        hallforPerformances = hallRepository.save(hall);
+        return sector1;
+
+    }
+
+    private SectorCategory newSectorCategory() {
+        final var sectorCategory = new SectorCategory();
+        sectorCategory.setName("test");
+        sectorCategory.setBasePriceMod(100L);
+        return sectorCategoryRepository.save(sectorCategory);
+    }
+
+    private Hall newHall() {
+        final var hall = new Hall();
+        hall.setName("hall1");
+        return hall;
+    }
+
+    private LocationAddress newLocationAddress() {
+        final var locationAddress = new LocationAddress();
+        locationAddress.setLocationName("test");
+        locationAddress.setCity("test");
+        locationAddress.setPostalCode("1111");
+        locationAddress.setCountry("tt");
+        locationAddress.setStreet("test");
+        return locationAddress;
+    }
 }

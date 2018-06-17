@@ -45,7 +45,10 @@ public class SimpleSeatsService implements SeatsService {
 
     @Override
     public void deleteSeat(Seat seat) {
-        seatRepository.delete(seat);
+        //   System.out.println(seat.toString());
+        Seat s = findbyID(seat.getId());
+        //   System.out.println(s.toString());
+        seatRepository.delete(s);
     }
 
     @Override
