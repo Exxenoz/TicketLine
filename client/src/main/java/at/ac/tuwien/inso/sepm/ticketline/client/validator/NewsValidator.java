@@ -70,6 +70,13 @@ public class NewsValidator {
             );
         }
 
+        if(img == null) {
+            throw new NewsValidationException(
+                BundleManager.getExceptionBundle().getString("exception.validator.news.image.could_not_read"),
+                "exception.validator.news.image.could_not_read"
+            );
+        }
+
         if (img.getWidth() < MIN_IMG_WIDTH || img.getHeight() < MIN_IMG_HEIGHT) {
             throw new NewsValidationException(
                 BundleManager.getExceptionBundle().getString("exception.validator.news.image_too_small"),
