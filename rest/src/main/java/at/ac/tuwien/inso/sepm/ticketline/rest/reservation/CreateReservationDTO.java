@@ -1,12 +1,14 @@
 package at.ac.tuwien.inso.sepm.ticketline.rest.reservation;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
+
 import java.util.List;
 
 public class CreateReservationDTO {
 
     private Long customerID;
     private long performanceID;
-    private List<Long> seatIDs;
+    private List<SeatDTO> seats;
     private boolean paid;
 
     public long getPerformanceID() {
@@ -17,12 +19,12 @@ public class CreateReservationDTO {
         this.performanceID = performanceID;
     }
 
-    public List<Long> getSeatIDs() {
-        return seatIDs;
+    public List<SeatDTO> getSeats() {
+        return seats;
     }
 
-    public void setSeatIDs(List<Long> seatIDs) {
-        this.seatIDs = seatIDs;
+    public void setSeats(List<SeatDTO> seats) {
+        this.seats = seats;
     }
 
     public boolean isPaid() {
@@ -46,7 +48,7 @@ public class CreateReservationDTO {
 
         private Long customerID;
         private long performanceID;
-        private List<Long> seatIDs;
+        private List<SeatDTO> seats;
         private boolean paid;
 
         private CreateReservationDTOBuilder() {
@@ -66,8 +68,8 @@ public class CreateReservationDTO {
             return this;
         }
 
-        public CreateReservationDTOBuilder withSeatIDs(List<Long> seatIDs) {
-            this.seatIDs = seatIDs;
+        public CreateReservationDTOBuilder withSeats(List<SeatDTO> seatDTOS) {
+            this.seats = seatDTOS;
             return this;
         }
 
@@ -80,7 +82,7 @@ public class CreateReservationDTO {
             CreateReservationDTO createReservationDTO = new CreateReservationDTO();
             createReservationDTO.setCustomerID(customerID);
             createReservationDTO.setPerformanceID(performanceID);
-            createReservationDTO.setSeatIDs(seatIDs);
+            createReservationDTO.setSeats(seats);
             createReservationDTO.setPaid(paid);
             return createReservationDTO;
         }

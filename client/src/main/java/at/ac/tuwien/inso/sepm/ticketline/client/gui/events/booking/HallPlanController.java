@@ -1,10 +1,13 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking;
 
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.PerformanceDetailViewController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SeatMapController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SeatSelectionListener;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SectorController;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
@@ -49,6 +52,7 @@ public class HallPlanController implements SeatSelectionListener {
     private final PurchaseReservationSummaryController PRSController;
     private final SeatMapController seatMapController;
     private final SectorController sectorController;
+    private final ReservationService reservationService;
 
     private ReservationDTO reservation;
     private List<SeatDTO> seats;
@@ -61,13 +65,15 @@ public class HallPlanController implements SeatSelectionListener {
                               @Lazy PerformanceDetailViewController performanceDetailViewController,
                               @Lazy PurchaseReservationSummaryController PRSController,
                               @Lazy SeatMapController seatMapController,
-                              @Lazy SectorController sectorController) {
+                              @Lazy SectorController sectorController,
+                               ReservationService reservationService) {
 
         this.fxmlLoader = fxmlLoader;
         this.selectCustomerController = selectCustomerController;
         this.PRSController = PRSController;
         this.seatMapController = seatMapController;
         this.sectorController = sectorController;
+        this.reservationService = reservationService;
     }
 
     @FXML
@@ -99,11 +105,19 @@ public class HallPlanController implements SeatSelectionListener {
             reserveButton.setManaged(false);
         }
 
+        List<ReservationDTO> reservationDTOS = null;
+        try {
+            reservationDTOS = this.reservationService.findReservationsForPerformance(reservation.getPerformance().getId());
+        } catch (DataAccessException d) {
+            d.printStackTrace();
+        }
         // Set performance detail to seat plan
         if(this.reservation != null && this.reservation.getPerformance() != null) {
-            //Set this controller als seat selection listener for the seat map
-            this.seatMapController.setSeatSelectionListener(this);
-            this.seatMapController.fill(this.reservation.getPerformance());
+            if(reservationDTOS != null) {
+                //Set this controller als seat selection listener for the seat map
+                this.seatMapController.setSeatSelectionListener(this);
+                this.seatMapController.fill(this.reservation.getPerformance(), reservationDTOS);
+            }
         }
     }
 
@@ -154,15 +168,22 @@ public class HallPlanController implements SeatSelectionListener {
             stage.setTitle(BundleManager.getBundle().getString("bookings.hallplan.customer_select.title"));
             stage.centerOnScreen();
         } else {
-            PRSController.showReservationDetails(reservation, stage);
-            Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
-            stage.setScene(new Scene(parent));
-            stage.setTitle(BundleManager.getBundle().getString("bookings.purchase.details.title"));
-            stage.centerOnScreen();
+            try {
+                reservation = reservationService.editReservation(reservation);
+
+                PRSController.showReservationDetails(reservation, stage);
+                Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
+                stage.setScene(new Scene(parent));
+                stage.setTitle(BundleManager.getBundle().getString("bookings.purchase.details.title"));
+                stage.centerOnScreen();
+            } catch (DataAccessException e) {
+                JavaFXUtils.createErrorDialog(e.getMessage(), stage);
+            }
         }
     }
 
     public void fill(ReservationDTO reservation, Stage stage) {
+        this.changeDetails = false;
         this.reservation = reservation;
         this.stage = stage;
     }

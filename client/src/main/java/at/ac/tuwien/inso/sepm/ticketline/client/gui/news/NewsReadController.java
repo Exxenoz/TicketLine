@@ -103,7 +103,7 @@ public class NewsReadController {
     @FXML
     private void initialize() {
         tabHeaderController.setIcon(NEWSPAPER_ALT);
-        tabHeaderController.setTitle(BundleManager.getBundle().getString("news.header.read"));
+        tabHeaderController.setTitleBinding(BundleManager.getStringBinding("news.header.read"));
         webView.getEngine().setJavaScriptEnabled(false);
     }
 

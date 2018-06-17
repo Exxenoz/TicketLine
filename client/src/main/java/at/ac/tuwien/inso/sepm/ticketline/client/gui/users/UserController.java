@@ -13,6 +13,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -72,6 +73,9 @@ public class UserController {
     public Button passwordResetButton;
 
     @FXML
+    public Button createUserButton;
+
+    @FXML
     private TabHeaderController tabHeaderController;
 
     private ScrollBar verticalScrollbar;
@@ -94,22 +98,32 @@ public class UserController {
     @FXML
     private void initialize() {
         tabHeaderController.setIcon(LOCK);
-        tabHeaderController.setTitle(BundleManager.getBundle().getString("usertab.header"));
+        tabHeaderController.setTitleBinding(BundleManager.getStringBinding("usertab.header"));
 
+        initI18N();
         initializeUserTable();
+    }
+
+    private void initI18N() {
+        usernameCol.textProperty().bind(BundleManager.getStringBinding("usertab.usertable.username"));
+        useraccountStatusCol.textProperty().bind(BundleManager.getStringBinding("usertab.usertable.user_is_enabled"));
+        userAuthTriesCol.textProperty().bind(BundleManager.getStringBinding("usertab.usertable.user_auth_tries"));
+        passwordResetButton.textProperty().bind(BundleManager.getStringBinding("usertab.user.password_reset"));
+        toggleEnableButton.textProperty().bind(BundleManager.getStringBinding("usertab.user.enable"));
+        createUserButton.textProperty().bind(BundleManager.getStringBinding("usertab.user.create"));
     }
 
     private void initializeUserTable() {
         userTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if(newSelection != null) {
                 // update button text according to enabled status of selected user
-                String toggleEnableButtonText = "";
+                StringBinding toggleEnableButtonBinding = null;
                 if (newSelection.isEnabled()) {
-                    toggleEnableButtonText = BundleManager.getBundle().getString("usertab.user.disable");
+                    toggleEnableButtonBinding = BundleManager.getStringBinding("usertab.user.disable");
                 } else {
-                    toggleEnableButtonText = BundleManager.getBundle().getString("usertab.user.enable");
+                    toggleEnableButtonBinding = BundleManager.getStringBinding("usertab.user.enable");
                 }
-                toggleEnableButton.setText(toggleEnableButtonText);
+                toggleEnableButton.textProperty().bind(toggleEnableButtonBinding);
                 toggleEnableButton.setDisable(false);
                 passwordResetButton.setDisable(false);
             } else {
@@ -124,11 +138,9 @@ public class UserController {
         );
         useraccountStatusCol.setCellValueFactory(cellData -> {
             if (cellData.getValue().isEnabled()) {
-                return new SimpleStringProperty(BundleManager.getBundle().getString(
-                    "usertab.usertable.user_is_enabled.true"));
+                return BundleManager.getStringBinding("usertab.usertable.user_is_enabled.true");
             } else {
-                return new SimpleStringProperty(BundleManager.getBundle().getString(
-                    "usertab.usertable.user_is_enabled.false"));
+                return BundleManager.getStringBinding("usertab.usertable.user_is_enabled.false");
             }
         });
         userAuthTriesCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(
@@ -278,12 +290,12 @@ public class UserController {
                 LOGGER.debug("Trying to disable user");
                 userService.disableUser(userDTO);
                 userDTO.setEnabled(false);
-                toggleEnableButton.setText(BundleManager.getBundle().getString("usertab.user.enable"));
+                toggleEnableButton.textProperty().bind(BundleManager.getStringBinding("usertab.user.enable"));
             } else {
                 LOGGER.debug("Trying to enable user");
                 userService.enableUser(userDTO);
                 userDTO.setEnabled(true);
-                toggleEnableButton.setText(BundleManager.getBundle().getString("usertab.user.disable"));
+                toggleEnableButton.textProperty().bind(BundleManager.getStringBinding("usertab.user.disable"));
             }
         } catch (DataAccessException e) {
             String errorMessage = e.getMessage();

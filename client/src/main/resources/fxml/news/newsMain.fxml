@@ -11,13 +11,13 @@
     <children>
         <TabPane VBox.vgrow="ALWAYS" fx:id="eventTabPane" stylesheets="@/css/secondLevelTabs.css" tabClosingPolicy="UNAVAILABLE">
             <tabs>
-                <Tab text="%news.main.tab1">
+                <Tab fx:id="unreadNewsTab" text="%news.main.tab1">
                     <fx:include fx:id="newsUnread" source="newsTabUnread.fxml" />
                 </Tab>
-                <Tab text="%news.main.tab2">
+                <Tab fx:id="readNewsTab" text="%news.main.tab2">
                     <fx:include fx:id="newsRead" source="newsTabRead.fxml" />
                 </Tab>
-                <Tab text="%news.main.tab3">
+                <Tab fx:id="createNewsTab" text="%news.main.tab3">
                     <fx:include fx:id="newsCreate" source="newsTabCreate.fxml" />
                 </Tab>
             </tabs>

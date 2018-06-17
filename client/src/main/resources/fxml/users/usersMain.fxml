@@ -36,7 +36,7 @@
                                   <Insets right="16.0" />
                               </VBox.margin>
                           </Button>
-                          <Button mnemonicParsing="false" onAction="#onClickCreateUserButton" text="%usertab.user.create" />
+                          <Button fx:id="createUserButton" mnemonicParsing="false" onAction="#onClickCreateUserButton" text="%usertab.user.create" />
                       </buttons>
                   </ButtonBar>
           </children>

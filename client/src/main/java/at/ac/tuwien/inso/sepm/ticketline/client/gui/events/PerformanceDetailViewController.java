@@ -21,12 +21,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
+import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
 @Component
 public class PerformanceDetailViewController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    public Label eventName;
 
     @FXML
     private Label performanceHeader;
@@ -68,9 +70,13 @@ public class PerformanceDetailViewController {
     @FXML
     private void initialize() {
         reservation = new ReservationDTO();
-        performanceHeader.setText(performance.getEvent().getName());
-        locationName.setText(performance.getLocationAddress().getLocationName() + ", " + performance.getLocationAddress().getCity());
-        startTime.setText(performance.getPerformanceStart().toString());
+        performanceHeader.setText(performance.getName());
+        eventName.setText(performance.getEvent().getName());
+        locationName.setText(performance.getLocationAddress().getLocationName() + ", "
+            + performance.getLocationAddress().getStreet() + ", "
+            + performance.getAddress().getPostalCode());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
+        startTime.setText(performance.getPerformanceStart().format(formatter));
 
         String artistList = performance.getArtists()
             .stream()

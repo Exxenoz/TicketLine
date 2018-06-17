@@ -6,6 +6,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.service.UserService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserCreateRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordChangeRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
@@ -55,8 +56,8 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public UserDTO create(UserDTO userDTO) throws DataAccessException {
-        return userRestClient.create(userDTO);
+    public UserDTO create(UserCreateRequestDTO userCreateRequestDTO) throws DataAccessException {
+        return userRestClient.create(userCreateRequestDTO);
     }
 
     @Override

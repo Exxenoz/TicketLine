@@ -25,13 +25,15 @@ public class CanvasSeat implements CanvasComponent {
 
     private boolean selected;
     private Paint paint;
+    private boolean alreadyReserved;
 
-    public CanvasSeat(int planX, int planY, double xPos, double yPos, Paint paint) {
+    public CanvasSeat(int planX, int planY, double xPos, double yPos, Paint paint, boolean alreadyReserved) {
         this.planX = planX;
         this.planY = planY;
         this.xPos = xPos + OFFSET_LEFT;
         this.yPos = yPos + OFFSET_TOP;
         this.paint = paint;
+        this.alreadyReserved = alreadyReserved;
     }
 
     @Override
@@ -45,9 +47,16 @@ public class CanvasSeat implements CanvasComponent {
 
     @Override
     public void draw(GraphicsContext gc) {
-        gc.setFill(this.paint);
-        gc.setLineWidth(1);
-        gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
+
+        if(isAlreadyReserved()) {
+            gc.setFill(Color.GREY);
+            gc.setLineWidth(1);
+            gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
+        } else {
+            gc.setFill(this.paint);
+            gc.setLineWidth(1);
+            gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
+        }
     }
 
     public void drawSelected(GraphicsContext gc) {
@@ -100,5 +109,13 @@ public class CanvasSeat implements CanvasComponent {
 
     public void setPlanY(int planY) {
         this.planY = planY;
+    }
+
+    public boolean isAlreadyReserved() {
+        return alreadyReserved;
+    }
+
+    public void setAlreadyReserved(boolean alreadyReserved) {
+        this.alreadyReserved = alreadyReserved;
     }
 }

@@ -3,12 +3,11 @@ package at.ac.tuwien.inso.sepm.ticketline.server.entity.specification;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -58,10 +57,24 @@ public class PerformanceSpecification implements Specification<Performance> {
         final var predicates = new ArrayList<Predicate>();
 
         if (start != null) {
-            LocalDateTime before = start.minusHours(1);
-            LocalDateTime after = start.plusHours(1);
 
-            predicates.add(builder.between(root.get("performanceStart"), before, after));
+            LocalDate chosenDate = LocalDate.of(start.getYear(), start.getMonth(), start.getDayOfMonth());
+            LocalDateTime before;
+            LocalDateTime after;
+
+            if(start.isEqual(LocalDateTime.of(chosenDate, LocalTime.MIDNIGHT))){
+                before = start;
+                after = start.plusDays(1).minusNanos(1);
+
+                predicates.add(builder.between(root.get("performanceStart"), before, after));
+
+            } else {
+
+                before = start.minusHours(1);
+                after = start.plusHours(1);
+
+                predicates.add(builder.between(root.get("performanceStart"), before, after));
+            }
         }
 
         if (duration != null && !duration.isZero()) {
@@ -77,27 +90,33 @@ public class PerformanceSpecification implements Specification<Performance> {
             predicates.add(builder.between(root.get("price"), less, more));
         }
 
+        Path<Object> locationAddress = root.get("locationAddress");
+
         if (!isNullOrEmpty(locationName)) {
-            predicates.add(builder.like(root.get("locationAddress").get("locationName"), "%" + locationName + "%"));
+            predicates.add(fulltextSearch(builder, locationAddress.get("locationName"), locationName));
         }
 
         if (!isNullOrEmpty(street)) {
-            predicates.add(builder.equal(root.get("locationAddress").get("street"), street));
+            predicates.add(fulltextSearch(builder, locationAddress.get("street"), street));
         }
 
         if (!isNullOrEmpty(city)) {
-            predicates.add(builder.like(root.get("locationAddress").get("city"), "%" + city + "%"));
+            predicates.add(fulltextSearch(builder, locationAddress.get("city"), city));
         }
 
         if (!isNullOrEmpty(country)) {
-            predicates.add(builder.equal(root.get("locationAddress").get("country"), country));
+            predicates.add(fulltextSearch(builder, locationAddress.get("country"), country));
         }
 
         if (!isNullOrEmpty(postalCode)) {
-            predicates.add(builder.equal(root.get("locationAddress").get("postalCode"), postalCode));
+            predicates.add(fulltextSearch(builder, locationAddress.get("postalCode"), postalCode));
         }
 
         return builder.and(predicates.toArray(new Predicate[]{}));
+    }
+
+    private static Predicate fulltextSearch(CriteriaBuilder builder, Path<String> fieldPath, String searchString) {
+        return builder.like(builder.lower(fieldPath), ("%" + searchString + "%").toLowerCase());
     }
 
 }

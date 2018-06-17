@@ -15,6 +15,8 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Long.valueOf;
+
 @Profile("generateData")
 @Component
 @Order(5)
@@ -91,7 +93,7 @@ public class HallDataGenerator implements DataGenerator {
                     if(sectorCategoryRepository.count() == 0) {
                         LOGGER.debug("Could net set sector category since the corresponding repository is empty");
                         SectorCategory sectorCategory = new SectorCategory();
-                        sectorCategory.setBasePriceMod(new Long(500L));
+                        sectorCategory.setBasePriceMod(valueOf(500L));
                         sectorCategory.setName(faker.hipster().word());
                         s.setCategory(sectorCategory);
                         sectorCategoryRepository.save(sectorCategory);
@@ -102,34 +104,6 @@ public class HallDataGenerator implements DataGenerator {
 
                     // Save sector without seats
                     s = sectorRepository.save(s);
-
-                    List<Seat> seats = new ArrayList<>(5);
-                    // Add a few random seats
-                    for(int k = 0; k < 5; k++) {
-                        Seat seat = new Seat();
-
-                        // Initialize position of seat in sector
-                        int nextX = faker.number().numberBetween(0, sectorSeatsPerRow);
-                        int nextY = faker.number().numberBetween(0, sectorRows);
-                        seat.setPositionX(nextX);
-                        seat.setPositionY(nextY);
-//                        seat.setSector(s);
-
-                        //Check if such a seat already exists, and just dont store it for now if it does.
-                        for(Seat t: seats) {
-                            if(t.getPositionX() == nextX && t.getPositionY() == nextY) {
-                                seat = null;
-                            }
-                        }
-                        if(seat != null) {
-                            seats.add(seat);
-                            seatRepository.save(seat);
-                        }
-
-                    }
-
-                    // Set sector seats
-                    s.setSeats(seats);
 
                     // Update seats of sector
                     sectorRepository.save(s);

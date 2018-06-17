@@ -33,6 +33,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -137,6 +138,8 @@ public class EventSearchController {
         tabHeaderController.setIcon(CALENDAR_ALT);
         tabHeaderController.setTitle(BundleManager.getBundle().getString("bookings.table.event"));
         initializeTableView();
+
+
     }
 
     private void initializeTableView() {
@@ -144,12 +147,14 @@ public class EventSearchController {
             cellData.getValue().getName()));
         eventColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
             cellData.getValue().getEvent().getName()));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
         startTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
-            cellData.getValue().getPerformanceStart().toString()));
-        locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
+            cellData.getValue().getPerformanceStart().format(formatter)));
+        locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty( cellData.getValue().getLocationAddress().getCountry() + ", " +
             cellData.getValue().getLocationAddress().getCity()));
 
         foundEventsTableView.setItems(performanceData);
+
     }
 
 

@@ -221,10 +221,14 @@ public class ReservationsController {
             cellData.getValue().getCustomer().getFirstName() + " " +
                 cellData.getValue().getCustomer().getLastName()));
         paidColumn.setCellValueFactory(cellData -> {
-            if (cellData.getValue().isPaid()) {
-                return new SimpleStringProperty(BundleManager.getBundle().getString("bookings.table.paid.true"));
+            if (cellData.getValue().isCanceled() == false) {
+                if (cellData.getValue().isPaid()) {
+                    return new SimpleStringProperty(BundleManager.getBundle().getString("bookings.table.paid.true"));
+                } else {
+                    return new SimpleStringProperty(BundleManager.getBundle().getString("bookings.table.paid.false"));
+                }
             } else {
-                return new SimpleStringProperty(BundleManager.getBundle().getString("bookings.table.paid.false"));
+                return new SimpleStringProperty(BundleManager.getBundle().getString("bookings.table.canceled.true"));
             }
         });
 

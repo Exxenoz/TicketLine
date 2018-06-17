@@ -29,9 +29,6 @@ public class SectorDTO {
     @ApiModelProperty(readOnly = true, name= "The number of rows")
     private int rows;
 
-    @ApiModelProperty
-    private List<SeatDTO> seats;
-
     public Long getId() {
         return id;
     }
@@ -72,14 +69,6 @@ public class SectorDTO {
         this.rows = rows;
     }
 
-    public List<SeatDTO> getSeats() {
-        return seats;
-    }
-
-    public void setSeats(List<SeatDTO> seats) {
-        this.seats = seats;
-    }
-
     public SectorCategoryDTO getCategory() {
         return category;
     }
@@ -87,7 +76,7 @@ public class SectorDTO {
     public void setCategory(SectorCategoryDTO category) {
         this.category = category;
     }
-
+//kleinesgackiwarda
     @Override
     public String toString() {
         return "SectorDTO{" +
@@ -97,7 +86,6 @@ public class SectorDTO {
             ", startPositionY=" + startPositionY +
             ", seatsPerRow=" + seatsPerRow +
             ", rows=" + rows +
-            ", seats=" + seats +
             '}';
     }
 
@@ -111,13 +99,12 @@ public class SectorDTO {
             getSeatsPerRow() == sectorDTO.getSeatsPerRow() &&
             getRows() == sectorDTO.getRows() &&
             Objects.equals(getId(), sectorDTO.getId()) &&
-            Objects.equals(getCategory(), sectorDTO.getCategory()) &&
-            Objects.equals(getSeats(), sectorDTO.getSeats());
+            Objects.equals(getCategory(), sectorDTO.getCategory());
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(getId(), getCategory(), getStartPositionX(), getStartPositionY(), getSeatsPerRow(), getRows(), getSeats());
+        return Objects.hash(getId(), getCategory(), getStartPositionX(), getStartPositionY(), getSeatsPerRow(), getRows());
     }
 }

@@ -5,7 +5,8 @@ import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,6 +22,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,6 +42,8 @@ public class PurchaseReservationSummaryController {
     public Label performanceHeader;
 
     private final SpringFxmlLoader fxmlLoader;
+    public Label customerName;
+    public Label performanceDate;
     private Stage stage;
 
     private ReservationDTO reservation;
@@ -64,6 +68,9 @@ public class PurchaseReservationSummaryController {
         performanceName.setText(reservation.getPerformance().getName());
         String totalAmountTickets = "" + reservation.getSeats().size();
         ticketsNr.setText(totalAmountTickets);
+        customerName.setText(reservation.getCustomer().getFirstName() + " " + reservation.getCustomer().getLastName());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
+        performanceDate.setText(reservation.getPerformance().getPerformanceStart().format(formatter));
         performancePrice.setText(reservation.getPerformance().getPrice().toString());
 
         if (isReservation) {
@@ -76,7 +83,7 @@ public class PurchaseReservationSummaryController {
             //make sure the reservation is still unpaid
             if (!reservation.isPaid()) {
                 cancelButtonPRS.setText("Edit Reservation");
-            } else{
+            } else {
                 cancelButtonPRS.setDisable(true);
                 cancelButtonPRS.setVisible(false);
                 cancelButtonPRS.setManaged(false);
@@ -93,24 +100,26 @@ public class PurchaseReservationSummaryController {
         CreateReservationDTO createReservationDTO = new CreateReservationDTO();
         createReservationDTO.setCustomerID(reservation.getCustomer() != null ? reservation.getCustomer().getId() : null);
         createReservationDTO.setPerformanceID(reservation.getPerformance().getId());
-        List<Long> seatsID = new LinkedList<>();
-        reservation.getSeats().forEach(seatDTO -> seatsID.add(seatDTO.getId()));
-        createReservationDTO.setSeatIDs(seatsID);
+
+        List<SeatDTO> seatDTOS = new LinkedList<>();
+        seatDTOS.addAll(reservation.getSeats());
+        createReservationDTO.setSeats(seatDTOS);
 
 
         //only reserve tickets
         if (!showDetails && isReservation) {
-            //ReservationDTO reservationDTO = reservationService.createNewReservation(createReservationDTO);
+            ReservationDTO reservationDTO = reservationService.createNewReservation(createReservationDTO);
 
-            //Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            //alert.setTitle("Print Invoice");
-           // alert.setHeaderText("Congratulations! Your Reservation was successful!" + reservationDTO.getReservationNumber());
-           // alert.showAndWait();
-           // closeWindow();
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Print Invoice");
+            alert.setHeaderText("Congratulations! Your reservation was successful!" + '\n' + "Your reservation number is: " + reservationDTO.getReservationNumber());
+            alert.showAndWait();
+            closeWindow();
 
             closeWindow();
-        } else if (!showDetails){
+
             //reserve and buy tickets
+        } else if (!showDetails) {
             reservationService.createAndPayReservation(createReservationDTO);
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -118,8 +127,9 @@ public class PurchaseReservationSummaryController {
             alert.setHeaderText("Congratulations! Your Purchase was successful!" + "\n" + "Do you want to print the invoice?");
             alert.showAndWait();
             closeWindow();
-        } else {
+
             //buy already reserved tickets
+        } else {
             reservationService.purchaseReservation(reservation);
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -142,9 +152,9 @@ public class PurchaseReservationSummaryController {
     }
 
     public void backButton(ActionEvent event) {
-        if(showDetails){
+        if (showDetails) {
             closeWindow();
-        }else {
+        } else {
             Parent parent = fxmlLoader.load("/fxml/events/book/selectCustomerView.fxml");
             stage.setScene(new Scene(parent));
             stage.setTitle(BundleManager.getBundle().getString("bookings.purchase.customer.details.title"));
@@ -170,6 +180,4 @@ public class PurchaseReservationSummaryController {
         this.showDetails = true;
 
     }
-
-
 }

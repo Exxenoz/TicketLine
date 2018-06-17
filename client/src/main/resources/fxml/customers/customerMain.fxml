@@ -31,7 +31,7 @@
                        <VBox.margin>
                           <Insets right="16.0" />
                        </VBox.margin></Button>
-                     <Button mnemonicParsing="false" onAction="#onClickCreateCustomerButton" text="%customers.main.button.create" />
+                     <Button fx:id="customerCreateButton" mnemonicParsing="false" onAction="#onClickCreateCustomerButton" text="%customers.main.button.create" />
                  </buttons>
               </ButtonBar>
             </children>
