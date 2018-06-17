@@ -49,8 +49,8 @@ public class PurchaseReservationSummaryController {
     PurchaseReservationSummaryController(
         SpringFxmlLoader fxmlLoader,
         ReservationService reservationService,
-        @Lazy HallPlanController hallPlanController
-    ) {
+        @Lazy HallPlanController hallPlanController) {
+
         this.fxmlLoader = fxmlLoader;
         this.reservationService = reservationService;
         this.hallPlanController = hallPlanController;
@@ -75,7 +75,7 @@ public class PurchaseReservationSummaryController {
             //make sure the reservation is still unpaid
             if (!reservation.isPaid()) {
                 cancelButtonPRS.setText("Edit Reservation");
-            } else{
+            } else {
                 cancelButtonPRS.setDisable(true);
                 cancelButtonPRS.setVisible(false);
                 cancelButtonPRS.setManaged(false);
@@ -84,11 +84,9 @@ public class PurchaseReservationSummaryController {
                 buyButtonPRS.setManaged(false);
             }
         }
-
     }
 
     public void buyTicketsButton(ActionEvent event) throws DataAccessException {
-
         CreateReservationDTO createReservationDTO = new CreateReservationDTO();
         createReservationDTO.setCustomerID(reservation.getCustomer() != null ? reservation.getCustomer().getId() : null);
         createReservationDTO.setPerformanceID(reservation.getPerformance().getId());
@@ -97,19 +95,18 @@ public class PurchaseReservationSummaryController {
         reservation.getSeats().forEach(seatDTO -> seatDTOS.add(seatDTO));
         createReservationDTO.setSeats(seatDTOS);
 
-
         //only reserve tickets
         if (!showDetails && isReservation) {
             //ReservationDTO reservationDTO = reservationService.createNewReservation(createReservationDTO);
 
             //Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             //alert.setTitle("Print Invoice");
-           // alert.setHeaderText("Congratulations! Your Reservation was successful!" + reservationDTO.getReservationNumber());
-           // alert.showAndWait();
-           // closeWindow();
+            // alert.setHeaderText("Congratulations! Your Reservation was successful!" + reservationDTO.getReservationNumber());
+            // alert.showAndWait();
+            // closeWindow();
 
             closeWindow();
-        } else if (!showDetails){
+        } else if (!showDetails) {
             //reserve and buy tickets
             reservationService.createAndPayReservation(createReservationDTO);
 
@@ -135,16 +132,15 @@ public class PurchaseReservationSummaryController {
             hallPlanController.changeReservationDetails(reservation, stage);
             Parent parent = fxmlLoader.load("/fxml/events/book/hallPlanView.fxml");
             stage.setScene(new Scene(parent));
-
         } else {
             closeWindow();
         }
     }
 
     public void backButton(ActionEvent event) {
-        if(showDetails){
+        if (showDetails) {
             closeWindow();
-        }else {
+        } else {
             Parent parent = fxmlLoader.load("/fxml/events/book/selectCustomerView.fxml");
             stage.setScene(new Scene(parent));
             stage.setTitle("Customer Details");
@@ -161,15 +157,12 @@ public class PurchaseReservationSummaryController {
         this.reservation = reservation;
         this.isReservation = isReservation;
         this.stage = stage;
-
     }
 
     public void showReservationDetails(ReservationDTO reservation, Stage stage) {
         this.reservation = reservation;
         this.stage = stage;
         this.showDetails = true;
-
     }
-
 
 }

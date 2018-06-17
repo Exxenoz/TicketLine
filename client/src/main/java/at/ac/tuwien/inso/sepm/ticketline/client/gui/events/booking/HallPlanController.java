@@ -129,6 +129,10 @@ public class HallPlanController implements SeatSelectionListener {
             seats = new LinkedList<>();
         } else {
             seats = reservation.getSeats();
+
+            if(seats == null || seats.isEmpty()) {
+                seats = new LinkedList<>();
+            }
             continueButton.setText("Save Changes");
             backButton.setText("Cancel Editing");
 
@@ -215,7 +219,6 @@ public class HallPlanController implements SeatSelectionListener {
         } else {
             try {
                 reservation = reservationService.editReservation(reservation);
-
                 PRSController.showReservationDetails(reservation, stage);
                 Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
                 stage.setScene(new Scene(parent));
@@ -233,10 +236,14 @@ public class HallPlanController implements SeatSelectionListener {
     }
 
     public void changeReservationDetails(ReservationDTO reservation, Stage stage) {
+        //Set state
         this.reservation = reservation;
         this.stage = stage;
         this.changeDetails = true;
         this.isReservation = true;
+
+        //Just prefill the seat controller for the reservation state
+        seatMapController.fillForReservationEdit(reservation);
     }
 
     private void closeWindow() {

@@ -46,7 +46,6 @@ public class EventSearchController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     // ---------- Show all and search tab -----------
-
     @FXML
     private TabHeaderController tabHeaderController;
     @FXML
@@ -113,13 +112,11 @@ public class EventSearchController {
 
     private String activeFilters = "";
 
-
     public EventSearchController(SpringFxmlLoader fxmlLoader, PerformanceService performanceService, PerformanceDetailViewController performanceDetailViewController) {
         this.fxmlLoader = fxmlLoader;
         this.performanceService = performanceService;
         this.performanceDetailViewController = performanceDetailViewController;
     }
-
 
     //+++++++++++INITIALIZE+++++++++++++++
     public void initialize() {
@@ -151,9 +148,6 @@ public class EventSearchController {
 
         foundEventsTableView.setItems(performanceData);
     }
-
-
-
 
     //+++++++++++++++++LOAD DATA+++++++++++++++
     public void loadData() {
@@ -203,7 +197,6 @@ public class EventSearchController {
         }
     }
 
-
     private ScrollBar getVerticalScrollbar(TableView<?> table){
         ScrollBar result = null;
         for (Node n : table.lookupAll(".scroll-bar")){
@@ -230,10 +223,6 @@ public class EventSearchController {
         return "id";
     }
 
-
-
-
-
     //++++++++++++++BUTTONS+++++++++++++++
     @FXML
     private void bookPerformanceButton(ActionEvent event) {
@@ -252,8 +241,6 @@ public class EventSearchController {
 
         stage.showAndWait();
     }
-
-
 
     @FXML
     void searchForPerformancesButton(ActionEvent event) {
@@ -373,8 +360,6 @@ public class EventSearchController {
         };
     }
 
-
-
     @FXML
     private void clearAndReloadButton(ActionEvent event) {
             initializeTableView();
@@ -398,7 +383,6 @@ public class EventSearchController {
             cityTextField.setText("");
             countryTextField.setText("");
             postalCodeTextField.setText("");
-
     }
 
     private void updateCurrentSearchParameters() {

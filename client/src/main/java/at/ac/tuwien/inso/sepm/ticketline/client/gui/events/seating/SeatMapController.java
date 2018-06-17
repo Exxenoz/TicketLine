@@ -180,6 +180,24 @@ public class SeatMapController {
         drawSeatMap(performance, reservationDTOS);
     }
 
+    public void fillForReservationEdit(ReservationDTO reservationDTO) {
+        //We have to find the corresponding reservation in the seatmap, and make those seats editable
+        for(SeatDTO s: reservationDTO.getSeats()) {
+            for(Map.Entry<SectorDTO, List<CanvasSeat>> entry: sectorSeatMap.entrySet()) {
+                if(s.getSector().getId() == entry.getKey().getId()) {
+                    for(CanvasSeat cs: entry.getValue()) {
+                        if(cs.getPlanX() == s.getPositionX()
+                            && (cs.getPlanY() == s.getPositionY())) {
+                            cs.setAlreadyReserved(false);
+                            cs.drawSelectedState(this.gc);
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
     public void setSeatSelectionListener(SeatSelectionListener seatSelectionListener) {
         this.seatSelectionListener = seatSelectionListener;
     }
