@@ -6,9 +6,11 @@ import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -94,5 +96,17 @@ public class SimpleReservationService implements ReservationService {
     @Override
     public List<ReservationDTO> findReservationsForPerformance(Long id) throws DataAccessException {
         return reservationRestClient.findReservationsForPerformance(id);
+    }
+
+    @Override
+    public Long precalculatePrice(List<SeatDTO> seats, PerformanceDTO performanceDTO) {
+        Long price = 0L;
+
+        //Calculate the price based on category modificator and performance base price
+        for(SeatDTO s: seats) {
+            price += s.getSector().getCategory().getBasePriceMod() * performanceDTO.getPrice();
+        }
+
+        return price;
     }
 }

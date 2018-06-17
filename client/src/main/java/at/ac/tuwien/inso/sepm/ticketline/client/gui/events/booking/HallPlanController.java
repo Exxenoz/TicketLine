@@ -8,6 +8,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SectorControl
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
@@ -122,6 +123,14 @@ public class HallPlanController implements SeatSelectionListener {
         }
     }
 
+    public void updateSeats() {
+
+    }
+
+    public void updatePrice(List<SeatDTO> seats, PerformanceDTO performanceDTO) {
+        reservationService.precalculatePrice(seats, performanceDTO);
+    }
+
     @FXML
     public void backButton(ActionEvent event) {
         if(changeDetails){
@@ -157,10 +166,8 @@ public class HallPlanController implements SeatSelectionListener {
         amountOfTicketsLabel.setText("" + seats.size());
     }
 
-
     private void continueOrReserve() {
         reservation.setSeats(seats);
-
         if (!changeDetails) {
             selectCustomerController.fill(reservation, isReservation, stage);
             Parent parent = fxmlLoader.load("/fxml/events/book/selectCustomerView.fxml");
