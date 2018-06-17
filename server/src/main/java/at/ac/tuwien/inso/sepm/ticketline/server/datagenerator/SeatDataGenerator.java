@@ -56,6 +56,7 @@ public class SeatDataGenerator implements DataGenerator {
 
                     if(y < sectors.size() - 1) {
                         y++;
+
                     }
                 }
                 LOGGER.debug("Saving seat {}", seat);
