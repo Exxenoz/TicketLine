@@ -142,7 +142,7 @@ public class ReservationsController {
         } else {
             loadUnfilteredReservationsTable(page);
         }
-        refreshAndSortReservationTable();
+        foundReservationsTableView.refresh();
     }
 
     private void loadUnfilteredReservationsTable(int page) {
@@ -253,11 +253,6 @@ public class ReservationsController {
         if (scrollBar != null) {
             scrollBar.setValue(0);
         }
-    }
-
-    private void refreshAndSortReservationTable() {
-        foundReservationsTableView.refresh();
-        foundReservationsTableView.sort();
     }
 
     public void showReservationDetailsButton() {
