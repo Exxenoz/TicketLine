@@ -90,4 +90,9 @@ public class SimpleReservationService implements ReservationService {
     public PageResponseDTO<ReservationDTO> findAll(PageRequestDTO pageRequestDTO) throws DataAccessException {
         return reservationRestClient.findAll(pageRequestDTO);
     }
+
+    @Override
+    public List<ReservationDTO> findReservationsForPerformance(Long id) throws DataAccessException {
+        return reservationRestClient.findReservationsForPerformance(id);
+    }
 }

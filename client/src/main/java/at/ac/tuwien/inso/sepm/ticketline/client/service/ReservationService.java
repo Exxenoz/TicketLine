@@ -82,7 +82,7 @@ public interface ReservationService {
     PageResponseDTO<ReservationDTO> findAll(final PageRequestDTO pageRequestDTO) throws DataAccessException;
 
     /**
-     * Purchase a reservation.
+     * Purchases a reservation.
      *
      * @param reservationDTO contains the reservation that is to be purchased
      * @return the updated reservation
@@ -91,7 +91,7 @@ public interface ReservationService {
     ReservationDTO purchaseReservation(ReservationDTO reservationDTO) throws DataAccessException;
 
     /**
-     * Edit a reservation.
+     * Edits a reservation.
      *
      * @param reservationDTO contains the new seats for the reservation
      * @return the updated reservation
@@ -99,5 +99,22 @@ public interface ReservationService {
      */
     ReservationDTO editReservation(ReservationDTO reservationDTO) throws DataAccessException;
 
+
+    /**
+     * Cancels a reservation.
+     * @param id the id of the reservation that will be cancelled
+     * @return the reservation that has been cancelled
+     * @throws DataAccessException in case something goes wrong while cancelling the reservation
+     */
     ReservationDTO cancelReservation(Long id) throws DataAccessException;
+
+
+    /**
+     * Finds all reservations for a performance
+     * @param id the id of the performance
+     * @return all reservations for the according performance
+     * @throws DataAccessException in case something goes wrong while finding the reservations
+     */
+    List<ReservationDTO> findReservationsForPerformance(Long id) throws DataAccessException;
+
 }
