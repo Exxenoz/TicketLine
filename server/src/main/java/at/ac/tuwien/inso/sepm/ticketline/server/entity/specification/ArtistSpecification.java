@@ -28,12 +28,12 @@ public class ArtistSpecification implements Specification<Artist> {
 
         String firstNameLike = '%' + firstName + '%';
         if (!isNullOrEmpty(firstName)) {
-            predicates.add(builder.like(root.get("firstName"), firstNameLike));
+            predicates.add(builder.like(builder.lower(root.get("firstName")), firstNameLike.toLowerCase()));
         }
 
         String lastNameLike = '%' + lastName + '%';
         if (!isNullOrEmpty(lastName)) {
-            predicates.add(builder.like(root.get("lastName"), lastNameLike));
+            predicates.add(builder.like(builder.lower(root.get("lastName")), lastNameLike.toLowerCase()));
         }
         return builder.and(predicates.toArray(new Predicate[]{}));
     }

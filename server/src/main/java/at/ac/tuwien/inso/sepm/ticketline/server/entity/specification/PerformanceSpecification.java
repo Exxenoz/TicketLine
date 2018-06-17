@@ -8,7 +8,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -58,10 +60,24 @@ public class PerformanceSpecification implements Specification<Performance> {
         final var predicates = new ArrayList<Predicate>();
 
         if (start != null) {
-            LocalDateTime before = start.minusHours(1);
-            LocalDateTime after = start.plusHours(1);
 
-            predicates.add(builder.between(root.get("performanceStart"), before, after));
+            LocalDate chosenDate = LocalDate.of(start.getYear(), start.getMonth(), start.getDayOfMonth());
+            LocalDateTime before;
+            LocalDateTime after;
+
+            if(start.isEqual(LocalDateTime.of(chosenDate, LocalTime.MIDNIGHT))){
+                before = start;
+                after = start.plusHours(23);
+
+                predicates.add(builder.between(root.get("performanceStart"), before, after));
+
+            } else {
+
+                before = start.minusHours(1);
+                after = start.plusHours(1);
+
+                predicates.add(builder.between(root.get("performanceStart"), before, after));
+            }
         }
 
         if (duration != null && !duration.isZero()) {
@@ -78,23 +94,23 @@ public class PerformanceSpecification implements Specification<Performance> {
         }
 
         if (!isNullOrEmpty(locationName)) {
-            predicates.add(builder.like(root.get("locationAddress").get("locationName"), "%" + locationName + "%"));
+            predicates.add(builder.like(builder.lower(root.get("locationAddress").get("locationName")), ("%" + locationName + "%").toLowerCase()));
         }
 
         if (!isNullOrEmpty(street)) {
-            predicates.add(builder.equal(root.get("locationAddress").get("street"), street));
+            predicates.add(builder.equal(root.get("locationAddress").get("street"), ("%" + street + "%").toLowerCase()));
         }
 
         if (!isNullOrEmpty(city)) {
-            predicates.add(builder.like(root.get("locationAddress").get("city"), "%" + city + "%"));
+            predicates.add(builder.like(root.get("locationAddress").get("city"), ("%" + city + "%").toLowerCase()));
         }
 
         if (!isNullOrEmpty(country)) {
-            predicates.add(builder.equal(root.get("locationAddress").get("country"), country));
+            predicates.add(builder.equal(root.get("locationAddress").get("country"), ("%" + country + "%").toLowerCase()));
         }
 
         if (!isNullOrEmpty(postalCode)) {
-            predicates.add(builder.equal(root.get("locationAddress").get("postalCode"), postalCode));
+            predicates.add(builder.equal(root.get("locationAddress").get("postalCode"), ("%" + postalCode + "%").toLowerCase()));
         }
 
         return builder.and(predicates.toArray(new Predicate[]{}));
