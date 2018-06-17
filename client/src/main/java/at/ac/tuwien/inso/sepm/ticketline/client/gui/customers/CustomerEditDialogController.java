@@ -225,6 +225,8 @@ public class CustomerEditDialogController {
             countryErrorLabel.setText(e.getMessage());
         }
 
+        firstNameTextfield.getScene().getWindow().sizeToScene();
+
         if (!valid) {
             return;
         }

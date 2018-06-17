@@ -258,7 +258,7 @@ public class ReservationsController {
         Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
 
         stage.setScene(new Scene(parent));
-        stage.setTitle("Reservation Overview");
+        stage.setTitle(BundleManager.getBundle().getString("reservation.details.title"));
 
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(showReservationDetailsButton.getScene().getWindow());

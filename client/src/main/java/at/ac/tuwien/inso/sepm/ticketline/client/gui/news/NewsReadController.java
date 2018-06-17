@@ -21,6 +21,8 @@ import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
@@ -35,6 +37,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
@@ -45,7 +48,7 @@ import static javafx.scene.control.ProgressIndicator.INDETERMINATE_PROGRESS;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.NEWSPAPER_ALT;
 
 @Component
-public class NewsUnreadController {
+public class NewsReadController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -89,7 +92,7 @@ public class NewsUnreadController {
     private int page = 0;
     private int totalPages = 1;
 
-    public NewsUnreadController(MainController mainController, SpringFxmlLoader springFxmlLoader, NewsService newsService) {
+    public NewsReadController(MainController mainController, SpringFxmlLoader springFxmlLoader, NewsService newsService) {
         this.mainController = mainController;
         this.springFxmlLoader = springFxmlLoader;
         this.newsService = newsService;
@@ -100,7 +103,7 @@ public class NewsUnreadController {
     @FXML
     private void initialize() {
         tabHeaderController.setIcon(NEWSPAPER_ALT);
-        tabHeaderController.setTitleBinding(BundleManager.getStringBinding("news.header.unread"));
+        tabHeaderController.setTitleBinding(BundleManager.getStringBinding("news.header.read"));
         webView.getEngine().setJavaScriptEnabled(false);
     }
 
@@ -130,13 +133,6 @@ public class NewsUnreadController {
         loadNewsList(FIRST_NEWS_LIST_PAGE);
     }
 
-    public void reloadNews() {
-        vbNewsBoxChildren = vbNewsElements.getChildren();
-        vbNewsBoxChildren.clear();
-        loadedNews.clear();
-        loadNewsList(FIRST_NEWS_LIST_PAGE);
-    }
-
     private boolean loadNewsList(int page) {
         if (page < 0 || page >= totalPages) {
             LOGGER.error("Could not load news table page, because page parameter is invalid: " + page);
@@ -144,19 +140,19 @@ public class NewsUnreadController {
         }
 
         PageRequestDTO pageRequestDTO = null;
-        pageRequestDTO = new PageRequestDTO(page, NEWS_PER_PAGE, Sort.Direction.ASC, null);
+        pageRequestDTO = new PageRequestDTO(page, NEWS_PER_PAGE, Sort.Direction.DESC, null);
 
         this.page = page;
 
         try {
-            PageResponseDTO<SimpleNewsDTO> response = newsService.findAllUnread(pageRequestDTO);
+            PageResponseDTO<SimpleNewsDTO> response = newsService.findAllRead(pageRequestDTO);
             this.totalPages = response.getTotalPages() > 0 ? response.getTotalPages() : 1;
 
             for (int i = 0; i < response.getContent().size(); i++) {
                 SimpleNewsDTO news = response.getContent().get(i);
                 SpringFxmlLoader.Wrapper<NewsElementController> wrapper =
                     springFxmlLoader.loadAndWrap("/fxml/news/newsElement.fxml");
-                wrapper.getLoadedObject().setId("unreadNews" + loadedNews.size() + i);
+                wrapper.getLoadedObject().setId("readNews" + loadedNews.size() + i);
                 wrapper.getController().initializeData(news);
                 vbNewsBoxChildren.add(wrapper.getLoadedObject());
                 if (i + 1 < response.getContent().size()) {

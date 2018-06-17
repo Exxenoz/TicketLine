@@ -6,6 +6,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.service.UserService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
 import at.ac.tuwien.inso.sepm.ticketline.client.validator.UserValidator;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserCreateRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -71,11 +72,11 @@ public class UserCreateDialogController {
         LOGGER.debug("Clicked create user button");
 
         boolean valid = true;
-        UserDTO userDTO = new UserDTO();
+        UserCreateRequestDTO userCreateRequestDTO = new UserCreateRequestDTO();
 
         try {
             String username = UserValidator.validateUsername(usernameTextField);
-            userDTO.setUsername(username);
+            userCreateRequestDTO.setUsername(username);
             usernameErrorLabel.setText("");
         } catch (UserValidationException e) {
             valid = false;
@@ -85,7 +86,7 @@ public class UserCreateDialogController {
 
         try {
             String encryptedPassword = UserValidator.validatePassword(passwordField, passwordRepeatField);
-            userDTO.setPassword(encryptedPassword);
+            userCreateRequestDTO.setPassword(encryptedPassword);
             passwordErrorLabel.setText("");
         } catch (UserValidationException e) {
             valid = false;
@@ -93,14 +94,16 @@ public class UserCreateDialogController {
             passwordErrorLabel.setText(e.getMessage());
         }
 
-        userDTO.setRoles(getRoles());
+        usernameTextField.getScene().getWindow().sizeToScene();
+
+        userCreateRequestDTO.setRoles(getRoles());
 
         if (!valid) {
             return;
         }
 
         try {
-            userController.addUser(userService.create(userDTO));
+            userController.addUser(userService.create(userCreateRequestDTO));
         } catch (DataAccessException e) {
             LOGGER.error("User creation failed: " + e.getMessage());
 

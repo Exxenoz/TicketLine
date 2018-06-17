@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.customers.CustomerEditDialogController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.CustomerService;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
@@ -197,9 +198,9 @@ public class SelectCustomerController {
         Parent parent = fxmlLoader.load("/fxml/events/book/hallPlanView.fxml");
         stage.setScene(new Scene(parent));
         if (reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SEAT) {
-            stage.setTitle("Seat Selection");
+            stage.setTitle(BundleManager.getBundle().getString("bookings.hallplan.title"));
         } else {
-            stage.setTitle("Sector Selection");
+            stage.setTitle(BundleManager.getBundle().getString("bookings.sectorplan.title"));
         }
         stage.centerOnScreen();
     }
@@ -228,9 +229,9 @@ public class SelectCustomerController {
         stage.setScene(new Scene(parent));
 
         if (isReservation) {
-            stage.setTitle("Reservation Details");
+            stage.setTitle(BundleManager.getBundle().getString("bookings.reservation.details.title"));
         } else {
-            stage.setTitle("Purchase Details");
+            stage.setTitle(BundleManager.getBundle().getString("bookings.purchase.details.title"));
         }
         stage.centerOnScreen();
     }

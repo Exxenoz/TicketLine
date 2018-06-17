@@ -11,12 +11,13 @@ import at.ac.tuwien.inso.sepm.ticketline.client.validator.NewsValidator;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.DetailedNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.SimpleNewsDTO;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.InputEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.FileChooser;
 import org.slf4j.Logger;
@@ -62,6 +63,27 @@ public class NewsCreateController {
     public Label articleErrorLabel;
 
     @FXML
+    public Label createNewsLabel;
+
+    @FXML
+    public Label uploadLabel;
+
+    @FXML
+    public Button chooseImageFileButton;
+
+    @FXML
+    public Label summaryLabel;
+
+    @FXML
+    public Label articleLabel;
+
+    @FXML
+    public Label requiredFieldLabel;
+
+    @FXML
+    public Button saveNewsButton;
+
+    @FXML
     private TabHeaderController tabHeaderController;
 
     private final MainController mainController;
@@ -77,10 +99,39 @@ public class NewsCreateController {
     @FXML
     private void initialize() {
         tabHeaderController.setIcon(NEWSPAPER_ALT);
-        tabHeaderController.setTitle("Create News");
+        tabHeaderController.setTitleBinding(BundleManager.getStringBinding("news.header.create"));
+        htmlEditor.addEventHandler(InputEvent.ANY, new EventHandler<InputEvent>() {
+            @Override
+            public void handle(InputEvent event) {
+                try {
+                    NewsValidator.validateArticle(htmlEditor);
+                    articleErrorLabel.textProperty().unbind();
+                    articleErrorLabel.setText("");
+                } catch (NewsValidationException e) {
+                    articleErrorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
+                }
+            }
+        });
+
+        initI18N();
+    }
+
+    private void initI18N() {
+        createNewsLabel.textProperty().bind(BundleManager.getStringBinding("news.create.title"));
+        uploadLabel.textProperty().bind(BundleManager.getStringBinding("news.create.upload"));
+        chooseImageFileButton.textProperty().bind(BundleManager.getStringBinding("news.create.choose"));
+        summaryLabel.textProperty().bind(BundleManager.getStringBinding("news.create.summary"));
+        articleLabel.textProperty().bind(BundleManager.getStringBinding("news.create.article"));
+        requiredFieldLabel.textProperty().bind(BundleManager.getStringBinding("news.dialog.create.required_field"));
+        saveNewsButton.textProperty().bind(BundleManager.getStringBinding("news.create.save"));
     }
 
     private void clearInputs() {
+        titleErrorLabel.textProperty().unbind();
+        imageErrorLabel.textProperty().unbind();
+        summaryErrorLabel.textProperty().unbind();
+        articleErrorLabel.textProperty().unbind();
+
         titleErrorLabel.setText("");
         imageErrorLabel.setText("");
         summaryErrorLabel.setText("");
@@ -97,7 +148,7 @@ public class NewsCreateController {
 
     public void onClickChooseImageFileButton(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choose Image");
+        fileChooser.setTitle(BundleManager.getBundle().getString("news.filechooser.title"));
 
         //Only Allow .jpg and .png files
         fileChooser.getExtensionFilters().addAll(
@@ -122,40 +173,44 @@ public class NewsCreateController {
 
         try {
             detailedNewsDTO.setTitle(NewsValidator.validateTitle(titleTextField));
+            titleErrorLabel.textProperty().unbind();
             titleErrorLabel.setText("");
         } catch (NewsValidationException e) {
             valid = false;
             LOGGER.debug("News validation failed: " + e.getMessage());
-            titleErrorLabel.setText(e.getMessage());
+            titleErrorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
         }
 
         try {
             detailedNewsDTO.setImageData(NewsValidator.validateImage(imageFileLabel.getText()));
+            imageErrorLabel.textProperty().unbind();
             imageErrorLabel.setText("");
         } catch (NewsValidationException e) {
             valid = false;
             LOGGER.debug("News validation failed: " + e.getMessage());
-            imageErrorLabel.setText(e.getMessage());
+            imageErrorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
         }
 
         try {
             detailedNewsDTO.setSummary(NewsValidator.validateSummary(summaryTextField));
+            summaryErrorLabel.textProperty().unbind();
             summaryErrorLabel.setText("");
             summaryErrorLabel.setMinHeight(0);
         } catch (NewsValidationException e) {
             valid = false;
             LOGGER.debug("News validation failed: " + e.getMessage());
-            summaryErrorLabel.setText(e.getMessage());
+            summaryErrorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
             summaryErrorLabel.setMinHeight(16);
         }
 
         try {
             detailedNewsDTO.setText(NewsValidator.validateArticle(htmlEditor));
+            articleErrorLabel.textProperty().unbind();
             articleErrorLabel.setText("");
         } catch (NewsValidationException e) {
             valid = false;
             LOGGER.debug("News validation failed: " + e.getMessage());
-            articleErrorLabel.setText(e.getMessage());
+            articleErrorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
         }
 
         if (!valid) {
@@ -188,7 +243,7 @@ public class NewsCreateController {
             titleTextField.getScene().getWindow()
         ).showAndWait();
 
-        newsUnreadController.loadNews();
+        newsUnreadController.reloadNews();
 
         clearInputs();
     }
@@ -196,6 +251,7 @@ public class NewsCreateController {
     public void onClickClearImageButton(ActionEvent actionEvent) {
         clearImageButton.setDisable(true);
         imageFileLabel.setText("");
+        imageErrorLabel.textProperty().unbind();
         imageErrorLabel.setText("");
     }
 }

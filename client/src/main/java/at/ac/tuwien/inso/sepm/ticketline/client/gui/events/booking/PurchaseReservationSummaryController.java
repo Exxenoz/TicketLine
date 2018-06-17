@@ -2,10 +2,10 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
-import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -121,7 +121,7 @@ public class PurchaseReservationSummaryController {
             reservationService.createAndPayReservation(createReservationDTO);
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Print Invoice");
+            alert.setTitle(BundleManager.getBundle().getString("bookings.purchase.print.title"));
             alert.setHeaderText("Congratulations! Your Purchase was successful!" + "\n" + "Do you want to print the invoice?");
             alert.showAndWait();
             closeWindow();
@@ -131,7 +131,7 @@ public class PurchaseReservationSummaryController {
             reservationService.purchaseReservation(reservation);
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Print Invoice");
+            alert.setTitle(BundleManager.getBundle().getString("bookings.purchase.print.title"));
             alert.setHeaderText("Congratulations! Your Purchase was successful!" + "\n" + "Do you want to print the invoice?");
             alert.showAndWait();
             closeWindow();
@@ -155,7 +155,7 @@ public class PurchaseReservationSummaryController {
         } else {
             Parent parent = fxmlLoader.load("/fxml/events/book/selectCustomerView.fxml");
             stage.setScene(new Scene(parent));
-            stage.setTitle("Customer Details");
+            stage.setTitle(BundleManager.getBundle().getString("bookings.purchase.customer.details.title"));
             stage.centerOnScreen();
         }
     }
@@ -178,4 +178,6 @@ public class PurchaseReservationSummaryController {
         this.showDetails = true;
 
     }
+
+
 }

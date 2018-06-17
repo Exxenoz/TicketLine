@@ -67,6 +67,9 @@ public class CustomerController {
     @FXML
     public Button customerEditButton;
 
+    @FXML
+    public Button customerCreateButton;
+
     private final SpringFxmlLoader springFxmlLoader;
 
     private CustomerService customerService;
@@ -84,9 +87,19 @@ public class CustomerController {
     @FXML
     private void initialize() {
         tabHeaderController.setIcon(USERS);
-        tabHeaderController.setTitle(BundleManager.getBundle().getString("customers.main.title"));
+        tabHeaderController.setTitleBinding(BundleManager.getStringBinding("customers.main.title"));
 
+        initI18N();
         initializeCustomerTable();
+    }
+
+    private void initI18N() {
+        customerTableColumnFirstName.textProperty().bind(BundleManager.getStringBinding("customers.main.table.column.first_name"));
+        customerTableColumnLastName.textProperty().bind(BundleManager.getStringBinding("customers.main.table.column.last_name"));
+        customerTableColumnTelephoneNumber.textProperty().bind(BundleManager.getStringBinding("customers.main.table.column.telephone_number"));
+        customerTableColumnEMail.textProperty().bind(BundleManager.getStringBinding("customers.main.table.column.email"));
+        customerEditButton.textProperty().bind(BundleManager.getStringBinding("customers.main.button.edit"));
+        customerCreateButton.textProperty().bind(BundleManager.getStringBinding("customers.main.button.create"));
     }
 
     private void initializeCustomerTable() {

@@ -5,6 +5,8 @@ import at.ac.tuwien.inso.sepm.ticketline.client.rest.NewsRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.NewsService;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.DetailedNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.SimpleNewsDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -24,8 +26,13 @@ public class SimpleNewsService implements NewsService {
     }
 
     @Override
-    public List<SimpleNewsDTO> findAll() throws DataAccessException {
-        return newsRestClient.findAll();
+    public PageResponseDTO<SimpleNewsDTO> findAllUnread(PageRequestDTO request) throws DataAccessException {
+        return newsRestClient.findAllUnread(request);
+    }
+
+    @Override
+    public PageResponseDTO<SimpleNewsDTO> findAllRead(PageRequestDTO request) throws DataAccessException {
+        return newsRestClient.findAllRead(request);
     }
 
     @Override

@@ -5,6 +5,8 @@ import at.ac.tuwien.inso.sepm.ticketline.client.rest.NewsRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.DetailedNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.SimpleNewsDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
@@ -12,6 +14,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
@@ -27,20 +30,52 @@ public class SimpleNewsRestClient implements NewsRestClient {
 
     private final RestClient restClient;
     private final URI newsUri;
+    private final URI newsUnreadUri;
 
     public SimpleNewsRestClient(RestClient restClient) {
         this.restClient = restClient;
         this.newsUri = restClient.getServiceURI("/news");
+        this.newsUnreadUri = restClient.getServiceURI("/news/unread");
     }
 
     @Override
-    public List<SimpleNewsDTO> findAll() throws DataAccessException {
+    public PageResponseDTO<SimpleNewsDTO> findAllUnread(PageRequestDTO request) throws DataAccessException {
         try {
-            LOGGER.debug("Retrieving all news from {}", newsUri);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUri(restClient.getServiceURI("/news"))
+                .queryParam("read", false)
+                .queryParam("page", request.getPage())
+                .queryParam("size", request.getSize());
+
+            URI uri = builder.build().toUri();
+            LOGGER.debug("Retrieving all unread news from {}", uri);
             final var news =
                 restClient.exchange(
-                    new RequestEntity<>(GET, newsUri),
-                    new ParameterizedTypeReference<List<SimpleNewsDTO>>() {
+                    new RequestEntity<>(request, GET, uri),
+                    new ParameterizedTypeReference<PageResponseDTO<SimpleNewsDTO>>() {
+                    });
+            LOGGER.debug("Result status was {} with content {}", news.getStatusCode(), news.getBody());
+            return news.getBody();
+        } catch (HttpStatusCodeException e) {
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
+        } catch (RestClientException e) {
+            throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
+        }
+    }
+
+    @Override
+    public PageResponseDTO<SimpleNewsDTO> findAllRead(PageRequestDTO request) throws DataAccessException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUri(restClient.getServiceURI("/news"))
+                .queryParam("read", true)
+                .queryParam("page", request.getPage())
+                .queryParam("size", request.getSize());
+
+            URI uri = builder.build().toUri();
+            LOGGER.debug("Retrieving all read news from {}", uri);
+            final var news =
+                restClient.exchange(
+                    new RequestEntity<>(request, GET, uri),
+                    new ParameterizedTypeReference<PageResponseDTO<SimpleNewsDTO>>() {
                     });
             LOGGER.debug("Result status was {} with content {}", news.getStatusCode(), news.getBody());
             return news.getBody();
