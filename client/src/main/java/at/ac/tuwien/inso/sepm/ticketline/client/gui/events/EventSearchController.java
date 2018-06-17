@@ -12,7 +12,6 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -34,9 +33,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import static javafx.collections.FXCollections.observableArrayList;
@@ -226,11 +222,11 @@ public class EventSearchController {
         if (sortedColumn == nameColumn) {
             return "name";
         } else if (sortedColumn == eventColumn) {
-            return "event";
+            return "event.name";
         } else if (sortedColumn == startTimeColumn) {
             return "performanceStart";
         } else if (sortedColumn == locationColumn) {
-            return "locationName";
+            return "locationAddress.country";
         }
         return "id";
     }
