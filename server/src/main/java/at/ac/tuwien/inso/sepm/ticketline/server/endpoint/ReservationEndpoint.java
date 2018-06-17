@@ -14,6 +14,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationExce
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpBadRequestException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpConflictException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpNotFoundException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalCancelationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import io.swagger.annotations.Api;
@@ -174,7 +175,12 @@ public class ReservationEndpoint {
     @PreAuthorize("hasRole('USER')")
     @ApiOperation("Cancel created reservation")
     public ReservationDTO cancelReservation(@PathVariable("id") Long id) {
-        var reservation = reservationService.cancelReservation(id);
+        Reservation reservation = null;
+        try {
+            reservation = reservationService.cancelReservation(id);
+        } catch (InternalCancelationException e) {
+            e.printStackTrace();
+        }
         return reservationMapper.reservationToReservationDTO(reservation);
     }
 

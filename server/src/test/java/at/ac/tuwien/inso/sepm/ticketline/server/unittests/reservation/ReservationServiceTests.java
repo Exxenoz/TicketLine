@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.unittests.reservation;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalCancelationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.CustomerRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
@@ -292,7 +293,7 @@ public class ReservationServiceTests {
     }
 
     @Test
-    public void cancel() {
+    public void cancel() throws InternalCancelationException {
         Performance performance = performanceRepository.save(newPerformance());
         Seat seat = seatRepository.save(newSeat());
         Customer customer = customerRepository.save(newCustomer());

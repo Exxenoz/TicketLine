@@ -5,6 +5,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationSearch;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Seat;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalCancelationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalHallValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
@@ -259,18 +260,21 @@ public class SimpleReservationService implements ReservationService {
     }
 
 
-    private void deleteSeatsAfterCancelation(List<Seat> seatsToDelete) {
+    private void deleteSeatsAfterCancelation(List<Seat> seatsToDelete) throws InternalCancelationException {
         for (Seat seat : seatsToDelete) {
             seatsService.deleteSeat(seat);
         }
-        checkIfAllSeatsOfReservationAreDeleted(seatsToDelete);
+        if (!checkIfAllSeatsOfReservationAreDeleted(seatsToDelete)) {
+            throw new InternalCancelationException(" ");
+        }
 
     }
 
     @Override
-    public Reservation cancelReservation(Long id) {
+    public Reservation cancelReservation(Long id) throws InternalCancelationException {
         //TODO: remove Seats from database
         Reservation reservation = reservationRepository.findById(id).get();
+        deleteSeatsAfterCancelation(reservation.getSeats());
         reservation.setCanceled(true);
         return reservationRepository.save(reservation);
 
