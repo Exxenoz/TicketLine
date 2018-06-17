@@ -102,7 +102,7 @@ public class PurchaseReservationSummaryController {
         createReservationDTO.setPerformanceID(reservation.getPerformance().getId());
 
         List<SeatDTO> seatDTOS = new LinkedList<>();
-        reservation.getSeats().forEach(seatDTO -> seatDTOS.add(seatDTO));
+        seatDTOS.addAll(reservation.getSeats());
         createReservationDTO.setSeats(seatDTOS);
 
 
@@ -180,6 +180,4 @@ public class PurchaseReservationSummaryController {
         this.showDetails = true;
 
     }
-
-
 }

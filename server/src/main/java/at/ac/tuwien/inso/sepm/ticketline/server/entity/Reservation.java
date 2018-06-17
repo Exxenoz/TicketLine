@@ -34,7 +34,7 @@ public class Reservation {
     private String reservationNumber;
 
     @Column
-    private boolean canceled = true;
+    private boolean canceled = false;
 
     public Long getId() {
         return id;
