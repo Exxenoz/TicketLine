@@ -5,20 +5,28 @@ import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.PerformanceDetailView
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SeatMapController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SeatSelectionListener;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SectorController;
-import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.PriceUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
+import javafx.beans.property.ReadOnlyLongWrapper;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -34,18 +42,31 @@ public class HallPlanController implements SeatSelectionListener {
 
     private Stage stage;
 
-    public Label eventNameLabel;
-    public Label performanceNameLabel;
-    public Label amountOfTicketsLabel;
-    public Label seatsOrSectorsLabel;
-    public Label rowsSeatsOrSectorLabel;
-    public Label amountTickets;
-    public Label pricePerTicket;
-    public Label totalPrice;
-    public Label hallHeading;
-
+    @FXML
+    private Label eventNameLabel;
+    @FXML
+    private Label performanceNameLabel;
+    @FXML
+    private Label amountOfTicketsLabel;
+    @FXML
+    private Label seatsOrSectorsLabel;
+    @FXML
+    private Label totalPrice;
+    @FXML
+    private Label hallHeading;
+    @FXML
+    private TableView seatsTableView;
+    @FXML
+    public TableColumn seatsRowColumn;
+    @FXML
+    public TableColumn seatsSeatColumn;
+    @FXML
+    public TableColumn seatsPriceColumn;
+    @FXML
     public Button continueButton;
+    @FXML
     public Button backButton;
+    @FXML
     public Button reserveButton;
 
     private final SpringFxmlLoader fxmlLoader;
@@ -87,9 +108,17 @@ public class HallPlanController implements SeatSelectionListener {
         } else {
             amountOfTicketsLabel.setText("0");
         }
-        //TODO: Connect display of chosen seats/sectors with hallplan (rowsSeatsOrSectorsLabel)
+        //Initialize table view
+        seatsRowColumn.setCellValueFactory(new PropertyValueFactory<SeatDTO, Integer>("positionY"));
+        seatsSeatColumn.setCellValueFactory(new PropertyValueFactory<SeatDTO, Integer>("positionX"));
+        seatsPriceColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SeatDTO, Long>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<SeatDTO, Long> param) {
+                return new SimpleStringProperty(Long.toString(
+                    reservationService.calculateSinglePrice(param.getValue(), reservation.getPerformance())));
+            }
+        });
 
-        //TODO: pricePerTicket & totalPrice
         if (reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SECTOR) {
             seatsOrSectorsLabel.setText("Chosen Sector: ");
             hallHeading.setText("Choose your Sector");
@@ -113,6 +142,7 @@ public class HallPlanController implements SeatSelectionListener {
         } catch (DataAccessException d) {
             d.printStackTrace();
         }
+
         // Set performance detail to seat plan
         if(this.reservation != null && this.reservation.getPerformance() != null) {
             if(reservationDTOS != null) {
@@ -123,12 +153,12 @@ public class HallPlanController implements SeatSelectionListener {
         }
     }
 
-    public void updateSeats() {
-
+    public void updateSeats(List<SeatDTO> seats) {
+        seatsTableView.getItems().setAll(seats);
     }
 
     public void updatePrice(List<SeatDTO> seats, PerformanceDTO performanceDTO) {
-        reservationService.precalculatePrice(seats, performanceDTO);
+        totalPrice.setText(PriceUtils.priceToRepresentation(reservationService.calculateCompletePrice(seats, performanceDTO)));
     }
 
     @FXML
@@ -158,12 +188,18 @@ public class HallPlanController implements SeatSelectionListener {
     public void onSeatSelected(SeatDTO seatDTO) {
         seats.add(seatDTO);
         amountOfTicketsLabel.setText("" + seats.size());
+
+        updateSeats(this.seats);
+        updatePrice(this.seats, this.reservation.getPerformance());
     }
 
     @Override
     public void onSeatDeselected(SeatDTO seatDTO) {
         seats.remove(seatDTO);
         amountOfTicketsLabel.setText("" + seats.size());
+
+        updateSeats(this.seats);
+        updatePrice(this.seats, this.reservation.getPerformance());
     }
 
     private void continueOrReserve() {

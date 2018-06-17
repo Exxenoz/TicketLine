@@ -122,9 +122,17 @@ public interface ReservationService {
     /**
      * Calculates the price of a reservation with a given list of seats.
      * @param seats list of picked seats.
-     * @param performanceDTO the reservation for which the seats are intended to be reserved
-     * @return the calculated price
+     * @param performanceDTO the performance for which the seats are intended to be reserved
+     * @return the calculated price for the complete reservation
      */
-    Long precalculatePrice(List<SeatDTO> seats, PerformanceDTO performanceDTO);
+    Long calculateCompletePrice(List<SeatDTO> seats, PerformanceDTO performanceDTO);
+
+    /**
+     * Calculates the price for a single seat of a reservation.
+     * @param seat the seat whose price will be calculated
+     * @param performanceDTO the performance for which the seats are intended to be reserved
+     * @return the calculated price for a single seat
+     */
+    Long calculateSinglePrice(SeatDTO seat, PerformanceDTO performanceDTO);
 
 }

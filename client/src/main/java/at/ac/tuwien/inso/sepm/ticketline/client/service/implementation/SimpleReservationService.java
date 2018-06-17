@@ -99,14 +99,18 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
-    public Long precalculatePrice(List<SeatDTO> seats, PerformanceDTO performanceDTO) {
+    public Long calculateCompletePrice(List<SeatDTO> seats, PerformanceDTO performanceDTO) {
         Long price = 0L;
 
         //Calculate the price based on category modificator and performance base price
         for(SeatDTO s: seats) {
             price += s.getSector().getCategory().getBasePriceMod() * performanceDTO.getPrice();
         }
-
         return price;
+    }
+
+    @Override
+    public Long calculateSinglePrice(SeatDTO seat, PerformanceDTO performanceDTO) {
+        return seat.getSector().getCategory().getBasePriceMod() * performanceDTO.getPrice();
     }
 }
