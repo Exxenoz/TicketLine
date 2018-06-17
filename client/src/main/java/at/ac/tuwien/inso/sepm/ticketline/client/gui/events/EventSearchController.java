@@ -179,9 +179,14 @@ public class EventSearchController {
     }
 
     private void clear() {
+        LOGGER.debug("clearing the data");
         performanceData.clear();
         page = 0;
         totalPages = 0;
+        ScrollBar scrollBar = getVerticalScrollbar(foundEventsTableView);
+        if (scrollBar != null) {
+            scrollBar.setValue(0);
+        }
     }
 
     private void loadPerformanceTable(int page){
