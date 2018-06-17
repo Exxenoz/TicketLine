@@ -248,6 +248,25 @@ public class SimpleReservationService implements ReservationService {
         return reservationNumber;
     }
 
+    private boolean checkIfAllSeatsOfReservationAreDeleted(List<Seat> deletedSeats) {
+        boolean allDeleted = true;
+        for (Seat seat : deletedSeats) {
+            if (seatsService.findbyID(seat.getId()) != null) {
+                allDeleted = false;
+            }
+        }
+        return allDeleted;
+    }
+
+
+    private void deleteSeatsAfterCancelation(List<Seat> seatsToDelete) {
+        for (Seat seat : seatsToDelete) {
+            seatsService.deleteSeat(seat);
+        }
+        checkIfAllSeatsOfReservationAreDeleted(seatsToDelete);
+
+    }
+
     @Override
     public Reservation cancelReservation(Long id) {
         //TODO: remove Seats from database
