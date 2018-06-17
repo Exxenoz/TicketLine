@@ -6,6 +6,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -99,9 +100,10 @@ public class PurchaseReservationSummaryController {
         CreateReservationDTO createReservationDTO = new CreateReservationDTO();
         createReservationDTO.setCustomerID(reservation.getCustomer() != null ? reservation.getCustomer().getId() : null);
         createReservationDTO.setPerformanceID(reservation.getPerformance().getId());
-        List<Long> seatsID = new LinkedList<>();
-        reservation.getSeats().forEach(seatDTO -> seatsID.add(seatDTO.getId()));
-        createReservationDTO.setSeatIDs(seatsID);
+
+        List<SeatDTO> seatDTOS = new LinkedList<>();
+        reservation.getSeats().forEach(seatDTO -> seatDTOS.add(seatDTO));
+        createReservationDTO.setSeats(seatDTOS);
 
 
         //only reserve tickets

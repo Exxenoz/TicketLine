@@ -89,4 +89,47 @@ public class SeatDTO {
 
         return Objects.hash(id, positionX, positionY, sector);
     }
+
+    public static final class Builder {
+        private Long id;
+        private Integer positionX;
+        private Integer positionY;
+        private SectorDTO sector;
+
+        private Builder() {
+        }
+
+        public static Builder aSeatDTO() {
+            return new Builder();
+        }
+
+        public Builder withId(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder withPositionX(Integer positionX) {
+            this.positionX = positionX;
+            return this;
+        }
+
+        public Builder withPositionY(Integer positionY) {
+            this.positionY = positionY;
+            return this;
+        }
+
+        public Builder withSector(SectorDTO sector) {
+            this.sector = sector;
+            return this;
+        }
+
+        public SeatDTO build() {
+            SeatDTO seatDTO = new SeatDTO();
+            seatDTO.setId(id);
+            seatDTO.setPositionX(positionX);
+            seatDTO.setPositionY(positionY);
+            seatDTO.setSector(sector);
+            return seatDTO;
+        }
+    }
 }
