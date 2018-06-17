@@ -15,6 +15,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
@@ -251,9 +252,20 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     @Override
     public PageResponseDTO<ReservationDTO> findAll(PageRequestDTO pageRequestDTO) throws DataAccessException {
         try {
-            URI uri = restClient.getServiceURI(
-                RESERVATION + "/" + pageRequestDTO.getPage() + "/" + pageRequestDTO.getSize()
-            );
+            URI uri = null;
+            if (pageRequestDTO.getSortColumnName() != null && pageRequestDTO.getSortDirection() != null) {
+                uri = UriComponentsBuilder.fromUri(restClient.getServiceURI(RESERVATION + "/"))
+                    .queryParam("page", pageRequestDTO.getPage())
+                    .queryParam("size", pageRequestDTO.getSize())
+                    .queryParam("sort", pageRequestDTO.getSortColumnName()
+                        + "," + pageRequestDTO.getSortDirection().toString().toLowerCase())
+                    .build().toUri();
+            } else {
+                uri = UriComponentsBuilder.fromUri(restClient.getServiceURI(RESERVATION))
+                    .queryParam("page", pageRequestDTO.getPage())
+                    .queryParam("size", pageRequestDTO.getSize())
+                    .build().toUri();
+            }
             LOGGER.debug("Entering findAll method with URI {}", uri);
             final var response =
                 restClient.exchange(
