@@ -60,7 +60,7 @@ public class ReservationsController {
     private final SpringFxmlLoader fxmlLoader;
     private final ReservationService reservationService;
     private final PurchaseReservationSummaryController PRSController;
-    private ObservableList<ReservationDTO> reservationDTOS = FXCollections.observableArrayList();
+    private ObservableList<ReservationDTO> reservationList;
     private int page = 0;
     private int totalPages = 0;
     private static final int RESERVATIONS_PER_PAGE = 50;
@@ -79,6 +79,7 @@ public class ReservationsController {
         this.fxmlLoader = fxmlLoader;
         this.reservationService = reservationService;
         this.PRSController = PRSController;
+        this.reservationList = FXCollections.observableArrayList();
     }
 
     public void loadData() {
@@ -96,11 +97,11 @@ public class ReservationsController {
     public void cancelReservation(ActionEvent event) {
         ResourceBundle ex = BundleManager.getExceptionBundle();
         int row = foundReservationsTableView.getSelectionModel().getFocusedIndex();
-        ReservationDTO selected = reservationDTOS.get(row);
+        ReservationDTO selected = reservationList.get(row);
         if (!selected.isPaid()) {
             try {
                 ReservationDTO reservationDTO = reservationService.cancelReservation(selected.getId());
-                reservationDTOS.remove(reservationDTO);
+                reservationList.remove(reservationDTO);
                 foundReservationsTableView.getItems().remove(row);
             } catch (DataAccessException e) {
                 LOGGER.debug(ex.getString("exception.reservation.cancel.alreadypaid"), e);
@@ -127,9 +128,9 @@ public class ReservationsController {
                 if ((value == scrollBar.getMax()) && (!(page >= (totalPages - 1)))) {
                     page++;
                     LOGGER.debug("Getting next Page: {}", page);
-                    double targetValue = value * reservationDTOS.size();
+                    double targetValue = value * reservationList.size();
                     loadReservationTable(page);
-                    scrollBar.setValue(targetValue / reservationDTOS.size());
+                    scrollBar.setValue(targetValue / reservationList.size());
                 }
             });
         }
@@ -141,7 +142,7 @@ public class ReservationsController {
         } else {
             loadUnfilteredReservationsTable(page);
         }
-        foundReservationsTableView.refresh();
+        refreshAndSortReservationTable();
     }
 
     private void loadUnfilteredReservationsTable(int page) {
@@ -156,7 +157,7 @@ public class ReservationsController {
 
         try {
             PageResponseDTO<ReservationDTO> response = reservationService.findAll(pageRequestDTO);
-            reservationDTOS.addAll(response.getContent());
+            reservationList.addAll(response.getContent());
             totalPages = response.getTotalPages();
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch reservations from server!");
@@ -187,7 +188,7 @@ public class ReservationsController {
         try {
             PageResponseDTO<ReservationDTO> response =
                 reservationService.findAllByCustomerNameAndPerformanceName(reservationSearchBuilder.build());
-            reservationDTOS.addAll(response.getContent());
+            reservationList.addAll(response.getContent());
             this.page = page;
             totalPages = response.getTotalPages();
         } catch (DataAccessException e) {
@@ -227,7 +228,7 @@ public class ReservationsController {
             }
         });
 
-        foundReservationsTableView.setItems(reservationDTOS);
+        foundReservationsTableView.setItems(reservationList);
     }
 
     private ScrollBar getVerticalScrollbar(TableView<?> table) {
@@ -245,15 +246,24 @@ public class ReservationsController {
 
     private void clear() {
         LOGGER.debug("clearing the data");
-        reservationDTOS.clear();
+        reservationList.clear();
         page = 0;
         totalPages = 0;
+        ScrollBar scrollBar = getVerticalScrollbar(foundReservationsTableView);
+        if (scrollBar != null) {
+            scrollBar.setValue(0);
+        }
+    }
+
+    private void refreshAndSortReservationTable() {
+        foundReservationsTableView.refresh();
+        foundReservationsTableView.sort();
     }
 
     public void showReservationDetailsButton() {
         Stage stage = new Stage();
         int row = foundReservationsTableView.getSelectionModel().getFocusedIndex();
-        PRSController.showReservationDetails(reservationDTOS.get(row), stage);
+        PRSController.showReservationDetails(reservationList.get(row), stage);
 
         Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
 
@@ -311,8 +321,8 @@ public class ReservationsController {
                 try {
                     ReservationDTO response =
                         reservationService.findOneByReservationNumber(reservationNumber);
-                    reservationDTOS.clear();
-                    reservationDTOS.addAll(response);
+                    reservationList.clear();
+                    reservationList.addAll(response);
                 } catch (DataAccessException e) {
                     LOGGER.error("Couldn't fetch reservations from server!");
                     JavaFXUtils.createErrorDialog(e.getMessage(),
