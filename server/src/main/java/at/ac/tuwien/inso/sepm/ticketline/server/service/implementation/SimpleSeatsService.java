@@ -37,4 +37,9 @@ public class SimpleSeatsService implements SeatsService {
             throw new InternalSeatReservationException("Could not find persisted seat for seat parameter: " + seat.toString());
         }
     }
+
+    @Override
+    public void deleteAll(List<Seat> seats) {
+        seatRepository.deleteAll(seats);
+    }
 }

@@ -83,7 +83,7 @@ public class ReservationServiceTests {
 
 
     @Test
-    public void removeSeatFromReservation() {
+    public void removeSeatFromReservation() throws InvalidReservationException {
         //get reservation
         var reservation = reservationService.findOneByPaidFalseAndId(RESERVATION_TEST_ID);
         Assert.assertNotNull(reservation);
@@ -102,9 +102,24 @@ public class ReservationServiceTests {
         seats = reservation.getSeats();
         Assert.assertEquals(0, seats.size());
         var seatOpt = seatRepository.findById(SEAT_TEST_ID);
-        Assert.assertTrue(seatOpt.isPresent());
-        Assert.assertEquals(seat, seatOpt.get());
+        Assert.assertFalse(seatOpt.isPresent());
     }
+
+    @Test(expected = InvalidReservationException.class)
+    public void addLockedSeatToReservation() throws InvalidReservationException {
+        //get reservation
+        var reservation = reservationService.findOneByPaidFalseAndId(RESERVATION_TEST_ID);
+        Assert.assertNotNull(reservation);
+        Assert.assertEquals(false, reservation.isPaid());
+
+        //remove seats
+        List<Seat> seats = reservation.getSeats();
+        Assert.assertEquals(1, seats.size());
+        seats.add(newSeat());
+        reservation.setSeats(seats);
+        reservation = reservationService.editReservation(reservation);
+    }
+
 
     @Test
     public void purchaseReservationWithId() {
@@ -137,7 +152,7 @@ public class ReservationServiceTests {
 
             //search
             Pageable pageable = Pageable.unpaged();
-            var reservationPage = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
+            var reservationPage = reservationService.findAllByCustomerNameAndPerformanceName(
                 reservationSearch, pageable);
             var reservations = reservationPage.getContent();
             Assert.assertEquals(1, reservations.size());
@@ -147,10 +162,11 @@ public class ReservationServiceTests {
             }
 
             //assert result
-            reservationPage = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
+            reservationPage = reservationService.findAllByCustomerNameAndPerformanceName(
                 reservationSearch, pageable);
             reservations = reservationPage.getContent();
-            Assert.assertEquals(0, reservations.size());
+            Assert.assertEquals(1, reservations.size());
+            Assert.assertTrue(reservations.get(0).isPaid());
         } else {
             Assert.fail("Either the customer or the performance weren't found!");
         }
@@ -175,7 +191,7 @@ public class ReservationServiceTests {
 
             //search
             Pageable pageable = Pageable.unpaged();
-            var reservationPage = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
+            var reservationPage = reservationService.findAllByCustomerNameAndPerformanceName(
                 reservationSearch, pageable);
             var reservations = reservationPage.getContent();
 

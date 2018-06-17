@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.integrationtests;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.performance.PerformanceMapper;
@@ -130,6 +131,7 @@ public class ReservationIT extends BaseIT {
         //get findAll parameters
         var customerOpt = customerRepository.findById(CUSTOMER_TEST_ID);
         var performanceOpt = performanceRepository.findById(PERFORMANCE_TEST_ID);
+
         if (customerOpt.isPresent() && performanceOpt.isPresent()) {
             var customerDTO = customerMapper.customerToCustomerDTO(customerOpt.get());
             var performanceDTO = performanceMapper.performanceToPerformanceDTO(performanceOpt.get());
@@ -154,7 +156,7 @@ public class ReservationIT extends BaseIT {
                 .contentType(ContentType.JSON)
                 .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
                 .body(reservationSearchDTO)
-                .when().post(RESERVATION_ENDPOINT + "/findNotPaid")
+                .when().post(RESERVATION_ENDPOINT + "/find")
                 .then().statusCode(HttpStatus.OK.value())
                 .assertThat().body("content.id", Matchers.hasItem(PERFORMANCE_TEST_ID.intValue()))
                 .assertThat().body("content.paid", Matchers.hasItem(false));
@@ -191,6 +193,37 @@ public class ReservationIT extends BaseIT {
         Assert.assertNotNull(result.getId());
         var resultSeatDTOs = result.getSeats();
         Assert.assertEquals(0, resultSeatDTOs.size());
+    }
+
+    @Test
+    public void addLockedSeatToReservationAsUser() {
+        //get not yet purchased reservation
+        var reservation = reservationRepository.findByPaidFalseAndId(RESERVATION_TEST_ID);
+        ReservationDTO reservationDTO = reservationMapper.reservationToReservationDTO(reservation);
+        Assert.assertNotNull(reservationDTO);
+
+        //edit reservation -> remove one seat
+        var seatDTOs = reservationDTO.getSeats();
+        var lockedSeat = seatRepository.save(newSeat());
+        Assert.assertEquals(1, seatDTOs.size());
+        seatDTOs.add(SeatDTO.Builder.aSeatDTO()
+            .withPositionX(lockedSeat.getPositionX())
+            .withPositionY(lockedSeat.getPositionY())
+            .build()
+        );
+        reservationDTO.setSeats(seatDTOs);
+
+        //create and send request - update reservation with new data
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .body(reservationDTO)
+            .when().post(RESERVATION_ENDPOINT + "/edit")
+            .then().extract().response();
+
+        //assert result
+        Assert.assertEquals(HttpStatus.CONFLICT.value(), response.getStatusCode());
     }
 
     @Test
@@ -278,6 +311,10 @@ public class ReservationIT extends BaseIT {
         seat.setPositionX(1);
         seat.setPositionY(2);
         return seat;
+    }
+
+    private Sector newSector() {
+        return null;
     }
 
     private Customer newCustomer() {

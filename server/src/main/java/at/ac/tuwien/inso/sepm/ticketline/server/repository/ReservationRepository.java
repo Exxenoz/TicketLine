@@ -59,7 +59,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     Reservation findByPaidFalseAndId(Long reservationId);
 
     /**
-     * Finds a not yet purchased reservation by the name of the customer and performance
+     * Finds a reservation by the name of the customer and performance
      *
      * @param firstName       first name of the customer
      * @param lastName        last name of the customer
@@ -68,23 +68,24 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      */
     @Query(value = "SELECT r " +
         "FROM Reservation r, Customer c, Performance p " +
-        "WHERE c.id = r.customer.id AND p.id = r.performance.id AND r.paid = false " +
+        "WHERE c.id = r.customer.id AND p.id = r.performance.id " +
         "AND c.firstName = :firstName AND c.lastName = :lastName AND p.name  = :performanceName")
-    Page<Reservation> findAllByPaidFalseAndCustomerNameAndPerformanceName(@Param("firstName") String firstName,
-                                                                          @Param("lastName") String lastName,
-                                                                          @Param("performanceName") String performanceName,
-                                                                          Pageable pageable);
+    Page<Reservation> findAllByCustomerNameAndPerformanceName(@Param("firstName") String firstName,
+                                                              @Param("lastName") String lastName,
+                                                              @Param("performanceName") String performanceName,
+                                                              Pageable pageable);
 
     /**
-     * Finds a non invoiced reservation by the unique reservationNr
+     * Finds reservation by the unique reservationNr
      *
      * @param reservationNr the unique number of the reservation to be found
      * @return the not yet purchased reservation
      */
-    Reservation findByPaidFalseAndReservationNumber(String reservationNr);
+    Reservation findByReservationNumber(String reservationNr);
 
     /**
      * Finds all the reservations for a given performance
+     *
      * @param performanceId the id of the performance for which the reservations will be returned
      * @return the list of found reservations
      */

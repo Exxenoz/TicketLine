@@ -1,10 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
@@ -25,8 +21,15 @@ public class News {
     @Size(max = 100)
     private String title;
 
+    @Column(nullable = false)
+    @Size(max = 50)
+    private String summary;
+
     @Column(nullable = false, length = 10_000)
     private String text;
+
+    @Column(nullable = true, length = 8000000)
+    private byte[] imageData;
 
     public Long getId() {
         return id;
@@ -52,12 +55,28 @@ public class News {
         this.title = title;
     }
 
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
     public String getText() {
         return text;
     }
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public byte[] getImageData() {
+        return imageData;
+    }
+
+    public void setImageData(byte[] imageData) {
+        this.imageData = imageData;
     }
 
     public static NewsBuilder builder() {
@@ -70,7 +89,9 @@ public class News {
             "id=" + id +
             ", publishedAt=" + publishedAt +
             ", title='" + title + '\'' +
+            ", summary='" + summary + '\'' +
             ", text='" + text + '\'' +
+            ", imageData='" + imageData + '\'' +
             '}';
     }
 
@@ -94,6 +115,12 @@ public class News {
         if (title != null ? !title.equals(news.title) : news.title != null) {
             return false;
         }
+        if (summary != null ? !summary.equals(news.summary) : news.summary != null) {
+            return false;
+        }
+        if (imageData != null ? !imageData.equals(news.imageData) : news.imageData != null) {
+            return false;
+        }
         return text != null ? text.equals(news.text) : news.text == null;
 
     }
@@ -103,7 +130,9 @@ public class News {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (publishedAt != null ? publishedAt.hashCode() : 0);
         result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (summary != null ? summary.hashCode() : 0);
         result = 31 * result + (text != null ? text.hashCode() : 0);
+        result = 31 * result + (imageData != null ? imageData.hashCode() : 0);
         return result;
     }
 
@@ -111,7 +140,9 @@ public class News {
         private Long id;
         private LocalDateTime publishedAt;
         private String title;
+        private String summary;
         private String text;
+        private byte[] imageData;
 
         private NewsBuilder() {
         }
@@ -131,8 +162,18 @@ public class News {
             return this;
         }
 
+        public NewsBuilder summary(String summary) {
+            this.summary = summary;
+            return this;
+        }
+
         public NewsBuilder text(String text) {
             this.text = text;
+            return this;
+        }
+
+        public NewsBuilder imageData(byte[] imageData) {
+            this.imageData = imageData;
             return this;
         }
 
@@ -141,7 +182,9 @@ public class News {
             news.setId(id);
             news.setPublishedAt(publishedAt);
             news.setTitle(title);
+            news.setSummary(summary);
             news.setText(text);
+            news.setImageData(imageData);
             return news;
         }
     }

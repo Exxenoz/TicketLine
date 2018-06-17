@@ -34,7 +34,7 @@ public class PerformanceSpecification implements Specification<Performance> {
     private final String country;
     private final String postalCode;
 
-    public PerformanceSpecification(long price,
+    public PerformanceSpecification(Long price,
                                     LocalDateTime start,
                                     Duration duration,
                                     String locationName,

@@ -39,13 +39,12 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     private final URI reservationCreateAndPayUri;
     private final URI reservationFindAllUri;
     private final URI reservationEditUri;
-    private final URI reservationPurchaseUri;
-    private final URI reservationFindNotPaidUri;
-    private final URI reservationFindNotPaidByReservationNumberUri;
-
     private final String reservationCancelUri;
-    private final String RESERVATION_FINDNOTPAID = "/reservation/findNotPaid";
-    private final String RESERVATION_FINDNOTPAID_WITHRESERVATION_NR = "/reservation/findNotPaid/reservationNr";
+    private final URI reservationPurchaseUri;
+    private final URI reservationFindUri;
+    private final String RESERVATION_FIND = "/reservation/find";
+    private final String RESERVATION_FIND_WITHRESERVATION_NR = "/reservation/find/reservationNr";
+    private final URI reservationFindByReservationNumberUri;
 
     public SimpleReservationRestClient(RestClient restClient) {
         this.restClient = restClient;
@@ -57,9 +56,9 @@ public class SimpleReservationRestClient implements ReservationRestClient {
         this.reservationEditUri = restClient.getServiceURI("/reservation/edit");
         this.reservationCancelUri = "/reservation/cancel/id";
         this.reservationPurchaseUri = restClient.getServiceURI("/reservation/purchase");
-        this.reservationFindNotPaidUri = restClient.getServiceURI(RESERVATION_FINDNOTPAID);
-        this.reservationFindNotPaidByReservationNumberUri =
-            restClient.getServiceURI("reservation/findNotPaid/ReservationNumber");
+        this.reservationFindUri = restClient.getServiceURI(RESERVATION_FIND);
+        this.reservationFindByReservationNumberUri =
+            restClient.getServiceURI("reservation/find/ReservationNumber");
     }
 
     @Override
@@ -137,7 +136,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     @Override
     public ReservationDTO findOneByPaidFalseById(Long reservationId) throws DataAccessException {
         try {
-            URI uri = restClient.getServiceURI(RESERVATION_FINDNOTPAID + "/" + reservationId);
+            URI uri = restClient.getServiceURI(RESERVATION_FIND + "/" + reservationId);
             LOGGER.debug("Entering findOneByPaidFalseById method with URI {}", uri);
             final var response =
                 restClient.exchange(
@@ -154,13 +153,13 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     }
 
     @Override
-    public PageResponseDTO<ReservationDTO> findAllByPaidFalseByCustomerNameAndByPerformanceName(
+    public PageResponseDTO<ReservationDTO> findAllByCustomerNameAndByPerformanceName(
         ReservationSearchDTO reservationSearchDTO) throws DataAccessException {
         try {
-            LOGGER.debug("Entering findAllByPaidFalseByCustomerNameAndByPerformanceName method with URI {}", reservationFindNotPaidUri);
+            LOGGER.debug("Entering findAllByCustomerNameAndByPerformanceName method with URI {}", reservationFindUri);
             final var response =
                 restClient.exchange(
-                    new RequestEntity<>(reservationSearchDTO, POST, reservationFindNotPaidUri),
+                    new RequestEntity<>(reservationSearchDTO, POST, reservationFindUri),
                     new ParameterizedTypeReference<PageResponseDTO<ReservationDTO>>() {
                     });
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
@@ -231,12 +230,12 @@ public class SimpleReservationRestClient implements ReservationRestClient {
 
 
     @Override
-    public ReservationDTO findOneByPaidFalseAndReservationNumber(String reservationNr) throws DataAccessException {
+    public ReservationDTO findOneByReservationNumber(String reservationNr) throws DataAccessException {
         try {
             final URI uri = restClient.getServiceURI(
-                RESERVATION_FINDNOTPAID_WITHRESERVATION_NR + "/" + reservationNr
+                RESERVATION_FIND_WITHRESERVATION_NR + "/" + reservationNr
             );
-            LOGGER.debug("Entering findOneByPaidFalseAndReservationNumber method with URI {}", uri);
+            LOGGER.debug("Entering findOneByReservationNumber method with URI {}", uri);
             final var response =
                 restClient.exchange(
                     new RequestEntity<>(GET, uri),

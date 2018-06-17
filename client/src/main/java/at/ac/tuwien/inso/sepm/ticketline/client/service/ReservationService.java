@@ -56,13 +56,13 @@ public interface ReservationService {
     ReservationDTO findOneByPaidFalseById(Long reservationId) throws DataAccessException;
 
     /**
-     * Finds a not yet purchased reservation with the given reservation number
+     * Finds a reservation with the given reservation number
      *
      * @param reservationNr the unique number of the reservation
      * @return the found reservation
      * @throws DataAccessException in case something went during the action
      */
-    ReservationDTO findOneByPaidFalseAndReservationNumber(String reservationNr) throws DataAccessException;
+    ReservationDTO findOneByReservationNumber(String reservationNr) throws DataAccessException;
 
     /**
      * Finds a not yet purchased reservation with the full name of the customer and name of the performance
@@ -71,7 +71,7 @@ public interface ReservationService {
      * @return a page of the found reservations
      * @throws DataAccessException in case something went wrong during the action
      */
-    PageResponseDTO<ReservationDTO> findAllByPaidFalseByCustomerNameAndPerformanceName(ReservationSearchDTO reservationSearchDTO)
+    PageResponseDTO<ReservationDTO> findAllByCustomerNameAndPerformanceName(ReservationSearchDTO reservationSearchDTO)
         throws DataAccessException;
 
     /**

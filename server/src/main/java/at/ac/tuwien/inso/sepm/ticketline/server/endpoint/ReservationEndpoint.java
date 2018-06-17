@@ -12,6 +12,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.Reserv
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationSearchMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpBadRequestException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpConflictException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpNotFoundException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
@@ -84,25 +85,25 @@ public class ReservationEndpoint {
         return reservationMapper.reservationToReservationDTO(reservation);
     }
 
-    @GetMapping("/findNotPaid/reservationNr/{reservationNumber}")
+    @GetMapping("/find/reservationNr/{reservationNumber}")
     @PreAuthorize("hasRole('USER')")
-    @ApiOperation("Finds a Reservation which wasn't purchased yet with the given id")
-    public ReservationDTO findOneByPaidFalseAndReservationNumber(@PathVariable("reservationNumber") String reservationNr) {
-        final var reservation = reservationService.findOneByPaidFalseAndReservationNumber(reservationNr);
+    @ApiOperation("Finds a Reservation with the given reservationnumber")
+    public ReservationDTO findOneByReservationNumber(@PathVariable("reservationNumber") String reservationNr) {
+        final var reservation = reservationService.findOneByReservationNumber(reservationNr);
         if (reservation == null) {
             throw new HttpNotFoundException();
         }
         return reservationMapper.reservationToReservationDTO(reservation);
     }
 
-    @PostMapping("/findNotPaid")
+    @PostMapping("/find")
     @PreAuthorize("hasRole('USER')")
-    @ApiOperation("Finds Reservations which wasn't purchased yet with the given customername and performancename")
-    public PageResponseDTO<ReservationDTO> findAllByPaidFalseByCustomerNameAndPerformanceName(
+    @ApiOperation("Finds Reservations with the given customername and performancename")
+    public PageResponseDTO<ReservationDTO> findAllByCustomerNameAndPerformanceName(
         @RequestBody ReservationSearchDTO reservationSearchDTO) {
         try {
             ReservationSearchValidator.validateReservationSearchDTO(reservationSearchDTO);
-            Page<Reservation> reservationPage = reservationService.findAllByPaidFalseAndCustomerNameAndPerformanceName(
+            Page<Reservation> reservationPage = reservationService.findAllByCustomerNameAndPerformanceName(
                 reservationSearchMapper.reservationSearchDTOToReservationSearch(reservationSearchDTO),
                 reservationSearchDTO.getPageable()
             );
@@ -132,9 +133,14 @@ public class ReservationEndpoint {
     @PreAuthorize("hasRole('USER')")
     @ApiOperation("Edit an existing Reservation")
     public ReservationDTO editReservation(@RequestBody ReservationDTO reservationDTO) {
-        var reservation = reservationService.editReservation(
-            reservationMapper.reservationDTOToReservation(reservationDTO)
-        );
+        Reservation reservation = null;
+        try {
+            reservation = reservationService.editReservation(
+                reservationMapper.reservationDTOToReservation(reservationDTO)
+            );
+        } catch (InvalidReservationException e) {
+            throw new HttpConflictException(e.getMessage());
+        }
         return reservationMapper.reservationToReservationDTO(reservation);
     }
 
