@@ -54,8 +54,8 @@ public class PerformanceEndpoint {
     @GetMapping("search")
     @ApiOperation("Get a list of all the performances that match the given criteria")
     @PreAuthorize("hasRole('USER')")
-    public PageResponseDTO<PerformanceDTO> findAll(SearchDTO search, PageRequestDTO pageRequestDTO) {
-        Page<Performance> performancePage = performanceService.findAll(search, pageRequestDTO.getPageable());
+    public PageResponseDTO<PerformanceDTO> findAll(SearchDTO search, Pageable pageable) {
+        Page<Performance> performancePage = performanceService.findAll(search, pageable);
         List<PerformanceDTO> performanceDTOList = performanceMapper.performanceToPerformanceDTO(performancePage.getContent());
         return new PageResponseDTO<>(performanceDTOList, performancePage.getTotalPages());
     }

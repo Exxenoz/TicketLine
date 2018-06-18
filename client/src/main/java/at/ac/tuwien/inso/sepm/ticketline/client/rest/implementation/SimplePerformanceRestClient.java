@@ -115,8 +115,12 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
                     .queryParam("duration", search.getDuration())
                     .queryParam("page", pageRequestDTO.getPage())
                     .queryParam("size", pageRequestDTO.getSize());
-            } else
-            {
+                if (pageRequestDTO.getSortColumnName() != null && pageRequestDTO.getSortDirection() != null) {
+                    builder = builder
+                        .queryParam("sort", pageRequestDTO.getSortColumnName()
+                            + "," + pageRequestDTO.getSortDirection().toString().toLowerCase());
+                }
+            } else {
                 builder = UriComponentsBuilder.fromUri(restClient.getServiceURI("/performance/search/"))
                     .queryParam("performanceName", search.getPerformanceName())
                     .queryParam("eventName", search.getEventName())
@@ -133,8 +137,12 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
                     .queryParam("duration", search.getDuration())
                     .queryParam("page", pageRequestDTO.getPage())
                     .queryParam("size", pageRequestDTO.getSize());
+                if (pageRequestDTO.getSortColumnName() != null && pageRequestDTO.getSortDirection() != null) {
+                    builder = builder
+                        .queryParam("sort", pageRequestDTO.getSortColumnName()
+                            + "," + pageRequestDTO.getSortDirection().toString().toLowerCase());
+                }
             }
-
             URI uri = builder.build().toUri();
 
             final var performance =
