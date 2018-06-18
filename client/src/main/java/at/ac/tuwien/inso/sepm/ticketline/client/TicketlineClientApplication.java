@@ -30,7 +30,6 @@ public class TicketlineClientApplication extends SpringFxApplication {
 
     @Override
     public void start(Stage stage) {
-
         if(javaFxConfigurationProperties != null) {
             stage.setTitle(javaFxConfigurationProperties.getTitle());
             javaFxConfigurationProperties.setInitialHeight(800);
@@ -43,7 +42,7 @@ public class TicketlineClientApplication extends SpringFxApplication {
             ));
         } else {
             stage.setTitle(BundleManager.getBundle().getString("main.stage.title"));
-            stage.setMinHeight(1100);
+            stage.setMinHeight(800);
             stage.setMinWidth(1100);
 
             stage.setScene(new Scene(
