@@ -4,4 +4,7 @@ public class InternalCancelationException extends Exception {
     public InternalCancelationException(String message) {
         super(message);
     }
+
+    public InternalCancelationException() {
+    }
 }

@@ -252,42 +252,19 @@ public class SimpleReservationService implements ReservationService {
         return reservationNumber;
     }
 
-    private boolean checkIfAllSeatsOfReservationAreDeleted(List<Seat> deletedSeats) {
-        boolean allDeleted = true;
-        for (Seat seat : deletedSeats) {
-            try {
-                Seat s = seatsService.findbyID(seat.getId());
-                allDeleted = false;
-            } catch (NoSuchElementException e) {
-                allDeleted = true;
-            }
-        }
-        return allDeleted;
-    }
 
 
-    private void deleteSeatsAfterCancelation(List<Seat> seatsToDelete) throws InternalCancelationException {
-        for (Seat seat : seatsToDelete) {
-            seatsService.deleteSeat(seat);
-        }
-        if (!checkIfAllSeatsOfReservationAreDeleted(seatsToDelete)) {
-            throw new InternalCancelationException(" ");
-        }
-
-    }
 
     @Override
     public Reservation cancelReservation(Long id) throws InternalCancelationException {
-        //TODO: remove Seats from database
-        Reservation reservation = reservationRepository.findById(id).get();
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(InternalCancelationException::new);
         List<Seat> seatsOfReservation = reservation.getSeats();
         reservation.setSeats(null);
         reservation.setCanceled(true);
         Reservation canceledReservation = reservationRepository.save(reservation);
-        deleteSeatsAfterCancelation(seatsOfReservation);
+        seatsOfReservation.forEach(seat -> seatsService.deleteSeat(seat));
 
         return canceledReservation;
-
     }
 
     @Override
