@@ -161,7 +161,8 @@ public class HallPlanController implements SeatSelectionListener {
         }
     }
 
-    public void updateSeats(List<SeatDTO> seats) {
+    public void updateSeatsInformation(List<SeatDTO> seats) {
+        amountOfTicketsLabel.setText("" + seats.size());
         seatsTableView.getItems().setAll(seats);
     }
 
@@ -195,18 +196,14 @@ public class HallPlanController implements SeatSelectionListener {
     @Override
     public void onSeatSelected(SeatDTO seatDTO) {
         seats.add(seatDTO);
-        amountOfTicketsLabel.setText("" + seats.size());
-
-        updateSeats(this.seats);
+        updateSeatsInformation(this.seats);
         updatePrice(this.seats, this.reservation.getPerformance());
     }
 
     @Override
     public void onSeatDeselected(SeatDTO seatDTO) {
         seats.remove(seatDTO);
-        amountOfTicketsLabel.setText("" + seats.size());
-
-        updateSeats(this.seats);
+        updateSeatsInformation(this.seats);
         updatePrice(this.seats, this.reservation.getPerformance());
     }
 
@@ -244,7 +241,13 @@ public class HallPlanController implements SeatSelectionListener {
         this.stage = stage;
         this.changeDetails = true;
         this.isReservation = true;
-        runLater(() -> seatMapController.fillForReservationEdit(reservation));
+
+
+        runLater(() -> {
+            updateSeatsInformation(reservation.getSeats());
+            updatePrice(reservation.getSeats(), this.reservation.getPerformance());
+            seatMapController.fillForReservationEdit(reservation);
+        });
     }
 
     private void closeWindow() {
