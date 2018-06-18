@@ -50,9 +50,13 @@ public class SeatDataGenerator implements DataGenerator {
                 seat.setPositionX(x);
                 seat.setPositionY(y);
                 seat.setSector(sectors.get(y));
+
                 if ((i % seatsPerSector) == 0 && i > 0) {
                     x = 0;
-                    y++;
+
+                    if(y < sectors.size() - 1) {
+                        y++;
+                    }
                 }
                 LOGGER.debug("Saving seat {}", seat);
                 seatRepository.save(seat);
