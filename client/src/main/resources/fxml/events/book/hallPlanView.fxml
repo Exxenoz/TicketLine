@@ -47,9 +47,9 @@
                    <Button fx:id="continueButton" layoutX="617.0" layoutY="175.0" mnemonicParsing="false" onAction="#continueButton" text="Continue" />
                   <TableView fx:id="seatsTableView" layoutX="29.0" layoutY="32.0" prefHeight="126.0" prefWidth="670.0">
                     <columns>
-                      <TableColumn fx:id="seatsRowColumn" prefWidth="223.333333333" text="Row" />
-                      <TableColumn fx:id="seatsSeatColumn" prefWidth="223.333333333" text="Seat" />
-                        <TableColumn fx:id="seatsPriceColumn" prefWidth="223.333333333" text="Price" />
+                      <TableColumn fx:id="seatsRowColumn" prefWidth="223.333333333" text="Row" sortable="false" />
+                      <TableColumn fx:id="seatsSeatColumn" prefWidth="223.333333333" text="Seat" sortable="false"  />
+                        <TableColumn fx:id="seatsPriceColumn" prefWidth="223.333333333" text="Price" sortable="false" />
                     </columns>
                   </TableView>
                   <Label layoutX="28.0" layoutY="12.0" text="Chosen seats" />

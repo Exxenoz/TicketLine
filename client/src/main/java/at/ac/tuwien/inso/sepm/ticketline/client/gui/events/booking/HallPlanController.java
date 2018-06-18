@@ -212,7 +212,6 @@ public class HallPlanController implements SeatSelectionListener {
 
     private void continueOrReserve() {
         reservation.setSeats(seats);
-
         if (!changeDetails) {
             selectCustomerController.fill(reservation, isReservation, stage);
             Parent parent = fxmlLoader.load("/fxml/events/book/selectCustomerView.fxml");
