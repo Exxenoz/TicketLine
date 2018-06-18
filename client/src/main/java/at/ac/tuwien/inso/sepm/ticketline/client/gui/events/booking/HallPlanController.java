@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import static javafx.application.Platform.runLater;
+
 import java.lang.invoke.MethodHandles;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,8 +51,6 @@ public class HallPlanController implements SeatSelectionListener {
     private Label performanceNameLabel;
     @FXML
     private Label amountOfTicketsLabel;
-    @FXML
-    private Label seatsOrSectorsLabel;
     @FXML
     private Label totalPrice;
     @FXML
@@ -89,14 +89,13 @@ public class HallPlanController implements SeatSelectionListener {
                               @Lazy PurchaseReservationSummaryController PRSController,
                               @Lazy SeatMapController seatMapController,
                               @Lazy SectorController sectorController,
-                               ReservationService reservationService) {
+                              ReservationService reservationService) {
 
         this.fxmlLoader = fxmlLoader;
         this.selectCustomerController = selectCustomerController;
         this.PRSController = PRSController;
         this.seatMapController = seatMapController;
         this.sectorController = sectorController;
-
         this.reservationService = reservationService;
     }
 
@@ -104,7 +103,7 @@ public class HallPlanController implements SeatSelectionListener {
     private void initialize() {
         eventNameLabel.setText(reservation.getPerformance().getEvent().getName());
         performanceNameLabel.setText(reservation.getPerformance().getName());
-        if(seats != null){
+        if (seats != null) {
             amountOfTicketsLabel.setText("" + seats.size());
         } else {
             amountOfTicketsLabel.setText("0");
@@ -121,7 +120,6 @@ public class HallPlanController implements SeatSelectionListener {
         });
 
         if (reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SECTOR) {
-            seatsOrSectorsLabel.setText("Chosen Sector: ");
             hallHeading.setText("Choose your Sector");
         }
 
@@ -130,7 +128,7 @@ public class HallPlanController implements SeatSelectionListener {
         } else {
             seats = reservation.getSeats();
 
-            if(seats == null || seats.isEmpty()) {
+            if (seats == null || seats.isEmpty()) {
                 seats = new LinkedList<>();
             }
             continueButton.setText("Save Changes");
@@ -149,8 +147,8 @@ public class HallPlanController implements SeatSelectionListener {
         }
 
         // Set performance detail to seat plan
-        if(this.reservation != null && this.reservation.getPerformance() != null) {
-            if(reservationDTOS != null) {
+        if (this.reservation != null && this.reservation.getPerformance() != null) {
+            if (reservationDTOS != null) {
                 //Set this controller als seat selection listener for the seat map
                 this.seatMapController.setSeatSelectionListener(this);
                 this.seatMapController.fill(this.reservation.getPerformance(), reservationDTOS);
@@ -168,9 +166,9 @@ public class HallPlanController implements SeatSelectionListener {
 
     @FXML
     public void backButton(ActionEvent event) {
-        if(changeDetails){
+        if (changeDetails) {
             closeWindow();
-        }else {
+        } else {
             Parent parent = fxmlLoader.load("/fxml/events/performanceDetailView.fxml");
             stage.setScene(new Scene(parent));
             stage.setTitle("Performance Details");
@@ -241,9 +239,7 @@ public class HallPlanController implements SeatSelectionListener {
         this.stage = stage;
         this.changeDetails = true;
         this.isReservation = true;
-
-        //Just prefill the seat controller for the reservation state
-        seatMapController.fillForReservationEdit(reservation);
+        runLater(() -> seatMapController.fillForReservationEdit(reservation));
     }
 
     private void closeWindow() {

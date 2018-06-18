@@ -189,13 +189,13 @@ public class SeatMapController {
                         if(cs.getPlanX() == s.getPositionX()
                             && (cs.getPlanY() == s.getPositionY())) {
                             cs.setAlreadyReserved(false);
+                            cs.setSelected(true);
                             cs.drawSelectedState(this.gc);
                         }
                     }
                 }
             }
         }
-
     }
 
     public void setSeatSelectionListener(SeatSelectionListener seatSelectionListener) {

@@ -110,7 +110,7 @@ public class SimpleReservationService implements ReservationService {
             throw new InvalidReservationException("Hall plan is not coherent with sectors or seats.");
         }
         //check if all new seats are free
-        checkIfAllSeatsAreFreeIgnoreId(onlyNewSeats);
+        checkIfAllSeatsAreFreeIgnoreId(reservation.getId(), performance.getId(), onlyNewSeats);
         LOGGER.debug("The added seats are still free");
 
         //create the new Seats
@@ -154,14 +154,17 @@ public class SimpleReservationService implements ReservationService {
     }
 
 
-    private void checkIfAllSeatsAreFreeIgnoreId(List<Seat> seatsToCheck) throws InvalidReservationException {
-        List<Reservation> allReservations = reservationRepository.findAll();
+    private void checkIfAllSeatsAreFreeIgnoreId(Long reservationId, Long performanceId, List<Seat> seatsToCheck) throws InvalidReservationException {
+        List<Reservation> allReservations = reservationRepository.findAllByPerformanceId(performanceId);
+
         for (Reservation reservation : allReservations) {
-            for (Seat seat : seatsToCheck) {
-                for (Seat otherSeat : reservation.getSeats()) {
-                    if (seat.equalsWithoutId(otherSeat)) {
-                        LOGGER.warn("The seat {} is already reserved", seat);
-                        throw new InvalidReservationException("Seat " + seat + " is already reserved!");
+            if (!reservation.getId().equals(reservationId)) {
+                for (Seat seat : seatsToCheck) {
+                    for (Seat otherSeat : reservation.getSeats()) {
+                        if (seat.equalsWithoutId(otherSeat)) {
+                            LOGGER.warn("The seat {} is already reserved", seat);
+                            throw new InvalidReservationException("Seat " + seat + " is already reserved!");
+                        }
                     }
                 }
             }

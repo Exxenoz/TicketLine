@@ -4,8 +4,16 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 
 public interface SeatSelectionListener {
 
+    /**
+     *
+     * @param seatDTO
+     */
     void onSeatSelected(SeatDTO seatDTO);
 
+    /**
+     *
+     * @param seatDTO
+     */
     void onSeatDeselected(SeatDTO seatDTO);
 
 }
