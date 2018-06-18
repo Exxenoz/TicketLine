@@ -70,6 +70,10 @@ public class AuthenticationPasswordChangeController {
         this.username = username;
     }
 
+    public void setPasswordChangeKey(String passwordChangeKey) {
+        txtPasswordResetKey.setText(passwordChangeKey);
+    }
+
     @FXML
     private void handleAuthenticate(ActionEvent actionEvent) {
         final var task = new Task<AuthenticationTokenInfo>() {
@@ -148,4 +152,5 @@ public class AuthenticationPasswordChangeController {
     public void handleBackToAuthentication(ActionEvent actionEvent) {
         mainController.switchBackToAuthentication();
     }
+
 }

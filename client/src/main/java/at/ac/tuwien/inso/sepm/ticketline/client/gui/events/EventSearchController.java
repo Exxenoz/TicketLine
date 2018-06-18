@@ -11,8 +11,10 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -34,9 +36,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import static javafx.collections.FXCollections.observableArrayList;
@@ -113,7 +112,7 @@ public class EventSearchController {
     private static final int PERFORMANCES_PER_PAGE = 50;
 
     private String activeFilters = "";
-
+    private TableColumn sortedColumn;
 
     public EventSearchController(SpringFxmlLoader fxmlLoader, PerformanceService performanceService, PerformanceDetailViewController performanceDetailViewController) {
         this.fxmlLoader = fxmlLoader;
@@ -153,21 +152,18 @@ public class EventSearchController {
         locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty( cellData.getValue().getLocationAddress().getCountry() + ", " +
             cellData.getValue().getLocationAddress().getCity()));
 
+        startTimeColumn.setComparator((d1, d2) -> {
+            LocalDateTime date1 = LocalDateTime.parse(d1, formatter);
+            LocalDateTime date2 = LocalDateTime.parse(d2, formatter);
+            return date1.compareTo(date2);
+        });
+
         foundEventsTableView.setItems(performanceData);
 
     }
 
-
-
-
     //+++++++++++++++++LOAD DATA+++++++++++++++
     public void loadData() {
-        foundEventsTableView.sortPolicyProperty().set(t -> {
-            clear();
-            loadPerformanceTable(0);
-            return true;
-        });
-
         final ScrollBar scrollBar = getVerticalScrollbar(foundEventsTableView);
         if (scrollBar != null) {
             scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -179,19 +175,56 @@ public class EventSearchController {
                     scrollBar.setValue(targetValue / performanceData.size());
                 }
             });
+
+            scrollBar.visibleProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                if (newValue == false) {
+                    // Scrollbar is invisible, load next page
+                    page++;
+                    loadPerformanceTable(page);
+                }
+            });
         }
+
+        ChangeListener<TableColumn.SortType> tableColumnSortChangeListener = (observable, oldValue, newValue) -> {
+            if(newValue != null) {
+                var property = (ObjectProperty<TableColumn.SortType>) observable;
+                sortedColumn = (TableColumn) property.getBean();
+                for (TableColumn tableColumn : foundEventsTableView.getColumns()) {
+                    if (tableColumn != sortedColumn) {
+                        tableColumn.setSortType(null);
+                    }
+                }
+                clear();
+                loadPerformanceTable(0);
+            }
+        };
+
+        for(TableColumn tableColumn : foundEventsTableView.getColumns()) {
+            tableColumn.setSortType(null);
+        }
+        nameColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        eventColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        startTimeColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        locationColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
+
+        loadPerformanceTable(0);
     }
 
     private void clear() {
+        LOGGER.debug("clearing the data");
         performanceData.clear();
         page = 0;
         totalPages = 0;
+        ScrollBar scrollBar = getVerticalScrollbar(foundEventsTableView);
+        if (scrollBar != null) {
+            scrollBar.setValue(0);
+        }
     }
 
     private void loadPerformanceTable(int page){
         PageRequestDTO pageRequestDTO = null;
-        if (foundEventsTableView.getSortOrder().size() > 0) {
-            TableColumn<PerformanceDTO, ?> sortedColumn = foundEventsTableView.getSortOrder().get(0);
+
+        if (sortedColumn != null) {
             Sort.Direction sortDirection = (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
             pageRequestDTO = new PageRequestDTO(page, PERFORMANCES_PER_PAGE, sortDirection, getColumnNameBy(sortedColumn));
         } else {
@@ -226,18 +259,14 @@ public class EventSearchController {
         if (sortedColumn == nameColumn) {
             return "name";
         } else if (sortedColumn == eventColumn) {
-            return "event";
+            return "event.name";
         } else if (sortedColumn == startTimeColumn) {
             return "performanceStart";
         } else if (sortedColumn == locationColumn) {
-            return "locationName";
+            return "locationAddress.country";
         }
         return "id";
     }
-
-
-
-
 
     //++++++++++++++BUTTONS+++++++++++++++
     @FXML
@@ -382,7 +411,7 @@ public class EventSearchController {
 
     @FXML
     private void clearAndReloadButton(ActionEvent event) {
-            initializeTableView();
+        clear();
             loadPerformanceTable(0);
             foundEventsTableView.refresh();
             activeFilters = "";

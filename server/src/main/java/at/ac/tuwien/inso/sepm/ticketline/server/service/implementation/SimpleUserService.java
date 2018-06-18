@@ -100,8 +100,7 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public void increaseStrikes(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException,
-    InternalUserDisabledException {
+    public void increaseStrikesAndDisableUserIfStrikesAreTooHigh(UserDTO userDTO) throws InternalUserNotFoundException {
         LOGGER.info("Increase strikes for user {}", userDTO.getUsername());
 
         User user = userRepository.findByUsername(userDTO.getUsername());
@@ -109,39 +108,23 @@ public class SimpleUserService implements UserService {
             throw new InternalUserNotFoundException();
         }
 
-        if(!user.isEnabled()) {
-            throw new InternalUserDisabledException("User is already disabled.");
-        }
-
         int userStrikes = user.getStrikes();
-        if(!(userStrikes > UserService.ALLOWED_STRIKES)) {
-            user.setStrikes(user.getStrikes() + 1);
-            LOGGER.info("Increasing strikes for user: {} to amount: {}", user.getUsername(), user.getStrikes());
-        }
-        userRepository.save(user);
-    }
 
-    @Override
-    public boolean isUserBelowAllowedStrikes(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException {
-        try {
-            UserValidator.validateExistingUser(userDTO);
-        } catch(UserValidatorException e) {
-            throw new InternalUserValidationException();
+        if (userStrikes <= UserService.ALLOWED_STRIKES) {
+            userStrikes++;
+
+            LOGGER.info("Increasing strikes for user: {} to amount: {}", user.getUsername(), userStrikes);
+
+            user.setStrikes(userStrikes);
         }
 
-        User user = userRepository.findByUsername(userDTO.getUsername());
-        if(user == null) {
-            throw new InternalUserNotFoundException();
-        }
-
-        if(user.getStrikes() > UserService.ALLOWED_STRIKES) {
+        if (userStrikes > UserService.ALLOWED_STRIKES)
+        {
+            LOGGER.info("Disable user {}, because strike counter is greater than allowed strikes!", user.getUsername());
             user.setEnabled(false);
-            userRepository.save(user);
-            return false;
-        } else {
-            return true;
         }
 
+        userRepository.save(user);
     }
 
     @Override

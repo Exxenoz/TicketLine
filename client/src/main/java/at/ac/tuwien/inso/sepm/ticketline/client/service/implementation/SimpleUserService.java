@@ -2,7 +2,9 @@ package at.ac.tuwien.inso.sepm.ticketline.client.service.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.UserRestClient;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationInformationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.UserService;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
@@ -13,6 +15,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.List;
 
 @Service
@@ -20,9 +23,12 @@ public class SimpleUserService implements UserService {
 
 
     private final UserRestClient userRestClient;
+    private AuthenticationInformationService authenticationInformationService;
 
-    public SimpleUserService(UserRestClient userRestClient) {
+
+    public SimpleUserService(UserRestClient userRestClient, AuthenticationInformationService authenticationInformationService) {
         this.userRestClient = userRestClient;
+        this.authenticationInformationService = authenticationInformationService;
     }
 
     @Override
@@ -49,6 +55,9 @@ public class SimpleUserService implements UserService {
     public void disableUser(UserDTO userDTO) throws DataAccessException {
         try {
             UserValidator.validateExistingUser(userDTO);
+            if (authenticationInformationService.getCurrentAuthenticationTokenInfo().get().getUsername().equals(userDTO.getUsername())) {
+                throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.user.disable_self"));
+            }
         } catch (UserValidatorException e) {
             throw new DataAccessException(e.getMessage());
         }
@@ -62,11 +71,24 @@ public class SimpleUserService implements UserService {
 
     @Override
     public UserDTO resetPassword(UserPasswordResetRequestDTO userPasswordResetRequestDTO) throws DataAccessException {
+        String resetKey = generateResetKey();
+        userPasswordResetRequestDTO.setPasswordChangeKey(resetKey);
         return userRestClient.resetPassword(userPasswordResetRequestDTO);
     }
 
     @Override
     public void changePassword(UserPasswordChangeRequestDTO userPasswordChangeRequestDTO) throws DataAccessException {
         userRestClient.changePassword(userPasswordChangeRequestDTO);
+    }
+
+    // https://stackoverflow.com/a/157202
+    private String generateResetKey() {
+        final String AB = "123456789ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        SecureRandom rnd = new SecureRandom();
+
+        StringBuilder sb = new StringBuilder(8);
+        for(int i = 0; i < 8; i++)
+            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+        return sb.toString();
     }
 }

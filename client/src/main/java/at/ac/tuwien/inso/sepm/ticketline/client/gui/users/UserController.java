@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.users;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.MainController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationInformationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.UserService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
@@ -14,6 +15,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.binding.StringBinding;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -87,6 +89,8 @@ public class UserController {
     private ObservableList<UserDTO> userList;
     private int page = 0;
     private int totalPages = 1;
+
+    private TableColumn sortedColumn;
 
     public UserController(SpringFxmlLoader springFxmlLoader, MainController mainController, UserService userService) {
         this.springFxmlLoader = springFxmlLoader;
@@ -164,17 +168,30 @@ public class UserController {
 
             verticalScrollbar.visibleProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
                 if (newValue == false) {
-                    // Scrollbar is invisible, load pages until scrollbar is shown again
+                    // Scrollbar is invisible, load next page
                     loadUserTable(page + 1);
                 }
             });
         }
 
         ChangeListener<TableColumn.SortType> tableColumnSortChangeListener = (observable, oldValue, newValue) -> {
-            clearUserList();
-            loadUserTable(FIRST_USER_TABLE_PAGE);
+            if(newValue != null) {
+                var property = (ObjectProperty<TableColumn.SortType>) observable;
+                sortedColumn = (TableColumn) property.getBean();
+                for (TableColumn tableColumn : userTable.getColumns()) {
+                    if (tableColumn != sortedColumn) {
+                        tableColumn.setSortType(null);
+                    }
+                }
+
+                clearUserList();
+                loadUserTable(FIRST_USER_TABLE_PAGE);
+            }
         };
 
+        for(TableColumn tableColumn : userTable.getColumns()) {
+            tableColumn.setSortType(null);
+        }
         usernameCol.sortTypeProperty().addListener(tableColumnSortChangeListener);
         useraccountStatusCol.sortTypeProperty().addListener(tableColumnSortChangeListener);
         userAuthTriesCol.sortTypeProperty().addListener(tableColumnSortChangeListener);
@@ -184,13 +201,11 @@ public class UserController {
 
     private ScrollBar getVerticalScrollbar(TableView<?> table) {
         if(verticalScrollbar == null) {
-            ScrollBar result = null;
             for (Node n : table.lookupAll(".scroll-bar")) {
                 if (n instanceof ScrollBar) {
                     ScrollBar bar = (ScrollBar) n;
                     if (bar.getOrientation().equals(Orientation.VERTICAL)) {
                         verticalScrollbar = bar;
-
                         break;
                     }
                 }
@@ -221,8 +236,8 @@ public class UserController {
         }
 
         PageRequestDTO pageRequestDTO = null;
-        if (userTable.getSortOrder().size() > 0) {
-            TableColumn<UserDTO, ?> sortedColumn = userTable.getSortOrder().get(0);
+
+        if (sortedColumn != null) {
             Sort.Direction sortDirection = (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
             pageRequestDTO = new PageRequestDTO(page, USERS_PER_PAGE, sortDirection, getColumnNameBy(sortedColumn));
         }
@@ -295,11 +310,12 @@ public class UserController {
                 LOGGER.debug("Trying to enable user");
                 userService.enableUser(userDTO);
                 userDTO.setEnabled(true);
+                userDTO.setStrikes(0);
                 toggleEnableButton.textProperty().bind(BundleManager.getStringBinding("usertab.user.disable"));
             }
         } catch (DataAccessException e) {
             String errorMessage = e.getMessage();
-            if ((e.getCause().getClass()) == HttpClientErrorException.class) {
+            if (e.getCause() != null && e.getCause().getClass() == HttpClientErrorException.class) {
                 var httpErrorCode = ((HttpStatusCodeException) e.getCause()).getStatusCode();
                 if (httpErrorCode == HttpStatus.FORBIDDEN) {
                     LOGGER.debug("Cannot disable own account");
@@ -346,11 +362,8 @@ public class UserController {
             return;
         }
 
-        String resetKey = generateResetKey();
-
         UserPasswordResetRequestDTO userPasswordResetRequestDTO =
             UserPasswordResetRequestDTO.builder().
-                passwordChangeKey(resetKey).
                 userDTO(userDTO).
                 build();
 
@@ -368,23 +381,12 @@ public class UserController {
                 BundleManager.getBundle().getString("usertab.password_reset.dialog.success.title"),
                 BundleManager.getBundle().getString("usertab.password_reset.dialog.success.header_text") + " " + userDTO.getUsername(),
                 BundleManager.getBundle().getString("usertab.password_reset.dialog.success.content_text"),
-                resetKey,
+                userPasswordResetRequestDTO.getPasswordChangeKey(),
                 passwordResetButton.getScene().getWindow()
             ).showAndWait();
         } catch (DataAccessException e) {
             JavaFXUtils.createErrorDialog(e.getMessage(),
                 content.getScene().getWindow()).showAndWait();
         }
-    }
-
-    // https://stackoverflow.com/a/157202
-    private String generateResetKey() {
-        final String AB = "123456789ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        SecureRandom rnd = new SecureRandom();
-
-        StringBuilder sb = new StringBuilder(8);
-        for(int i = 0; i < 8; i++)
-            sb.append(AB.charAt(rnd.nextInt(AB.length())));
-        return sb.toString();
     }
 }

@@ -148,11 +148,12 @@ public class NewsReadController {
             PageResponseDTO<SimpleNewsDTO> response = newsService.findAllRead(pageRequestDTO);
             this.totalPages = response.getTotalPages() > 0 ? response.getTotalPages() : 1;
 
+            int curNewsCount = loadedNews.size();
             for (int i = 0; i < response.getContent().size(); i++) {
                 SimpleNewsDTO news = response.getContent().get(i);
                 SpringFxmlLoader.Wrapper<NewsElementController> wrapper =
                     springFxmlLoader.loadAndWrap("/fxml/news/newsElement.fxml");
-                wrapper.getLoadedObject().setId("readNews" + loadedNews.size() + i);
+                wrapper.getLoadedObject().setId("readNews" + (curNewsCount + i));
                 wrapper.getController().initializeData(news);
                 vbNewsBoxChildren.add(wrapper.getLoadedObject());
                 if (i + 1 < response.getContent().size()) {

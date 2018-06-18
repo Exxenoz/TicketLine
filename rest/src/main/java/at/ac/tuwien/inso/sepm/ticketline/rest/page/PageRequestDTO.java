@@ -93,7 +93,7 @@ public class PageRequestDTO {
 
     public Pageable getPageable() {
         return (sortDirection != null && sortColumnName != null) ?
-            PageRequest.of(page, size, Sort.by(sortDirection, sortColumnName)) :
+            PageRequest.of(page, size, Sort.by(new Sort.Order(sortDirection, sortColumnName).ignoreCase())) :
             PageRequest.of(page, size);
     }
 }

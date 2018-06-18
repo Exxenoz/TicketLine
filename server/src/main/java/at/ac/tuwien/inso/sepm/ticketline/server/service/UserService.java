@@ -51,24 +51,13 @@ public interface UserService {
     void disableUserButNotSelf(UserDTO userDTO) throws InternalUserValidationException, InternalUserTriedToDisableHimselfException, InternalUserNotFoundException;
 
     /**
-     * Increasing the strike counter for the specified user.
+     * Increases the strike counter for the specified user and disables him if the strike counter is too high.
      *
      * @param userDTO The user that earns a strike
-     * @throws InternalUserValidationException in case the user validation failed
      * @throws InternalUserNotFoundException in case the user was not found
-     * @return Boolean that indicates whether or not the users is disabled
      */
-    void increaseStrikes(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException,
-       InternalUserDisabledException;
+    void increaseStrikesAndDisableUserIfStrikesAreTooHigh(UserDTO userDTO) throws InternalUserNotFoundException;
 
-    /**
-     * Checks how many strikes a user has and if is he still allowed to authenticate regularly.
-     * @param userDTO the user whose strikes will be checked
-     * @return Returns true if the user is still below the allowed strikes amount, otherwise false
-     * @throws InternalUserValidationException in case the user could not be validated
-     * @throws InternalUserNotFoundException in cast the corresponding was
-     */
-    boolean isUserBelowAllowedStrikes(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException;
     /**
      * Resets the strikes of a given user.
      * @param userDTO the DTO of the user, that whose strikes will be reset

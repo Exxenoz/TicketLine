@@ -9,7 +9,6 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.Page;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -19,10 +18,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
 
 @Component
 public class SimplePerformanceRestClient implements PerformanceRestClient {
@@ -64,12 +61,23 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
     @Override
     public PageResponseDTO<PerformanceDTO> findAllPerformances(PageRequestDTO pageRequestDTO) throws DataAccessException {
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromUri(restClient.getServiceURI("/performance/"))
-                .queryParam("page", pageRequestDTO.getPage())
-                .queryParam("size", pageRequestDTO.getSize());
+            URI uri = null;
+            if (pageRequestDTO.getSortColumnName() != null && pageRequestDTO.getSortDirection() != null) {
+                UriComponentsBuilder builder = UriComponentsBuilder.fromUri(restClient.getServiceURI("/performance/"))
+                    .queryParam("page", pageRequestDTO.getPage())
+                    .queryParam("size", pageRequestDTO.getSize())
+                    .queryParam("sort", pageRequestDTO.getSortColumnName()
+                        + "," + pageRequestDTO.getSortDirection().toString().toLowerCase());
+                uri = builder.build().toUri();
+            } else {
+                UriComponentsBuilder builder = UriComponentsBuilder.fromUri(restClient.getServiceURI("/performance/"))
+                    .queryParam("page", pageRequestDTO.getPage())
+                    .queryParam("size", pageRequestDTO.getSize());
 
-            URI uri = builder.build().toUri();
+                uri = builder.build().toUri();
+            }
 
+            LOGGER.debug("Entering findAllPerformances method with URI {}", uri);
             final var performance =
                 restClient.exchange(
                     new RequestEntity<>(GET, uri),
@@ -107,8 +115,12 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
                     .queryParam("duration", search.getDuration())
                     .queryParam("page", pageRequestDTO.getPage())
                     .queryParam("size", pageRequestDTO.getSize());
-            } else
-            {
+                if (pageRequestDTO.getSortColumnName() != null && pageRequestDTO.getSortDirection() != null) {
+                    builder = builder
+                        .queryParam("sort", pageRequestDTO.getSortColumnName()
+                            + "," + pageRequestDTO.getSortDirection().toString().toLowerCase());
+                }
+            } else {
                 builder = UriComponentsBuilder.fromUri(restClient.getServiceURI("/performance/search/"))
                     .queryParam("performanceName", search.getPerformanceName())
                     .queryParam("eventName", search.getEventName())
@@ -125,8 +137,12 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
                     .queryParam("duration", search.getDuration())
                     .queryParam("page", pageRequestDTO.getPage())
                     .queryParam("size", pageRequestDTO.getSize());
+                if (pageRequestDTO.getSortColumnName() != null && pageRequestDTO.getSortDirection() != null) {
+                    builder = builder
+                        .queryParam("sort", pageRequestDTO.getSortColumnName()
+                            + "," + pageRequestDTO.getSortDirection().toString().toLowerCase());
+                }
             }
-
             URI uri = builder.build().toUri();
 
             final var performance =
