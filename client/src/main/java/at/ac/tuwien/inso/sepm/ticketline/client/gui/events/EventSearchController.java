@@ -394,7 +394,7 @@ public class EventSearchController {
 
     @FXML
     private void clearAndReloadButton(ActionEvent event) {
-            initializeTableView();
+        clear();
             loadPerformanceTable(0);
             foundEventsTableView.refresh();
             activeFilters = "";
