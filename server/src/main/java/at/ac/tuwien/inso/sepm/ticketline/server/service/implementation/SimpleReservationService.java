@@ -116,6 +116,10 @@ public class SimpleReservationService implements ReservationService {
         //create the new Seats
         seatsService.createSeats(onlyNewSeats);
 
+        //save changes
+        LOGGER.debug("Update reservation");
+        Reservation out = reservationRepository.save(reservation);
+
         //delete Seats, if they were removed from the reservation
         if (!changedSeats.containsAll(savedSeats)) {
             List<Seat> removedSeats = new LinkedList<>();
@@ -128,9 +132,7 @@ public class SimpleReservationService implements ReservationService {
             LOGGER.debug("Delete removed Seats");
         }
 
-        //save changes
-        LOGGER.debug("Update reservation");
-        return reservationRepository.save(reservation);
+        return out;
     }
 
     private List<Seat> getNewSeats(List<Seat> seats) {

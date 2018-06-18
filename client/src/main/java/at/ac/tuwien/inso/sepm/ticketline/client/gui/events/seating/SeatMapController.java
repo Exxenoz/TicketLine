@@ -49,6 +49,7 @@ public class SeatMapController {
     public SeatMapController(SeatMapService seatMapService) {
         this.seatMapService = seatMapService;
     }
+
     @FXML
     public void initialize() {
         this.gc = seatMapCanvas.getGraphicsContext2D();
@@ -57,13 +58,13 @@ public class SeatMapController {
 
     public void drawSeatMap(PerformanceDTO performance, List<ReservationDTO> reservationDTOS) {
         LOGGER.debug("Performance to draw seatmap for {}", performance.toString());
-        for(SectorDTO sector: performance.getHall().getSectors()) {
+        for (SectorDTO sector : performance.getHall().getSectors()) {
             Long price = sector.getCategory().getBasePriceMod() * performance.getPrice();
 
             //First draw all sectors and seats of this hall and check if these seats are in any reservation
             List<CanvasSeat> canvasSeats = new ArrayList<>(sector.getSeatsPerRow() * sector.getRows());
-            for(int i = 0; i < sector.getSeatsPerRow(); i++) {
-                for(int j = 0; j < sector.getRows(); j++) {
+            for (int i = 0; i < sector.getSeatsPerRow(); i++) {
+                for (int j = 0; j < sector.getRows(); j++) {
                     //Draw the row labels
                     gc.fillText("" + (j + 1), OFFSET_LEFT, (CanvasSeat.HEIGHT / VERTICAL_ESTIMATE)
                         + (sector.getStartPositionY() * CanvasSeat.HEIGHT + CanvasSeat.REGULAR_MARGIN * j + j * CanvasSeat.HEIGHT)
@@ -71,9 +72,9 @@ public class SeatMapController {
 
                     boolean isReserved = false;
                     //Check if this seat might be in a reservation
-                    for(ReservationDTO r: reservationDTOS) {
-                        for(SeatDTO s: r.getSeats()) {
-                            if(s.getSector().getId() == sector.getId()
+                    for (ReservationDTO r : reservationDTOS) {
+                        for (SeatDTO s : r.getSeats()) {
+                            if (s.getSector().getId() == sector.getId()
                                 && s.getPositionX() == i
                                 && s.getPositionY() == j) {
                                 isReserved = true;
@@ -91,8 +92,8 @@ public class SeatMapController {
         }
 
         //Finally draw
-        for(Map.Entry<SectorDTO, List<CanvasSeat>> entry: sectorSeatMap.entrySet()) {
-            for(CanvasSeat seat: entry.getValue()) {
+        for (Map.Entry<SectorDTO, List<CanvasSeat>> entry : sectorSeatMap.entrySet()) {
+            for (CanvasSeat seat : entry.getValue()) {
                 seat.draw(this.gc);
             }
         }
@@ -105,21 +106,37 @@ public class SeatMapController {
             double eventX = event.getX();
             double eventY = event.getY();
 
-            for(Map.Entry<SectorDTO, List<CanvasSeat>> entry: sectorSeatMap.entrySet()) {
-                for(CanvasSeat seat: entry.getValue()) {
+            for (Map.Entry<SectorDTO, List<CanvasSeat>> entry : sectorSeatMap.entrySet()) {
+                for (CanvasSeat seat : entry.getValue()) {
                     // Check if the seat was clicked
-                    if(seat.isClicked(eventX, eventY)) {
-                        if(!seat.isAlreadyReserved()) {
+                    if (seat.isClicked(eventX, eventY)) {
+                        if (!seat.isAlreadyReserved()) {
+
+                            //Setup the corresponding seat with full data
+                            SeatDTO seatDTO;
+                            if (seat.getSeatID() != null) {
+                                seatDTO = SeatDTO.Builder.aSeatDTO()
+                                    .withId(seat.getSeatID())
+                                    .withPositionX(seat.getPlanX())
+                                    .withPositionY(seat.getPlanY())
+                                    .withSector(entry.getKey())
+                                    .build();
+                            } else {
+                                seatDTO = SeatDTO.Builder.aSeatDTO()
+                                    .withPositionX(seat.getPlanX())
+                                    .withPositionY(seat.getPlanY())
+                                    .withSector(entry.getKey())
+                                    .build();
+                            }
                             if (seat.isSelected()) {
                                 seat.setSelected(false);
                                 seat.drawDeselectedState(gc);
-                                seatSelectionListener.onSeatDeselected(new SeatDTO(seat.getPlanX(), seat.getPlanY(),
-                                    entry.getKey()));
+                                seatSelectionListener.onSeatDeselected(seatDTO);
                             } else {
                                 seat.setSelected(true);
                                 seat.drawSelectedState(gc);
-                                seatSelectionListener.onSeatSelected(new SeatDTO(seat.getPlanX(), seat.getPlanY(),
-                                    entry.getKey()));
+                                //Notify listener about selected seat
+                                seatSelectionListener.onSeatSelected(seatDTO);
                             }
                         }
                     }
@@ -136,8 +153,8 @@ public class SeatMapController {
         double currentY = seatMapService.findMaxSectorY(sectors, false) * CanvasSectorLegend.HEIGHT;
         double currentX = CanvasSectorLegend.OFFSET_LEFT;
 
-        for(int i = 0; i < sectors.size() + STATE_LEGEND_SIZE; i++) {
-            if(i < sectors.size()) {
+        for (int i = 0; i < sectors.size() + STATE_LEGEND_SIZE; i++) {
+            if (i < sectors.size()) {
                 SectorDTO s = performance.getHall().getSectors().get(i);
                 //Determine price of sector
                 Long price = s.getCategory().getBasePriceMod() * performance.getPrice();
@@ -145,14 +162,14 @@ public class SeatMapController {
                 sectorLegendList.add(c);
                 c.draw(gc);
             } else {
-                if(i < sectors.size() + STATE_LEGEND_SIZE) {
-                    if(i == sectors.size()) {
+                if (i < sectors.size() + STATE_LEGEND_SIZE) {
+                    if (i == sectors.size()) {
                         //Adding legend for reserved state
                         CanvasStateLegend canvasStateLegend = new CanvasStateLegend(currentX, currentY,
                             CanvasSeat.ALREADY_RESERVED_COLOR,
                             BundleManager.getBundle().getString("events.seating.canvas.state.reserved"), true);
                         canvasStateLegend.draw(gc);
-                    } else if(i == sectors.size() + 1) {
+                    } else if (i == sectors.size() + 1) {
                         //Add legend for selected state
                         CanvasStateLegend canvasStateLegend = new CanvasStateLegend(currentX, currentY,
                             CanvasSeat.SELECTED_COLOR,
@@ -163,7 +180,7 @@ public class SeatMapController {
             }
 
             //Create a new legend row for every few items
-            if(i % CanvasSectorLegend.LEGEND_ROW_SIZE == 0 && i > 0) {
+            if (i % CanvasSectorLegend.LEGEND_ROW_SIZE == 0 && i > 0) {
                 currentY += CanvasSectorLegend.HEIGHT + CanvasSectorLegend.REGULAR_MARGIN;
                 currentX = CanvasSectorLegend.OFFSET_LEFT;
             } else {
@@ -182,15 +199,18 @@ public class SeatMapController {
 
     public void fillForReservationEdit(ReservationDTO reservationDTO) {
         //We have to find the corresponding reservation in the seatmap, and make those seats editable
-        for(SeatDTO s: reservationDTO.getSeats()) {
-            for(Map.Entry<SectorDTO, List<CanvasSeat>> entry: sectorSeatMap.entrySet()) {
-                if(s.getSector().getId() == entry.getKey().getId()) {
-                    for(CanvasSeat cs: entry.getValue()) {
-                        if(cs.getPlanX() == s.getPositionX()
+        for (SeatDTO s : reservationDTO.getSeats()) {
+            for (Map.Entry<SectorDTO, List<CanvasSeat>> entry : sectorSeatMap.entrySet()) {
+                if (s.getSector().getId() == entry.getKey().getId()) {
+                    for (CanvasSeat cs : entry.getValue()) {
+                        if (cs.getPlanX() == s.getPositionX()
                             && (cs.getPlanY() == s.getPositionY())) {
                             cs.setAlreadyReserved(false);
                             cs.setSelected(true);
                             cs.drawSelectedState(this.gc);
+
+                            //Set the known id of the reserved seat too
+                            cs.setSeatID(s.getId());
                         }
                     }
                 }

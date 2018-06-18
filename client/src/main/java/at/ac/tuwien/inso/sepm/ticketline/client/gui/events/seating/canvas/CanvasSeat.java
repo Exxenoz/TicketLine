@@ -1,5 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -20,9 +21,7 @@ public class CanvasSeat implements CanvasComponent {
     public final static Color ALREADY_RESERVED_COLOR = Color.GREY;
     private Paint paint;
 
-    //Positioning
-    private int planX;
-    private int planY;
+    private SeatDTO seatDTO;
     private double xPos;
     private double yPos;
 
@@ -31,8 +30,12 @@ public class CanvasSeat implements CanvasComponent {
     private boolean alreadyReserved;
 
     public CanvasSeat(int planX, int planY, double xPos, double yPos, Paint paint, boolean alreadyReserved) {
-        this.planX = planX;
-        this.planY = planY;
+
+        this.seatDTO = SeatDTO.Builder.aSeatDTO()
+            .withPositionX(planX)
+            .withPositionY(planY)
+            .build();
+
         this.xPos = xPos + OFFSET_LEFT;
         this.yPos = yPos + OFFSET_TOP;
         this.paint = paint;
@@ -112,19 +115,19 @@ public class CanvasSeat implements CanvasComponent {
     }
 
     public int getPlanX() {
-        return planX;
+        return seatDTO.getPositionX();
     }
 
     public void setPlanX(int planX) {
-        this.planX = planX;
+        seatDTO.setPositionX(planX);
     }
 
     public int getPlanY() {
-        return planY;
+        return seatDTO.getPositionY();
     }
 
     public void setPlanY(int planY) {
-        this.planY = planY;
+        seatDTO.setPositionY(planY);
     }
 
     public boolean isAlreadyReserved() {
@@ -133,5 +136,13 @@ public class CanvasSeat implements CanvasComponent {
 
     public void setAlreadyReserved(boolean alreadyReserved) {
         this.alreadyReserved = alreadyReserved;
+    }
+
+    public void setSeatID(Long seatID) {
+        seatDTO.setId(seatID);
+    }
+
+    public Long getSeatID() {
+        return seatDTO.getId();
     }
 }
