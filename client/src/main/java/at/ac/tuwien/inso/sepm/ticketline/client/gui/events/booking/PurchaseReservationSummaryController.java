@@ -97,14 +97,12 @@ public class PurchaseReservationSummaryController {
 
         //only reserve tickets
         if (!showDetails && isReservation) {
-            //ReservationDTO reservationDTO = reservationService.createNewReservation(createReservationDTO);
+            ReservationDTO reservationDTO = reservationService.createNewReservation(createReservationDTO);
 
-            //Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            //alert.setTitle("Print Invoice");
-            // alert.setHeaderText("Congratulations! Your Reservation was successful!" + reservationDTO.getReservationNumber());
-            // alert.showAndWait();
-            // closeWindow();
-
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Print Invoice");
+            alert.setHeaderText("Congratulations! Your Reservation was successful!" + reservationDTO.getReservationNumber());
+            alert.showAndWait();
             closeWindow();
         } else if (!showDetails) {
             //reserve and buy tickets
