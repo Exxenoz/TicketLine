@@ -119,24 +119,18 @@ public class MainController {
     private void init(boolean reinit) {
         if (reinit) {
             authenticationService.prepareAuthenticationContext();
-            runLater(() -> {
-                TicketlineClientApplication app = new TicketlineClientApplication();
-                final var stage = (Stage) spMainContent.getScene().getWindow();
-                app.start(stage);
-            });
-        } else {
-            runLater(() -> mbMain.setUseSystemMenuBar(true));
-            pbLoadingProgress.setProgress(0);
-            login = springFxmlLoader.load("/fxml/authenticationComponent.fxml");
-            spMainContent.getChildren().add(login);
-            initI18N();
-            initLanguageMenu();
-            initNewsTabPane();
-            initEventsTabPane();
-            initReservationTabPane();
-            initCustomersTabPane();
-            initUserManagementTabPane();
         }
+        runLater(() -> mbMain.setUseSystemMenuBar(true));
+        pbLoadingProgress.setProgress(0);
+        login = springFxmlLoader.load("/fxml/authenticationComponent.fxml");
+        spMainContent.getChildren().add(login);
+        initI18N();
+        initLanguageMenu();
+        initNewsTabPane();
+        initEventsTabPane();
+        initReservationTabPane();
+        initCustomersTabPane();
+        initUserManagementTabPane();
     }
 
     @FXML
@@ -147,9 +141,12 @@ public class MainController {
 
     @FXML
     private void logout(ActionEvent actionEvent) {
-
         //Remove authentication
         authenticationService.deAuthenticate();
+
+        //Remove all tabs and login
+        tpContent.getTabs().removeAll(tpContent.getTabs());
+        spMainContent.getChildren().remove(login);
 
         //Restart application
         init(true);
@@ -185,7 +182,6 @@ public class MainController {
         newsGlyph.setColor(Color.WHITE);
         newsTab.setGraphic(newsGlyph);
         tpContent.getTabs().add(newsTab);
-
     }
 
     private void initEventsTabPane() {
