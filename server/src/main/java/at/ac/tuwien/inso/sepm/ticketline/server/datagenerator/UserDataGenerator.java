@@ -17,7 +17,7 @@ import java.util.HashSet;
 public class UserDataGenerator implements DataGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private static final int NUMBER_OF_USERS_TO_GENERATE = 50;
+    private static final int NUMBER_OF_USERS_TO_GENERATE = 150;
     private static long appendix = 0;
     private final UserRepository userRepository;
     private final Faker faker;

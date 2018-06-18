@@ -20,7 +20,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -160,11 +160,11 @@ public class ReservationEndpoint {
 
     }
 
-    @GetMapping("/{page}/{size}")
+    @GetMapping
     @PreAuthorize("hasRole('USER')")
     @ApiOperation("Finds a page of all exisiting Reservations")
-    public PageResponseDTO<ReservationDTO> findAll(@PathVariable("page") int page, @PathVariable("size") int size) {
-        Page<Reservation> reservationPage = reservationService.findAll(PageRequest.of(page, size));
+    public PageResponseDTO<ReservationDTO> findAll(Pageable pageable) {
+        Page<Reservation> reservationPage = reservationService.findAll(pageable);
         List<ReservationDTO> reservationDTOList = reservationMapper.reservationToReservationDTO(
             reservationPage.getContent()
         );

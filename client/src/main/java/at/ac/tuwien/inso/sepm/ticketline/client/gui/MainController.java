@@ -226,13 +226,14 @@ public class MainController {
         pbLoadingProgress.setProgress(progress);
     }
 
-    public void switchToNewPasswordAuthentication(String username) {
+    public void switchToNewPasswordAuthentication(String username, String passwordChangeKey) {
         spMainContent.getChildren().remove(login);
         SpringFxmlLoader.Wrapper<AuthenticationPasswordChangeController> wrapper =
             springFxmlLoader.loadAndWrap("/fxml/authenticationPasswordChangeComponent.fxml");
         loginNewPassword = wrapper.getLoadedObject();
         spMainContent.getChildren().add(loginNewPassword);
         wrapper.getController().setUsername(username);
+        wrapper.getController().setPasswordChangeKey(passwordChangeKey);
     }
 
     public void switchBackToAuthentication() {
