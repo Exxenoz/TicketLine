@@ -75,7 +75,7 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
     @Override
     public AuthenticationToken authenticate(String username, CharSequence password) throws InternalUserNotFoundException,
         InternalUserDisabledException, InternalPasswordResetException, InternalUserPasswordWrongException,
-        InternalUserValidationException, InternalForbiddenException {
+        InternalUserValidationException {
         UserDTO userDTO = null;
 
         //First of all find user, to check if he is in the password change key set

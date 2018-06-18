@@ -68,18 +68,13 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public void disableUser(UserDTO userDTO) throws InternalUserValidationException, InternalForbiddenException, InternalUserNotFoundException {
+    public void disableUser(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException {
         LOGGER.info("Disable user {}", userDTO);
 
         try {
             UserValidator.validateExistingUser(userDTO);
         } catch (UserValidatorException e) {
             throw new InternalUserValidationException();
-        }
-
-        Authentication authentication = authenticationFacade.getAuthentication();
-        if (authentication.getName().equals(userDTO.getUsername())) {
-            throw new InternalForbiddenException();
         }
 
         User user = userRepository.findByUsername(userDTO.getUsername());
@@ -90,6 +85,18 @@ public class SimpleUserService implements UserService {
         user.setEnabled(false);
 
         userRepository.save(user);
+    }
+
+    @Override
+    public void disableUserButNotSelf(UserDTO userDTO) throws InternalUserValidationException, InternalUserTriedToDisableHimselfException, InternalUserNotFoundException {
+        LOGGER.info("Try to disable user {}", userDTO);
+
+        Authentication authentication = authenticationFacade.getAuthentication();
+        if (authentication.getName().equals(userDTO.getUsername())) {
+            throw new InternalUserTriedToDisableHimselfException();
+        }
+
+        disableUser(userDTO);
     }
 
     @Override

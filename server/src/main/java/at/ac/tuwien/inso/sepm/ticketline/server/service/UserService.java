@@ -36,11 +36,19 @@ public interface UserService {
      *
      * @param userDTO The user that is being disabled
      * @throws InternalUserValidationException in case the user validation failed
-     * @throws InternalForbiddenException in case the user wanted to disable himself
      * @throws InternalUserNotFoundException in case the user was not found
      */
-    void disableUser(UserDTO userDTO) throws InternalUserValidationException, InternalForbiddenException, InternalUserNotFoundException;
+    void disableUser(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException;
 
+    /**
+     * Disabling a user's right to authenticate, if the user to disable is not the authenticated user.
+     *
+     * @param userDTO The user that is being disabled
+     * @throws InternalUserValidationException in case the user validation failed
+     * @throws InternalUserTriedToDisableHimselfException in case the user wanted to disable himself
+     * @throws InternalUserNotFoundException in case the user was not found
+     */
+    void disableUserButNotSelf(UserDTO userDTO) throws InternalUserValidationException, InternalUserTriedToDisableHimselfException, InternalUserNotFoundException;
 
     /**
      * Increasing the strike counter for the specified user.
