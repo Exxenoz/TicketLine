@@ -295,6 +295,7 @@ public class UserController {
                 LOGGER.debug("Trying to enable user");
                 userService.enableUser(userDTO);
                 userDTO.setEnabled(true);
+                userDTO.setStrikes(0);
                 toggleEnableButton.textProperty().bind(BundleManager.getStringBinding("usertab.user.disable"));
             }
         } catch (DataAccessException e) {
@@ -346,11 +347,8 @@ public class UserController {
             return;
         }
 
-        String resetKey = generateResetKey();
-
         UserPasswordResetRequestDTO userPasswordResetRequestDTO =
             UserPasswordResetRequestDTO.builder().
-                passwordChangeKey(resetKey).
                 userDTO(userDTO).
                 build();
 
@@ -368,23 +366,12 @@ public class UserController {
                 BundleManager.getBundle().getString("usertab.password_reset.dialog.success.title"),
                 BundleManager.getBundle().getString("usertab.password_reset.dialog.success.header_text") + " " + userDTO.getUsername(),
                 BundleManager.getBundle().getString("usertab.password_reset.dialog.success.content_text"),
-                resetKey,
+                userPasswordResetRequestDTO.getPasswordChangeKey(),
                 passwordResetButton.getScene().getWindow()
             ).showAndWait();
         } catch (DataAccessException e) {
             JavaFXUtils.createErrorDialog(e.getMessage(),
                 content.getScene().getWindow()).showAndWait();
         }
-    }
-
-    // https://stackoverflow.com/a/157202
-    private String generateResetKey() {
-        final String AB = "123456789ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        SecureRandom rnd = new SecureRandom();
-
-        StringBuilder sb = new StringBuilder(8);
-        for(int i = 0; i < 8; i++)
-            sb.append(AB.charAt(rnd.nextInt(AB.length())));
-        return sb.toString();
     }
 }

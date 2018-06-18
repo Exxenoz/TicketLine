@@ -1,9 +1,11 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.UserValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
+import at.ac.tuwien.inso.sepm.ticketline.client.validator.UserValidator;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationRequest;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationTokenInfo;
 import javafx.concurrent.Task;
@@ -120,7 +122,15 @@ public class AuthenticationController {
                         getException().getCause().getClass() == HttpClientErrorException.class) {
                         var httpErrorCode = ((HttpStatusCodeException) getException().getCause()).getStatusCode();
                         if (httpErrorCode == HttpStatus.LOCKED) {
-                            mainController.switchToNewPasswordAuthentication(txtUsername.getText());
+                            try {
+                                UserValidator.validatePasswordChangeKey(txtPassword);
+                                // if password is in valid change key format -> forward to next form
+                                mainController.switchToNewPasswordAuthentication(txtUsername.getText(), txtPassword.getText());
+                            } catch (UserValidationException e) {
+                                // otherwise send an empty string
+                                mainController.switchToNewPasswordAuthentication(txtUsername.getText(), "");
+                            }
+
                             return;
                         }
                     }
