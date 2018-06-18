@@ -6,15 +6,13 @@ import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SeatMapContro
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SeatSelectionListener;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SectorController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
-import at.ac.tuwien.inso.sepm.ticketline.client.util.PriceUtils;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.PriceUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
-import javafx.beans.property.ReadOnlyLongWrapper;
-import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -121,12 +119,18 @@ public class HallPlanController implements SeatSelectionListener {
         });
 
         if (reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SECTOR) {
-            seatsOrSectorsLabel.setText("Chosen Sector: ");
             hallHeading.setText("Choose your Sector");
         }
 
         if (!changeDetails) {
             seats = new LinkedList<>();
+            continueButton.setText("Continue");
+            backButton.setText("Back");
+
+            reserveButton.setDisable(false);
+            reserveButton.setVisible(true);
+            reserveButton.setManaged(true);
+
         } else {
             seats = reservation.getSeats();
 
