@@ -1,11 +1,14 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui;
 
+import at.ac.tuwien.inso.sepm.ticketline.client.TicketlineClientApplication;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.customers.CustomerController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.news.NewsController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.reservations.ReservationsController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.users.UserController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationInformationService;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationService;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.implementation.SimpleAuthenticationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.event.ActionEvent;
@@ -18,6 +21,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.controlsfx.glyphfont.FontAwesome;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static java.util.Locale.ENGLISH;
@@ -60,6 +64,9 @@ public class MainController {
     public MenuItem applicationExitMenuItem;
 
     @FXML
+    public MenuItem applicationLogout;
+
+    @FXML
     public Menu helpMenu;
 
     @FXML
@@ -75,6 +82,9 @@ public class MainController {
     private UserController userController;
     private CustomerController customerController;
     private ReservationsController reservationsController;
+
+    @Autowired
+    AuthenticationService authenticationService;
 
     public MainController(
         SpringFxmlLoader springFxmlLoader,
@@ -93,17 +103,7 @@ public class MainController {
 
     @FXML
     private void initialize() {
-        runLater(() -> mbMain.setUseSystemMenuBar(true));
-        pbLoadingProgress.setProgress(0);
-        login = springFxmlLoader.load("/fxml/authenticationComponent.fxml");
-        spMainContent.getChildren().add(login);
-        initI18N();
-        initLanguageMenu();
-        initNewsTabPane();
-        initEventsTabPane();
-        initReservationTabPane();
-        initCustomersTabPane();
-        initUserManagementTabPane();
+        init(false);
     }
 
     private void initI18N() {
@@ -116,10 +116,43 @@ public class MainController {
         helpAboutMenuItem.textProperty().bind(BundleManager.getStringBinding("menu.help.about"));
     }
 
+    private void init(boolean reinit) {
+        if (reinit) {
+            authenticationService.prepareAuthenticationContext();
+            runLater(() -> {
+                TicketlineClientApplication app = new TicketlineClientApplication();
+                final var stage = (Stage) spMainContent.getScene().getWindow();
+                app.start(stage);
+            });
+        } else {
+            runLater(() -> mbMain.setUseSystemMenuBar(true));
+            pbLoadingProgress.setProgress(0);
+            login = springFxmlLoader.load("/fxml/authenticationComponent.fxml");
+            spMainContent.getChildren().add(login);
+            initI18N();
+            initLanguageMenu();
+            initNewsTabPane();
+            initEventsTabPane();
+            initReservationTabPane();
+            initCustomersTabPane();
+            initUserManagementTabPane();
+        }
+    }
+
     @FXML
     private void exitApplication(ActionEvent actionEvent) {
         final var stage = (Stage) spMainContent.getScene().getWindow();
         stage.fireEvent(new WindowEvent(stage, WINDOW_CLOSE_REQUEST));
+    }
+
+    @FXML
+    private void logout(ActionEvent actionEvent) {
+
+        //Remove authentication
+        authenticationService.deAuthenticate();
+
+        //Restart application
+        init(true);
     }
 
     @FXML
@@ -167,7 +200,7 @@ public class MainController {
         tpContent.getTabs().add(eventsTab);
     }
 
-    private void initReservationTabPane(){
+    private void initReservationTabPane() {
         SpringFxmlLoader.Wrapper<ReservationsController> wrapperEvents =
             springFxmlLoader.loadAndWrap("/fxml/reservations/reservationMain.fxml");
         reservationsController = wrapperEvents.getController();
@@ -207,7 +240,7 @@ public class MainController {
         if (authenticated) {
             if (spMainContent.getChildren().contains(login)) {
                 spMainContent.getChildren().remove(login);
-            } else if(spMainContent.getChildren().contains(loginNewPassword)) {
+            } else if (spMainContent.getChildren().contains(loginNewPassword)) {
                 spMainContent.getChildren().remove(loginNewPassword);
             }
             newsController.loadNews();
