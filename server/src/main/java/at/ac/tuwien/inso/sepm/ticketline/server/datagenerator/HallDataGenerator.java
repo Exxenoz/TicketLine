@@ -15,6 +15,8 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Long.valueOf;
+
 @Profile("generateData")
 @Component
 @Order(5)
@@ -91,7 +93,7 @@ public class HallDataGenerator implements DataGenerator {
                     if(sectorCategoryRepository.count() == 0) {
                         LOGGER.debug("Could net set sector category since the corresponding repository is empty");
                         SectorCategory sectorCategory = new SectorCategory();
-                        sectorCategory.setBasePriceMod(new Long(500L));
+                        sectorCategory.setBasePriceMod(valueOf(500L));
                         sectorCategory.setName(faker.hipster().word());
                         s.setCategory(sectorCategory);
                         sectorCategoryRepository.save(sectorCategory);

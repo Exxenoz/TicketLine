@@ -5,6 +5,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.PerformanceDetailView
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SeatMapController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SeatSelectionListener;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SectorController;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.PriceUtils;
@@ -62,6 +63,7 @@ public class HallPlanController implements SeatSelectionListener {
     @FXML
     public TableColumn seatsPriceColumn;
     @FXML
+
     public Button continueButton;
     @FXML
     public Button backButton;
@@ -177,7 +179,7 @@ public class HallPlanController implements SeatSelectionListener {
         } else {
             Parent parent = fxmlLoader.load("/fxml/events/performanceDetailView.fxml");
             stage.setScene(new Scene(parent));
-            stage.setTitle("Performance Details");
+            stage.setTitle(BundleManager.getBundle().getString("bookings.performance.details.title"));
             stage.centerOnScreen();
         }
     }
@@ -214,7 +216,7 @@ public class HallPlanController implements SeatSelectionListener {
             Parent parent = fxmlLoader.load("/fxml/events/book/selectCustomerView.fxml");
             selectCustomerController.loadCustomers();
             stage.setScene(new Scene(parent));
-            stage.setTitle("Customer Details");
+            stage.setTitle(BundleManager.getBundle().getString("bookings.hallplan.customer_select.title"));
             stage.centerOnScreen();
         } else {
             try {
@@ -222,7 +224,7 @@ public class HallPlanController implements SeatSelectionListener {
                 PRSController.showReservationDetails(reservation, stage);
                 Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
                 stage.setScene(new Scene(parent));
-                stage.setTitle("Reservation Overview");
+                stage.setTitle(BundleManager.getBundle().getString("bookings.purchase.details.title"));
                 stage.centerOnScreen();
             } catch (DataAccessException e) {
                 JavaFXUtils.createErrorDialog(e.getMessage(), stage);

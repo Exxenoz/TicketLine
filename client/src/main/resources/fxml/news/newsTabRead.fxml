@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.web.WebView?>
+
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" style="-fx-background-color: derive(#3c3f41, 25%);" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.news.NewsReadController">
+    <children>
+        <VBox prefHeight="800.0" spacing="5.0" style="-fx-background-color: #f4f4f4; -fx-background-radius: 0 3 3 3;" VBox.vgrow="ALWAYS">
+            <children>
+                <fx:include fx:id="tabHeader" source="../tabHeader.fxml" />
+                <Separator />
+                <GridPane VBox.vgrow="ALWAYS">
+                    <columnConstraints>
+                        <ColumnConstraints fx:id="column1" hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" />
+                        <ColumnConstraints fx:id="column2" hgrow="SOMETIMES" minWidth="10.0" percentWidth="0.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <ScrollPane fx:id="simpleNewsScrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent;" vbarPolicy="AS_NEEDED">
+                            <VBox fx:id="vbNewsElements" fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                <children>
+                                    <fx:include source="newsElement.fxml" />
+                                    <Separator />
+                                    <fx:include source="newsElement.fxml" />
+                                    <Separator />
+                                    <fx:include source="newsElement.fxml" />
+                                    <Separator />
+                                    <fx:include source="newsElement.fxml" />
+                                    <Separator />
+                                    <fx:include source="newsElement.fxml" />
+                                </children>
+                            </VBox>
+                        </ScrollPane>
+                        <VBox GridPane.columnIndex="1">
+                            <children>
+                                <ScrollPane fx:id="detailScrollPane" fitToHeight="true" fitToWidth="true" style="-fx-background-color: transparent;" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
+                                    <VBox fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                        <children>
+                                            <HBox alignment="CENTER">
+                                                <children>
+                                                    <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308">
+                                                        <font>
+                                                            <Font size="36.0" />
+                                                        </font>
+                                                    </Label>
+                                                </children>
+                                            </HBox>
+                                            <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" VBox.vgrow="ALWAYS">
+                                                <columnConstraints>
+                                                    <ColumnConstraints hgrow="ALWAYS" />
+                                                </columnConstraints>
+                                                <rowConstraints>
+                                                    <RowConstraints vgrow="ALWAYS" />
+                                                </rowConstraints>
+                                                <children>
+                                                    <WebView onScroll="#detailViewScrolled" fx:id="webView" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+                                                </children>
+                                            </GridPane>
+                                            <HBox fx:id="imageBox" alignment="CENTER">
+                                                <children>
+                                                    <ImageView fx:id="imageView" preserveRatio="true" HBox.hgrow="ALWAYS">
+                                                        <HBox.margin>
+                                                            <Insets top="10.0" />
+                                                        </HBox.margin></ImageView>
+                                                </children>
+                                            </HBox>
+                                        </children>
+                                    </VBox>
+                                </ScrollPane>
+                            </children>
+                        </VBox>
+                    </children>
+                </GridPane>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </VBox>
+    </children>
+</VBox>

@@ -1,5 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui;
 
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
+import javafx.beans.binding.StringBinding;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import org.controlsfx.glyphfont.FontAwesome;
@@ -35,5 +37,9 @@ public class TabHeaderController {
 
     public void setTitle(String title) {
         lblHeaderTitle.setText(title);
+    }
+
+    public void setTitleBinding(StringBinding binding) {
+        lblHeaderTitle.textProperty().bind(binding);
     }
 }

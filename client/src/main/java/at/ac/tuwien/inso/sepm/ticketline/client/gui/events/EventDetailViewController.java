@@ -3,8 +3,8 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.EventService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
@@ -17,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +25,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,6 +36,9 @@ import static at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO.SEAT;
 public class EventDetailViewController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+    public TableColumn<PerformanceDTO, String> nameColumn;
+    public Text descriptionText;
 
     @FXML
     private Label eventHeading;
@@ -47,19 +50,16 @@ public class EventDetailViewController {
     private Label artistNameEvent;
 
     @FXML
-    private Label descriptionEvent;
-
-    @FXML
     private Label eventTypeEvent;
 
     @FXML
     private TableView<PerformanceDTO> performanceDatesTableView;
 
     @FXML
-    private TableColumn<PerformanceDTO, String> endTimeColumn;
+    private TableColumn<PerformanceDTO, String> startTimeColumn;
 
     @FXML
-    private TableColumn<PerformanceDTO, String> startTimeColumn;
+    private TableColumn<PerformanceDTO, String> endTimeColumn;
 
     @FXML
     private TableColumn<PerformanceDTO, String> locationColumn;
@@ -111,7 +111,7 @@ public class EventDetailViewController {
         performanceDetailViewController.fill(chosenPerformance, stage);
         Parent parent = fxmlLoader.load("/fxml/events/performanceDetailView.fxml");
         stage.setScene(new Scene(parent));
-        stage.setTitle("Performance Details");
+        stage.setTitle(BundleManager.getBundle().getString("bookings.performance.details.title"));
         stage.centerOnScreen();
     }
 
@@ -147,7 +147,7 @@ public class EventDetailViewController {
             .collect(Collectors.joining(", "));
 
         artistNameEvent.setText(artistString);
-        descriptionEvent.setText(event.getDescription());
+        descriptionText.setText(event.getDescription());
         eventTypeEvent.setText(event.getEventType() == SEAT ? "yes" : "no");
 
         performances.addAll(performanceDTOs);
@@ -155,9 +155,11 @@ public class EventDetailViewController {
     }
 
     private void intializeTableView() {
-        startTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPerformanceStart().toString()));
-
-        endTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDuration().toString()));
+        nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
+        startTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPerformanceStart().format(formatter)));
+        endTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPerformanceStart()
+            .plusMinutes(cellData.getValue().getDuration().toMinutes()).format(formatter)));
         locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLocationAddress().getCity()));
         performanceData = FXCollections.observableArrayList(performances);
         performanceDatesTableView.setItems(performanceData);

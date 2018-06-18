@@ -7,6 +7,7 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.CheckMenuItem?>
 <VBox fx:id="vBoxMain" prefHeight="768.0" prefWidth="1024.0" stylesheets="@/css/main.css"
       xmlns="http://javafx.com/javafx/8.0.92" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.MainController">
@@ -15,14 +16,20 @@
                      style="-fx-border-insets: 0; -fx-border-radius: 0; -fx-border-style: none;"/>
         <MenuBar fx:id="mbMain">
             <menus>
-                <Menu mnemonicParsing="false" text="%menu.application">
+                <Menu fx:id="applicationMenu" mnemonicParsing="false" text="%menu.application">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#exitApplication" text="%menu.application.exit"/>
+                        <Menu fx:id="languageMenu" mnemonicParsing="false" text="%menu.application.language" style="-fx-text-fill: black;">
+                            <items>
+                                <CheckMenuItem fx:id="checkMenuItemLanguageEnglish" mnemonicParsing="false" onAction="#onClickLanguageEnglish" text="%menu.application.language.english" style="-fx-text-fill: black;"/>
+                                <CheckMenuItem fx:id="checkMenuItemLanguageGerman" mnemonicParsing="false" onAction="#onClickLanguageGerman" text="%menu.application.language.german" style="-fx-text-fill: black;"/>
+                            </items>
+                        </Menu>
+                        <MenuItem fx:id="applicationExitMenuItem" mnemonicParsing="false" onAction="#exitApplication" text="%menu.application.exit"/>
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="%menu.help">
+                <Menu fx:id="helpMenu" mnemonicParsing="false" text="%menu.help">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#aboutApplication" text="%menu.help.about"/>
+                        <MenuItem fx:id="helpAboutMenuItem" mnemonicParsing="false" onAction="#aboutApplication" text="%menu.help.about"/>
                     </items>
                 </Menu>
             </menus>

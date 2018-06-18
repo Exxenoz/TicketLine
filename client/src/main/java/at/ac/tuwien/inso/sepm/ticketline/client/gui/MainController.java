@@ -12,10 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -23,6 +20,8 @@ import javafx.stage.WindowEvent;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.springframework.stereotype.Component;
 
+import static java.util.Locale.ENGLISH;
+import static java.util.Locale.GERMAN;
 import static javafx.application.Platform.runLater;
 import static javafx.stage.Modality.APPLICATION_MODAL;
 import static javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST;
@@ -44,6 +43,27 @@ public class MainController {
 
     @FXML
     private MenuBar mbMain;
+
+    @FXML
+    public Menu applicationMenu;
+
+    @FXML
+    public Menu languageMenu;
+
+    @FXML
+    public CheckMenuItem checkMenuItemLanguageEnglish;
+
+    @FXML
+    public CheckMenuItem checkMenuItemLanguageGerman;
+
+    @FXML
+    public MenuItem applicationExitMenuItem;
+
+    @FXML
+    public Menu helpMenu;
+
+    @FXML
+    public MenuItem helpAboutMenuItem;
 
     private Node login;
     private Node loginNewPassword;
@@ -77,11 +97,23 @@ public class MainController {
         pbLoadingProgress.setProgress(0);
         login = springFxmlLoader.load("/fxml/authenticationComponent.fxml");
         spMainContent.getChildren().add(login);
+        initI18N();
+        initLanguageMenu();
         initNewsTabPane();
         initEventsTabPane();
         initReservationTabPane();
         initCustomersTabPane();
         initUserManagementTabPane();
+    }
+
+    private void initI18N() {
+        applicationMenu.textProperty().bind(BundleManager.getStringBinding("menu.application"));
+        languageMenu.textProperty().bind(BundleManager.getStringBinding("menu.application.language"));
+        checkMenuItemLanguageEnglish.textProperty().bind(BundleManager.getStringBinding("menu.application.language.english"));
+        checkMenuItemLanguageGerman.textProperty().bind(BundleManager.getStringBinding("menu.application.language.german"));
+        applicationExitMenuItem.textProperty().bind(BundleManager.getStringBinding("menu.application.exit"));
+        helpMenu.textProperty().bind(BundleManager.getStringBinding("menu.help"));
+        helpAboutMenuItem.textProperty().bind(BundleManager.getStringBinding("menu.help.about"));
     }
 
     @FXML
@@ -100,6 +132,14 @@ public class MainController {
         dialog.setScene(new Scene(springFxmlLoader.load("/fxml/aboutDialog.fxml")));
         dialog.setTitle(BundleManager.getBundle().getString("dialog.about.title"));
         dialog.showAndWait();
+    }
+
+    private void initLanguageMenu() {
+        if (BundleManager.getLocale().getLanguage().equals(ENGLISH.getLanguage())) {
+            checkMenuItemLanguageEnglish.setSelected(true);
+        } else if (BundleManager.getLocale().getLanguage().equals(GERMAN.getLanguage())) {
+            checkMenuItemLanguageGerman.setSelected(true);
+        }
     }
 
     private void initNewsTabPane() {
@@ -198,5 +238,27 @@ public class MainController {
     public void switchBackToAuthentication() {
         spMainContent.getChildren().remove(loginNewPassword);
         spMainContent.getChildren().add(login);
+    }
+
+    public void onClickLanguageEnglish(ActionEvent actionEvent) {
+        if (BundleManager.getLocale().getLanguage().equals(ENGLISH.getLanguage())) {
+            checkMenuItemLanguageEnglish.setSelected(true);
+            return;
+        }
+
+        checkMenuItemLanguageGerman.setSelected(false);
+
+        BundleManager.changeLocale(ENGLISH);
+    }
+
+    public void onClickLanguageGerman(ActionEvent actionEvent) {
+        if (BundleManager.getLocale().getLanguage().equals(GERMAN.getLanguage())) {
+            checkMenuItemLanguageGerman.setSelected(true);
+            return;
+        }
+
+        checkMenuItemLanguageEnglish.setSelected(false);
+
+        BundleManager.changeLocale(GERMAN);
     }
 }
