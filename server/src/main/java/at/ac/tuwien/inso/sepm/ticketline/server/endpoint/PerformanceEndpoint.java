@@ -10,6 +10,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.service.PerformanceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,8 +36,8 @@ public class PerformanceEndpoint {
     @GetMapping
     @ApiOperation("Get a list of all performances")
     @PreAuthorize("hasRole('USER')")
-    public PageResponseDTO<PerformanceDTO> findAll(PageRequestDTO pageRequestDTO) {
-        Page<Performance> performancePage = performanceService.findAll(pageRequestDTO.getPageable());
+    public PageResponseDTO<PerformanceDTO> findAll(Pageable pageable) {
+        Page<Performance> performancePage = performanceService.findAll(pageable);
         List<PerformanceDTO> performanceDTOList = performanceMapper.performanceToPerformanceDTO(performancePage.getContent());
         return new PageResponseDTO<>(performanceDTOList, performancePage.getTotalPages());
     }
@@ -53,8 +54,8 @@ public class PerformanceEndpoint {
     @GetMapping("search")
     @ApiOperation("Get a list of all the performances that match the given criteria")
     @PreAuthorize("hasRole('USER')")
-    public PageResponseDTO<PerformanceDTO> findAll(SearchDTO search, PageRequestDTO pageRequestDTO) {
-        Page<Performance> performancePage = performanceService.findAll(search, pageRequestDTO.getPageable());
+    public PageResponseDTO<PerformanceDTO> findAll(SearchDTO search, Pageable pageable) {
+        Page<Performance> performancePage = performanceService.findAll(search, pageable);
         List<PerformanceDTO> performanceDTOList = performanceMapper.performanceToPerformanceDTO(performancePage.getContent());
         return new PageResponseDTO<>(performanceDTOList, performancePage.getTotalPages());
     }

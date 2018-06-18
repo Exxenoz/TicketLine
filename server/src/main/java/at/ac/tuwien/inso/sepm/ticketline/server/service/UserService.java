@@ -36,31 +36,28 @@ public interface UserService {
      *
      * @param userDTO The user that is being disabled
      * @throws InternalUserValidationException in case the user validation failed
-     * @throws InternalForbiddenException in case the user wanted to disable himself
      * @throws InternalUserNotFoundException in case the user was not found
      */
-    void disableUser(UserDTO userDTO) throws InternalUserValidationException, InternalForbiddenException, InternalUserNotFoundException;
-
+    void disableUser(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException;
 
     /**
-     * Increasing the strike counter for the specified user.
+     * Disabling a user's right to authenticate, if the user to disable is not the authenticated user.
+     *
+     * @param userDTO The user that is being disabled
+     * @throws InternalUserValidationException in case the user validation failed
+     * @throws InternalUserTriedToDisableHimselfException in case the user wanted to disable himself
+     * @throws InternalUserNotFoundException in case the user was not found
+     */
+    void disableUserButNotSelf(UserDTO userDTO) throws InternalUserValidationException, InternalUserTriedToDisableHimselfException, InternalUserNotFoundException;
+
+    /**
+     * Increases the strike counter for the specified user and disables him if the strike counter is too high.
      *
      * @param userDTO The user that earns a strike
-     * @throws InternalUserValidationException in case the user validation failed
      * @throws InternalUserNotFoundException in case the user was not found
-     * @return Boolean that indicates whether or not the users is disabled
      */
-    void increaseStrikes(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException,
-       InternalUserDisabledException;
+    void increaseStrikesAndDisableUserIfStrikesAreTooHigh(UserDTO userDTO) throws InternalUserNotFoundException;
 
-    /**
-     * Checks how many strikes a user has and if is he still allowed to authenticate regularly.
-     * @param userDTO the user whose strikes will be checked
-     * @return Returns true if the user is still below the allowed strikes amount, otherwise false
-     * @throws InternalUserValidationException in case the user could not be validated
-     * @throws InternalUserNotFoundException in cast the corresponding was
-     */
-    boolean isUserBelowAllowedStrikes(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException;
     /**
      * Resets the strikes of a given user.
      * @param userDTO the DTO of the user, that whose strikes will be reset

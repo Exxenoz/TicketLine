@@ -38,16 +38,18 @@ public class EventDetailViewController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public TableColumn<PerformanceDTO, String> nameColumn;
+
+    @FXML
     public Text descriptionText;
+
+    @FXML
+    private Label artistNameEvent;
 
     @FXML
     private Label eventHeading;
 
     @FXML
     private Label eventNameEvent;
-
-    @FXML
-    private Label artistNameEvent;
 
     @FXML
     private Label eventTypeEvent;

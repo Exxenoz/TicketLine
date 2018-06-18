@@ -63,10 +63,10 @@ public class UsersEndpoint {
     @ApiOperation("Disable an enabled user")
     public void disableUser(@RequestBody UserDTO userDTO) {
         try {
-            userService.disableUser(userDTO);
+            userService.disableUserButNotSelf(userDTO);
         } catch (InternalUserNotFoundException e) {
             throw new HttpBadRequestException();
-        } catch (InternalForbiddenException e) {
+        } catch (InternalUserTriedToDisableHimselfException e) {
             throw new HttpBadRequestException();
         } catch (InternalUserValidationException e) {
             throw new HttpBadRequestException();
