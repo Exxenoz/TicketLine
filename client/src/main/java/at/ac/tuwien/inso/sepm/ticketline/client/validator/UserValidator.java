@@ -14,6 +14,8 @@ public class UserValidator {
 
     public static final String nameRegex = "^[-' a-zA-ZöüöäÜÖÄ0-9]+$";
 
+    public static final String passwordChangeKexRegex = "^[1-9a-zA-Z]{8}$";
+
     public static String validateUsername(TextField usernameTextField) throws UserValidationException {
         String username = usernameTextField.getText();
 
@@ -55,5 +57,11 @@ public class UserValidator {
         }
 
         return password;
+    }
+
+    public static void validatePasswordChangeKey(PasswordField passwordField) throws UserValidationException {
+        if (!passwordField.getText().matches(passwordChangeKexRegex)) {
+            throw new UserValidationException("");
+        }
     }
 }
