@@ -295,6 +295,7 @@ public class UserController {
                 LOGGER.debug("Trying to enable user");
                 userService.enableUser(userDTO);
                 userDTO.setEnabled(true);
+                userDTO.setStrikes(0);
                 toggleEnableButton.textProperty().bind(BundleManager.getStringBinding("usertab.user.disable"));
             }
         } catch (DataAccessException e) {
