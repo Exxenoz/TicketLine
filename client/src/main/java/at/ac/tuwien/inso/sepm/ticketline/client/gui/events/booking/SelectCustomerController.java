@@ -10,6 +10,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -33,7 +34,7 @@ import java.lang.invoke.MethodHandles;
 public class SelectCustomerController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final int CUSTOMERS_PER_PAGE = 20;
+    private static final int CUSTOMERS_PER_PAGE = 30;
 
     @FXML
     public TableView<CustomerDTO> customerTable;
@@ -113,6 +114,7 @@ public class SelectCustomerController {
 
     private ScrollBar getVerticalScrollbar(TableView<?> table) {
         ScrollBar result = null;
+
         for (Node n : table.lookupAll(".scroll-bar")) {
             if (n instanceof ScrollBar) {
                 ScrollBar bar = (ScrollBar) n;
@@ -121,6 +123,7 @@ public class SelectCustomerController {
                 }
             }
         }
+
         return result;
     }
 
@@ -132,19 +135,21 @@ public class SelectCustomerController {
             return true;
         });
 
-        final ScrollBar scrollBar = getVerticalScrollbar(customerTable);
-        if (scrollBar != null) {
-            scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
-                double value = newValue.doubleValue();
-                if ((value == scrollBar.getMax()) && (currentPage < totalPages)) {
-                    currentPage++;
-                    LOGGER.debug("Getting next Page: {}", currentPage);
-                    double targetValue = value * items.size();
-                    loadCustomersTable(currentPage);
-                    scrollBar.setValue(targetValue / items.size());
-                }
-            });
-        }
+        Platform.runLater(() -> {
+            final ScrollBar scrollBar = getVerticalScrollbar(customerTable);
+            if (scrollBar != null) {
+                scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
+                    double value = newValue.doubleValue();
+                    if ((value == scrollBar.getMax()) && (currentPage < totalPages)) {
+                        currentPage++;
+                        LOGGER.debug("Getting next Page: {}", currentPage);
+                        double targetValue = value * items.size();
+                        loadCustomersTable(currentPage);
+                        scrollBar.setValue(targetValue / items.size());
+                    }
+                });
+            }
+        });
     }
 
     private String getColumnNameBy(TableColumn<CustomerDTO, ?> tableColumn) {
