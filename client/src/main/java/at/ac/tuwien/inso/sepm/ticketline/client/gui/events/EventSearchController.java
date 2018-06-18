@@ -191,8 +191,9 @@ public class EventSearchController {
 
     private void loadPerformanceTable(int page){
         PageRequestDTO pageRequestDTO = null;
-        if (foundEventsTableView.getSortOrder().size() > 0) {
-            TableColumn<PerformanceDTO, ?> sortedColumn = foundEventsTableView.getSortOrder().get(0);
+        TableColumn sortedColumn = getSortedColumn();
+
+        if (sortedColumn != null) {
             Sort.Direction sortDirection = (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
             pageRequestDTO = new PageRequestDTO(page, PERFORMANCES_PER_PAGE, sortDirection, getColumnNameBy(sortedColumn));
         } else {
@@ -236,9 +237,19 @@ public class EventSearchController {
         return "id";
     }
 
+    public TableColumn getSortedColumn() {
+        if (nameColumn.getSortType() != null) {
+            return nameColumn;
+        } else if (eventColumn.getSortType() != null) {
+            return eventColumn;
+        } else if (startTimeColumn.getSortType() != null) {
+            return startTimeColumn;
+        } else if (locationColumn.getSortType() != null) {
+            return locationColumn;
+        }
 
-
-
+        return null;
+    }
 
     //++++++++++++++BUTTONS+++++++++++++++
     @FXML

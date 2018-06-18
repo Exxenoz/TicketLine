@@ -180,6 +180,20 @@ public class CustomerController {
         return "id";
     }
 
+    public TableColumn getSortedColumn() {
+        if (customerTableColumnFirstName.getSortType() != null) {
+            return customerTableColumnFirstName;
+        } else if (customerTableColumnLastName.getSortType() != null) {
+            return customerTableColumnLastName;
+        } else if (customerTableColumnTelephoneNumber.getSortType() != null) {
+            return customerTableColumnTelephoneNumber;
+        } else if (customerTableColumnEMail.getSortType() != null) {
+            return customerTableColumnEMail;
+        }
+
+        return null;
+    }
+
     public void loadCustomerTable(int page) {
         if (page < 0 || page >= customerTablePageCount) {
             LOGGER.error("Could not load customer table page, because page parameter is invalid!");
@@ -187,8 +201,9 @@ public class CustomerController {
         }
 
         PageRequestDTO pageRequestDTO = null;
-        if (customerTable.getSortOrder().size() > 0) {
-            TableColumn<CustomerDTO, ?> sortedColumn = customerTable.getSortOrder().get(0);
+        TableColumn sortedColumn = getSortedColumn();
+
+        if (sortedColumn != null) {
             Sort.Direction sortDirection = (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
             pageRequestDTO = new PageRequestDTO(page, CUSTOMERS_PER_PAGE, sortDirection, getColumnNameBy(sortedColumn));
         }

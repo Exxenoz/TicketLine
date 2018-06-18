@@ -147,8 +147,9 @@ public class ReservationsController {
 
     private void loadUnfilteredReservationsTable(int page) {
         PageRequestDTO pageRequestDTO;
-        if (foundReservationsTableView.getSortOrder().size() > 0) {
-            TableColumn<ReservationDTO, ?> sortedColumn = foundReservationsTableView.getSortOrder().get(0);
+        TableColumn sortedColumn = getSortedColumn();
+
+        if (sortedColumn != null) {
             Sort.Direction sortDirection = (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
             pageRequestDTO = new PageRequestDTO(page, RESERVATIONS_PER_PAGE, sortDirection, getColumnNameBy(sortedColumn));
         } else {
@@ -211,8 +212,21 @@ public class ReservationsController {
         return "id";
     }
 
-    private void initializeTableView() {
+    public TableColumn getSortedColumn() {
+        if (eventColumn.getSortType() != null) {
+            return eventColumn;
+        } else if (customerColumn.getSortType() != null) {
+            return customerColumn;
+        } else if (paidColumn.getSortType() != null) {
+            return paidColumn;
+        } else if (reservationIDColumn.getSortType() != null) {
+            return reservationIDColumn;
+        }
 
+        return null;
+    }
+
+    private void initializeTableView() {
         reservationIDColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
             cellData.getValue().getReservationNumber()));
         eventColumn.setCellValueFactory(cellData -> new SimpleStringProperty(

@@ -184,13 +184,11 @@ public class UserController {
 
     private ScrollBar getVerticalScrollbar(TableView<?> table) {
         if(verticalScrollbar == null) {
-            ScrollBar result = null;
             for (Node n : table.lookupAll(".scroll-bar")) {
                 if (n instanceof ScrollBar) {
                     ScrollBar bar = (ScrollBar) n;
                     if (bar.getOrientation().equals(Orientation.VERTICAL)) {
                         verticalScrollbar = bar;
-
                         break;
                     }
                 }
@@ -214,6 +212,18 @@ public class UserController {
         return "id";
     }
 
+    public TableColumn getSortedColumn() {
+        if (usernameCol.getSortType() != null) {
+            return usernameCol;
+        } else if (useraccountStatusCol.getSortType() != null) {
+            return useraccountStatusCol;
+        } else if (userAuthTriesCol.getSortType() != null) {
+            return userAuthTriesCol;
+        }
+
+        return null;
+    }
+
     public boolean loadUserTable(int page) {
         if (page < 0 || page >= totalPages) {
             LOGGER.error("Could not load user table page, because page parameter is invalid: " + page);
@@ -221,8 +231,9 @@ public class UserController {
         }
 
         PageRequestDTO pageRequestDTO = null;
-        if (userTable.getSortOrder().size() > 0) {
-            TableColumn<UserDTO, ?> sortedColumn = userTable.getSortOrder().get(0);
+        TableColumn sortedColumn = getSortedColumn();
+
+        if (sortedColumn != null) {
             Sort.Direction sortDirection = (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
             pageRequestDTO = new PageRequestDTO(page, USERS_PER_PAGE, sortDirection, getColumnNameBy(sortedColumn));
         }
