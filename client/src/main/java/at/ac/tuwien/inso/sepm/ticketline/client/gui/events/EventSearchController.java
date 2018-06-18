@@ -11,7 +11,9 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -109,7 +111,7 @@ public class EventSearchController {
     private static final int PERFORMANCES_PER_PAGE = 50;
 
     private String activeFilters = "";
-
+    private TableColumn sortedColumn;
 
     public EventSearchController(SpringFxmlLoader fxmlLoader, PerformanceService performanceService, PerformanceDetailViewController performanceDetailViewController) {
         this.fxmlLoader = fxmlLoader;
@@ -149,21 +151,18 @@ public class EventSearchController {
         locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty( cellData.getValue().getLocationAddress().getCountry() + ", " +
             cellData.getValue().getLocationAddress().getCity()));
 
+        startTimeColumn.setComparator((d1, d2) -> {
+            LocalDateTime date1 = LocalDateTime.parse(d1, formatter);
+            LocalDateTime date2 = LocalDateTime.parse(d2, formatter);
+            return date1.compareTo(date2);
+        });
+
         foundEventsTableView.setItems(performanceData);
 
     }
 
-
-
-
     //+++++++++++++++++LOAD DATA+++++++++++++++
     public void loadData() {
-        foundEventsTableView.sortPolicyProperty().set(t -> {
-            clear();
-            loadPerformanceTable(0);
-            return true;
-        });
-
         final ScrollBar scrollBar = getVerticalScrollbar(foundEventsTableView);
         if (scrollBar != null) {
             scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -174,8 +173,33 @@ public class EventSearchController {
                     loadPerformanceTable(page);
                     scrollBar.setValue(targetValue / performanceData.size());
                 }
+                // TODO: check visibility property
             });
         }
+
+        ChangeListener<TableColumn.SortType> tableColumnSortChangeListener = (observable, oldValue, newValue) -> {
+            if(newValue != null) {
+                var property = (ObjectProperty<TableColumn.SortType>) observable;
+                sortedColumn = (TableColumn) property.getBean();
+                for (TableColumn tableColumn : foundEventsTableView.getColumns()) {
+                    if (tableColumn != sortedColumn) {
+                        tableColumn.setSortType(null);
+                    }
+                }
+                clear();
+                loadPerformanceTable(0);
+            }
+        };
+
+        for(TableColumn tableColumn : foundEventsTableView.getColumns()) {
+            tableColumn.setSortType(null);
+        }
+        nameColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        eventColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        startTimeColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        locationColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
+
+        loadPerformanceTable(0);
     }
 
     private void clear() {
@@ -191,7 +215,6 @@ public class EventSearchController {
 
     private void loadPerformanceTable(int page){
         PageRequestDTO pageRequestDTO = null;
-        TableColumn sortedColumn = getSortedColumn();
 
         if (sortedColumn != null) {
             Sort.Direction sortDirection = (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
@@ -235,20 +258,6 @@ public class EventSearchController {
             return "locationAddress.country";
         }
         return "id";
-    }
-
-    public TableColumn getSortedColumn() {
-        if (nameColumn.getSortType() != null) {
-            return nameColumn;
-        } else if (eventColumn.getSortType() != null) {
-            return eventColumn;
-        } else if (startTimeColumn.getSortType() != null) {
-            return startTimeColumn;
-        } else if (locationColumn.getSortType() != null) {
-            return locationColumn;
-        }
-
-        return null;
     }
 
     //++++++++++++++BUTTONS+++++++++++++++
