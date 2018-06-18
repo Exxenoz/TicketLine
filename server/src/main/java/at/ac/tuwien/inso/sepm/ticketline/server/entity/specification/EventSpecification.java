@@ -31,7 +31,7 @@ public class EventSpecification implements Specification<Event> {
 
         String eventNameLike = '%' + eventName + '%';
         if (!isNullOrEmpty(eventName)) {
-            predicates.add(builder.like(root.get("name"), eventNameLike));
+            predicates.add(builder.like(builder.lower(root.get("name")), eventNameLike.toLowerCase()));
         }
 
         if(eventType != null){

@@ -3,10 +3,12 @@ package at.ac.tuwien.inso.sepm.ticketline.server.integrationtests;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.performance.PerformanceMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationMapper;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.seat.SeatMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.integrationtests.base.BaseIT;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.*;
 import io.restassured.RestAssured;
@@ -54,6 +56,8 @@ public class ReservationIT extends BaseIT {
     private ArtistRepository artistRepository;
     @Autowired
     private PerformanceMapper performanceMapper;
+    @Autowired
+    private SeatMapper seatMapper;
 
 
     @Before
@@ -192,6 +196,37 @@ public class ReservationIT extends BaseIT {
     }
 
     @Test
+    public void addLockedSeatToReservationAsUser() {
+        //get not yet purchased reservation
+        var reservation = reservationRepository.findByPaidFalseAndId(RESERVATION_TEST_ID);
+        ReservationDTO reservationDTO = reservationMapper.reservationToReservationDTO(reservation);
+        Assert.assertNotNull(reservationDTO);
+
+        //edit reservation -> remove one seat
+        var seatDTOs = reservationDTO.getSeats();
+        var lockedSeat = seatRepository.save(newSeat());
+        Assert.assertEquals(1, seatDTOs.size());
+        seatDTOs.add(SeatDTO.Builder.aSeatDTO()
+            .withPositionX(lockedSeat.getPositionX())
+            .withPositionY(lockedSeat.getPositionY())
+            .build()
+        );
+        reservationDTO.setSeats(seatDTOs);
+
+        //create and send request - update reservation with new data
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .body(reservationDTO)
+            .when().post(RESERVATION_ENDPOINT + "/edit")
+            .then().extract().response();
+
+        //assert result
+        Assert.assertEquals(HttpStatus.CONFLICT.value(), response.getStatusCode());
+    }
+
+    @Test
     public void createReservationAsUser() {
         // GIVEN
         Performance performance = performanceRepository.save(newPerformance());
@@ -207,7 +242,7 @@ public class ReservationIT extends BaseIT {
                 .withCustomerID(customer.getId())
                 .withPaid(false)
                 .withPerformanceID(performance.getId())
-                .withSeatIDs(List.of(seat.getId()))
+                .withSeats(List.of(seatMapper.seatToSeatDTO(seat)))
                 .build())
             .when().post(RESERVATION_ENDPOINT)
             .then().extract().response();
@@ -237,7 +272,7 @@ public class ReservationIT extends BaseIT {
                 .withCustomerID(customer.getId())
                 .withPaid(false)
                 .withPerformanceID(performance.getId())
-                .withSeatIDs(List.of(seat.getId()))
+                .withSeats(List.of(seatMapper.seatToSeatDTO(seat)))
                 .build())
             .when().post(RESERVATION_ENDPOINT + "/createAndPay")
             .then().extract().response();
@@ -276,6 +311,10 @@ public class ReservationIT extends BaseIT {
         seat.setPositionX(1);
         seat.setPositionY(2);
         return seat;
+    }
+
+    private Sector newSector() {
+        return null;
     }
 
     private Customer newCustomer() {

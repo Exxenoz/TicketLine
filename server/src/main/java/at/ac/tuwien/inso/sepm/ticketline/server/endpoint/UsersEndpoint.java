@@ -1,8 +1,8 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 
-import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserCreateRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordChangeRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
@@ -63,10 +63,10 @@ public class UsersEndpoint {
     @ApiOperation("Disable an enabled user")
     public void disableUser(@RequestBody UserDTO userDTO) {
         try {
-            userService.disableUser(userDTO);
+            userService.disableUserButNotSelf(userDTO);
         } catch (InternalUserNotFoundException e) {
             throw new HttpBadRequestException();
-        } catch (InternalForbiddenException e) {
+        } catch (InternalUserTriedToDisableHimselfException e) {
             throw new HttpBadRequestException();
         } catch (InternalUserValidationException e) {
             throw new HttpBadRequestException();
@@ -76,9 +76,9 @@ public class UsersEndpoint {
     @PostMapping("/create")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation("Create a new user")
-    public UserDTO save(@RequestBody UserDTO userDTO) {
+    public UserDTO save(@RequestBody UserCreateRequestDTO userCreateRequestDTO) {
         try {
-            return userService.save(userDTO);
+            return userService.save(userCreateRequestDTO);
         } catch (InternalUserValidationException e) {
             throw new HttpBadRequestException();
         } catch (InternalUsernameConflictException e) {

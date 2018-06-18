@@ -16,9 +16,6 @@ public class UserDTO {
     @ApiModelProperty(required = true, readOnly = true, name = "The username of the useraccount")
     private String username;
 
-    @ApiModelProperty(required = true, readOnly = true, name = "The password of the useraccount")
-    private String password;
-
     @ApiModelProperty(required = true, readOnly = true, name = "Indicates whether the users is enabled or not")
     private boolean enabled = true;
 
@@ -48,14 +45,6 @@ public class UserDTO {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public boolean isEnabled() {
         return enabled;
     }
@@ -83,7 +72,6 @@ public class UserDTO {
     public void update(UserDTO userDTO) {
         this.id = userDTO.id;
         this.username = userDTO.username;
-        this.password = userDTO.password;
         this.enabled = userDTO.enabled;
         this.strikes = userDTO.strikes;
         this.roles = new HashSet<>(userDTO.roles);
@@ -94,7 +82,6 @@ public class UserDTO {
         return "UserDTO{" +
             "id=" + id +
             ", username='" + username + '\'' +
-            ", password='" + password + '\'' +
             ", enabled=" + enabled +
             ", strikes=" + strikes +
             ", roles=" + roles +
@@ -109,7 +96,6 @@ public class UserDTO {
         return enabled == userDTO.enabled &&
             Objects.equals(id, userDTO.id) &&
             Objects.equals(username, userDTO.username) &&
-            Objects.equals(password, userDTO.password) &&
             Objects.equals(strikes, userDTO.strikes) &&
             Objects.equals(roles, userDTO.roles);
     }
@@ -117,13 +103,12 @@ public class UserDTO {
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, username, password, enabled, strikes, roles);
+        return Objects.hash(id, username, enabled, strikes, roles);
     }
 
     public static final class UserDTOBuilder {
         private Long id;
         private String username;
-        private String password;
         private boolean enabled;
         private Integer strikes;
         private Set<String> roles = new HashSet<>();
@@ -135,11 +120,6 @@ public class UserDTO {
 
         public UserDTOBuilder username(String username) {
             this.username = username;
-            return this;
-        }
-
-        public UserDTOBuilder password(String password) {
-            this.password = password;
             return this;
         }
 
@@ -162,7 +142,6 @@ public class UserDTO {
             UserDTO userDTO = new UserDTO();
             userDTO.setId(id);
             userDTO.setUsername(username);
-            userDTO.setPassword(password);
             userDTO.setEnabled(enabled);
             userDTO.setStrikes(strikes);
             userDTO.setRoles(new HashSet<>(roles));

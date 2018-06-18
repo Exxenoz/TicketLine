@@ -30,6 +30,7 @@ public class NewsEndpointIT extends BaseIT {
 
     private static final String TEST_NEWS_TEXT = "TestNewsText";
     private static final String TEST_NEWS_TITLE = "title";
+    private static final String TEST_NEWS_SUMMARY = "This is a news test summary!";
     private static final LocalDateTime TEST_NEWS_PUBLISHED_AT =
         LocalDateTime.of(2016, 11, 13, 12, 15, 0, 0);
     private static final long TEST_NEWS_ID = 1L;
@@ -165,6 +166,7 @@ public class NewsEndpointIT extends BaseIT {
                 .id(TEST_NEWS_ID)
                 .title(TEST_NEWS_TITLE)
                 .text(TEST_NEWS_TEXT)
+                .summary(TEST_NEWS_SUMMARY)
                 .publishedAt(TEST_NEWS_PUBLISHED_AT)
                 .build());
         Response response = RestAssured
@@ -174,6 +176,7 @@ public class NewsEndpointIT extends BaseIT {
             .body(DetailedNewsDTO.builder()
                 .title(TEST_NEWS_TITLE)
                 .text(TEST_NEWS_TEXT)
+                .summary(TEST_NEWS_SUMMARY)
                 .build())
             .when().post(NEWS_ENDPOINT)
             .then().extract().response();
@@ -182,6 +185,7 @@ public class NewsEndpointIT extends BaseIT {
             .id(TEST_NEWS_ID)
             .title(TEST_NEWS_TITLE)
             .text(TEST_NEWS_TEXT)
+            .summary(TEST_NEWS_SUMMARY)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
             .build()));
     }

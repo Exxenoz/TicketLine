@@ -1,27 +1,26 @@
 package at.ac.tuwien.inso.sepm.ticketline.rest.validator;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserCreateRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.util.DuplicateFinder;
-import at.ac.tuwien.inso.sepm.ticketline.rest.util.RestBundleManager;
 
 public abstract class UserValidator {
 
     public static final String nameRegex = "^[-' a-zA-ZöüöäÜÖÄ0-9]+$";
 
     //validates newly created user
-    public static void validateNewUser(UserDTO userDTO) throws UserValidatorException {
-        validateUsername(userDTO);
-        validatePlainTextPassword(userDTO);
-        validateStrikes(userDTO);
-        validateRoles(userDTO);
+    public static void validateNewUser(UserCreateRequestDTO userCreateRequestDTO) throws UserValidatorException {
+        validateUsername(userCreateRequestDTO);
+        validatePlainTextPassword(userCreateRequestDTO);
+        validateStrikes(userCreateRequestDTO);
+        validateRoles(userCreateRequestDTO);
     }
 
     //validates existing user
     public static void validateExistingUser(UserDTO userDTO) throws UserValidatorException {
         validateID(userDTO);
         validateUsername(userDTO);
-        validateEncryptedPassword(userDTO); // ToDo: Remove me
         validateStrikes(userDTO);
         validateRoles(userDTO);
     }
@@ -49,23 +48,22 @@ public abstract class UserValidator {
         }
     }
 
-    public static void validateUsername(UserDTO userDTO) throws UserValidatorException {
-        validateDTO(userDTO);
-        if (userDTO.getUsername() == null) {
+    public static void validateUsername(String username) throws UserValidatorException {
+        if (username == null) {
             throw new UserValidatorException(
                 "User Validation failed: username is null"
             );
         } else {
-            if(!userDTO.getUsername().matches(nameRegex)) {
+            if(!username.matches(nameRegex)) {
                 throw new UserValidatorException(
-                  "User Validation failed: does not fit regex"
+                    "User Validation failed: does not fit regex"
                 );
             }
-            if (userDTO.getUsername().length() < 3) {
+            if (username.length() < 3) {
                 throw new UserValidatorException(
                     "User Validation failed: username too short"
                 );
-            } else if (userDTO.getUsername().length() > 30) {
+            } else if (username.length() > 30) {
                 throw new UserValidatorException(
                     "User Validation failed: username too long"
                 );
@@ -73,29 +71,32 @@ public abstract class UserValidator {
         }
     }
 
-    public static void validatePlainTextPassword(UserDTO userDTO) throws UserValidatorException {
+    public static void validateUsername(UserDTO userDTO) throws UserValidatorException {
         validateDTO(userDTO);
+        validateUsername(userDTO.getUsername());
+    }
 
-        if (userDTO.getPassword() == null ||
-            userDTO.getPassword().length() < 3 ||
-            userDTO.getPassword().length() > 30 ||
-            !userDTO.getPassword().matches("^[\\x00-\\xFF]*$")) {
+    public static void validatePlainTextPassword(String password) throws UserValidatorException {
+        if (password == null ||
+            password.length() < 3 ||
+            password.length() > 30 ||
+            !password.matches("^[\\x00-\\xFF]*$")) {
             throw new UserValidatorException("Plain text password validation failed, because it is invalid!");
         }
     }
 
-    public static void validateEncryptedPassword(UserDTO userDTO) throws UserValidatorException {
-        validateDTO(userDTO);
-        if (userDTO.getPassword() == null) {
-            throw new UserValidatorException(
-                "User Validation failed: password null"
-            );
-        } else {
-            if (userDTO.getPassword().length() != 60) {
-                throw new UserValidatorException(
-                    "User Validation failed: password faulty"
-                );
-            }
+    public static void validatePlainTextPassword(UserCreateRequestDTO userCreateRequestDTO) throws UserValidatorException {
+        validateDTO(userCreateRequestDTO);
+        validatePlainTextPassword(userCreateRequestDTO.getPassword());
+    }
+
+    public static void validatePasswordChangeKey(String passwordChangeKey) throws UserValidatorException {
+        if (passwordChangeKey == null) {
+            throw new UserValidatorException("Password change key validation failed, because the object reference is null!");
+        }
+
+        if (!passwordChangeKey.matches("^[1-9a-zA-Z]{8}$")) {
+            throw new UserValidatorException("Password change key validation failed, because it is invalid!");
         }
     }
 

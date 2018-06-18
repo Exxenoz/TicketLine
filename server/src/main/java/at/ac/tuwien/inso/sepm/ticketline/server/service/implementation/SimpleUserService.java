@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserCreateRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordChangeRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
@@ -10,9 +11,11 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.user.UserMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.UserRepository;
+import at.ac.tuwien.inso.sepm.ticketline.server.security.IAuthenticationFacade;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -26,12 +29,14 @@ import java.util.List;
 @Service
 public class SimpleUserService implements UserService {
 
+    private IAuthenticationFacade authenticationFacade;
     private UserRepository userRepository;
     private UserMapper userMapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public SimpleUserService(UserRepository userRepository, UserMapper userMapper) {
+    public SimpleUserService(IAuthenticationFacade authenticationFacade, UserRepository userRepository, UserMapper userMapper) {
+        this.authenticationFacade = authenticationFacade;
         this.userRepository = userRepository;
         this.userMapper = userMapper;
     }
@@ -63,18 +68,13 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public void disableUser(UserDTO userDTO) throws InternalUserValidationException, InternalForbiddenException, InternalUserNotFoundException {
+    public void disableUser(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException {
         LOGGER.info("Disable user {}", userDTO);
 
         try {
             UserValidator.validateExistingUser(userDTO);
         } catch (UserValidatorException e) {
             throw new InternalUserValidationException();
-        }
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication.getName().equals(userDTO.getUsername())) {
-            throw new InternalForbiddenException();
         }
 
         User user = userRepository.findByUsername(userDTO.getUsername());
@@ -85,6 +85,18 @@ public class SimpleUserService implements UserService {
         user.setEnabled(false);
 
         userRepository.save(user);
+    }
+
+    @Override
+    public void disableUserButNotSelf(UserDTO userDTO) throws InternalUserValidationException, InternalUserTriedToDisableHimselfException, InternalUserNotFoundException {
+        LOGGER.info("Try to disable user {}", userDTO);
+
+        Authentication authentication = authenticationFacade.getAuthentication();
+        if (authentication.getName().equals(userDTO.getUsername())) {
+            throw new InternalUserTriedToDisableHimselfException();
+        }
+
+        disableUser(userDTO);
     }
 
     @Override
@@ -161,22 +173,22 @@ public class SimpleUserService implements UserService {
     }
 
     @Override
-    public UserDTO save(UserDTO userDTO) throws InternalUserValidationException, InternalUsernameConflictException {
-        LOGGER.info("Save user {}", userDTO);
+    public UserDTO save(UserCreateRequestDTO userCreateRequestDTO) throws InternalUserValidationException, InternalUsernameConflictException {
+        LOGGER.info("Save user {}", userCreateRequestDTO.getUsername());
 
         try {
-            UserValidator.validateNewUser(userDTO);
+            UserValidator.validateNewUser(userCreateRequestDTO);
         } catch (UserValidatorException e) {
             throw new InternalUserValidationException();
         }
 
-        if (userRepository.findByUsername(userDTO.getUsername()) != null) {
+        if (userRepository.findByUsername(userCreateRequestDTO.getUsername()) != null) {
             throw new InternalUsernameConflictException();
         }
 
-        var user = userMapper.userDTOToUser(userDTO);
+        var user = userMapper.userDTOToUser(userCreateRequestDTO);
 
-        user.setPassword(new BCryptPasswordEncoder(10).encode(userDTO.getPassword()));
+        user.setPassword(new BCryptPasswordEncoder(10).encode(userCreateRequestDTO.getPassword()));
 
         return userMapper.userToUserDTO(userRepository.save(user));
     }
@@ -246,20 +258,17 @@ public class SimpleUserService implements UserService {
     public void changePassword(UserPasswordChangeRequestDTO userPasswordChangeRequestDTO) throws InternalUserNotFoundException, InternalBadRequestException {
         LOGGER.info("Change password for user {}", userPasswordChangeRequestDTO.getUsername());
 
-        if (userPasswordChangeRequestDTO.getPassword() == null ||
-            userPasswordChangeRequestDTO.getPassword().length() < 3 ||
-            userPasswordChangeRequestDTO.getPassword().length() > 30 ||
-            !userPasswordChangeRequestDTO.getPassword().matches("^[\\x00-\\xFF]*$")) {
+        try {
+            UserValidator.validateUsername(userPasswordChangeRequestDTO.getUsername());
+            UserValidator.validatePlainTextPassword(userPasswordChangeRequestDTO.getPassword());
+            UserValidator.validatePasswordChangeKey(userPasswordChangeRequestDTO.getPasswordChangeKey());
+        } catch (UserValidatorException e) {
             throw new InternalBadRequestException();
         }
 
         User user = userRepository.findByUsername(userPasswordChangeRequestDTO.getUsername());
         if (user == null) {
             throw new InternalUserNotFoundException();
-        }
-
-        if (user.getPasswordChangeKey() == null) {
-            throw new InternalBadRequestException();
         }
 
         if (!new BCryptPasswordEncoder(10).matches(userPasswordChangeRequestDTO.getPasswordChangeKey(), user.getPasswordChangeKey())) {

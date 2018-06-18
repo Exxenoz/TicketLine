@@ -32,7 +32,7 @@
                     <children>
                         <HBox prefHeight="100.0" prefWidth="200.0">
                             <children>
-                                <Label text="%news.create.title">
+                                <Label fx:id="createNewsLabel" text="%news.create.title">
                                     <font>
                                         <Font name="System Bold" size="19.0" />
                                     </font>
@@ -54,7 +54,7 @@
                             <GridPane.margin>
                                 <Insets />
                             </GridPane.margin></TextField>
-                        <Label text="%news.create.upload" GridPane.columnIndex="1">
+                        <Label fx:id="uploadLabel" text="%news.create.upload" GridPane.columnIndex="1">
                             <font>
                                 <Font name="System Bold" size="19.0" />
                             </font>
@@ -72,7 +72,7 @@
                                     <HBox.margin>
                                         <Insets right="5.0" top="2.0" />
                                     </HBox.margin></Button>
-                                <Button mnemonicParsing="false" onAction="#onClickChooseImageFileButton" text="%news.create.choose">
+                                <Button fx:id="chooseImageFileButton" mnemonicParsing="false" onAction="#onClickChooseImageFileButton" text="%news.create.choose">
                                     <HBox.margin>
                                         <Insets top="2.0" />
                                     </HBox.margin></Button>
@@ -87,7 +87,7 @@
                 </GridPane>
                 <HBox prefWidth="800.0">
                     <children>
-                        <Label text="%news.create.summary">
+                        <Label fx:id="summaryLabel" text="%news.create.summary">
                             <font>
                                 <Font name="System Bold" size="19.0" />
                             </font>
@@ -105,7 +105,7 @@
                 <Label fx:id="summaryErrorLabel" minHeight="0.0" prefHeight="0.0" textFill="RED" />
                 <HBox GridPane.columnIndex="1">
                     <children>
-                        <Label text="%news.create.article">
+                        <Label fx:id="articleLabel" text="%news.create.article">
                             <font>
                                 <Font name="System Bold" size="19.0" />
                             </font>
@@ -129,10 +129,10 @@
                                 <Insets right="4.0" />
                             </HBox.margin>
                         </Label>
-                        <Label text="%news.dialog.create.required_field" />
+                        <Label fx:id="requiredFieldLabel" text="%news.dialog.create.required_field" />
                     </children>
                 </HBox>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onClickSaveNewsClicked" text="%news.create.save" />
+                <Button fx:id="saveNewsButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onClickSaveNewsClicked" text="%news.create.save" />
             </children>
             <padding>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

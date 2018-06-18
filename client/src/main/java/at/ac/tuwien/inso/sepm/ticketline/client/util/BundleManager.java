@@ -1,10 +1,12 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.util;
 
+import javafx.beans.binding.StringBinding;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,7 +32,7 @@ public class BundleManager {
     private static final Map<String, ResourceBundle> BUNDLES = new HashMap<>();
     private static final Map<String, ResourceBundle> EXCEPTION_BUNDLES = new HashMap<>();
 
-    private static Locale locale = Locale.getDefault();
+    private static ObjectProperty<Locale> localeProperty = new SimpleObjectProperty<>(Locale.getDefault());
 
     static {
         SUPPORTED_LOCALES.forEach(locale -> {
@@ -47,33 +49,57 @@ public class BundleManager {
     }
 
     /**
-     * Gets the bundle for the current locale or if not set the default locale.
+     * Gets the bundle for the current localeProperty or if not set the default localeProperty.
      *
      * @return the bundle
      */
     public static ResourceBundle getBundle() {
-        return BUNDLES.getOrDefault(locale.getLanguage(), BUNDLES.get(SUPPORTED_LOCALES.get(0).getLanguage()));
+        return BUNDLES.getOrDefault(getLocale().getLanguage(), BUNDLES.get(SUPPORTED_LOCALES.get(0).getLanguage()));
     }
 
     /**
-     * Gets the exception bundle for the current locale or if not set the default local.
+     * Gets the exception bundle for the current localeProperty or if not set the default local.
      *
      * @return the exception bundle
      */
     public static ResourceBundle getExceptionBundle() {
-        return EXCEPTION_BUNDLES.getOrDefault(locale.getLanguage(), EXCEPTION_BUNDLES.get(SUPPORTED_LOCALES.get(0).getLanguage()));
+        return EXCEPTION_BUNDLES.getOrDefault(getLocale().getLanguage(), EXCEPTION_BUNDLES.get(SUPPORTED_LOCALES.get(0).getLanguage()));
     }
 
     /**
-     * Changes the locale.
+     * Changes the localeProperty.
      *
-     * @param locale the locale
+     * @param locale the localeProperty
      */
     public static void changeLocale(Locale locale) {
         if (!SUPPORTED_LOCALES.contains(locale)) {
             throw new IllegalArgumentException("Locale not supported");
         }
-        BundleManager.locale = locale;
+        BundleManager.localeProperty.set(locale);
+    }
+
+    public static Locale getLocale() {
+        return localeProperty.get();
+    }
+
+    public static StringBinding getStringBinding(String key) {
+        return new StringBinding() {
+            { bind(localeProperty); }
+            @Override
+            protected String computeValue() {
+                return getBundle().getString(key);
+            }
+        };
+    }
+
+    public static StringBinding getExceptionStringBinding(String key) {
+        return new StringBinding() {
+            { bind(localeProperty); }
+            @Override
+            protected String computeValue() {
+                return getExceptionBundle().getString(key);
+            }
+        };
     }
 
     /**

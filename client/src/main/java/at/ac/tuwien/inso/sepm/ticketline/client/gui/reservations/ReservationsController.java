@@ -97,18 +97,14 @@ public class ReservationsController {
         ResourceBundle ex = BundleManager.getExceptionBundle();
         int row = foundReservationsTableView.getSelectionModel().getFocusedIndex();
         ReservationDTO selected = reservationDTOS.get(row);
-        if (!selected.isPaid()) {
             try {
                 ReservationDTO reservationDTO = reservationService.cancelReservation(selected.getId());
-                reservationDTOS.remove(reservationDTO);
-                foundReservationsTableView.getItems().remove(row);
+                foundReservationsTableView.getItems().get(row).setCanceled(true);
+                //     initializeTableView();
+                foundReservationsTableView.refresh();
             } catch (DataAccessException e) {
                 LOGGER.debug(ex.getString("exception.reservation.cancel.alreadypaid"), e);
             }
-        } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR, ex.getString("exception.reservation.cancel.alreadypaid"), OK);
-            alert.showAndWait();
-        }
     }
 
 
@@ -220,10 +216,14 @@ public class ReservationsController {
             cellData.getValue().getCustomer().getFirstName() + " " +
                 cellData.getValue().getCustomer().getLastName()));
         paidColumn.setCellValueFactory(cellData -> {
-            if (cellData.getValue().isPaid()) {
-                return new SimpleStringProperty(BundleManager.getBundle().getString("bookings.table.paid.true"));
+            if (cellData.getValue().isCanceled() == false) {
+                if (cellData.getValue().isPaid()) {
+                    return new SimpleStringProperty(BundleManager.getBundle().getString("bookings.table.paid.true"));
+                } else {
+                    return new SimpleStringProperty(BundleManager.getBundle().getString("bookings.table.paid.false"));
+                }
             } else {
-                return new SimpleStringProperty(BundleManager.getBundle().getString("bookings.table.paid.false"));
+                return new SimpleStringProperty(BundleManager.getBundle().getString("bookings.table.canceled.true"));
             }
         });
 
@@ -258,7 +258,7 @@ public class ReservationsController {
         Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
 
         stage.setScene(new Scene(parent));
-        stage.setTitle("Reservation Overview");
+        stage.setTitle(BundleManager.getBundle().getString("reservation.details.title"));
 
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(showReservationDetailsButton.getScene().getWindow());

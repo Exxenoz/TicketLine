@@ -44,8 +44,6 @@ public class AuthenticationEndpoint {
             throw new HttpLockedException();
         } catch (InternalUserPasswordWrongException e) {
             throw new HttpUnauthorizedException();
-        } catch (InternalForbiddenException e) {
-            throw new HttpForbiddenException();
         } catch (InternalUserValidationException e) {
             throw new HttpBadRequestException();
         }

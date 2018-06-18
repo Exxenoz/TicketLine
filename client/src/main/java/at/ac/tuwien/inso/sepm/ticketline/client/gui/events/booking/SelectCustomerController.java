@@ -1,17 +1,16 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.customers.CustomerEditDialogController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.CustomerService;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -63,17 +62,22 @@ public class SelectCustomerController {
     private final SpringFxmlLoader fxmlLoader;
     private Stage stage;
     private boolean isReservation;
+    private boolean reservationWithNewCustomer = true;
+    private boolean NoAnonymousCustomer;
     private ReservationDTO reservation;
     private CustomerDTO chosenCustomer;
-    private PurchaseReservationSummaryController PRSController;
+    private final PurchaseReservationSummaryController PRSController;
+    private final CustomerEditDialogController customerEditDialogController;
 
 
     public SelectCustomerController(SpringFxmlLoader fxmlLoader,
                                     CustomerService customerService,
-                                    PurchaseReservationSummaryController PRSController) {
+                                    PurchaseReservationSummaryController PRSController,
+                                    CustomerEditDialogController customerEditDialogController) {
         this.fxmlLoader = fxmlLoader;
         this.customerService = customerService;
         this.PRSController = PRSController;
+        this.customerEditDialogController = customerEditDialogController;
     }
 
     @FXML
@@ -97,7 +101,6 @@ public class SelectCustomerController {
         ));
 
         customerTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-
         LOGGER.debug("loading the page into the table");
         customerTable.setItems(items);
 
@@ -158,7 +161,7 @@ public class SelectCustomerController {
         return "id";
     }
 
-    public void loadCustomersTable(int page) {
+    private void loadCustomersTable(int page) {
         LOGGER.debug("Loading Customers of page {}", page);
         PageRequestDTO pageRequestDTO = null;
         if (customerTable.getSortOrder().size() > 0) {
@@ -173,6 +176,7 @@ public class SelectCustomerController {
         try {
             PageResponseDTO<CustomerDTO> response = customerService.findAll(pageRequestDTO);
             items.addAll(response.getContent());
+            items.removeIf(customer -> customer.getLastName().equals("anonymous") && customer.getFirstName().equals("anonymous"));
             totalPages = response.getTotalPages();
         } catch (DataAccessException e) {
             LOGGER.warn("Could not access customers!");
@@ -191,9 +195,9 @@ public class SelectCustomerController {
         Parent parent = fxmlLoader.load("/fxml/events/book/hallPlanView.fxml");
         stage.setScene(new Scene(parent));
         if (reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SEAT) {
-            stage.setTitle("Seat Selection");
+            stage.setTitle(BundleManager.getBundle().getString("bookings.hallplan.title"));
         } else {
-            stage.setTitle("Sector Selection");
+            stage.setTitle(BundleManager.getBundle().getString("bookings.sectorplan.title"));
         }
         stage.centerOnScreen();
     }
@@ -217,18 +221,20 @@ public class SelectCustomerController {
 
     private void continueOrReserve(){
         PRSController.fill(reservation, isReservation, stage);
+
         Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
         stage.setScene(new Scene(parent));
 
         if (isReservation) {
-            stage.setTitle("Reservation Details");
+            stage.setTitle(BundleManager.getBundle().getString("bookings.reservation.details.title"));
         } else {
-            stage.setTitle("Purchase Details");
+            stage.setTitle(BundleManager.getBundle().getString("bookings.purchase.details.title"));
         }
         stage.centerOnScreen();
     }
 
     public void createNewCustomer(ActionEvent actionEvent) {
+        customerEditDialogController.fill(reservationWithNewCustomer, reservation, isReservation, stage);
         Parent parent = fxmlLoader.load("/fxml/customers/customerEditDialog.fxml");
         stage.setScene(new Scene(parent));
         stage.centerOnScreen();

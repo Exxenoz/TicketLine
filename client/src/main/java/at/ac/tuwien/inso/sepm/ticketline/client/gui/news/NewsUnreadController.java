@@ -4,9 +4,12 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.MainController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.NewsService;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.DetailedNewsDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.news.SimpleNewsDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -15,18 +18,22 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Separator;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
@@ -41,6 +48,9 @@ import static org.controlsfx.glyphfont.FontAwesome.Glyph.NEWSPAPER_ALT;
 public class NewsUnreadController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+    public static final int NEWS_PER_PAGE = 50;
+    public static final int FIRST_NEWS_LIST_PAGE = 0;
 
     @FXML
     public ColumnConstraints column1;
@@ -61,6 +71,9 @@ public class NewsUnreadController {
     public ScrollPane detailScrollPane;
 
     @FXML
+    public ScrollPane simpleNewsScrollPane;
+
+    @FXML
     private VBox vbNewsElements;
 
     @FXML
@@ -73,6 +86,8 @@ public class NewsUnreadController {
     private SimpleNewsDTO currentlySelectedNews;
     private List<SimpleNewsDTO> loadedNews;
     ObservableList<Node> vbNewsBoxChildren;
+    private int page = 0;
+    private int totalPages = 1;
 
     public NewsUnreadController(MainController mainController, SpringFxmlLoader springFxmlLoader, NewsService newsService) {
         this.mainController = mainController;
@@ -85,51 +100,104 @@ public class NewsUnreadController {
     @FXML
     private void initialize() {
         tabHeaderController.setIcon(NEWSPAPER_ALT);
-        tabHeaderController.setTitle("News");
+        tabHeaderController.setTitleBinding(BundleManager.getStringBinding("news.header.unread"));
         webView.getEngine().setJavaScriptEnabled(false);
     }
 
     public void loadNews() {
         vbNewsBoxChildren = vbNewsElements.getChildren();
         vbNewsBoxChildren.clear();
-        loadedNews.clear();
-        final var task = new Task<List<SimpleNewsDTO>>() {
-            @Override
-            protected List<SimpleNewsDTO> call() throws DataAccessException {
-                return newsService.findAll();
-            }
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                int i = 0;
-                for (Iterator<SimpleNewsDTO> iterator = getValue().iterator(); iterator.hasNext(); ) {
-                    SimpleNewsDTO news = iterator.next();
-                    SpringFxmlLoader.Wrapper<NewsElementController> wrapper =
-                        springFxmlLoader.loadAndWrap("/fxml/news/newsElement.fxml");
-                    wrapper.getLoadedObject().setId("unreadNews" + i);
-                    wrapper.getController().initializeData(news);
-                    vbNewsBoxChildren.add(wrapper.getLoadedObject());
-                    if (iterator.hasNext()) {
-                        Separator separator = new Separator();
-                        vbNewsBoxChildren.add(separator);
-                        i++;
-                    }
+        final ScrollBar scrollBar = getVerticalScrollbar();
+        if (scrollBar != null) {
+            scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
+                double scrollValue = newValue.doubleValue();
+                if (scrollValue == scrollBar.getMax() && (page + 1) < totalPages) {
+                    double targetValue = scrollValue * loadedNews.size();
+                    loadNewsList(page + 1);
+                    scrollBar.setValue(targetValue / loadedNews.size());
                 }
-                loadedNews = getValue();
-            }
+            });
 
-            @Override
-            protected void failed() {
-                super.failed();
-                JavaFXUtils.createExceptionDialog(getException(),
-                    vbNewsElements.getScene().getWindow()).showAndWait();
+            scrollBar.visibleProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                if (newValue == false) {
+                    // Scrollbar is invisible, load pages until scrollbar is shown again
+                    loadNewsList(page + 1);
+                }
+            });
+        }
+
+        loadNewsList(FIRST_NEWS_LIST_PAGE);
+    }
+
+    public void reloadNews() {
+        vbNewsBoxChildren = vbNewsElements.getChildren();
+        vbNewsBoxChildren.clear();
+        loadedNews.clear();
+        loadNewsList(FIRST_NEWS_LIST_PAGE);
+    }
+
+    private boolean loadNewsList(int page) {
+        if (page < 0 || page >= totalPages) {
+            LOGGER.error("Could not load news table page, because page parameter is invalid: " + page);
+            return false;
+        }
+
+        PageRequestDTO pageRequestDTO = null;
+        pageRequestDTO = new PageRequestDTO(page, NEWS_PER_PAGE, Sort.Direction.ASC, null);
+
+        this.page = page;
+
+        try {
+            PageResponseDTO<SimpleNewsDTO> response = newsService.findAllUnread(pageRequestDTO);
+            this.totalPages = response.getTotalPages() > 0 ? response.getTotalPages() : 1;
+
+            for (int i = 0; i < response.getContent().size(); i++) {
+                SimpleNewsDTO news = response.getContent().get(i);
+                SpringFxmlLoader.Wrapper<NewsElementController> wrapper =
+                    springFxmlLoader.loadAndWrap("/fxml/news/newsElement.fxml");
+                wrapper.getLoadedObject().setId("unreadNews" + loadedNews.size() + i);
+                wrapper.getController().initializeData(news);
+                vbNewsBoxChildren.add(wrapper.getLoadedObject());
+                if (i + 1 < response.getContent().size()) {
+                    Separator separator = new Separator();
+                    vbNewsBoxChildren.add(separator);
+                }
             }
-        };
-        task.runningProperty().addListener((observable, oldValue, running) ->
-            mainController.setProgressbarProgress(running ? INDETERMINATE_PROGRESS : 0)
-        );
-        new Thread(task).start();
+            loadedNews.addAll(response.getContent());
+        } catch (DataAccessException e) {
+            JavaFXUtils.createErrorDialog(e.getMessage(),
+                vbNewsElements.getScene().getWindow()).showAndWait();
+        }
+
+        return true;
+    }
+
+    private ScrollBar getVerticalScrollbar() {
+        for (Node n : simpleNewsScrollPane.lookupAll(".scroll-bar")) {
+            if (n instanceof ScrollBar) {
+                ScrollBar bar = (ScrollBar) n;
+                if (bar.getOrientation().equals(Orientation.VERTICAL)) {
+                    return bar;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private ScrollBar getVerticalScrollbarDetails() {
+        ScrollBar scrollbar = null;
+        for (Node n : detailScrollPane.lookupAll(".scroll-bar")) {
+            if (n instanceof ScrollBar) {
+                ScrollBar bar = (ScrollBar) n;
+                if (bar.getOrientation().equals(Orientation.VERTICAL)) {
+                    scrollbar = bar;
+                }
+            }
+        }
+
+        return scrollbar;
     }
 
     public void toggleDetailView(VBox vbox, int id) {
@@ -210,5 +278,9 @@ public class NewsUnreadController {
 
             }
         });
+    }
+
+    public void detailViewScrolled(ScrollEvent scrollEvent) {
+        getVerticalScrollbarDetails().adjustValue(-scrollEvent.getDeltaY());
     }
 }

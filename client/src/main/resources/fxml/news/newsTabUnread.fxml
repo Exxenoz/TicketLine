@@ -28,7 +28,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent;" vbarPolicy="AS_NEEDED">
+                  <ScrollPane fx:id="simpleNewsScrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent;" vbarPolicy="AS_NEEDED">
                       <VBox fx:id="vbNewsElements" fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                           <children>
                               <fx:include source="newsElement.fxml" />
@@ -65,7 +65,7 @@
                                   <RowConstraints vgrow="ALWAYS" />
                                 </rowConstraints>
                                  <children>
-                                    <WebView fx:id="webView" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+                                    <WebView onScroll="#detailViewScrolled" fx:id="webView" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
                                  </children>
                               </GridPane>
                               <HBox fx:id="imageBox" alignment="CENTER">

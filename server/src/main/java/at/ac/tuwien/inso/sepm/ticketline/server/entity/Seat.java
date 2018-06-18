@@ -1,8 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.entity;
 
 import javax.persistence.*;
-
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static javax.persistence.GenerationType.AUTO;
@@ -67,6 +65,16 @@ public class Seat {
             Objects.equals(getSector(), seat.getSector());
     }
 
+    public boolean equalsWithoutId(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Seat)) return false;
+        Seat seat = (Seat) o;
+        return Objects.equals(getPositionX(), seat.getPositionX()) &&
+            Objects.equals(getPositionY(), seat.getPositionY()) &&
+            Objects.equals(getSector(), seat.getSector());
+    }
+
+
     @Override
     public int hashCode() {
 
@@ -75,7 +83,7 @@ public class Seat {
 
     @Override
     public String toString() {
-        return "Seat{" +
+        return "seat{" +
             "id=" + id +
             ", positionX=" + positionX +
             ", positionY=" + positionY +

@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserCreateRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordChangeRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
@@ -35,11 +36,19 @@ public interface UserService {
      *
      * @param userDTO The user that is being disabled
      * @throws InternalUserValidationException in case the user validation failed
-     * @throws InternalForbiddenException in case the user wanted to disable himself
      * @throws InternalUserNotFoundException in case the user was not found
      */
-    void disableUser(UserDTO userDTO) throws InternalUserValidationException, InternalForbiddenException, InternalUserNotFoundException;
+    void disableUser(UserDTO userDTO) throws InternalUserValidationException, InternalUserNotFoundException;
 
+    /**
+     * Disabling a user's right to authenticate, if the user to disable is not the authenticated user.
+     *
+     * @param userDTO The user that is being disabled
+     * @throws InternalUserValidationException in case the user validation failed
+     * @throws InternalUserTriedToDisableHimselfException in case the user wanted to disable himself
+     * @throws InternalUserNotFoundException in case the user was not found
+     */
+    void disableUserButNotSelf(UserDTO userDTO) throws InternalUserValidationException, InternalUserTriedToDisableHimselfException, InternalUserNotFoundException;
 
     /**
      * Increasing the strike counter for the specified user.
@@ -95,13 +104,13 @@ public interface UserService {
     /**
      * Creates a new user
      *
-     * @param userDTO user to create
+     * @param userCreateRequestDTO information about the user to create
      * @return created user
      * @throws InternalUserValidationException in case user validation failed
      * @throws InternalUsernameConflictException in case the username is already taken
      * @return the saved user
      */
-    UserDTO save(UserDTO userDTO) throws InternalUserValidationException, InternalUsernameConflictException;
+    UserDTO save(UserCreateRequestDTO userCreateRequestDTO) throws InternalUserValidationException, InternalUsernameConflictException;
 
     /**
      * Resets the password of a user

@@ -79,9 +79,9 @@
                                                                 <VBox layoutX="14.0" layoutY="14.0" spacing="10.0">
                                                                     <children>
                                                                         <Label text="%events.search.artistfirstname" />
-                                                                        <TextField fx:id="artistFirstNameTextField" />
+                                                                        <TextField fx:id="artistFirstNameTextField" onAction="#searchForPerformancesButton" />
                                                                         <Label text="%events.search.artistlastname" />
-                                                                        <TextField fx:id="artistLastNameTextField" />
+                                                                        <TextField fx:id="artistLastNameTextField" onAction="#searchForPerformancesButton" />
                                                                     </children>
                                                                 </VBox>
                                                             </children>
@@ -95,18 +95,18 @@
                                                                 <VBox layoutX="10.0" layoutY="9.0" spacing="10.0">
                                                                     <children>
                                                                         <Label text="%events.search.eventname" />
-                                                                        <TextField fx:id="eventNameTextField" />
+                                                                        <TextField fx:id="eventNameTextField" onAction="#searchForPerformancesButton" />
                                                                         <Label text="%events.search.length" />
-                                                                        <TextField fx:id="lengthInMinutesTextField" />
+                                                                        <TextField fx:id="lengthInMinutesTextField" onAction="#searchForPerformancesButton" />
                                                                         <Label text="%events.search.seating" />
                                                                         <HBox spacing="15.0">
                                                                             <children>
-                                                                                <RadioButton fx:id="seatingYesButton" mnemonicParsing="false" text="%events.search.seatingyes">
+                                                                                <RadioButton fx:id="seatingYesButton" mnemonicParsing="false" text="%events.search.seatingyes" onAction="#searchForPerformancesButton" >
                                                                                     <toggleGroup>
                                                                                         <ToggleGroup fx:id="seatingToggleGroup" />
                                                                                     </toggleGroup>
                                                                                 </RadioButton>
-                                                                                <RadioButton fx:id="seatingNoButton" mnemonicParsing="false" text="%events.search.seatingno" toggleGroup="$seatingToggleGroup" />
+                                                                                <RadioButton fx:id="seatingNoButton" mnemonicParsing="false" text="%events.search.seatingno" toggleGroup="$seatingToggleGroup" onAction="#searchForPerformancesButton" />
                                                                             </children>
                                                                         </HBox>
                                                                     </children>
@@ -131,7 +131,7 @@
                                                                             </children>
                                                                         </HBox>
                                                                         <Label text="%events.search.price" />
-                                                                        <TextField fx:id="priceTextField" prefHeight="26.0" prefWidth="73.0" />
+                                                                        <TextField fx:id="priceTextField" prefHeight="26.0" prefWidth="73.0" onAction="#searchForPerformancesButton" />
                                                                         <HBox spacing="15.0" />
                                                                     </children>
                                                                 </VBox>
@@ -146,16 +146,16 @@
                                                                 <VBox layoutX="7.0" layoutY="10.0" prefHeight="248.0" prefWidth="198.0" spacing="10.0">
                                                                     <children>
                                                                         <Label text="%events.search.locationname" />
-                                                                        <TextField fx:id="locationNameTextField" prefHeight="26.0" prefWidth="73.0" />
+                                                                        <TextField fx:id="locationNameTextField" prefHeight="26.0" prefWidth="73.0" onAction="#searchForPerformancesButton"  />
                                                                         <Label text="%events.search.street" />
                                                                         <HBox spacing="15.0" />
-                                                                        <TextField fx:id="streetTextField" prefHeight="26.0" prefWidth="73.0" />
+                                                                        <TextField fx:id="streetTextField" prefHeight="26.0" prefWidth="73.0" onAction="#searchForPerformancesButton" />
                                                                         <Label text="%events.search.city" />
-                                                                        <TextField fx:id="cityTextField" prefHeight="26.0" prefWidth="73.0" />
+                                                                        <TextField fx:id="cityTextField" prefHeight="26.0" prefWidth="73.0" onAction="#searchForPerformancesButton" />
                                                                         <Label text="%events.search.postalcode" />
-                                                                        <TextField fx:id="postalCodeTextField" prefHeight="26.0" prefWidth="73.0" />
+                                                                        <TextField fx:id="postalCodeTextField" prefHeight="26.0" prefWidth="73.0" onAction="#searchForPerformancesButton" />
                                                                         <Label text="%events.search.contry" />
-                                                                        <TextField fx:id="countryTextField" prefHeight="26.0" prefWidth="73.0" />
+                                                                        <TextField fx:id="countryTextField" prefHeight="26.0" prefWidth="73.0" onAction="#searchForPerformancesButton" />
                                                                     </children>
                                                                 </VBox>
                                                             </children>

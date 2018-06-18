@@ -105,7 +105,7 @@ public class EventTop10Controller {
 
         //Initialize tab header
         tabHeaderController.setIcon(CALENDAR_ALT);
-        tabHeaderController.setTitle("Events");
+        tabHeaderController.setTitle(BundleManager.getBundle().getString("events.topten.title"));
     }
 
     private void initYearChoiceBox() {
@@ -253,9 +253,18 @@ public class EventTop10Controller {
 
     @FXML
     void bookTopTenEvent(ActionEvent event) {
-        final var parent = fxmlLoader.<Parent>load("/fxml/events/eventDetailView.fxml");
         int selectedIndex = topTenEventChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? topTenEventChoiceBox.getSelectionModel().getSelectedIndex() : 0;
-        Stage stage = new Stage();
-        eventDetailViewController.fill(performanceService, currentEvents.get(selectedIndex), stage);
+        if (currentEvents.size() > 0) {
+            Stage stage = new Stage();
+
+            final var parent = fxmlLoader.<Parent>load("/fxml/events/eventDetailView.fxml");
+            eventDetailViewController.fill(performanceService, currentEvents.get(selectedIndex), stage);
+
+            stage.setScene(new Scene(parent));
+            stage.setTitle(BundleManager.getBundle().getString("bookings.event.details.title"));
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(topTenEventChoiceBox.getScene().getWindow());
+            stage.showAndWait();
+        }
     }
 }
