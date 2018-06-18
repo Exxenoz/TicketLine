@@ -167,7 +167,7 @@ public class UserController {
 
             verticalScrollbar.visibleProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
                 if (newValue == false) {
-                    // Scrollbar is invisible, load pages until scrollbar is shown again
+                    // Scrollbar is invisible, load next page
                     loadUserTable(page + 1);
                 }
             });

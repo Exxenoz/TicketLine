@@ -14,6 +14,7 @@ import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -116,8 +117,6 @@ public class ReservationsController {
         }
     }
 
-
-
     public void loadReservations() {
         final ScrollBar scrollBar = getVerticalScrollbar(foundReservationsTableView);
         if (scrollBar != null) {
@@ -129,6 +128,14 @@ public class ReservationsController {
                     double targetValue = value * reservationList.size();
                     loadReservationTable(page);
                     scrollBar.setValue(targetValue / reservationList.size());
+                }
+            });
+
+            scrollBar.visibleProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                if (newValue == false) {
+                    // Scrollbar is invisible, load next page
+                    page++;
+                    loadReservationTable(page);
                 }
             });
         }
