@@ -73,7 +73,7 @@ public class PurchaseReservationSummaryController {
         if (showDetails) {
             performanceHeader.setText("Reservation Overview");
             //make sure the reservation is still unpaid
-            if (!reservation.isPaid()) {
+            if (!reservation.isPaid() && !reservation.isCanceled()) {
                 cancelButtonPRS.setText("Edit Reservation");
             } else{
                 cancelButtonPRS.setDisable(true);
