@@ -30,11 +30,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import static javafx.application.Platform.runLater;
-
 import java.lang.invoke.MethodHandles;
 import java.util.LinkedList;
 import java.util.List;
+
+import static javafx.application.Platform.runLater;
 
 @Component
 public class HallPlanController implements SeatSelectionListener {
@@ -231,6 +231,8 @@ public class HallPlanController implements SeatSelectionListener {
     }
 
     public void fill(ReservationDTO reservation, Stage stage) {
+        this.changeDetails = false;
+        this.isReservation = false;
         this.reservation = reservation;
         this.stage = stage;
     }
