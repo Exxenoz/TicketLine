@@ -11,7 +11,9 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -73,6 +75,8 @@ public class ReservationsController {
     private String customerLastName = null;
     private boolean filtered = false;
 
+    private TableColumn sortedColumn;
+
     public ReservationsController(SpringFxmlLoader fxmlLoader,
                                   ReservationService reservationService,
                                   PurchaseReservationSummaryController PRSController) {
@@ -115,12 +119,6 @@ public class ReservationsController {
 
 
     public void loadReservations() {
-        foundReservationsTableView.sortPolicyProperty().set(t -> {
-            clear();
-            loadReservationTable(RESERVATION_FIRST_PAGE);
-            return true;
-        });
-
         final ScrollBar scrollBar = getVerticalScrollbar(foundReservationsTableView);
         if (scrollBar != null) {
             scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -134,6 +132,31 @@ public class ReservationsController {
                 }
             });
         }
+
+        ChangeListener<TableColumn.SortType> tableColumnSortChangeListener = (observable, oldValue, newValue) -> {
+            if(newValue != null) {
+                var property = (ObjectProperty<TableColumn.SortType>) observable;
+                sortedColumn = (TableColumn) property.getBean();
+                for (TableColumn tableColumn : foundReservationsTableView.getColumns()) {
+                    if(tableColumn != sortedColumn) {
+                        tableColumn.setSortType(null);
+                    }
+                }
+
+                clear();
+                loadReservationTable(RESERVATION_FIRST_PAGE);
+            }
+        };
+
+        for(TableColumn tableColumn : foundReservationsTableView.getColumns()) {
+            tableColumn.setSortType(null);
+        }
+        eventColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        customerColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        paidColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        reservationIDColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
+
+        loadReservationTable(RESERVATION_FIRST_PAGE);
     }
 
     private void loadReservationTable(int page) {
@@ -147,7 +170,6 @@ public class ReservationsController {
 
     private void loadUnfilteredReservationsTable(int page) {
         PageRequestDTO pageRequestDTO;
-        TableColumn sortedColumn = getSortedColumn();
 
         if (sortedColumn != null) {
             Sort.Direction sortDirection = (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
@@ -210,20 +232,6 @@ public class ReservationsController {
             return "reservationNumber";
         }
         return "id";
-    }
-
-    public TableColumn getSortedColumn() {
-        if (eventColumn.getSortType() != null) {
-            return eventColumn;
-        } else if (customerColumn.getSortType() != null) {
-            return customerColumn;
-        } else if (paidColumn.getSortType() != null) {
-            return paidColumn;
-        } else if (reservationIDColumn.getSortType() != null) {
-            return reservationIDColumn;
-        }
-
-        return null;
     }
 
     private void initializeTableView() {

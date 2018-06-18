@@ -14,6 +14,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.binding.StringBinding;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -87,6 +88,8 @@ public class UserController {
     private ObservableList<UserDTO> userList;
     private int page = 0;
     private int totalPages = 1;
+
+    private TableColumn sortedColumn;
 
     public UserController(SpringFxmlLoader springFxmlLoader, MainController mainController, UserService userService) {
         this.springFxmlLoader = springFxmlLoader;
@@ -171,10 +174,23 @@ public class UserController {
         }
 
         ChangeListener<TableColumn.SortType> tableColumnSortChangeListener = (observable, oldValue, newValue) -> {
-            clearUserList();
-            loadUserTable(FIRST_USER_TABLE_PAGE);
+            if(newValue != null) {
+                var property = (ObjectProperty<TableColumn.SortType>) observable;
+                sortedColumn = (TableColumn) property.getBean();
+                for (TableColumn tableColumn : userTable.getColumns()) {
+                    if (tableColumn != sortedColumn) {
+                        tableColumn.setSortType(null);
+                    }
+                }
+
+                clearUserList();
+                loadUserTable(FIRST_USER_TABLE_PAGE);
+            }
         };
 
+        for(TableColumn tableColumn : userTable.getColumns()) {
+            tableColumn.setSortType(null);
+        }
         usernameCol.sortTypeProperty().addListener(tableColumnSortChangeListener);
         useraccountStatusCol.sortTypeProperty().addListener(tableColumnSortChangeListener);
         userAuthTriesCol.sortTypeProperty().addListener(tableColumnSortChangeListener);
@@ -212,18 +228,6 @@ public class UserController {
         return "id";
     }
 
-    public TableColumn getSortedColumn() {
-        if (usernameCol.getSortType() != null) {
-            return usernameCol;
-        } else if (useraccountStatusCol.getSortType() != null) {
-            return useraccountStatusCol;
-        } else if (userAuthTriesCol.getSortType() != null) {
-            return userAuthTriesCol;
-        }
-
-        return null;
-    }
-
     public boolean loadUserTable(int page) {
         if (page < 0 || page >= totalPages) {
             LOGGER.error("Could not load user table page, because page parameter is invalid: " + page);
@@ -231,7 +235,6 @@ public class UserController {
         }
 
         PageRequestDTO pageRequestDTO = null;
-        TableColumn sortedColumn = getSortedColumn();
 
         if (sortedColumn != null) {
             Sort.Direction sortDirection = (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;

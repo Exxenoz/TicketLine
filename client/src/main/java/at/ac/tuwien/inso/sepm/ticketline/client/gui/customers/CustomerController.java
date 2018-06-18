@@ -9,6 +9,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -79,6 +80,8 @@ public class CustomerController {
     private int customerTablePage = 0;
     private int customerTablePageCount = 1;
 
+    private TableColumn sortedColumn;
+
     public CustomerController(SpringFxmlLoader springFxmlLoader, CustomerService customerService) {
         this.springFxmlLoader = springFxmlLoader;
         this.customerService = customerService;
@@ -136,10 +139,22 @@ public class CustomerController {
         }
 
         ChangeListener<TableColumn.SortType> tableColumnSortChangeListener = (observable, oldValue, newValue) -> {
-            clearCustomerList();
-            loadCustomerTable(FIRST_CUSTOMER_TABLE_PAGE);
+            if(newValue != null) {
+                var property = (ObjectProperty<TableColumn.SortType>) observable;
+                sortedColumn = (TableColumn) property.getBean();
+                for (TableColumn tableColumn : customerTable.getColumns()) {
+                    if (tableColumn != sortedColumn) {
+                        tableColumn.setSortType(null);
+                    }
+                }
+                clearCustomerList();
+                loadCustomerTable(FIRST_CUSTOMER_TABLE_PAGE);
+            }
         };
 
+        for(TableColumn tableColumn : customerTable.getColumns()) {
+            tableColumn.setSortType(null);
+        }
         customerTableColumnFirstName.sortTypeProperty().addListener(tableColumnSortChangeListener);
         customerTableColumnLastName.sortTypeProperty().addListener(tableColumnSortChangeListener);
         customerTableColumnEMail.sortTypeProperty().addListener(tableColumnSortChangeListener);
@@ -180,20 +195,6 @@ public class CustomerController {
         return "id";
     }
 
-    public TableColumn getSortedColumn() {
-        if (customerTableColumnFirstName.getSortType() != null) {
-            return customerTableColumnFirstName;
-        } else if (customerTableColumnLastName.getSortType() != null) {
-            return customerTableColumnLastName;
-        } else if (customerTableColumnTelephoneNumber.getSortType() != null) {
-            return customerTableColumnTelephoneNumber;
-        } else if (customerTableColumnEMail.getSortType() != null) {
-            return customerTableColumnEMail;
-        }
-
-        return null;
-    }
-
     public void loadCustomerTable(int page) {
         if (page < 0 || page >= customerTablePageCount) {
             LOGGER.error("Could not load customer table page, because page parameter is invalid!");
@@ -201,7 +202,6 @@ public class CustomerController {
         }
 
         PageRequestDTO pageRequestDTO = null;
-        TableColumn sortedColumn = getSortedColumn();
 
         if (sortedColumn != null) {
             Sort.Direction sortDirection = (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
