@@ -2,7 +2,9 @@ package at.ac.tuwien.inso.sepm.ticketline.client.service.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.UserRestClient;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationInformationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.UserService;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.exception.UserValidatorException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
@@ -21,9 +23,12 @@ public class SimpleUserService implements UserService {
 
 
     private final UserRestClient userRestClient;
+    private AuthenticationInformationService authenticationInformationService;
 
-    public SimpleUserService(UserRestClient userRestClient) {
+
+    public SimpleUserService(UserRestClient userRestClient, AuthenticationInformationService authenticationInformationService) {
         this.userRestClient = userRestClient;
+        this.authenticationInformationService = authenticationInformationService;
     }
 
     @Override
@@ -50,6 +55,9 @@ public class SimpleUserService implements UserService {
     public void disableUser(UserDTO userDTO) throws DataAccessException {
         try {
             UserValidator.validateExistingUser(userDTO);
+            if (authenticationInformationService.getCurrentAuthenticationTokenInfo().get().getUsername().equals(userDTO.getUsername())) {
+                throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.user.disable_self"));
+            }
         } catch (UserValidatorException e) {
             throw new DataAccessException(e.getMessage());
         }
