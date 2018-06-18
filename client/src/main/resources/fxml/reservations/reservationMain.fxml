@@ -92,12 +92,29 @@
                                                                     <children>
                                                                         <Label text="%bookings.search.performancename"/>
                                                                         <TextField fx:id="performanceNameField"/>
+                                                                        <Label fx:id="performanceNameErrorLabel"
+                                                                               prefHeight="16.0" prefWidth="290.0"
+                                                                               textFill="RED">
+                                                                            <VBox.margin>
+                                                                                <Insets bottom="10.0"/>
+                                                                            </VBox.margin>
+                                                                        </Label>
                                                                         <Label
                                                                             text="%bookings.search.customerfirstname"/>
                                                                         <TextField fx:id="customerFirstNameField"/>
+                                                                        <Label fx:id="customerFirstNameErrorLabel"
+                                                                               prefHeight="16.0" prefWidth="290.0"
+                                                                               textFill="RED">
+                                                                            <VBox.margin>
+                                                                                <Insets bottom="10.0"/>
+                                                                            </VBox.margin>
+                                                                        </Label>
                                                                         <Label
                                                                             text="%bookings.search.customerlastname"/>
                                                                         <TextField fx:id="customerLastNameField"/>
+                                                                        <Label fx:id="customerLastNameErrorLabel"
+                                                                               prefHeight="16.0" prefWidth="290.0"
+                                                                               textFill="RED"/>
                                                                     </children>
                                                                 </VBox>
                                                             </children>
@@ -113,6 +130,9 @@
                                                                         <Label
                                                                             text="%bookings.main.search.reservationnr"/>
                                                                         <TextField fx:id="reservationNrField"/>
+                                                                        <Label fx:id="reservationNumberErrorLabel"
+                                                                               prefHeight="16.0" prefWidth="290.0"
+                                                                               textFill="RED"/>
                                                                     </children>
                                                                 </VBox>
                                                             </children>
