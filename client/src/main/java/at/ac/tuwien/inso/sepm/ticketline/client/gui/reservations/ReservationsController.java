@@ -36,6 +36,7 @@ import java.util.ResourceBundle;
 
 import static at.ac.tuwien.inso.sepm.ticketline.client.validator.CustomerValidator.validateFirstName;
 import static at.ac.tuwien.inso.sepm.ticketline.client.validator.CustomerValidator.validateLastName;
+import static at.ac.tuwien.inso.sepm.ticketline.client.validator.ReservationSearchValidator.validatePerformanceName;
 import static at.ac.tuwien.inso.sepm.ticketline.client.validator.ReservationSearchValidator.validateReservationNumber;
 import static javafx.scene.control.ButtonType.OK;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.TICKET;
@@ -303,19 +304,24 @@ public class ReservationsController {
                 customerLastNameErrorLabel.setText(e.getMessage());
             }
 
-            //TODO: Validate Performance Name
+            try {
+                performanceName = validatePerformanceName(performanceNameField);
+                clear();
+                activeFilters += BundleManager.getBundle().getString("bookings.main.activefilters.performancename")
+                    + " " + performanceName + ", "
+                    + BundleManager.getBundle().getString("bookings.main.activefilters.customername")
+                    + " " + customerFirstName
+                    + " " + customerLastName;
 
-            clear();
-            activeFilters += BundleManager.getBundle().getString("bookings.main.activefilters.performancename")
-                + " " + performanceName + ", "
-                + BundleManager.getBundle().getString("bookings.main.activefilters.customername")
-                + " " + customerFirstName
-                + " " + customerLastName;
+                loadFilteredReservationsTable(0);
+                foundReservationsTableView.refresh();
+                filtered = true;
+                LOGGER.debug("Found {} page(s) satisfying the given criteria", totalPages);
+            } catch (ReservationSearchValidationException e) {
+                LOGGER.error("Error with performance name value, ", e);
+                performanceNameErrorLabel.setText(e.getMessage());
+            }
 
-            loadFilteredReservationsTable(0);
-            foundReservationsTableView.refresh();
-            filtered = true;
-            LOGGER.debug("Found {} page(s) satisfying the given criteria", totalPages);
         } else if ((performanceName.equals(""))
             && (customerFirstName.equals(""))
             && (customerLastName.equals(""))

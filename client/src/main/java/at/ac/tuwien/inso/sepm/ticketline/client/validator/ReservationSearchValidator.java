@@ -21,17 +21,18 @@ public class ReservationSearchValidator {
         return reservationNumber;
     }
 
-    public static String validatePerformanceName(TextField performanceNameField) {
+    public static String validatePerformanceName(TextField performanceNameField) throws ReservationSearchValidationException {
         String performanceName = performanceNameField.getText();
         if (performanceName.length() < 2) {
-
+            throw new ReservationSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_length"));
         }
         if (performanceName.length() > 100) {
-
+            throw new ReservationSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_length"));
         }
         if (!performanceName.matches(PERFORMANCE_NAME_REGEX)) {
-
+            throw new ReservationSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_characters"));
         }
+        return performanceName;
 
     }
 }
