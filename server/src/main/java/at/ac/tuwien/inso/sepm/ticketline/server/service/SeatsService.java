@@ -32,4 +32,19 @@ public interface SeatsService {
      * @param seats the seats to be removed
      */
     void deleteAll(List<Seat> seats);
+
+    /**
+     * deletes the parameter seat
+     *
+     * @param seat
+     */
+    void deleteSeat(Seat seat);
+
+    /**
+     * finds Seat with ID
+     *
+     * @param id
+     * @return
+     */
+    Seat findbyID(Long id);
 }

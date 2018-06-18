@@ -1,10 +1,8 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationSearch;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Seat;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalCancelationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalHallValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
@@ -19,11 +17,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class SimpleReservationService implements ReservationService {
@@ -185,12 +185,16 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
+    @Transactional
     public Reservation createReservation(Reservation reservation) throws InvalidReservationException, InternalSeatReservationException {
         //First, get the picked performance for this reservation
         Performance performance = performanceRepository.findById(reservation.getPerformance().getId()).get();
 
         //Then, too fail fast, we check the integrity of the seats according to the hall plan and the sectors
         try {
+            List<Seat> seatst = reservation.getSeats();
+            Hall hall = performance.getHall();
+            List<Sector> sectort = hall.getSectors();
             hallPlanService.checkSeatsAgainstSectors(reservation.getSeats(), performance.getHall().getSectors());
         } catch (InternalHallValidationException i) {
             LOGGER.warn("The sectors of the reservation do not match the hall '{}", performance.getHall());
@@ -253,13 +257,19 @@ public class SimpleReservationService implements ReservationService {
         return reservationNumber;
     }
 
-    @Override
-    public Reservation cancelReservation(Long id) {
-        //TODO: remove Seats from database
-        Reservation reservation = reservationRepository.findById(id).get();
-        reservation.setCanceled(true);
-        return reservationRepository.save(reservation);
 
+
+
+    @Override
+    public Reservation cancelReservation(Long id) throws InternalCancelationException {
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(InternalCancelationException::new);
+        List<Seat> seatsOfReservation = reservation.getSeats();
+        reservation.setSeats(null);
+        reservation.setCanceled(true);
+        Reservation canceledReservation = reservationRepository.save(reservation);
+        seatsOfReservation.forEach(seat -> seatsService.deleteSeat(seat));
+
+        return canceledReservation;
     }
 
     @Override
