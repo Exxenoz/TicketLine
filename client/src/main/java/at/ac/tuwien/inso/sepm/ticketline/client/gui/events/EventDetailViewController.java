@@ -10,7 +10,9 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,6 +32,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
@@ -82,6 +85,8 @@ public class EventDetailViewController {
 
     private PerformanceDTO chosenPerformance;
 
+    private TableColumn sortedColumn;
+
     public EventDetailViewController(
         SpringFxmlLoader fxmlLoader,
 
@@ -103,7 +108,7 @@ public class EventDetailViewController {
 
     @FXML
     private void initialize() {
-        intializeTableView();
+        initializeTableView();
     }
 
     private ScrollBar getVerticalScrollbar(TableView<?> table) {
@@ -157,8 +162,7 @@ public class EventDetailViewController {
     private void loadPerformanceTable(int page) {
         LOGGER.debug("Loading Performances of page {}", page);
         PageRequestDTO pageRequestDTO = null;
-        if (performanceDatesTableView.getSortOrder().size() > 0) {
-            TableColumn<PerformanceDTO, ?> sortedColumn = performanceDatesTableView.getSortOrder().get(0);
+        if (sortedColumn != null) {
             Sort.Direction sortDirection =
                 (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
             pageRequestDTO = new PageRequestDTO(page, PERFORMANCES_PER_PAGE, sortDirection, getColumnNameBy(sortedColumn));
@@ -170,6 +174,8 @@ public class EventDetailViewController {
             PageResponseDTO<PerformanceDTO> response = performanceService.findAll(pageRequestDTO);
             performanceData.addAll(response.getContent());
             totalPages = response.getTotalPages();
+            performanceDatesTableView.refresh();
+
         } catch (DataAccessException e) {
             LOGGER.warn("Could not access performances!");
         }
@@ -182,15 +188,13 @@ public class EventDetailViewController {
         //.collect(Collectors.joining(", "));
 
         artistNameEvent.setText(artistString);
-
-        performanceDatesTableView.setItems(performanceData);
     }
 
     private String getColumnNameBy(TableColumn<PerformanceDTO, ?> sortedColumn) {
         if (sortedColumn == nameColumn) {
             return "name";
         } else if (sortedColumn == locationColumn) {
-            return "locationAddress.locationName";
+            return "locationAddress.country";
         } else if (sortedColumn == startTimeColumn) {
             return "performanceStart";
         } else if (sortedColumn == endTimeColumn) {
@@ -200,19 +204,12 @@ public class EventDetailViewController {
     }
 
     private void loadData() {
-        // Setting event handler for sort policy property calls it automatically
-        performanceDatesTableView.sortPolicyProperty().set(t -> {
-            clear();
-            loadPerformanceTable(0);
-            return true;
-        });
-
         Platform.runLater(() -> {
             final ScrollBar scrollBar = getVerticalScrollbar(performanceDatesTableView);
             if (scrollBar != null) {
                 scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
                     double value = newValue.doubleValue();
-                    if ((value == scrollBar.getMax()) && (currentPage < totalPages)) {
+                    if ((value >= scrollBar.getMax()) && (currentPage + 1 < totalPages)) {
                         currentPage++;
                         LOGGER.debug("Getting next Page: {}", currentPage);
                         double targetValue = value * performanceData.size();
@@ -231,6 +228,31 @@ public class EventDetailViewController {
                 });
             }
         });
+
+        ChangeListener<TableColumn.SortType> tableColumnSortChangeListener = (observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                var property = (ObjectProperty<TableColumn.SortType>) observable;
+                sortedColumn = (TableColumn) property.getBean();
+                for (TableColumn tableColumn : performanceDatesTableView.getColumns()) {
+                    if (tableColumn != sortedColumn) {
+                        tableColumn.setSortType(null);
+                    }
+                }
+
+                clear();
+                loadPerformanceTable(0);
+            }
+        };
+
+        for (TableColumn tableColumn : performanceDatesTableView.getColumns()) {
+            tableColumn.setSortType(null);
+        }
+        nameColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        startTimeColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        endTimeColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        locationColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
+
+        loadPerformanceTable(0);
     }
 
     private void clear() {
@@ -239,13 +261,26 @@ public class EventDetailViewController {
         currentPage = 0;
     }
 
-    private void intializeTableView() {
+    private void initializeTableView() {
         nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
         startTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPerformanceStart().format(formatter)));
         endTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPerformanceStart()
             .plusMinutes(cellData.getValue().getDuration().toMinutes()).format(formatter)));
-        locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLocationAddress().getCity()));
+        locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty( cellData.getValue().getLocationAddress().getCountry() + ", " +
+            cellData.getValue().getLocationAddress().getCity()));
+
+        startTimeColumn.setComparator((d1, d2) -> {
+            LocalDateTime date1 = LocalDateTime.parse(d1, formatter);
+            LocalDateTime date2 = LocalDateTime.parse(d2, formatter);
+            return date1.compareTo(date2);
+        });
+
+        endTimeColumn.setComparator((d1, d2) -> {
+            LocalDateTime date1 = LocalDateTime.parse(d1, formatter);
+            LocalDateTime date2 = LocalDateTime.parse(d2, formatter);
+            return date1.compareTo(date2);
+        });
 
         performanceDatesTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         LOGGER.debug("loading the page into the table");
