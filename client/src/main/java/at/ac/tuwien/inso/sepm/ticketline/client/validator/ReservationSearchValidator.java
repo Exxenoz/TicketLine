@@ -23,7 +23,7 @@ public class ReservationSearchValidator {
 
     public static String validatePerformanceName(TextField performanceNameField) throws ReservationSearchValidationException {
         String performanceName = performanceNameField.getText();
-        if (performanceName.length() < 2) {
+        if (performanceName.length() < 1) {
             throw new ReservationSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_length"));
         }
         if (performanceName.length() > 100) {

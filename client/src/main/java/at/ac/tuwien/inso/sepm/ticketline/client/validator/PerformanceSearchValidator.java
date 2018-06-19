@@ -1,52 +1,64 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.validator;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.PerformanceSearchValidationException;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
+import javafx.scene.control.TextField;
 
-import java.awt.*;
 
 public class PerformanceSearchValidator {
 
     private static final String NAME_REGEX = "[0-9]*";
 
-    static void validateArtistFirstName(TextField artistFirstNameTextField) throws PerformanceSearchValidationException {
+    public static String validateArtistFirstName(TextField artistFirstNameTextField) throws PerformanceSearchValidationException {
         String artistFirstName = artistFirstNameTextField.getText();
-        validationForStingFields(artistFirstName);
+        return validationOfLength(artistFirstName);
     }
 
-    static void validateArtistLastName(TextField artistLastNameTextField) throws PerformanceSearchValidationException {
+    public static String validateArtistLastName(TextField artistLastNameTextField) throws PerformanceSearchValidationException {
         String artistLastName = artistLastNameTextField.getText();
-        validationForStingFields(artistLastName);
 
         if (!artistLastName.matches(NAME_REGEX)) {
-            throw new PerformanceSearchValidationException("the last name of the artist can only contain numbers");
+            throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.numberFormat"));
         }
+
+        return validationOfLength(artistLastName);
     }
 
-    static void validateEventName(TextField eventNameTextField) throws PerformanceSearchValidationException {
+    public static String validateEventName(TextField eventNameTextField) throws PerformanceSearchValidationException {
         String eventName = eventNameTextField.getText();
-        validationForStingFields(eventName);
+        return validationOfLength(eventName);
     }
 
-    static void validateDuration(TextField durationTextField){}
+    public static String validateDuration(TextField durationTextField) throws PerformanceSearchValidationException {
+        String durationString = durationTextField.getText();
 
-    static void validateTime(){}
+        if(!durationString.matches(NAME_REGEX)){
+            throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.numberFormat"));
+        }
 
-    static void validatePrice(TextField priceTextField){}
+        return validationOfLength(durationString);
+    }
+
+    public static void validateTime(){}
+
+    public static String validatePrice(TextField priceTextField) throws PerformanceSearchValidationException {
+        String price = priceTextField.getText();
+
+        if(!price.matches(NAME_REGEX)){
+            throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.numberFormatPositive"));
+        }
+
+        return validationOfLength(price);
+    }
 
 
 
-    static void validationForStingFields(String stringToValidate) throws PerformanceSearchValidationException {
-        /**
-         if (stringToValidate == null) {
-         throw new PerformanceSearchValidationException("first name of the" + string + "for the search can not be null");
+    private static String validationOfLength(String stringToValidate) throws PerformanceSearchValidationException {
+
+         if (stringToValidate.length() < 1 || stringToValidate.length() > 100) {
+         throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_length"));
          }
-         if (searchDTO.getFirstName().length() < 2) {
-         throw new PerformanceSearchValidationException("first name of the" + string + "for the search has to be at least 2 characters long");
-         }
-         if (searchDTO.getFirstName().length() > 50) {
-         throw new PerformanceSearchValidationException("first name of the" + string + "for the search can not be longer than 50 characters");
-         }
 
-         */
+         return stringToValidate;
     }
 }

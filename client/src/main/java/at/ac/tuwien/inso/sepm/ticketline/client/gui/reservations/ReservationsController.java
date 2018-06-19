@@ -77,7 +77,6 @@ public class ReservationsController {
     private int page = 0;
     private int totalPages = 0;
     private static final int RESERVATIONS_PER_PAGE = 50;
-    private static final int RESERVATION_NUMBER_LENGTH = 7;
     private static final int RESERVATION_FIRST_PAGE = 0;
 
     private String activeFilters = "";
@@ -409,6 +408,12 @@ public class ReservationsController {
         customerFirstName = "";
         customerLastName = "";
         activeFilters = "";
+
+        reservationNumberErrorLabel.setText("");
+        customerLastNameErrorLabel.setText("");
+        customerFirstNameErrorLabel.setText("");
+        performanceNameErrorLabel.setText("");
+
         clear();
         loadData();
     }
