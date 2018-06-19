@@ -136,7 +136,7 @@ public class SelectCustomerController {
             if (scrollBar != null) {
                 scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
                     double value = newValue.doubleValue();
-                    if ((value == scrollBar.getMax()) && (currentPage < totalPages)) {
+                    if ((value >= scrollBar.getMax()) && (currentPage + 1 < totalPages)) {
                         currentPage++;
                         LOGGER.debug("Getting next Page: {}", currentPage);
                         double targetValue = value * items.size();
@@ -211,11 +211,10 @@ public class SelectCustomerController {
             items.addAll(response.getContent());
             items.removeIf(customer -> customer.getLastName().equals("anonymous") && customer.getFirstName().equals("anonymous"));
             totalPages = response.getTotalPages();
+            customerTable.refresh();
         } catch (DataAccessException e) {
             LOGGER.warn("Could not access customers!");
         }
-
-        customerTable.setItems(items);
     }
 
     private void clear() {

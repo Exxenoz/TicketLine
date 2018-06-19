@@ -280,6 +280,11 @@ public class UserController {
         }
         userList.add(userDTO);
         userTable.sort();
+        if (userList.get(userList.size() - 1) == userDTO) {
+            userList.remove(userDTO);
+            // remove last item, so it doesn't appear twice when loading next page
+            userList.remove(userList.size() - 1);
+        }
     }
 
     public void refreshAndSortUserTable() {

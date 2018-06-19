@@ -235,6 +235,12 @@ public class CustomerController {
         }
         customerList.add(customerDTO);
         customerTable.sort();
+        if (customerList.get(customerList.size() - 1) == customerDTO) {
+            customerList.remove(customerDTO);
+        } else {
+            // remove last item, so it doesn't appear twice when loading next page
+            customerList.remove(customerList.size() - 1);
+        }
     }
 
     public void refreshAndSortCustomerTable() {
