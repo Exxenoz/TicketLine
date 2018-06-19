@@ -153,12 +153,17 @@ public class HallPlanController implements SeatSelectionListener {
             d.printStackTrace();
         }
 
-        // Set performance detail to seat plan
+        // Set performance detail to seat or sector plan plan
         if (this.reservation != null && this.reservation.getPerformance() != null) {
             if (reservationDTOS != null) {
                 //Set this controller als seat selection listener for the seat map
-                this.seatMapController.setSeatSelectionListener(this);
-                this.seatMapController.fill(this.reservation.getPerformance(), reservationDTOS);
+                if(seatMapController.isInitialized()) {
+                    this.seatMapController.setSeatSelectionListener(this);
+                    this.seatMapController.fill(this.reservation.getPerformance(), reservationDTOS);
+                } else if(sectorController != null) {
+                    this.sectorController.setSeatSelectionListener(this);
+                    this.sectorController.fill(this.reservation.getPerformance(), reservationDTOS);
+                }
             }
         }
     }
@@ -250,7 +255,12 @@ public class HallPlanController implements SeatSelectionListener {
         runLater(() -> {
             updateSeatsInformation(reservation.getSeats());
             updatePrice(reservation.getSeats(), this.reservation.getPerformance());
-            seatMapController.fillForReservationEdit(reservation);
+
+            if(seatMapController.isInitialized()) {
+                seatMapController.fillForReservationEdit(reservation);
+            } else {
+
+            }
         });
     }
 

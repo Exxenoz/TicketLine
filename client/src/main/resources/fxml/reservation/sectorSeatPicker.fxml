@@ -1,27 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollBar?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SectorController">
    <children>
-      <Text id="event" fx:id="eventTitleText" layoutX="243.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Event" textAlignment="CENTER" textOrigin="CENTER" wrappingWidth="100.52490234375">
-         <font>
-            <Font size="24.0" />
-         </font>
-      </Text>
-      <Text id="event" fx:id="eventDateText" layoutX="243.0" layoutY="73.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Date" textAlignment="CENTER" textOrigin="CENTER" wrappingWidth="100.52490234375" />
-      <Separator layoutX="68.0" layoutY="92.0" prefHeight="24.0" prefWidth="451.0" />
-      <Label layoutX="109.0" layoutY="108.0" text="Sector" />
-      <Label layoutX="278.0" layoutY="108.0" text="Price" />
-      <Label layoutX="436.0" layoutY="108.0" text="Amount" />
-      <VBox fx:id="sectorDetailsVBox" layoutX="74.0" layoutY="136.0" prefHeight="200.0" prefWidth="451.0" />
-      <ScrollBar fx:id="sectorDetailsScrollBar" layoutX="525.0" layoutY="136.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="17.0" />
+      <Separator layoutX="69.0" layoutY="45.0" prefHeight="24.0" prefWidth="451.0" />
+      <Label layoutX="106.0" layoutY="69.0" text="Sector" />
+      <Label layoutX="268.0" layoutY="69.0" text="Price" />
+      <Label layoutX="431.0" layoutY="69.0" text="Amount" />
+      <ScrollPane layoutX="72.0" layoutY="86.0" prefHeight="309.0" prefWidth="451.0">
+         <content>
+            <VBox fx:id="sectorDetailsVBox" prefHeight="289.0" prefWidth="460.0" />
+         </content>
+      </ScrollPane>
    </children>
 </AnchorPane>

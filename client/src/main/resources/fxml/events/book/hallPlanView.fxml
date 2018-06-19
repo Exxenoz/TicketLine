@@ -35,7 +35,10 @@
                </children>
             </AnchorPane>
             <!-- including seat picker here -->
-            <fx:include fx:id="seatMap" source="/fxml/reservation/seatMapPicker.fxml" />
+            <!--<fx:include fx:id="seatMap" source="/fxml/reservation/seatMapPicker.fxml" />-->
+            <!-- including sector picker here -->
+            <fx:include fx:id="sectorMap" source="/fxml/reservation/sectorSeatPicker.fxml" />
+
             <AnchorPane layoutX="10.0" layoutY="10.0" minHeight="0.0" minWidth="0.0" prefHeight="156.0" prefWidth="731.0">
                <children>
                   <HBox layoutX="89.0" layoutY="23.0" prefHeight="17.0" prefWidth="240.0" />
