@@ -54,8 +54,21 @@ public class SelectCustomerController {
 
     @FXML
     public TableColumn<CustomerDTO, String> customerTableColumnEMail;
+
     @FXML
     public AnchorPane content;
+
+    @FXML
+    public Button btnBack;
+
+    @FXML
+    public Button btnWithCustomer;
+
+    @FXML
+    public Button btnWithoutCustomer;
+
+    @FXML
+    public Button btnCreateNewCustomer;
 
     private CustomerService customerService;
 
@@ -87,6 +100,11 @@ public class SelectCustomerController {
 
     @FXML
     private void initialize() {
+        ButtonBar.setButtonUniformSize(btnBack, false);
+        ButtonBar.setButtonUniformSize(btnWithCustomer, false);
+        ButtonBar.setButtonUniformSize(btnWithoutCustomer, false);
+        ButtonBar.setButtonUniformSize(btnCreateNewCustomer, false);
+
         initTable();
     }
 

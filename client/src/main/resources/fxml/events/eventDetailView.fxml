@@ -49,11 +49,11 @@
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <HBox layoutX="495.0" layoutY="524.0" prefHeight="27.0" prefWidth="207.0" spacing="15.0">
-         <children>
-            <Button fx:id="performanceButtonEvent1" mnemonicParsing="false" onAction="#backButton" text="Back" />
-            <Button fx:id="performanceButtonEvent" layoutX="445.0" layoutY="536.0" mnemonicParsing="false" onAction="#changeToPerformanceDetailView" text="Performance Details" />
-         </children>
-      </HBox>
+      <ButtonBar layoutX="495.0" layoutY="524.0">
+         <buttons>
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#backButton" text="Back" />
+            <Button fx:id="performanceDetailButton" mnemonicParsing="false" onAction="#changeToPerformanceDetailView" text="Performance Details" />
+         </buttons>
+      </ButtonBar>
    </children>
 </AnchorPane>
