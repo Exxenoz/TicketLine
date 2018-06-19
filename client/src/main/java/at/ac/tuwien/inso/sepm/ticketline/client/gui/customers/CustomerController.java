@@ -219,7 +219,9 @@ public class CustomerController {
             customerTablePageCount = response.getTotalPages() > 0 ? response.getTotalPages() : 1;
             for (CustomerDTO customerDTO : response.getContent()) {
                 customerList.remove(customerDTO); // New created entries must be removed first, so they can be re-added at their sorted location in the next line
-                customerList.add(customerDTO);
+                if(!customerDTO.getLastName().equals("anonymous") || !customerDTO.getFirstName().equals("anonymous")) {
+                    customerList.add(customerDTO);
+                }
             }
         } catch (DataAccessException e) {
             LOGGER.warn("Could not access customers!");

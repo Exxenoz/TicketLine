@@ -67,7 +67,6 @@ public class SelectCustomerController {
     private Stage stage;
     private boolean isReservation;
     private boolean reservationWithNewCustomer = true;
-    private boolean NoAnonymousCustomer;
     private ReservationDTO reservation;
     private CustomerDTO chosenCustomer;
     private final PurchaseReservationSummaryController PRSController;
