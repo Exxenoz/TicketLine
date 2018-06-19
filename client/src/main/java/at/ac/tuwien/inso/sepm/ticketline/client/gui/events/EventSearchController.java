@@ -166,9 +166,10 @@ public class EventSearchController {
         if (scrollBar != null) {
             scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
                 double value = newValue.doubleValue();
-                if ((value == scrollBar.getMax()) && (!(page >= totalPages))) {
+                if ((value == scrollBar.getMax()) && (page + 1 < totalPages)) {
                     page++;
                     double targetValue = value * performanceData.size();
+                    LOGGER.debug("VAL: " + (targetValue / performanceData.size()));
                     loadPerformanceTable(page);
                     scrollBar.setValue(targetValue / performanceData.size());
                 }
