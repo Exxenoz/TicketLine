@@ -38,6 +38,7 @@ public class SelectCustomerController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static final int CUSTOMERS_PER_PAGE = 30;
+    private static final String anonymousUser = "anonymous";
 
     @FXML
     public TableView<CustomerDTO> customerTable;
@@ -209,7 +210,7 @@ public class SelectCustomerController {
         try {
             PageResponseDTO<CustomerDTO> response = customerService.findAll(pageRequestDTO);
             items.addAll(response.getContent());
-            items.removeIf(customer -> customer.getLastName().equals("anonymous") && customer.getFirstName().equals("anonymous"));
+            items.removeIf(customer -> customer.getLastName().equals(anonymousUser) && customer.getFirstName().equals(anonymousUser));
             totalPages = response.getTotalPages();
             customerTable.refresh();
         } catch (DataAccessException e) {
