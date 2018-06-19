@@ -42,4 +42,16 @@ public class SimpleSeatsService implements SeatsService {
     public void deleteAll(List<Seat> seats) {
         seatRepository.deleteAll(seats);
     }
+
+    @Override
+    public void deleteSeat(Seat seat) {
+        seatRepository.delete(seat);
+    }
+
+    @Override
+    public Seat findbyID(Long id) {
+        return seatRepository.findById(id).get();
+    }
+
+
 }

@@ -46,7 +46,6 @@ public class EventSearchController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     // ---------- Show all and search tab -----------
-
     @FXML
     private TabHeaderController tabHeaderController;
     @FXML
@@ -119,7 +118,6 @@ public class EventSearchController {
         this.performanceService = performanceService;
         this.performanceDetailViewController = performanceDetailViewController;
     }
-
 
     //+++++++++++INITIALIZE+++++++++++++++
     public void initialize() {
@@ -242,7 +240,6 @@ public class EventSearchController {
         }
     }
 
-
     private ScrollBar getVerticalScrollbar(TableView<?> table){
         ScrollBar result = null;
         for (Node n : table.lookupAll(".scroll-bar")){
@@ -287,8 +284,6 @@ public class EventSearchController {
 
         stage.showAndWait();
     }
-
-
 
     @FXML
     void searchForPerformancesButton(ActionEvent event) {
@@ -408,8 +403,6 @@ public class EventSearchController {
         };
     }
 
-
-
     @FXML
     private void clearAndReloadButton(ActionEvent event) {
         clear();
@@ -433,7 +426,6 @@ public class EventSearchController {
             cityTextField.setText("");
             countryTextField.setText("");
             postalCodeTextField.setText("");
-
     }
 
     private void updateCurrentSearchParameters() {

@@ -29,6 +29,8 @@ public class SeatDTO {
         this.sector = sector;
     }
 
+
+
     public Long getId() {
         return id;
     }
