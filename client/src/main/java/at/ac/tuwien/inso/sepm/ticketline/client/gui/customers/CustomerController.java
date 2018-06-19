@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.customers;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationInformationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.CustomerService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
@@ -218,7 +219,9 @@ public class CustomerController {
             customerTablePageCount = response.getTotalPages() > 0 ? response.getTotalPages() : 1;
             for (CustomerDTO customerDTO : response.getContent()) {
                 customerList.remove(customerDTO); // New created entries must be removed first, so they can be re-added at their sorted location in the next line
-                customerList.add(customerDTO);
+                if(!customerDTO.getLastName().equals("anonymous") || !customerDTO.getFirstName().equals("anonymous")) {
+                    customerList.add(customerDTO);
+                }
             }
         } catch (DataAccessException e) {
             LOGGER.warn("Could not access customers!");
@@ -232,6 +235,12 @@ public class CustomerController {
         }
         customerList.add(customerDTO);
         customerTable.sort();
+        if (customerList.get(customerList.size() - 1) == customerDTO) {
+            customerList.remove(customerDTO);
+        } else {
+            // remove last item, so it doesn't appear twice when loading next page
+            customerList.remove(customerList.size() - 1);
+        }
     }
 
     public void refreshAndSortCustomerTable() {
