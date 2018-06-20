@@ -328,7 +328,10 @@ public class EventSearchController {
         try {
             if (currentTextField.getText() != null && !currentTextField.getText().equals("")) {
                 returnString = currentTextField.getText();
-                String limitForActiveFiltersString = returnString.substring(0,50);
+                String limitForActiveFiltersString = currentTextField.getText();
+                    if(limitForActiveFiltersString.length() >= 50) {
+                    limitForActiveFiltersString = returnString.substring(0, 50);
+                    }
                 currentTextChunk = new Text(labels.getString(bundleName) + " " + limitForActiveFiltersString + " ");
                 textChunks.add(currentTextChunk);
 

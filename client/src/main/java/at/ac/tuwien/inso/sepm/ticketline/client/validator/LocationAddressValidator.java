@@ -7,7 +7,7 @@ import javafx.scene.control.TextField;
 public class LocationAddressValidator extends BaseAddressValidator{
 
     public static String validateLocationName(TextField locationNameTextField) throws AddressValidationException {
-        String locationName = locationNameTextField.toString();
+        String locationName = locationNameTextField.getText();
         return validationOfLength(locationName);
     }
 

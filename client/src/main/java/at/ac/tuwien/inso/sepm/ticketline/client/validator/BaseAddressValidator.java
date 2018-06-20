@@ -9,22 +9,22 @@ public class BaseAddressValidator{
 
 
     public static String validateStreet(TextField streetTextField) throws AddressValidationException {
-        String street = streetTextField.toString();
+        String street = streetTextField.getText();
         return validationOfLength(street);
     }
 
     public static String validateCity(TextField cityTextField) throws AddressValidationException {
-        String city = cityTextField.toString();
+        String city = cityTextField.getText();
         return validationOfLength(city);
     }
 
     public static String validateCountry(TextField countryTextField) throws AddressValidationException {
-        String country = countryTextField.toString();
+        String country = countryTextField.getText();
         return validationOfLength(country);
     }
 
     public static String validatePostalCode(TextField postalCodeTextField) throws AddressValidationException {
-        String postalCode = postalCodeTextField.toString();
+        String postalCode = postalCodeTextField.getText();
         return validationOfLength(postalCode);
     }
 
