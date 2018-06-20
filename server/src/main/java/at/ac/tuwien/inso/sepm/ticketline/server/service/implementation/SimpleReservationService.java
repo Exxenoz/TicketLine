@@ -1,10 +1,10 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalCancelationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalHallValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.HallPlanService;
@@ -39,6 +39,24 @@ public class SimpleReservationService implements ReservationService {
     @Autowired
     private SeatsService seatsService;
 
+    public ReservationRepository getReservationRepository() {
+        return reservationRepository;
+    }
+
+    @Override
+    public void setReservationRepository(ReservationRepository reservationRepository) {
+        this.reservationRepository = reservationRepository;
+    }
+
+    @Override
+    public void setPerformanceRepository(PerformanceRepository performanceRepository) {
+        this.performanceRepository = performanceRepository;
+    }
+
+    @Override
+    public void setSeatsService(SeatsService seatsService) {
+        this.seatsService = seatsService;
+    }
 
     @Override
     public List<Reservation> findAllByEventId(Long eventId) {
