@@ -15,12 +15,16 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.awt.*;
 import java.lang.invoke.MethodHandles;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
@@ -87,6 +91,7 @@ public class PurchaseReservationSummaryController {
                 cancelButtonPRS.setDisable(true);
                 cancelButtonPRS.setVisible(false);
                 cancelButtonPRS.setManaged(false);
+                buyButtonPRS.setText("Buy");
                 buyButtonPRS.setDisable(true);
                 buyButtonPRS.setVisible(false);
                 buyButtonPRS.setManaged(false);
@@ -107,9 +112,18 @@ public class PurchaseReservationSummaryController {
         if (!showDetails && isReservation) {
             ReservationDTO reservationDTO = reservationService.createNewReservation(createReservationDTO);
 
+            TextArea textArea = new TextArea(BundleManager.getBundle().getString(
+                "bookings.purchase.reservation.endtext") + reservationDTO.getReservationNumber());
+            textArea.setEditable(false);
+            textArea.setMaxSize(300, 100);
+            textArea.setWrapText(true);
+
+            GridPane gridPane = new GridPane();
+            gridPane.add(textArea, 0, 0);
+
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Print Invoice");
-            alert.setHeaderText("Congratulations! Your reservation was successful!" + '\n' + "Your reservation number is: " + reservationDTO.getReservationNumber());
+            alert.setTitle(BundleManager.getBundle().getString("bookings.purchase.reservationnumber"));
+            alert.getDialogPane().setContent(gridPane);
             alert.showAndWait();
             closeWindow();
 
@@ -164,6 +178,7 @@ public class PurchaseReservationSummaryController {
     }
 
     public void fill(ReservationDTO reservation, boolean isReservation, Stage stage) {
+        this.showDetails = false;
         this.reservation = reservation;
         this.isReservation = isReservation;
         this.stage = stage;

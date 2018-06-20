@@ -236,8 +236,8 @@ public class ReservationsController {
             totalPages = response.getTotalPages();
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch reservations from server!");
-            JavaFXUtils.createErrorDialog(e.getMessage(),
-                content.getScene().getWindow()).showAndWait();
+            //JavaFXUtils.createErrorDialog(e.getMessage(),
+                //content.getScene().getWindow()).showAndWait();
         }
     }
 
