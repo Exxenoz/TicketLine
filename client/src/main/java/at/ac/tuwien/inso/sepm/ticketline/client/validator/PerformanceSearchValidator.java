@@ -8,6 +8,7 @@ import javafx.scene.control.TextField;
 public class PerformanceSearchValidator {
 
     private static final String NAME_REGEX = "[0-9]*";
+    private static final String PRICE_REGEX = "^\\d{0,8}(,\\d{2})?$";
 
     public static String validateArtistFirstName(TextField artistFirstNameTextField) throws PerformanceSearchValidationException {
         String artistFirstName = artistFirstNameTextField.getText();
@@ -39,23 +40,19 @@ public class PerformanceSearchValidator {
         return validationOfLength(durationString);
     }
 
-    public static void validateTime(){}
-
     public static String validatePrice(TextField priceTextField) throws PerformanceSearchValidationException {
         String price = priceTextField.getText();
 
-        if(!price.matches(NAME_REGEX)){
+        if(!price.matches(PRICE_REGEX)){
             throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.numberFormatPositive"));
         }
 
-        return validationOfLength(price);
+        return price;
     }
-
-
 
     private static String validationOfLength(String stringToValidate) throws PerformanceSearchValidationException {
 
-         if (stringToValidate.length() < 1 || stringToValidate.length() > 100) {
+         if (stringToValidate.length() < 1 || stringToValidate.length() > 50) {
          throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_length"));
          }
 

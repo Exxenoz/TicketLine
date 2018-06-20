@@ -9,30 +9,31 @@ public class BaseAddressValidator{
 
 
     public static String validateStreet(TextField streetTextField) throws AddressValidationException {
-
-        return streetTextField.getText();
+        String street = streetTextField.toString();
+        return validationOfLength(street);
     }
 
     public static String validateCity(TextField cityTextField) throws AddressValidationException {
-        // TODO
-        return cityTextField.getText();
+        String city = cityTextField.toString();
+        return validationOfLength(city);
     }
 
     public static String validateCountry(TextField countryTextField) throws AddressValidationException {
-        // TODO
-        return countryTextField.getText();
+        String country = countryTextField.toString();
+        return validationOfLength(country);
     }
 
     public static String validatePostalCode(TextField postalCodeTextField) throws AddressValidationException {
-        // TODO
-        return postalCodeTextField.getText();
+        String postalCode = postalCodeTextField.toString();
+        return validationOfLength(postalCode);
     }
 
-    static void validationForStingFields(String stringToValidate) throws PerformanceSearchValidationException {
+    private static String validationOfLength(String stringToValidate) throws AddressValidationException {
 
-        if (stringToValidate.length() < 2 || stringToValidate.length() > 100) {
-            throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_length"));
+        if (stringToValidate.length() < 1 || stringToValidate.length() > 50) {
+            throw new AddressValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_length"));
         }
 
+        return stringToValidate;
     }
 }

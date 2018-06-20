@@ -327,7 +327,8 @@ public class EventSearchController {
         try {
             if (currentTextField.getText() != null && !currentTextField.getText().equals("")) {
                 returnString = currentTextField.getText();
-                currentTextChunk = new Text(labels.getString(bundleName) + " " + returnString + " ");
+                String limitForActiveFiltersString = returnString.substring(0,50);
+                currentTextChunk = new Text(labels.getString(bundleName) + " " + limitForActiveFiltersString + " ");
                 textChunks.add(currentTextChunk);
 
                 switch (toValidate){
@@ -418,7 +419,6 @@ public class EventSearchController {
 
         //+++++++++++++++++++++++TIME++++++++++++++++++++
 
-        //DATEPICKER
         LocalDate beginDate = beginTimeDatePicker.getValue();
         LocalDateTime beginDateAndTime = null;
         Integer beginTimeHours = null;

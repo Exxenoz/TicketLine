@@ -121,7 +121,7 @@
                                                                 <VBox layoutX="10.0" layoutY="9.0" prefHeight="220.0" prefWidth="268.0" spacing="10.0">
                                                                     <children>
                                                                         <Label text="%events.search.begintime" />
-                                                                        <DatePicker fx:id="beginTimeDatePicker" prefHeight="26.0" prefWidth="177.0" />
+                                                                        <DatePicker fx:id="beginTimeDatePicker" editable="false" prefHeight="26.0" prefWidth="177.0" />
                                                                         <HBox spacing="15.0">
                                                                             <children>
                                                                                 <Spinner fx:id="beginTimeHourSpinner" prefHeight="26.0" prefWidth="71.0" />
@@ -132,7 +132,7 @@
                                                       <Label fx:id="starttimeErrorLabel" prefHeight="16.0" prefWidth="290.0" textFill="RED" />
                                                                         <Label text="%events.search.price" />
                                                                         <TextField fx:id="priceTextField" onAction="#searchForPerformancesButton" prefHeight="26.0" prefWidth="73.0" />
-                                                      <Label fx:id="priceErrorLabel" prefHeight="16.0" prefWidth="290.0" textFill="RED" />
+                                                      <Label fx:id="priceErrorLabel" prefHeight="16.0" prefWidth="290.0" textFill="RED" wrapText="true" />
                                                                         <HBox spacing="15.0" />
                                                                     </children>
                                                                 </VBox>
