@@ -34,7 +34,6 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
         this.performanceUri = restClient.getServiceURI("/performance");
     }
 
-
     @Override
     public PageResponseDTO<PerformanceDTO> findByEventID(Long eventID, PageRequestDTO pageRequestDTO) throws DataAccessException {
         try {

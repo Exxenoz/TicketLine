@@ -1,5 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.service;
 
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+
 import java.io.File;
 
 public interface InvoiceService {
@@ -7,8 +9,9 @@ public interface InvoiceService {
     /**
      * Downloads a PDF from the server
      * @param reservationNumber the established generated and unique identifier of a reservation
+     * @throws DataAccessException in case something went wrong during API call
      */
-    void downloadPDF(String reservationNumber);
+    void downloadPDF(String reservationNumber) throws DataAccessException;
 
     /**
      * Stores a downloaded PDF
@@ -20,8 +23,9 @@ public interface InvoiceService {
      * Combines the actions of downloading and storing a PDF
      * @param reservationNumber the established generated and unique identifier of a reservation
      * @param file the PDF-file that will be stored after downloading
+     * @throws DataAccessException in case something went wrong during API call
      */
-    void downdloadAndStorePDF(String reservationNumber, File file);
+    void downdloadAndStorePDF(String reservationNumber, File file) throws DataAccessException;
 
     /**
      * Opens an existing PDF

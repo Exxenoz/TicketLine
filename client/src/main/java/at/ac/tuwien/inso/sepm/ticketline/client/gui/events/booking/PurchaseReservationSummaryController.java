@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import javax.xml.crypto.Data;
 import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.time.format.DateTimeFormatter;
@@ -118,7 +119,7 @@ public class PurchaseReservationSummaryController {
         if (result.isPresent() && result.get() == buttonTypeYes) {
             LOGGER.debug("print invoice");
             File pdf = openPDFFile();
-            invoiceService.deletePDF(pdf);
+//            invoiceService.deletePDF(pdf);
         } else {
             LOGGER.debug("do not print invoice");
         }
@@ -132,8 +133,12 @@ public class PurchaseReservationSummaryController {
             + reservation.getPaidAt()
             + ".pdf";
         File invoiceFile = new File(filepath);
-        invoiceService.downdloadAndStorePDF(reservation.getReservationNumber(), invoiceFile);
-        invoiceService.openPDF(invoiceFile);
+        try {
+            invoiceService.downdloadAndStorePDF(reservation.getReservationNumber(), invoiceFile);
+            invoiceService.openPDF(invoiceFile);
+        } catch (DataAccessException d) {
+            d.printStackTrace();
+        }
         return invoiceFile;
     }
 
@@ -169,11 +174,11 @@ public class PurchaseReservationSummaryController {
 
             //reserve and buy tickets
         } else if (!showDetails) {
-            reservationService.createAndPayReservation(createReservationDTO);
+            reservation = reservationService.createAndPayReservation(createReservationDTO);
             printInvoiceDialog();
         } else {
             //buy already reserved tickets
-            reservationService.purchaseReservation(reservation);
+            reservation = reservationService.purchaseReservation(reservation);
             printInvoiceDialog();
         }
     }
