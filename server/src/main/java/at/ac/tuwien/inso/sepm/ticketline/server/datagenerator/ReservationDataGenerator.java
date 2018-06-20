@@ -71,12 +71,13 @@ public class ReservationDataGenerator implements DataGenerator {
 
             LOGGER.info("Generating {} reservation entries", (NUMBER_OF_RESERVATIONS_PER_PERFORMANCE_TO_GENERATE * performances.size()));
 
+            int seatIndex = 0;
             for (int p = 0; p < performances.size(); p++) {
                 Performance performance = performances.get(p);
-                for (int i = 0; i < NUMBER_OF_RESERVATIONS_PER_PERFORMANCE_TO_GENERATE && i < seats.size(); i++) {
+                for (int i = 0; i < NUMBER_OF_RESERVATIONS_PER_PERFORMANCE_TO_GENERATE && seatIndex < seats.size(); i++) {
                     final var reservation = new Reservation();
                     reservation.setPerformance(performance);
-                    reservation.setSeats(singletonList(seats.get(0)));
+                    reservation.setSeats(singletonList(seats.get(seatIndex++)));
                     reservation.setCustomer(customers.get(faker.random().nextInt(0, customers.size() - 1)));
                     reservation.setReservationNumber(reservationService.generateReservationNumber());
                     if (faker.random().nextBoolean()) {

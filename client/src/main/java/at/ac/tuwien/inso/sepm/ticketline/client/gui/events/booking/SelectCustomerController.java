@@ -1,17 +1,19 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.customers.CustomerEditDialogController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.CustomerService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
+import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -35,7 +37,8 @@ import java.lang.invoke.MethodHandles;
 public class SelectCustomerController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final int CUSTOMERS_PER_PAGE = 20;
+    private static final int CUSTOMERS_PER_PAGE = 30;
+    private static final String anonymousUser = "anonymous";
 
     @FXML
     public TableView<CustomerDTO> customerTable;
@@ -51,8 +54,21 @@ public class SelectCustomerController {
 
     @FXML
     public TableColumn<CustomerDTO, String> customerTableColumnEMail;
+
     @FXML
     public AnchorPane content;
+
+    @FXML
+    public Button btnBack;
+
+    @FXML
+    public Button btnWithCustomer;
+
+    @FXML
+    public Button btnWithoutCustomer;
+
+    @FXML
+    public Button btnCreateNewCustomer;
 
     private CustomerService customerService;
 
@@ -64,21 +80,32 @@ public class SelectCustomerController {
     private final SpringFxmlLoader fxmlLoader;
     private Stage stage;
     private boolean isReservation;
+    private boolean reservationWithNewCustomer = true;
     private ReservationDTO reservation;
     private CustomerDTO chosenCustomer;
-    private PurchaseReservationSummaryController PRSController;
+    private final PurchaseReservationSummaryController PRSController;
+    private final CustomerEditDialogController customerEditDialogController;
 
+    private TableColumn sortedColumn;
+    private CustomerDTO anonymousCustomer;
 
     public SelectCustomerController(SpringFxmlLoader fxmlLoader,
                                     CustomerService customerService,
-                                    PurchaseReservationSummaryController PRSController) {
+                                    PurchaseReservationSummaryController PRSController,
+                                    CustomerEditDialogController customerEditDialogController) {
         this.fxmlLoader = fxmlLoader;
         this.customerService = customerService;
         this.PRSController = PRSController;
+        this.customerEditDialogController = customerEditDialogController;
     }
 
     @FXML
     private void initialize() {
+        ButtonBar.setButtonUniformSize(btnBack, false);
+        ButtonBar.setButtonUniformSize(btnWithCustomer, false);
+        ButtonBar.setButtonUniformSize(btnWithoutCustomer, false);
+        ButtonBar.setButtonUniformSize(btnCreateNewCustomer, false);
+
         initTable();
     }
 
@@ -98,7 +125,6 @@ public class SelectCustomerController {
         ));
 
         customerTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-
         LOGGER.debug("loading the page into the table");
         customerTable.setItems(items);
 
@@ -111,6 +137,7 @@ public class SelectCustomerController {
 
     private ScrollBar getVerticalScrollbar(TableView<?> table) {
         ScrollBar result = null;
+
         for (Node n : table.lookupAll(".scroll-bar")) {
             if (n instanceof ScrollBar) {
                 ScrollBar bar = (ScrollBar) n;
@@ -119,30 +146,59 @@ public class SelectCustomerController {
                 }
             }
         }
+
         return result;
     }
 
     public void loadCustomers() {
-        // Setting event handler for sort policy property calls it automatically
-        customerTable.sortPolicyProperty().set(t -> {
-            clear();
-            loadCustomersTable(0);
-            return true;
+        Platform.runLater(() -> {
+            final ScrollBar scrollBar = getVerticalScrollbar(customerTable);
+            if (scrollBar != null) {
+                scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
+                    double value = newValue.doubleValue();
+                    if ((value >= scrollBar.getMax()) && (currentPage + 1 < totalPages)) {
+                        currentPage++;
+                        LOGGER.debug("Getting next Page: {}", currentPage);
+                        double targetValue = value * items.size();
+                        loadCustomersTable(currentPage);
+                        scrollBar.setValue(targetValue / items.size());
+                    }
+                });
+
+                scrollBar.visibleProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                    if (newValue == false) {
+                        // Scrollbar is invisible, load next page
+                        currentPage++;
+                        loadCustomersTable(currentPage);
+                    }
+                });
+            }
         });
 
-        final ScrollBar scrollBar = getVerticalScrollbar(customerTable);
-        if (scrollBar != null) {
-            scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
-                double value = newValue.doubleValue();
-                if ((value == scrollBar.getMax()) && (currentPage < totalPages)) {
-                    currentPage++;
-                    LOGGER.debug("Getting next Page: {}", currentPage);
-                    double targetValue = value * items.size();
-                    loadCustomersTable(currentPage);
-                    scrollBar.setValue(targetValue / items.size());
+        ChangeListener<TableColumn.SortType> tableColumnSortChangeListener = (observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                var property = (ObjectProperty<TableColumn.SortType>) observable;
+                sortedColumn = (TableColumn) property.getBean();
+                for (TableColumn tableColumn : customerTable.getColumns()) {
+                    if (tableColumn != sortedColumn) {
+                        tableColumn.setSortType(null);
+                    }
                 }
-            });
+
+                clear();
+                loadCustomersTable(0);
+            }
+        };
+
+        for (TableColumn tableColumn : customerTable.getColumns()) {
+            tableColumn.setSortType(null);
         }
+        customerTableColumnFirstName.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        customerTableColumnLastName.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        customerTableColumnTelephoneNumber.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        customerTableColumnEMail.sortTypeProperty().addListener(tableColumnSortChangeListener);
+
+        loadCustomersTable(0);
     }
 
     private String getColumnNameBy(TableColumn<CustomerDTO, ?> tableColumn) {
@@ -159,11 +215,10 @@ public class SelectCustomerController {
         return "id";
     }
 
-    public void loadCustomersTable(int page) {
+    private void loadCustomersTable(int page) {
         LOGGER.debug("Loading Customers of page {}", page);
         PageRequestDTO pageRequestDTO = null;
-        if (customerTable.getSortOrder().size() > 0) {
-            TableColumn<CustomerDTO, ?> sortedColumn = customerTable.getSortOrder().get(0);
+        if (sortedColumn != null) {
             Sort.Direction sortDirection =
                 (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
             pageRequestDTO = new PageRequestDTO(page, CUSTOMERS_PER_PAGE, sortDirection, getColumnNameBy(sortedColumn));
@@ -174,12 +229,13 @@ public class SelectCustomerController {
         try {
             PageResponseDTO<CustomerDTO> response = customerService.findAll(pageRequestDTO);
             items.addAll(response.getContent());
+            anonymousCustomer = items.get(0);
+            items.removeIf(customer -> customer.getLastName().equals(anonymousUser) && customer.getFirstName().equals(anonymousUser));
             totalPages = response.getTotalPages();
+            customerTable.refresh();
         } catch (DataAccessException e) {
             LOGGER.warn("Could not access customers!");
         }
-
-        customerTable.setItems(items);
     }
 
     private void clear() {
@@ -212,12 +268,13 @@ public class SelectCustomerController {
     }
 
     public void goNextWithoutCustomer(ActionEvent actionEvent) {
-        reservation.setCustomer(customerTable.getItems().get(0));
+        reservation.setCustomer(anonymousCustomer);
         continueOrReserve();
     }
 
     private void continueOrReserve(){
         PRSController.fill(reservation, isReservation, stage);
+
         Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
         stage.setScene(new Scene(parent));
 
@@ -230,6 +287,7 @@ public class SelectCustomerController {
     }
 
     public void createNewCustomer(ActionEvent actionEvent) {
+        customerEditDialogController.fill(reservationWithNewCustomer, reservation, isReservation, stage);
         Parent parent = fxmlLoader.load("/fxml/customers/customerEditDialog.fxml");
         stage.setScene(new Scene(parent));
         stage.centerOnScreen();

@@ -1,6 +1,5 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 
-import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking.HallPlanController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
@@ -13,20 +12,32 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
+import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
 @Component
 public class PerformanceDetailViewController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    public Label eventName;
+
+    @FXML
+    public Button eventButtonPerformance;
+
+    @FXML
+    public Button bookButtonPerformance;
+
+    @FXML
+    public Button eventButtonPerformance1;
 
     @FXML
     private Label performanceHeader;
@@ -68,9 +79,13 @@ public class PerformanceDetailViewController {
     @FXML
     private void initialize() {
         reservation = new ReservationDTO();
-        performanceHeader.setText(performance.getEvent().getName());
-        locationName.setText(performance.getLocationAddress().getLocationName() + ", " + performance.getLocationAddress().getCity());
-        startTime.setText(performance.getPerformanceStart().toString());
+        performanceHeader.setText(performance.getName());
+        eventName.setText(performance.getEvent().getName());
+        locationName.setText(performance.getLocationAddress().getLocationName() + ", "
+            + performance.getLocationAddress().getStreet() + ", "
+            + performance.getAddress().getPostalCode());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
+        startTime.setText(performance.getPerformanceStart().format(formatter));
 
         String artistList = performance.getArtists()
             .stream()
@@ -78,6 +93,10 @@ public class PerformanceDetailViewController {
             .collect(Collectors.joining(", "));
         artistNamePerformance.setText(artistList);
         performancePrice.setText(PriceUtils.priceToRepresentation(performance.getPrice()));
+
+        ButtonBar.setButtonUniformSize(eventButtonPerformance, false);
+        ButtonBar.setButtonUniformSize(bookButtonPerformance, false);
+        ButtonBar.setButtonUniformSize(eventButtonPerformance1, false);
     }
 
     @FXML
@@ -105,9 +124,9 @@ public class PerformanceDetailViewController {
     }
 
     @FXML
-    void changeToEventDetailView(ActionEvent event) throws DataAccessException {
-        Parent parent = fxmlLoader.<Parent>load("/fxml/events/eventDetailView.fxml");
-        eventDetailViewController.fill(performanceService, performance.getEvent(), stage);
+    void changeToEventDetailView(ActionEvent event) {
+        Parent parent = fxmlLoader.load("/fxml/events/eventDetailView.fxml");
+        eventDetailViewController.fill(performance.getEvent(), stage);
         stage.setScene(new Scene(parent));
         stage.setTitle(BundleManager.getBundle().getString("bookings.event.details.title"));
         stage.centerOnScreen();

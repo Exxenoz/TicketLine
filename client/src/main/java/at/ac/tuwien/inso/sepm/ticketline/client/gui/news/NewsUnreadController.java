@@ -100,7 +100,7 @@ public class NewsUnreadController {
     @FXML
     private void initialize() {
         tabHeaderController.setIcon(NEWSPAPER_ALT);
-        tabHeaderController.setTitle(BundleManager.getBundle().getString("news.header.unread"));
+        tabHeaderController.setTitleBinding(BundleManager.getStringBinding("news.header.unread"));
         webView.getEngine().setJavaScriptEnabled(false);
     }
 
@@ -152,11 +152,12 @@ public class NewsUnreadController {
             PageResponseDTO<SimpleNewsDTO> response = newsService.findAllUnread(pageRequestDTO);
             this.totalPages = response.getTotalPages() > 0 ? response.getTotalPages() : 1;
 
+            int curNewsCount = loadedNews.size();
             for (int i = 0; i < response.getContent().size(); i++) {
                 SimpleNewsDTO news = response.getContent().get(i);
                 SpringFxmlLoader.Wrapper<NewsElementController> wrapper =
                     springFxmlLoader.loadAndWrap("/fxml/news/newsElement.fxml");
-                wrapper.getLoadedObject().setId("unreadNews" + loadedNews.size() + i);
+                wrapper.getLoadedObject().setId("unreadNews" + (curNewsCount + i));
                 wrapper.getController().initializeData(news);
                 vbNewsBoxChildren.add(wrapper.getLoadedObject());
                 if (i + 1 < response.getContent().size()) {

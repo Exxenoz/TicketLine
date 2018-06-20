@@ -37,12 +37,12 @@ public class EventDataGenerator implements DataGenerator {
             LOGGER.info("generating {} performance entries", NUMBER_OF_EVENTS_TO_GENERATE_SEATS, NUMBER_OF_EVENTS_TO_GENERATE_SECTORS);
 
             for (int i = 0; i < NUMBER_OF_EVENTS_TO_GENERATE_SEATS; i++) {
-                Event event = new Event(faker.pokemon().name(), EventType.SEAT, faker.rickAndMorty().quote());
+                Event event = new Event(faker.pokemon().name(), EventType.SEAT, faker.harryPotter().quote());
                 eventRepository.save(event);
             }
 
             for (int i = 0; i < NUMBER_OF_EVENTS_TO_GENERATE_SECTORS; i++) {
-                Event event = new Event(faker.pokemon().name(), EventType.SECTOR, faker.rickAndMorty().quote());
+                Event event = new Event(faker.pokemon().name(), EventType.SECTOR, faker.harryPotter().quote());
                 eventRepository.save(event);
             }
         }

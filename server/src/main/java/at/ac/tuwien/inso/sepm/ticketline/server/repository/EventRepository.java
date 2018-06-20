@@ -32,9 +32,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
      */
     @Query(value = "SELECT new at.ac.tuwien.inso.sepm.ticketline.server.entity.EventResponseTopTen(e, COUNT(e.id) AS cnt)" +
         " FROM Event e, Performance p, Reservation r, Seat s, Sector sec" +
-        " WHERE e.id = p.event.id AND p.id = r.performance.id AND s MEMBER OF r.seats" +
-        " AND r.paid = true" +
+        " WHERE e.id = p.event.id AND p.id = r.performance.id AND s MEMBER OF r.seats AND s.sector.id = sec.id" +
+        " AND r.paid = true AND (:categoryId IS null OR sec.category.id = :categoryId)" +
         " AND r.paidAt >= :startOfTheMonth AND r.paidAt <= :endOfTheMonth" +
         " GROUP BY e.id")
-    List<EventResponseTopTen> findTopTenByMonthAndCategory(@Param("startOfTheMonth")LocalDateTime startOfTheMonth, @Param("endOfTheMonth")LocalDateTime endOfTheMonth, Pageable pageable);
+    List<EventResponseTopTen> findTopTenByMonthAndCategory(@Param("startOfTheMonth")LocalDateTime startOfTheMonth, @Param("endOfTheMonth")LocalDateTime endOfTheMonth, @Param("categoryId")Long categoryId, Pageable pageable);
 }

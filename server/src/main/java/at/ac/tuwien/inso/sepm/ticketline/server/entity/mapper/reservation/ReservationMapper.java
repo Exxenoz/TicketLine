@@ -26,7 +26,6 @@ public interface ReservationMapper {
         @Mapping(target = "performance.id", source = "performanceID"),
         @Mapping(target = "customer.id", source = "customerID"),
         @Mapping(target = "paid", source = "paid"),
-        @Mapping(target = "seats", source = "seatIDs", qualifiedBy = SeatIdToSeat.class),
         @Mapping(target = "paidAt", ignore = true),
         @Mapping(target = "id", ignore = true),
     })

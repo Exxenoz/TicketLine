@@ -100,10 +100,19 @@ public interface ReservationRestClient {
     ReservationDTO findOneByReservationNumber(String reservationNr) throws DataAccessException;
 
     /**
-     * sets state of reservation to canceled
+     * Sets state of reservation to canceled
      *
      * @param id
      * @return canceled Reservation
      */
     ReservationDTO cancelReservation(Long id) throws DataAccessException;
+
+    /**
+     * Find all reservations by performance id
+     * @param id
+     * @return
+     * @throws DataAccessException
+     */
+    List<ReservationDTO> findReservationsForPerformance(Long id) throws DataAccessException;
+
 }

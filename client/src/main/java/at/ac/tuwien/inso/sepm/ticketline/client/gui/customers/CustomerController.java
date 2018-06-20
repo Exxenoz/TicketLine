@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.customers;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationInformationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.CustomerService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
@@ -9,6 +10,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -21,10 +23,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollBar;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -45,6 +44,7 @@ public class CustomerController {
 
     public static final int CUSTOMERS_PER_PAGE = 50;
     public static final int FIRST_CUSTOMER_TABLE_PAGE = 0;
+    private static final String anonymousUser = "anonymous";
 
     @FXML
     private TabHeaderController tabHeaderController;
@@ -67,6 +67,9 @@ public class CustomerController {
     @FXML
     public Button customerEditButton;
 
+    @FXML
+    public Button customerCreateButton;
+
     private final SpringFxmlLoader springFxmlLoader;
 
     private CustomerService customerService;
@@ -76,6 +79,8 @@ public class CustomerController {
     private int customerTablePage = 0;
     private int customerTablePageCount = 1;
 
+    private TableColumn sortedColumn;
+
     public CustomerController(SpringFxmlLoader springFxmlLoader, CustomerService customerService) {
         this.springFxmlLoader = springFxmlLoader;
         this.customerService = customerService;
@@ -84,9 +89,22 @@ public class CustomerController {
     @FXML
     private void initialize() {
         tabHeaderController.setIcon(USERS);
-        tabHeaderController.setTitle(BundleManager.getBundle().getString("customers.main.title"));
+        tabHeaderController.setTitleBinding(BundleManager.getStringBinding("customers.main.title"));
 
+        ButtonBar.setButtonUniformSize(customerEditButton, false);
+        ButtonBar.setButtonUniformSize(customerCreateButton, false);
+
+        initI18N();
         initializeCustomerTable();
+    }
+
+    private void initI18N() {
+        customerTableColumnFirstName.textProperty().bind(BundleManager.getStringBinding("customers.main.table.column.first_name"));
+        customerTableColumnLastName.textProperty().bind(BundleManager.getStringBinding("customers.main.table.column.last_name"));
+        customerTableColumnTelephoneNumber.textProperty().bind(BundleManager.getStringBinding("customers.main.table.column.telephone_number"));
+        customerTableColumnEMail.textProperty().bind(BundleManager.getStringBinding("customers.main.table.column.email"));
+        customerEditButton.textProperty().bind(BundleManager.getStringBinding("customers.main.button.edit"));
+        customerCreateButton.textProperty().bind(BundleManager.getStringBinding("customers.main.button.create"));
     }
 
     private void initializeCustomerTable() {
@@ -123,10 +141,22 @@ public class CustomerController {
         }
 
         ChangeListener<TableColumn.SortType> tableColumnSortChangeListener = (observable, oldValue, newValue) -> {
-            clearCustomerList();
-            loadCustomerTable(FIRST_CUSTOMER_TABLE_PAGE);
+            if(newValue != null) {
+                var property = (ObjectProperty<TableColumn.SortType>) observable;
+                sortedColumn = (TableColumn) property.getBean();
+                for (TableColumn tableColumn : customerTable.getColumns()) {
+                    if (tableColumn != sortedColumn) {
+                        tableColumn.setSortType(null);
+                    }
+                }
+                clearCustomerList();
+                loadCustomerTable(FIRST_CUSTOMER_TABLE_PAGE);
+            }
         };
 
+        for(TableColumn tableColumn : customerTable.getColumns()) {
+            tableColumn.setSortType(null);
+        }
         customerTableColumnFirstName.sortTypeProperty().addListener(tableColumnSortChangeListener);
         customerTableColumnLastName.sortTypeProperty().addListener(tableColumnSortChangeListener);
         customerTableColumnEMail.sortTypeProperty().addListener(tableColumnSortChangeListener);
@@ -174,8 +204,8 @@ public class CustomerController {
         }
 
         PageRequestDTO pageRequestDTO = null;
-        if (customerTable.getSortOrder().size() > 0) {
-            TableColumn<CustomerDTO, ?> sortedColumn = customerTable.getSortOrder().get(0);
+
+        if (sortedColumn != null) {
             Sort.Direction sortDirection = (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
             pageRequestDTO = new PageRequestDTO(page, CUSTOMERS_PER_PAGE, sortDirection, getColumnNameBy(sortedColumn));
         }
@@ -190,7 +220,9 @@ public class CustomerController {
             customerTablePageCount = response.getTotalPages() > 0 ? response.getTotalPages() : 1;
             for (CustomerDTO customerDTO : response.getContent()) {
                 customerList.remove(customerDTO); // New created entries must be removed first, so they can be re-added at their sorted location in the next line
-                customerList.add(customerDTO);
+                if(!customerDTO.getLastName().equals(anonymousUser) || !customerDTO.getFirstName().equals(anonymousUser)) {
+                    customerList.add(customerDTO);
+                }
             }
         } catch (DataAccessException e) {
             LOGGER.warn("Could not access customers!");
@@ -204,6 +236,12 @@ public class CustomerController {
         }
         customerList.add(customerDTO);
         customerTable.sort();
+        if (customerList.get(customerList.size() - 1) == customerDTO) {
+            customerList.remove(customerDTO);
+        } else {
+            // remove last item, so it doesn't appear twice when loading next page
+            customerList.remove(customerList.size() - 1);
+        }
     }
 
     public void refreshAndSortCustomerTable() {

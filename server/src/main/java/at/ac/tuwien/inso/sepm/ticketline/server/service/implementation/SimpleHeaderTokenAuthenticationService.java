@@ -75,7 +75,7 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
     @Override
     public AuthenticationToken authenticate(String username, CharSequence password) throws InternalUserNotFoundException,
         InternalUserDisabledException, InternalPasswordResetException, InternalUserPasswordWrongException,
-        InternalUserValidationException, InternalForbiddenException {
+        InternalUserValidationException {
         UserDTO userDTO = null;
 
         //First of all find user, to check if he is in the password change key set
@@ -91,6 +91,11 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
             throw new InternalPasswordResetException();
         }
 
+        if (!userDTO.isEnabled()) {
+            LOGGER.debug("Could not authenticate user '{}', because the user is disabled!", username);
+            throw new InternalUserDisabledException("User disabled");
+        }
+
         Authentication authentication = null;
         try {
             authentication = authenticationManager.authenticate(
@@ -99,21 +104,13 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
             userService.resetStrikes(userDTO);
 
         } catch (AuthenticationException a) {
-            LOGGER.debug("Could not authenticate user '{}', because authentication failed: {}", username, a.getMessage());
-
-            //Purely increase stikes
-            userService.increaseStrikes(userDTO);
-
-            //Then check status of user and disable if necessary
-            if(!userService.isUserBelowAllowedStrikes(userDTO)) {
-                userService.disableUser(userDTO);
-            }
-
+            userService.increaseStrikesAndDisableUserIfStrikesAreTooHigh(userDTO);
             if (userService.findUserByName(username).isEnabled()) {
+                LOGGER.debug("Could not authenticate user '{}', because authentication details were invalid!", username);
                 throw new InternalUserPasswordWrongException();
             } else {
-                LOGGER.info("User will been informed that he was disabled.");
-                throw new InternalUserDisabledException("User is disabled");
+                LOGGER.debug("Could not authenticate user '{}', because the user is disabled!", username);
+                throw new InternalUserDisabledException("User disabled");
             }
         }
 

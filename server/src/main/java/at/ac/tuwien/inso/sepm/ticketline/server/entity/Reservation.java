@@ -21,7 +21,7 @@ public class Reservation {
     @ManyToOne
     private Performance performance;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Seat> seats;
 
     @Column(nullable = false)
@@ -34,7 +34,7 @@ public class Reservation {
     private String reservationNumber;
 
     @Column
-    private boolean canceled = true;
+    private boolean canceled = false;
 
     public Long getId() {
         return id;

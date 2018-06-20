@@ -8,7 +8,6 @@ import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.SectorCategoryService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
-import at.ac.tuwien.inso.sepm.ticketline.rest.artist.ArtistDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventRequestTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventResponseTopTenDTO;
@@ -35,7 +34,6 @@ import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.CALENDAR_ALT;
 
@@ -253,9 +251,18 @@ public class EventTop10Controller {
 
     @FXML
     void bookTopTenEvent(ActionEvent event) {
-        final var parent = fxmlLoader.<Parent>load("/fxml/events/eventDetailView.fxml");
         int selectedIndex = topTenEventChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? topTenEventChoiceBox.getSelectionModel().getSelectedIndex() : 0;
-        Stage stage = new Stage();
-        eventDetailViewController.fill(performanceService, currentEvents.get(selectedIndex), stage);
+        if (currentEvents.size() > 0) {
+            Stage stage = new Stage();
+
+            final var parent = fxmlLoader.<Parent>load("/fxml/events/eventDetailView.fxml");
+            eventDetailViewController.fill(currentEvents.get(selectedIndex), stage);
+
+            stage.setScene(new Scene(parent));
+            stage.setTitle(BundleManager.getBundle().getString("bookings.event.details.title"));
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(topTenEventChoiceBox.getScene().getWindow());
+            stage.showAndWait();
+        }
     }
 }

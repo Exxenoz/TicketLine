@@ -29,7 +29,8 @@ public class NewsValidator {
 
         if (title == null || title.length() < MIN_CHARS_TITLE || title.length() > MAX_CHARS_TITLE) {
             throw new NewsValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.news.title_length_invalid")
+                BundleManager.getExceptionBundle().getString("exception.validator.news.title_length_invalid"),
+                "exception.validator.news.title_length_invalid"
             );
         }
 
@@ -47,13 +48,15 @@ public class NewsValidator {
         File file = new File(path);
         if (!file.exists()) {
             throw new NewsValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.news.image_not_found")
+                BundleManager.getExceptionBundle().getString("exception.validator.news.image_not_found"),
+                "exception.validator.news.image_not_found"
             );
         }
 
         if (file.length() > MAX_SIZE_IMAGE_DATA) {
             throw new NewsValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.news.image_too_big")
+                BundleManager.getExceptionBundle().getString("exception.validator.news.image_too_big"),
+                "exception.validator.news.image_too_big"
             );
         }
 
@@ -62,13 +65,22 @@ public class NewsValidator {
             img = ImageIO.read(file);
         } catch (IOException e) {
             throw new NewsValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.news.image.could_not_read")
+                BundleManager.getExceptionBundle().getString("exception.validator.news.image.could_not_read"),
+                "exception.validator.news.image.could_not_read"
+            );
+        }
+
+        if(img == null) {
+            throw new NewsValidationException(
+                BundleManager.getExceptionBundle().getString("exception.validator.news.image.could_not_read"),
+                "exception.validator.news.image.could_not_read"
             );
         }
 
         if (img.getWidth() < MIN_IMG_WIDTH || img.getHeight() < MIN_IMG_HEIGHT) {
             throw new NewsValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.news.image_too_small")
+                BundleManager.getExceptionBundle().getString("exception.validator.news.image_too_small"),
+                "exception.validator.news.image_too_small"
             );
         }
 
@@ -76,7 +88,8 @@ public class NewsValidator {
             return Files.readAllBytes(file.toPath());
         } catch (IOException e) {
             throw new NewsValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.news.image.could_not_read")
+                BundleManager.getExceptionBundle().getString("exception.validator.news.image.could_not_read"),
+                "exception.validator.news.image.could_not_read"
             );
         }
     }
@@ -86,26 +99,30 @@ public class NewsValidator {
             int extensionIndex = fileName.lastIndexOf(".");
             if(extensionIndex < 0) {
                 throw new NewsValidationException(
-                    BundleManager.getExceptionBundle().getString("exception.validator.news.invalid_filetype")
+                    BundleManager.getExceptionBundle().getString("exception.validator.news.invalid_filetype"),
+                    "exception.validator.news.invalid_filetype"
                 );
             }
 
             String extension = fileName.substring(extensionIndex);
             if (extension == null || extension.isEmpty()) {
                 throw new NewsValidationException(
-                    BundleManager.getExceptionBundle().getString("exception.validator.news.invalid_filetype")
+                    BundleManager.getExceptionBundle().getString("exception.validator.news.invalid_filetype"),
+                    "exception.validator.news.invalid_filetype"
                 );
             }
 
             if (!extension.equals(".png") && !extension.equals(".jpg") &&
                 !extension.equals(".jpeg")) {
                 throw new NewsValidationException(
-                    BundleManager.getExceptionBundle().getString("exception.validator.news.invalid_filetype")
+                    BundleManager.getExceptionBundle().getString("exception.validator.news.invalid_filetype"),
+                    "exception.validator.news.invalid_filetype"
                 );
             }
         } else {
             throw new NewsValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.news.image_not_found")
+                BundleManager.getExceptionBundle().getString("exception.validator.news.image_not_found"),
+                "exception.validator.news.image_not_found"
             );
         }
     }
@@ -115,7 +132,8 @@ public class NewsValidator {
 
         if (summary == null || summary.length() < MIN_CHARS_SUMMARY || summary.length() > MAX_CHARS_SUMMARY) {
             throw new NewsValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.news.summary_length_invalid")
+                BundleManager.getExceptionBundle().getString("exception.validator.news.summary_length_invalid"),
+                "exception.validator.news.summary_length_invalid"
             );
         }
 
@@ -127,13 +145,15 @@ public class NewsValidator {
 
         if (article == null || !article.matches(EMPTY_ARTICLE_REGEX)) {
             throw new NewsValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.news.article.empty")
+                BundleManager.getExceptionBundle().getString("exception.validator.news.article.empty"),
+                "exception.validator.news.article.empty"
             );
         }
 
         if (article.length() > MAX_CHARS_TEXT) {
             throw new NewsValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.news.article.too_long")
+                BundleManager.getExceptionBundle().getString("exception.validator.news.article.too_long"),
+                "exception.validator.news.article.too_long"
             );
         }
 

@@ -8,13 +8,13 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="700.0" spacing="5.0" style="-fx-background-color: derive(#3c3f41, 25%);" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.users.UserController">
+<VBox spacing="5.0" style="-fx-background-color: derive(#3c3f41, 25%);" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.users.UserController">
    <children>
-      <VBox fx:id="content" prefHeight="700.0" prefWidth="1100.0" spacing="5.0" style="-fx-background-color: #f4f4f4; -fx-background-radius: 3 3 3 3;" VBox.vgrow="ALWAYS">
+      <VBox fx:id="content" spacing="5.0" style="-fx-background-color: #f4f4f4; -fx-background-radius: 3 3 3 3;" VBox.vgrow="ALWAYS">
           <children>
               <fx:include fx:id="tabHeader" source="../tabHeader.fxml" />
               <Separator />
-                  <TableView fx:id="userTable" prefWidth="1000.0" VBox.vgrow="ALWAYS">
+                  <TableView fx:id="userTable" VBox.vgrow="ALWAYS">
                       <columns>
                           <TableColumn fx:id="usernameCol" text="%usertab.usertable.username" />
                           <TableColumn fx:id="useraccountStatusCol" text="%usertab.usertable.user_is_enabled" />
@@ -36,7 +36,7 @@
                                   <Insets right="16.0" />
                               </VBox.margin>
                           </Button>
-                          <Button mnemonicParsing="false" onAction="#onClickCreateUserButton" text="%usertab.user.create" />
+                          <Button fx:id="createUserButton" mnemonicParsing="false" onAction="#onClickCreateUserButton" text="%usertab.user.create" />
                       </buttons>
                   </ButtonBar>
           </children>

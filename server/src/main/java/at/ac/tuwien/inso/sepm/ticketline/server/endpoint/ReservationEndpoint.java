@@ -12,12 +12,15 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.Reserv
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationSearchMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpBadRequestException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpConflictException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpNotFoundException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalCancelationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,8 +66,13 @@ public class ReservationEndpoint {
     @ApiOperation("Create a new Reservation for Seats in a Performance")
     public ReservationDTO createNewReservation(@RequestBody CreateReservationDTO createReservationDTO) throws InvalidReservationException {
         final var reservationToCreate = reservationMapper.createReservationDTOToReservation(createReservationDTO);
-        final var createdReservation = reservationService.createReservation(reservationToCreate);
-        return reservationMapper.reservationToReservationDTO(createdReservation);
+        try {
+            final var createdReservation = reservationService.createReservation(reservationToCreate);
+            return reservationMapper.reservationToReservationDTO(createdReservation);
+        } catch (InternalSeatReservationException e) {
+            e.printStackTrace();
+            throw new HttpBadRequestException();
+        }
     }
 
     @GetMapping("/findNotPaid/{reservationId}")
@@ -126,9 +134,14 @@ public class ReservationEndpoint {
     @PreAuthorize("hasRole('USER')")
     @ApiOperation("Edit an existing Reservation")
     public ReservationDTO editReservation(@RequestBody ReservationDTO reservationDTO) {
-        var reservation = reservationService.editReservation(
-            reservationMapper.reservationDTOToReservation(reservationDTO)
-        );
+        Reservation reservation = null;
+        try {
+            reservation = reservationService.editReservation(
+                reservationMapper.reservationDTOToReservation(reservationDTO)
+            );
+        } catch (InvalidReservationException e) {
+            throw new HttpConflictException(e.getMessage());
+        }
         return reservationMapper.reservationToReservationDTO(reservation);
     }
 
@@ -137,15 +150,21 @@ public class ReservationEndpoint {
     @ApiOperation("Create and pay new Reservation for Seats in a Performance")
     public ReservationDTO createAndPayReservation(@RequestBody CreateReservationDTO createReservationDTO) throws InvalidReservationException {
         final var reservationToCreate = reservationMapper.createReservationDTOToReservation(createReservationDTO);
-        final var createdReservation = reservationService.createAndPayReservation(reservationToCreate);
-        return reservationMapper.reservationToReservationDTO(createdReservation);
+        try {
+            final var createdReservation = reservationService.createAndPayReservation(reservationToCreate);
+            return reservationMapper.reservationToReservationDTO(createdReservation);
+        } catch (InternalSeatReservationException e) {
+            e.printStackTrace();
+            throw new HttpBadRequestException();
+        }
+
     }
 
-    @GetMapping("/{page}/{size}")
+    @GetMapping
     @PreAuthorize("hasRole('USER')")
     @ApiOperation("Finds a page of all exisiting Reservations")
-    public PageResponseDTO<ReservationDTO> findAll(@PathVariable("page") int page, @PathVariable("size") int size) {
-        Page<Reservation> reservationPage = reservationService.findAll(PageRequest.of(page, size));
+    public PageResponseDTO<ReservationDTO> findAll(Pageable pageable) {
+        Page<Reservation> reservationPage = reservationService.findAll(pageable);
         List<ReservationDTO> reservationDTOList = reservationMapper.reservationToReservationDTO(
             reservationPage.getContent()
         );
@@ -156,7 +175,20 @@ public class ReservationEndpoint {
     @PreAuthorize("hasRole('USER')")
     @ApiOperation("Cancel created reservation")
     public ReservationDTO cancelReservation(@PathVariable("id") Long id) {
-        var reservation = reservationService.cancelReservation(id);
+        Reservation reservation = null;
+        try {
+            reservation = reservationService.cancelReservation(id);
+        } catch (InternalCancelationException e) {
+            e.printStackTrace();
+        }
         return reservationMapper.reservationToReservationDTO(reservation);
+    }
+
+    @GetMapping("/performance/{performanceId}")
+    @PreAuthorize("hasRole('USER')")
+    @ApiOperation("Find all reservations for a given performance id")
+    public List<ReservationDTO> findReservationsForPerformance(@PathVariable("performanceId") long performanceId) {
+        List<Reservation> reservations = reservationService.findReservationsForPerformance(performanceId);
+        return reservationMapper.reservationToReservationDTO(reservations);
     }
 }

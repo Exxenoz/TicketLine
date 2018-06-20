@@ -4,9 +4,11 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 
 import java.util.List;
 
@@ -82,7 +84,7 @@ public interface ReservationService {
     PageResponseDTO<ReservationDTO> findAll(final PageRequestDTO pageRequestDTO) throws DataAccessException;
 
     /**
-     * Purchase a reservation.
+     * Purchases a reservation.
      *
      * @param reservationDTO contains the reservation that is to be purchased
      * @return the updated reservation
@@ -91,7 +93,7 @@ public interface ReservationService {
     ReservationDTO purchaseReservation(ReservationDTO reservationDTO) throws DataAccessException;
 
     /**
-     * Edit a reservation.
+     * Edits a reservation.
      *
      * @param reservationDTO contains the new seats for the reservation
      * @return the updated reservation
@@ -99,5 +101,38 @@ public interface ReservationService {
      */
     ReservationDTO editReservation(ReservationDTO reservationDTO) throws DataAccessException;
 
+
+    /**
+     * Cancels a reservation.
+     * @param id the id of the reservation that will be cancelled
+     * @return the reservation that has been cancelled
+     * @throws DataAccessException in case something goes wrong while cancelling the reservation
+     */
     ReservationDTO cancelReservation(Long id) throws DataAccessException;
+
+
+    /**
+     * Finds all reservations for a performance
+     * @param id the id of the performance
+     * @return all reservations for the according performance
+     * @throws DataAccessException in case something goes wrong while finding the reservations
+     */
+    List<ReservationDTO> findReservationsForPerformance(Long id) throws DataAccessException;
+
+    /**
+     * Calculates the price of a reservation with a given list of seats.
+     * @param seats list of picked seats.
+     * @param performanceDTO the performance for which the seats are intended to be reserved
+     * @return the calculated price for the complete reservation
+     */
+    Long calculateCompletePrice(List<SeatDTO> seats, PerformanceDTO performanceDTO);
+
+    /**
+     * Calculates the price for a single seat of a reservation.
+     * @param seat the seat whose price will be calculated
+     * @param performanceDTO the performance for which the seats are intended to be reserved
+     * @return the calculated price for a single seat
+     */
+    Long calculateSinglePrice(SeatDTO seat, PerformanceDTO performanceDTO);
+
 }

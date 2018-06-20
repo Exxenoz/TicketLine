@@ -14,10 +14,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.RowConstraints;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +28,12 @@ public class AuthenticationPasswordChangeController {
 
     @FXML
     public RowConstraints errorLabelRow2;
+
+    @FXML
+    public ButtonBar buttonBar;
+
+    @FXML
+    public Button backButton;
 
     @FXML
     private TextField txtPasswordResetKey;
@@ -66,8 +69,18 @@ public class AuthenticationPasswordChangeController {
         this.mainController = mainController;
     }
 
+    @FXML
+    private void initialize() {
+        ButtonBar.setButtonUniformSize(backButton, false);
+        ButtonBar.setButtonUniformSize(btnAuthenticate, false);
+    }
+
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public void setPasswordChangeKey(String passwordChangeKey) {
+        txtPasswordResetKey.setText(passwordChangeKey);
     }
 
     @FXML
@@ -148,4 +161,5 @@ public class AuthenticationPasswordChangeController {
     public void handleBackToAuthentication(ActionEvent actionEvent) {
         mainController.switchBackToAuthentication();
     }
+
 }
