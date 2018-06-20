@@ -87,6 +87,7 @@ public class SelectCustomerController {
     private final CustomerEditDialogController customerEditDialogController;
 
     private TableColumn sortedColumn;
+    private CustomerDTO anonymousCustomer;
 
     public SelectCustomerController(SpringFxmlLoader fxmlLoader,
                                     CustomerService customerService,
@@ -228,6 +229,7 @@ public class SelectCustomerController {
         try {
             PageResponseDTO<CustomerDTO> response = customerService.findAll(pageRequestDTO);
             items.addAll(response.getContent());
+            anonymousCustomer = items.get(0);
             items.removeIf(customer -> customer.getLastName().equals(anonymousUser) && customer.getFirstName().equals(anonymousUser));
             totalPages = response.getTotalPages();
             customerTable.refresh();
@@ -266,7 +268,7 @@ public class SelectCustomerController {
     }
 
     public void goNextWithoutCustomer(ActionEvent actionEvent) {
-        reservation.setCustomer(customerTable.getItems().get(0));
+        reservation.setCustomer(anonymousCustomer);
         continueOrReserve();
     }
 
