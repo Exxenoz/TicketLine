@@ -17,6 +17,13 @@
                     <children>
                         <Label contentDisplay="TOP" prefHeight="27.0" text="%events.main.activefilters" />
                         <Label prefWidth="10.0" />
+                        <FlowPane fx:id="flowpane" nodeOrientation="LEFT_TO_RIGHT" prefHeight="0.0" prefWidth="800.0" rowValignment="BOTTOM">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <padding>
+                        <Insets top="5.0" />
+                     </padding></FlowPane>
                         <ButtonBar HBox.hgrow="ALWAYS">
                             <buttons>
                                 <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAndReloadButton" text="%events.main.button.clear" textAlignment="CENTER" HBox.hgrow="ALWAYS">
@@ -26,7 +33,6 @@
                                 </Button>
                             </buttons>
                         </ButtonBar>
-                  <FlowPane fx:id="flowpane" nodeOrientation="LEFT_TO_RIGHT" prefHeight="0.0" prefWidth="443.0" />
                     </children>
                 </HBox>
                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
@@ -61,14 +67,14 @@
                                     <children>
                                         <Accordion maxHeight="1.7976931348623157E308" maxWidth="292.0" prefWidth="292.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                                             <panes>
-                                                <TitledPane animated="false" text="%events.main.search.artist">
+                                                <TitledPane fx:id="artistTitledPane" animated="false" text="%events.main.search.artist">
                                                     <content>
                                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                             <children>
-                                                                <VBox layoutX="14.0" layoutY="14.0" spacing="10.0">
+                                                                <VBox layoutX="14.0" layoutY="14.0" prefHeight="172.0" prefWidth="269.0" spacing="10.0">
                                                                     <children>
                                                                         <Label text="%events.search.artistfirstname" />
-                                                                        <TextField fx:id="artistFirstNameTextField" onAction="#searchForPerformancesButton" />
+                                                                        <TextField fx:id="artistFirstNameTextField" onAction="#searchForPerformancesButton" prefHeight="27.0" prefWidth="264.0" />
                                                       <Label fx:id="artistfirstnameErrorLabel" prefHeight="16.0" prefWidth="290.0" textFill="RED" />
                                                                         <Label text="%events.search.artistlastname" />
                                                                         <TextField fx:id="artistLastNameTextField" onAction="#searchForPerformancesButton" />
@@ -79,11 +85,11 @@
                                                         </AnchorPane>
                                                     </content>
                                                 </TitledPane>
-                                                <TitledPane animated="false" text="%events.main.search.event">
+                                                <TitledPane fx:id="eventsTitledPane" animated="false" text="%events.main.search.event">
                                                     <content>
                                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                             <children>
-                                                                <VBox layoutX="10.0" layoutY="9.0" spacing="10.0">
+                                                                <VBox layoutX="10.0" layoutY="9.0" prefHeight="227.0" prefWidth="271.0" spacing="10.0">
                                                                     <children>
                                                                         <Label text="%events.search.eventname" />
                                                                         <TextField fx:id="eventNameTextField" onAction="#searchForPerformancesButton" />
@@ -108,11 +114,11 @@
                                                         </AnchorPane>
                                                     </content>
                                                 </TitledPane>
-                                                <TitledPane animated="false" text="%events.main.search.time">
+                                                <TitledPane fx:id="timeTitledPane" animated="false" text="%events.main.search.time">
                                                     <content>
                                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                             <children>
-                                                                <VBox layoutX="10.0" layoutY="9.0" spacing="10.0">
+                                                                <VBox layoutX="10.0" layoutY="9.0" prefHeight="220.0" prefWidth="268.0" spacing="10.0">
                                                                     <children>
                                                                         <Label text="%events.search.begintime" />
                                                                         <DatePicker fx:id="beginTimeDatePicker" prefHeight="26.0" prefWidth="177.0" />
@@ -134,11 +140,11 @@
                                                         </AnchorPane>
                                                     </content>
                                                 </TitledPane>
-                                                <TitledPane animated="false" layoutX="10.0" layoutY="581.0" text="%events.main.search.city">
+                                                <TitledPane fx:id="cityTitledPane" animated="false" layoutX="10.0" layoutY="581.0" text="%events.main.search.city">
                                                     <content>
                                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="333.0" prefWidth="216.0">
                                                             <children>
-                                                                <VBox layoutX="7.0" layoutY="10.0" prefHeight="248.0" prefWidth="198.0" spacing="10.0">
+                                                                <VBox layoutX="7.0" layoutY="10.0" prefHeight="455.0" prefWidth="272.0" spacing="10.0">
                                                                     <children>
                                                                         <Label text="%events.search.locationname" />
                                                                         <TextField fx:id="locationNameTextField" onAction="#searchForPerformancesButton" prefHeight="26.0" prefWidth="73.0" />
