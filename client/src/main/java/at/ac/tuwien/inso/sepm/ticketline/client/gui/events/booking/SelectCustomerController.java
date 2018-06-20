@@ -11,7 +11,10 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -35,6 +38,7 @@ public class SelectCustomerController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static final int CUSTOMERS_PER_PAGE = 30;
+    private static final String anonymousUser = "anonymous";
 
     @FXML
     public TableView<CustomerDTO> customerTable;
@@ -50,8 +54,21 @@ public class SelectCustomerController {
 
     @FXML
     public TableColumn<CustomerDTO, String> customerTableColumnEMail;
+
     @FXML
     public AnchorPane content;
+
+    @FXML
+    public Button btnBack;
+
+    @FXML
+    public Button btnWithCustomer;
+
+    @FXML
+    public Button btnWithoutCustomer;
+
+    @FXML
+    public Button btnCreateNewCustomer;
 
     private CustomerService customerService;
 
@@ -64,12 +81,12 @@ public class SelectCustomerController {
     private Stage stage;
     private boolean isReservation;
     private boolean reservationWithNewCustomer = true;
-    private boolean NoAnonymousCustomer;
     private ReservationDTO reservation;
     private CustomerDTO chosenCustomer;
     private final PurchaseReservationSummaryController PRSController;
     private final CustomerEditDialogController customerEditDialogController;
 
+    private TableColumn sortedColumn;
 
     public SelectCustomerController(SpringFxmlLoader fxmlLoader,
                                     CustomerService customerService,
@@ -83,6 +100,11 @@ public class SelectCustomerController {
 
     @FXML
     private void initialize() {
+        ButtonBar.setButtonUniformSize(btnBack, false);
+        ButtonBar.setButtonUniformSize(btnWithCustomer, false);
+        ButtonBar.setButtonUniformSize(btnWithoutCustomer, false);
+        ButtonBar.setButtonUniformSize(btnCreateNewCustomer, false);
+
         initTable();
     }
 
@@ -128,19 +150,12 @@ public class SelectCustomerController {
     }
 
     public void loadCustomers() {
-        // Setting event handler for sort policy property calls it automatically
-        customerTable.sortPolicyProperty().set(t -> {
-            clear();
-            loadCustomersTable(0);
-            return true;
-        });
-
         Platform.runLater(() -> {
             final ScrollBar scrollBar = getVerticalScrollbar(customerTable);
             if (scrollBar != null) {
                 scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
                     double value = newValue.doubleValue();
-                    if ((value == scrollBar.getMax()) && (currentPage < totalPages)) {
+                    if ((value >= scrollBar.getMax()) && (currentPage + 1 < totalPages)) {
                         currentPage++;
                         LOGGER.debug("Getting next Page: {}", currentPage);
                         double targetValue = value * items.size();
@@ -148,8 +163,41 @@ public class SelectCustomerController {
                         scrollBar.setValue(targetValue / items.size());
                     }
                 });
+
+                scrollBar.visibleProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                    if (newValue == false) {
+                        // Scrollbar is invisible, load next page
+                        currentPage++;
+                        loadCustomersTable(currentPage);
+                    }
+                });
             }
         });
+
+        ChangeListener<TableColumn.SortType> tableColumnSortChangeListener = (observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                var property = (ObjectProperty<TableColumn.SortType>) observable;
+                sortedColumn = (TableColumn) property.getBean();
+                for (TableColumn tableColumn : customerTable.getColumns()) {
+                    if (tableColumn != sortedColumn) {
+                        tableColumn.setSortType(null);
+                    }
+                }
+
+                clear();
+                loadCustomersTable(0);
+            }
+        };
+
+        for (TableColumn tableColumn : customerTable.getColumns()) {
+            tableColumn.setSortType(null);
+        }
+        customerTableColumnFirstName.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        customerTableColumnLastName.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        customerTableColumnTelephoneNumber.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        customerTableColumnEMail.sortTypeProperty().addListener(tableColumnSortChangeListener);
+
+        loadCustomersTable(0);
     }
 
     private String getColumnNameBy(TableColumn<CustomerDTO, ?> tableColumn) {
@@ -169,8 +217,7 @@ public class SelectCustomerController {
     private void loadCustomersTable(int page) {
         LOGGER.debug("Loading Customers of page {}", page);
         PageRequestDTO pageRequestDTO = null;
-        if (customerTable.getSortOrder().size() > 0) {
-            TableColumn<CustomerDTO, ?> sortedColumn = customerTable.getSortOrder().get(0);
+        if (sortedColumn != null) {
             Sort.Direction sortDirection =
                 (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
             pageRequestDTO = new PageRequestDTO(page, CUSTOMERS_PER_PAGE, sortDirection, getColumnNameBy(sortedColumn));
@@ -181,13 +228,12 @@ public class SelectCustomerController {
         try {
             PageResponseDTO<CustomerDTO> response = customerService.findAll(pageRequestDTO);
             items.addAll(response.getContent());
-            items.removeIf(customer -> customer.getLastName().equals("anonymous") && customer.getFirstName().equals("anonymous"));
+            items.removeIf(customer -> customer.getLastName().equals(anonymousUser) && customer.getFirstName().equals(anonymousUser));
             totalPages = response.getTotalPages();
+            customerTable.refresh();
         } catch (DataAccessException e) {
             LOGGER.warn("Could not access customers!");
         }
-
-        customerTable.setItems(items);
     }
 
     private void clear() {

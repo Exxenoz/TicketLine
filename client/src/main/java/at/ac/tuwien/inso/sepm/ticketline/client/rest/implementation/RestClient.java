@@ -64,6 +64,8 @@ public class RestClient extends RestTemplate {
             message = BundleManager.getExceptionBundle().getString("exception.http_bad_request");
         } else if (httpStatus == HttpStatus.CONFLICT) {
             message = BundleManager.getExceptionBundle().getString("exception.http_conflict");
+        } else if (httpStatus == HttpStatus.INTERNAL_SERVER_ERROR) {
+            message = BundleManager.getExceptionBundle().getString("exception.internal_server_error");
         }
 
         return message;

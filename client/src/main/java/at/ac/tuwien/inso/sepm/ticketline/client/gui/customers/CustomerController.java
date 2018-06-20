@@ -23,10 +23,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollBar;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -47,6 +44,7 @@ public class CustomerController {
 
     public static final int CUSTOMERS_PER_PAGE = 50;
     public static final int FIRST_CUSTOMER_TABLE_PAGE = 0;
+    private static final String anonymousUser = "anonymous";
 
     @FXML
     private TabHeaderController tabHeaderController;
@@ -92,6 +90,9 @@ public class CustomerController {
     private void initialize() {
         tabHeaderController.setIcon(USERS);
         tabHeaderController.setTitleBinding(BundleManager.getStringBinding("customers.main.title"));
+
+        ButtonBar.setButtonUniformSize(customerEditButton, false);
+        ButtonBar.setButtonUniformSize(customerCreateButton, false);
 
         initI18N();
         initializeCustomerTable();
@@ -219,7 +220,9 @@ public class CustomerController {
             customerTablePageCount = response.getTotalPages() > 0 ? response.getTotalPages() : 1;
             for (CustomerDTO customerDTO : response.getContent()) {
                 customerList.remove(customerDTO); // New created entries must be removed first, so they can be re-added at their sorted location in the next line
-                customerList.add(customerDTO);
+                if(!customerDTO.getLastName().equals(anonymousUser) || !customerDTO.getFirstName().equals(anonymousUser)) {
+                    customerList.add(customerDTO);
+                }
             }
         } catch (DataAccessException e) {
             LOGGER.warn("Could not access customers!");
@@ -233,6 +236,12 @@ public class CustomerController {
         }
         customerList.add(customerDTO);
         customerTable.sort();
+        if (customerList.get(customerList.size() - 1) == customerDTO) {
+            customerList.remove(customerDTO);
+        } else {
+            // remove last item, so it doesn't appear twice when loading next page
+            customerList.remove(customerList.size() - 1);
+        }
     }
 
     public void refreshAndSortCustomerTable() {

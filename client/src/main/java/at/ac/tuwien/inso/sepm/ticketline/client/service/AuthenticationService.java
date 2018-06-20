@@ -21,4 +21,8 @@ public interface AuthenticationService {
      */
     void deAuthenticate();
 
+    /**
+     * A simple helper method provided to setup up everything needed for authentication
+     */
+    void prepareAuthenticationContext();
 }

@@ -54,8 +54,8 @@ public class PurchaseReservationSummaryController {
     PurchaseReservationSummaryController(
         SpringFxmlLoader fxmlLoader,
         ReservationService reservationService,
-        @Lazy HallPlanController hallPlanController
-    ) {
+        @Lazy HallPlanController hallPlanController) {
+
         this.fxmlLoader = fxmlLoader;
         this.reservationService = reservationService;
         this.hallPlanController = hallPlanController;
@@ -81,7 +81,7 @@ public class PurchaseReservationSummaryController {
         if (showDetails) {
             performanceHeader.setText("Reservation Overview");
             //make sure the reservation is still unpaid
-            if (!reservation.isPaid()) {
+            if (!reservation.isPaid() && !reservation.isCanceled()) {
                 cancelButtonPRS.setText("Edit Reservation");
             } else {
                 cancelButtonPRS.setDisable(true);
@@ -92,11 +92,9 @@ public class PurchaseReservationSummaryController {
                 buyButtonPRS.setManaged(false);
             }
         }
-
     }
 
     public void buyTicketsButton(ActionEvent event) throws DataAccessException {
-
         CreateReservationDTO createReservationDTO = new CreateReservationDTO();
         createReservationDTO.setCustomerID(reservation.getCustomer() != null ? reservation.getCustomer().getId() : null);
         createReservationDTO.setPerformanceID(reservation.getPerformance().getId());
@@ -104,7 +102,6 @@ public class PurchaseReservationSummaryController {
         List<SeatDTO> seatDTOS = new LinkedList<>();
         seatDTOS.addAll(reservation.getSeats());
         createReservationDTO.setSeats(seatDTOS);
-
 
         //only reserve tickets
         if (!showDetails && isReservation) {
@@ -145,7 +142,6 @@ public class PurchaseReservationSummaryController {
             hallPlanController.changeReservationDetails(reservation, stage);
             Parent parent = fxmlLoader.load("/fxml/events/book/hallPlanView.fxml");
             stage.setScene(new Scene(parent));
-
         } else {
             closeWindow();
         }
@@ -171,13 +167,11 @@ public class PurchaseReservationSummaryController {
         this.reservation = reservation;
         this.isReservation = isReservation;
         this.stage = stage;
-
     }
 
     public void showReservationDetails(ReservationDTO reservation, Stage stage) {
         this.reservation = reservation;
         this.stage = stage;
         this.showDetails = true;
-
     }
 }

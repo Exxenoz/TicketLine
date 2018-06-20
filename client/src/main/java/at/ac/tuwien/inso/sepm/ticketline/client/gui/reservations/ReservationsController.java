@@ -104,6 +104,10 @@ public class ReservationsController {
     private void initialize() {
         tabHeaderController.setIcon(TICKET);
         tabHeaderController.setTitle(BundleManager.getBundle().getString("bookings.tab.header"));
+
+        ButtonBar.setButtonUniformSize(showReservationDetailsButton, false);
+        ButtonBar.setButtonUniformSize(cancelReservationButton, false);
+
         initializeTableView();
     }
 

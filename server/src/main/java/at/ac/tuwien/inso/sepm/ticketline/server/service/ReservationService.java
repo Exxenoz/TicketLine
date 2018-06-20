@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationSearch;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalCancelationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -90,7 +91,7 @@ public interface ReservationService {
      * @param id
      * @return canceled reservation
      */
-    Reservation cancelReservation(Long id);
+    Reservation cancelReservation(Long id) throws InternalCancelationException;
 
     /**
      * Finds a page of all reservations

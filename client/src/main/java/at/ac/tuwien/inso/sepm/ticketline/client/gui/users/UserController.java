@@ -104,6 +104,10 @@ public class UserController {
         tabHeaderController.setIcon(LOCK);
         tabHeaderController.setTitleBinding(BundleManager.getStringBinding("usertab.header"));
 
+        ButtonBar.setButtonUniformSize(toggleEnableButton, false);
+        ButtonBar.setButtonUniformSize(passwordResetButton, false);
+        ButtonBar.setButtonUniformSize(createUserButton, false);
+
         initI18N();
         initializeUserTable();
     }
@@ -280,6 +284,11 @@ public class UserController {
         }
         userList.add(userDTO);
         userTable.sort();
+        if (userList.get(userList.size() - 1) == userDTO) {
+            userList.remove(userDTO);
+            // remove last item, so it doesn't appear twice when loading next page
+            userList.remove(userList.size() - 1);
+        }
     }
 
     public void refreshAndSortUserTable() {

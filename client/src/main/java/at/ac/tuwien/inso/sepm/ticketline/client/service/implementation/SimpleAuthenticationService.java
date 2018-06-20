@@ -26,7 +26,7 @@ public class SimpleAuthenticationService implements AuthenticationService, Dispo
 
     private final AuthenticationRestClient authenticationRestClient;
     private final AuthenticationInformationService authenticationInformationService;
-    private final ThreadPoolTaskScheduler taskScheduler;
+    private ThreadPoolTaskScheduler taskScheduler;
 
     private AuthenticationToken authenticationToken;
     private ScheduledFuture<?> schedule;
@@ -37,9 +37,7 @@ public class SimpleAuthenticationService implements AuthenticationService, Dispo
     ) {
         this.authenticationInformationService = authenticationInformationService;
         this.authenticationRestClient = authenticationRestClient;
-        taskScheduler = new ThreadPoolTaskScheduler();
-        taskScheduler.setPoolSize(1);
-        taskScheduler.initialize();
+        prepareAuthenticationContext();
     }
 
     @Override
@@ -105,6 +103,13 @@ public class SimpleAuthenticationService implements AuthenticationService, Dispo
     @Override
     public void destroy() {
         deAuthenticate();
+    }
+
+    @Override
+    public void prepareAuthenticationContext() {
+        taskScheduler = new ThreadPoolTaskScheduler();
+        taskScheduler.setPoolSize(1);
+        taskScheduler.initialize();
     }
 
 }
