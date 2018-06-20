@@ -39,8 +39,8 @@ public class ReservationEndpoint {
     public ReservationEndpoint(ReservationService reservationService,
                                ReservationMapper reservationMapper,
                                CustomerMapper customerMapper,
-                               ReservationSearchMapper reservationSearchMapper
-    ) {
+                               ReservationSearchMapper reservationSearchMapper) {
+
         this.reservationService = reservationService;
         this.reservationMapper = reservationMapper;
         this.customerMapper = customerMapper;
