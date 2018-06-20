@@ -13,7 +13,7 @@ public interface InvoiceService {
      * @throws InternalNotFoundException in case the reservation for the given id was not found
      * @throws InternalInvoiceGenerationException in case anything goes wrong during PDF creation
      */
-    String generateInvoice(String reservationNumber) throws InternalNotFoundException, InternalInvoiceGenerationException;
+    void generateInvoice(String reservationNumber) throws InternalNotFoundException, InternalInvoiceGenerationException;
 
     /**
      * Generates a cancellation invoice and returns the path of the file on the server

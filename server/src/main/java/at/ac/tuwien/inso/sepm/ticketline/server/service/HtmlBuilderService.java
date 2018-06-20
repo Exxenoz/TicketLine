@@ -9,5 +9,5 @@ public interface HtmlBuilderService {
      * @param reservation the reservation we build an Html representation for
      * @return the html source code
      */
-    String buildHtmlForReservation(Reservation reservation);
+    String buildInvoiceHtml(Reservation reservation);
 }
