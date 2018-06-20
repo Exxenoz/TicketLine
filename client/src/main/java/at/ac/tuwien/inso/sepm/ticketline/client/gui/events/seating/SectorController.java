@@ -3,11 +3,13 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.sector.SectorRow;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.sector.SectorDTO;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollBar;
-import javafx.scene.control.Spinner;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.springframework.stereotype.Component;
@@ -21,10 +23,22 @@ public class SectorController {
     private final static double INITIAL_OFFSET = 10.0;
     private final static double REGULAR_HEIGHT = 100.0;
     private final static double REGULAR_MARGIN = 20.0;
-    private final static double IN_BETWEEN_MARGIN = 40.0;
+
+    private final static double SPACING = 100;
+    private final static double INSET_TOP = 15;
+    private final static double INSET_RIGHT = 30;
+    private final static double INSET_BOTTOM = 15;
+    private final static double INSET_LEFT = 30;
+    private final static double SPINNER_WITH = 100;
+
+    private final static int SPINNER_DEFAULT_VALUE = 0;
+
     //UI
     @FXML
     private VBox sectorDetailsVBox;
+
+    @FXML
+    private ScrollPane sectorScrollPane;
 
     //State
     PerformanceDTO performance;
@@ -41,7 +55,8 @@ public class SectorController {
     }
 
     @FXML
-    public void initialize() {}
+    public void initialize() {
+    }
 
     public void fill(PerformanceDTO performance, List<ReservationDTO> reservationDTOS) {
         this.performance = performance;
@@ -56,7 +71,7 @@ public class SectorController {
 
         double height = INITIAL_OFFSET;
         int counter = 0;
-        for(SectorDTO s: performance.getHall().getSectors()) {
+        for (SectorDTO s : performance.getHall().getSectors()) {
             counter++;
             sectorRows.add(createNewSectorRow(s, height, REGULAR_MARGIN, counter));
             height += REGULAR_HEIGHT;
@@ -68,56 +83,83 @@ public class SectorController {
         HBox hBox = new HBox();
         hBox.setLayoutX(margin);
         hBox.setLayoutY(height);
+        hBox.setPadding(new Insets(INSET_TOP, INSET_RIGHT, INSET_BOTTOM, INSET_LEFT));
+        hBox.setSpacing(SPACING);
 
-        Label sectorLabel = createSectorLabel(sectorDTO, height, margin, count);
-        addLabel(sectorLabel);
+        Label sectorLabel = createSectorLabel(count);
+        addLabelToHBox(hBox, sectorLabel);
 
         //Create and add price label
-        margin += IN_BETWEEN_MARGIN;
-        Label priceLabel = createPriceLabel(sectorDTO, height, margin);
-        addLabel(priceLabel);
+        Label priceLabel = createPriceLabel(sectorDTO);
+        addLabelToHBox(hBox, priceLabel);
 
         //Create and add spinner
-        margin += IN_BETWEEN_MARGIN;
-        Spinner spinner = createSpinner(height, margin);
-        addSpinner(spinner);
+        Spinner spinner = createSpinner();
+        setupSpinner(spinner, sectorDTO);
+        addSpinnerToHBox(hBox, spinner);
 
+        addHBoxToVBox(hBox);
         //.. and return the created row!
         return new SectorRow(sectorDTO, sectorLabel, priceLabel, spinner);
     }
 
-    public Label createSectorLabel(SectorDTO sectorDTO, double height, double margin, int count) {
+    public Label createSectorLabel(int count) {
         Label sectorLabel = new Label();
-        sectorLabel.setLayoutX(margin);
-        sectorLabel.setLayoutY(height);
         sectorLabel.setText("Sector: " + count);
         return sectorLabel;
     }
 
-    public Label createPriceLabel(SectorDTO sectorDTO, double height, double margin) {
+    public Label createPriceLabel(SectorDTO sectorDTO) {
         Label priceLabel = new Label();
-        priceLabel.setLayoutX(margin);
-        priceLabel.setLayoutY(height);
         priceLabel.setText(Long.toString(sectorDTO.getCategory().getBasePriceMod() * performance.getPrice()));
         return priceLabel;
     }
 
-    public Spinner<Integer> createSpinner(double height, double margin) {
+    public Spinner<Integer> createSpinner() {
         Spinner<Integer> spinner = new Spinner<>();
-        spinner.setLayoutX(margin);
-        spinner.setLayoutY(height);
+        spinner.setMinWidth(SPINNER_WITH);
+        spinner.setMaxWidth(SPINNER_WITH);
         return spinner;
     }
 
-    public void addLabel(Label label) {
-        sectorDetailsVBox.getChildren().add(label);
+    public void addLabelToHBox(HBox hBox, Label label) {
+        hBox.getChildren().add(label);
     }
 
-    public void addSpinner(Spinner spinner) {
-        sectorDetailsVBox.getChildren().add(spinner);
+    public void addSpinnerToHBox(HBox hBox, Spinner<Integer> spinner) {
+        hBox.getChildren().add(spinner);
+    }
+
+    public void addHBoxToVBox(HBox hBox) {
+        sectorDetailsVBox.getChildren().add(hBox);
     }
 
     public void setSeatSelectionListener(SeatSelectionListener seatSelectionListener) {
         this.seatSelectionListener = seatSelectionListener;
+    }
+
+    public void setupSpinner(Spinner<Integer> spinner, SectorDTO sectorDTO) {
+        //Find the maximum spinner value possible for this sector
+        int maxValue = sectorDTO.getRows() * sectorDTO.getSeatsPerRow();
+
+        //Then setup spinner accordingly
+        SpinnerValueFactory<Integer> valueFactory =
+            new SpinnerValueFactory.IntegerSpinnerValueFactory(SPINNER_DEFAULT_VALUE, maxValue, SPINNER_DEFAULT_VALUE);
+        spinner.setValueFactory(valueFactory);
+        spinner.valueProperty().addListener(new ChangeListener<Integer>() {
+            @Override
+            public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+                SeatDTO seatDTO = SeatDTO.Builder.aSeatDTO()
+                    .withSector(sectorDTO)
+                    .withPositionX(0)
+                    .withPositionY(0)
+                    .build();
+                if(newValue > oldValue) {
+                    seatSelectionListener.onSeatSelected(seatDTO);
+                } else if (newValue < oldValue) {
+                    seatSelectionListener.onSeatDeselected(seatDTO);
+                }
+            }
+        });
     }
 }

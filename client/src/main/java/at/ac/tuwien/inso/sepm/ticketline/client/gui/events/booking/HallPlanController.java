@@ -109,8 +109,30 @@ public class HallPlanController implements SeatSelectionListener {
             amountOfTicketsLabel.setText("0");
         }
         //Initialize table view
-        seatsRowColumn.setCellValueFactory(new PropertyValueFactory<SeatDTO, Integer>("positionY"));
-        seatsSeatColumn.setCellValueFactory(new PropertyValueFactory<SeatDTO, Integer>("positionX"));
+        seatsRowColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SeatDTO, Integer>, ObservableValue>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<SeatDTO, Integer> param) {
+                if(reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SEAT) {
+                    //Increase position by one so we dont start at position 0
+                    return new SimpleStringProperty(Integer.toString(param.getValue().getPositionY() + 1));
+                } else {
+                    return new SimpleStringProperty(BundleManager.getBundle().getString("events.seating.hallplan.freeseating"));
+                }
+            }
+        });
+
+        seatsSeatColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SeatDTO, Integer>, ObservableValue>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<SeatDTO, Integer> param) {
+                if(reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SEAT) {
+                    //Increase position by one so we dont start at position 0
+                    return new SimpleStringProperty(Integer.toString(param.getValue().getPositionX() + 1));
+                } else {
+                    return new SimpleStringProperty(BundleManager.getBundle().getString("events.seating.hallplan.freeseating"));
+                }
+            }
+        });
+
         seatsPriceColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SeatDTO, Long>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<SeatDTO, Long> param) {
@@ -157,10 +179,10 @@ public class HallPlanController implements SeatSelectionListener {
         if (this.reservation != null && this.reservation.getPerformance() != null) {
             if (reservationDTOS != null) {
                 //Set this controller als seat selection listener for the seat map
-                if(seatMapController.isInitialized()) {
+                if (seatMapController.isInitialized()) {
                     this.seatMapController.setSeatSelectionListener(this);
                     this.seatMapController.fill(this.reservation.getPerformance(), reservationDTOS);
-                } else if(sectorController != null) {
+                } else if (sectorController != null) {
                     this.sectorController.setSeatSelectionListener(this);
                     this.sectorController.fill(this.reservation.getPerformance(), reservationDTOS);
                 }
@@ -256,7 +278,7 @@ public class HallPlanController implements SeatSelectionListener {
             updateSeatsInformation(reservation.getSeats());
             updatePrice(reservation.getSeats(), this.reservation.getPerformance());
 
-            if(seatMapController.isInitialized()) {
+            if (seatMapController.isInitialized()) {
                 seatMapController.fillForReservationEdit(reservation);
             } else {
 
