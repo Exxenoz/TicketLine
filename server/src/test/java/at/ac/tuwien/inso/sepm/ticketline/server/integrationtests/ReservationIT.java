@@ -58,7 +58,14 @@ public class ReservationIT extends BaseIT {
     private PerformanceMapper performanceMapper;
     @Autowired
     private SeatMapper seatMapper;
+    @Autowired
+    private SectorCategoryRepository sectorCategoryRepository;
+    @Autowired
+    private SectorRepository sectorRepository;
+    @Autowired
+    private HallRepository hallRepository;
 
+    private Hall hallforPerformances;
 
     @Before
     public void setUp() {
@@ -230,8 +237,10 @@ public class ReservationIT extends BaseIT {
     public void createReservationAsUser() {
         // GIVEN
         Performance performance = performanceRepository.save(newPerformance());
-        Seat seat = seatRepository.save(newSeat());
+        Seat seat = newSeat();
         Customer customer = customerRepository.save(newCustomer());
+        performance.setHall(hallforPerformances);
+        performanceRepository.save(performance);
 
         // WHEN
         Response response = RestAssured
@@ -260,8 +269,10 @@ public class ReservationIT extends BaseIT {
     public void createAndPayReservationAsUser() {
         // GIVEN
         Performance performance = performanceRepository.save(newPerformance());
-        Seat seat = seatRepository.save(newSeat());
+        Seat seat = newSeat();
         Customer customer = customerRepository.save(newCustomer());
+        performance.setHall(hallforPerformances);
+        performanceRepository.save(performance);
 
         // WHEN
         Response response = RestAssured
@@ -288,12 +299,14 @@ public class ReservationIT extends BaseIT {
         assertThat(reservationDTO.isPaid(), is(true));
     }
 
+    //TODO: test for cancel
+
     private Performance newPerformance() {
         Performance performance = new Performance();
         performance.setName("test");
         performance.setPrice(100L);
         performance.setPerformanceStart(LocalDateTime.now());
-        performance.setDuration(Duration.ofMinutes(30));
+        performance.setDuration(Duration.ofMinutes(20));
 
         LocationAddress address = new LocationAddress();
         address.setCity("city");
@@ -302,7 +315,6 @@ public class ReservationIT extends BaseIT {
         address.setStreet("street");
         address.setPostalCode("postalCode");
         performance.setLocationAddress(address);
-
         return performance;
     }
 
@@ -310,19 +322,17 @@ public class ReservationIT extends BaseIT {
         Seat seat = new Seat();
         seat.setPositionX(1);
         seat.setPositionY(2);
-        return seat;
-    }
-
-    private Sector newSector() {
-        return null;
+        seat.setSector(newSector());
+        return seatRepository.save(seat);
     }
 
     private Customer newCustomer() {
         Customer customer = new Customer();
-        customer.setFirstName("firstname");
-        customer.setLastName("lastname");
+        customer.setFirstName("first name");
+        customer.setLastName("last name");
         customer.setEmail("email@mail.com");
         customer.setTelephoneNumber("0123456789");
+        //customer.setId(CUSTOMER_TEST_ID);
 
 
         BaseAddress address = new BaseAddress();
@@ -335,6 +345,45 @@ public class ReservationIT extends BaseIT {
         return customer;
     }
 
+    private Sector newSector() {
+        final var sector = new Sector();
+        sector.setCategory(newSectorCategory());
+        sector.setSeatsPerRow(10);
+        sector.setRows(3);
+        sector.setStartPositionY(0);
+        Sector sector1 = sectorRepository.save(sector);
+        Hall hall = newHall();
+        hall.setSectors(List.of(sector1));
+        hall.setAddress(newLocationAddress());
+        hallforPerformances = hallRepository.save(hall);
+        return sector1;
 
+    }
 
+    private SectorCategory newSectorCategory() {
+        final var sectorCategory = new SectorCategory();
+        sectorCategory.setName("test");
+        sectorCategory.setBasePriceMod(100L);
+        return sectorCategoryRepository.save(sectorCategory);
+    }
+
+    private Hall newHall() {
+        final var hall = new Hall();
+        hall.setName("hall1");
+        return hall;
+    }
+
+    private LocationAddress newLocationAddress() {
+        final var locationAddress = new LocationAddress();
+        locationAddress.setLocationName("test");
+        locationAddress.setCity("test");
+        locationAddress.setPostalCode("1111");
+        locationAddress.setCountry("tt");
+        locationAddress.setStreet("test");
+        return locationAddress;
+    }
 }
+
+
+
+

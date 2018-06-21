@@ -96,6 +96,7 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
+    @Transactional
     public Reservation createAndPayReservation(Reservation reservation) throws InvalidReservationException, InternalSeatReservationException {
         createReservation(reservation);
         return purchaseReservation(reservation);
