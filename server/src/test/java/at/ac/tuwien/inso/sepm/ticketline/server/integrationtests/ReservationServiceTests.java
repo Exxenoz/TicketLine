@@ -252,8 +252,7 @@ public class ReservationServiceTests {
     }
 
 
-
-    @Test(expected = InvalidReservationException.class)
+    @Test(expected = InternalSeatReservationException.class)
     public void createInvalidReservation() throws InvalidReservationException, InternalSeatReservationException {
         Performance performance = performanceRepository.save(newPerformance());
         Seat seat = newSeat();
