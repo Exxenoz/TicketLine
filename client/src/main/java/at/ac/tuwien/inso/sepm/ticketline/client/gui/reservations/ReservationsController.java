@@ -1,6 +1,8 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.reservations;
 
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.CustomerValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.ReservationSearchValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking.PurchaseReservationSummaryController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
@@ -35,6 +37,10 @@ import org.springframework.stereotype.Component;
 import java.lang.invoke.MethodHandles;
 import java.util.ResourceBundle;
 
+import static at.ac.tuwien.inso.sepm.ticketline.client.validator.CustomerValidator.validateFirstName;
+import static at.ac.tuwien.inso.sepm.ticketline.client.validator.CustomerValidator.validateLastName;
+import static at.ac.tuwien.inso.sepm.ticketline.client.validator.ReservationSearchValidator.validatePerformanceName;
+import static at.ac.tuwien.inso.sepm.ticketline.client.validator.ReservationSearchValidator.validateReservationNumber;
 import static javafx.scene.control.ButtonType.OK;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.TICKET;
 
@@ -47,6 +53,10 @@ public class ReservationsController {
     public VBox content;
     public TabHeaderController tabHeaderController;
     public Label activeFiltersListLabel;
+    public Label reservationNumberErrorLabel;
+    public Label customerLastNameErrorLabel;
+    public Label customerFirstNameErrorLabel;
+    public Label performanceNameErrorLabel;
     public TableColumn<ReservationDTO, String> reservationIDColumn;
     public TableColumn<ReservationDTO, String> eventColumn;
     public TableColumn<ReservationDTO, String> customerColumn;
@@ -67,7 +77,6 @@ public class ReservationsController {
     private int page = 0;
     private int totalPages = 0;
     private static final int RESERVATIONS_PER_PAGE = 50;
-    private static final int RESERVATION_NUMBER_LENGTH = 7;
     private static final int RESERVATION_FIRST_PAGE = 0;
 
     private String activeFilters = "";
@@ -95,6 +104,10 @@ public class ReservationsController {
     private void initialize() {
         tabHeaderController.setIcon(TICKET);
         tabHeaderController.setTitle(BundleManager.getBundle().getString("bookings.tab.header"));
+
+        ButtonBar.setButtonUniformSize(showReservationDetailsButton, false);
+        ButtonBar.setButtonUniformSize(cancelReservationButton, false);
+
         initializeTableView();
     }
 
@@ -223,8 +236,8 @@ public class ReservationsController {
             totalPages = response.getTotalPages();
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch reservations from server!");
-            JavaFXUtils.createErrorDialog(e.getMessage(),
-                content.getScene().getWindow()).showAndWait();
+            //JavaFXUtils.createErrorDialog(e.getMessage(),
+                //content.getScene().getWindow()).showAndWait();
         }
     }
 
@@ -319,30 +332,45 @@ public class ReservationsController {
             && (!customerLastName.equals(""))
             && (reservationNumber.equals(""))) {
 
-            clear();
-            activeFilters += BundleManager.getBundle().getString("bookings.main.activefilters.performancename")
-                + " " + performanceName + ", "
-                + BundleManager.getBundle().getString("bookings.main.activefilters.customername")
-                + " " + customerFirstName
-                + " " + customerLastName;
+            try {
+                customerFirstName = validateFirstName(customerFirstNameField);
+            } catch (CustomerValidationException e) {
+                LOGGER.error("Error with customer first name value, ", e);
+                customerFirstNameErrorLabel.setText(e.getMessage());
+            }
+            try {
+                customerLastName = validateLastName(customerLastNameField);
+            } catch (CustomerValidationException e) {
+                LOGGER.error("Error with customer last name value, ", e);
+                customerLastNameErrorLabel.setText(e.getMessage());
+            }
 
-            loadFilteredReservationsTable(0);
-            foundReservationsTableView.refresh();
-            filtered = true;
-            LOGGER.debug("Found {} page(s) satisfying the given criteria", totalPages);
+            try {
+                performanceName = validatePerformanceName(performanceNameField);
+                clear();
+                activeFilters += BundleManager.getBundle().getString("bookings.main.activefilters.performancename")
+                    + " " + performanceName + ", "
+                    + BundleManager.getBundle().getString("bookings.main.activefilters.customername")
+                    + " " + customerFirstName
+                    + " " + customerLastName;
+
+                loadFilteredReservationsTable(0);
+                foundReservationsTableView.refresh();
+                filtered = true;
+                LOGGER.debug("Found {} page(s) satisfying the given criteria", totalPages);
+            } catch (ReservationSearchValidationException e) {
+                LOGGER.error("Error with performance name value, ", e);
+                performanceNameErrorLabel.setText(e.getMessage());
+            }
+
         } else if ((performanceName.equals(""))
             && (customerFirstName.equals(""))
             && (customerLastName.equals(""))
             && (!reservationNumber.equals(""))) {
 
-            if (reservationNumber.length() != RESERVATION_NUMBER_LENGTH) {
-                LOGGER.error("The reservationnumber must be {} characters long! Was {}!", RESERVATION_NUMBER_LENGTH,
-                    reservationNumber.length());
-                JavaFXUtils.createErrorDialog(
-                    BundleManager.getExceptionBundle().getString("exception.search.invalid.reservationnr.invalid.length"),
-                    content.getScene().getWindow()
-                ).showAndWait();
-            } else {
+            try {
+                reservationNumber = validateReservationNumber(reservationNrField);
+
                 clear();
                 activeFilters += BundleManager.getBundle().getString("bookings.main.activefilters.reservationnr") + " "
                     + reservationNumber;
@@ -358,6 +386,9 @@ public class ReservationsController {
                 }
                 foundReservationsTableView.refresh();
                 filtered = true;
+            } catch (ReservationSearchValidationException e) {
+                LOGGER.error("Error with given ReservationNumber", e);
+                reservationNumberErrorLabel.setText(e.getMessage());
             }
         } else {
             filtered = false;
@@ -381,6 +412,12 @@ public class ReservationsController {
         customerFirstName = "";
         customerLastName = "";
         activeFilters = "";
+
+        reservationNumberErrorLabel.setText("");
+        customerLastNameErrorLabel.setText("");
+        customerFirstNameErrorLabel.setText("");
+        performanceNameErrorLabel.setText("");
+
         clear();
         loadData();
     }

@@ -7,7 +7,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking.PurchaseReser
 import at.ac.tuwien.inso.sepm.ticketline.client.service.CustomerService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
-import at.ac.tuwien.inso.sepm.ticketline.client.validator.AddressValidator;
+import at.ac.tuwien.inso.sepm.ticketline.client.validator.BaseAddressValidator;
 import at.ac.tuwien.inso.sepm.ticketline.client.validator.CustomerValidator;
 import at.ac.tuwien.inso.sepm.ticketline.rest.address.LocationAddressDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
@@ -190,7 +190,7 @@ public class CustomerEditDialogController {
         }
 
         try {
-            locationAddressDTO.setStreet(AddressValidator.validateStreet(streetTextfield));
+            locationAddressDTO.setStreet(BaseAddressValidator.validateStreet(streetTextfield));
             streetErrorLabel.setText("");
         } catch (AddressValidationException e) {
             valid = false;
@@ -199,7 +199,7 @@ public class CustomerEditDialogController {
         }
 
         try {
-            locationAddressDTO.setPostalCode(AddressValidator.validatePostalCode(postalCodeTextfield));
+            locationAddressDTO.setPostalCode(BaseAddressValidator.validatePostalCode(postalCodeTextfield));
             postalCodeErrorLabel.setText("");
         } catch (AddressValidationException e) {
             valid = false;
@@ -208,7 +208,7 @@ public class CustomerEditDialogController {
         }
 
         try {
-            locationAddressDTO.setCity(AddressValidator.validateCity(cityTextfield));
+            locationAddressDTO.setCity(BaseAddressValidator.validateCity(cityTextfield));
             cityErrorLabel.setText("");
         } catch (AddressValidationException e) {
             valid = false;
@@ -217,7 +217,7 @@ public class CustomerEditDialogController {
         }
 
         try {
-            locationAddressDTO.setCountry(AddressValidator.validateCountry(countryTextfield));
+            locationAddressDTO.setCountry(BaseAddressValidator.validateCountry(countryTextfield));
             countryErrorLabel.setText("");
         } catch (AddressValidationException e) {
             valid = false;

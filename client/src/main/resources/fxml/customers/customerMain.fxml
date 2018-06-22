@@ -30,7 +30,8 @@
                      <Button fx:id="customerEditButton" disable="true" mnemonicParsing="false" onAction="#onClickEditCustomerButton" text="%customers.main.button.edit">
                        <VBox.margin>
                           <Insets right="16.0" />
-                       </VBox.margin></Button>
+                       </VBox.margin>
+                     </Button>
                      <Button fx:id="customerCreateButton" mnemonicParsing="false" onAction="#onClickCreateCustomerButton" text="%customers.main.button.create" />
                  </buttons>
               </ButtonBar>

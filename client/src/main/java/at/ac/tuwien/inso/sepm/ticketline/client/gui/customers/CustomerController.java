@@ -23,10 +23,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollBar;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -93,6 +90,9 @@ public class CustomerController {
     private void initialize() {
         tabHeaderController.setIcon(USERS);
         tabHeaderController.setTitleBinding(BundleManager.getStringBinding("customers.main.title"));
+
+        ButtonBar.setButtonUniformSize(customerEditButton, false);
+        ButtonBar.setButtonUniformSize(customerCreateButton, false);
 
         initI18N();
         initializeCustomerTable();

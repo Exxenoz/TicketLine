@@ -45,12 +45,12 @@
          </font>
       </Label>
       <Label layoutX="410.0" layoutY="319.0" text="Tickets starting at" />
-      <HBox layoutX="326.0" layoutY="373.0" prefHeight="27.0" prefWidth="255.0" spacing="15.0">
-         <children>
+      <ButtonBar layoutX="326.0" layoutY="373.0">
+         <buttons>
             <Button fx:id="eventButtonPerformance" mnemonicParsing="false" onAction="#backButton" text="Back" />
             <Button fx:id="bookButtonPerformance" mnemonicParsing="false" onAction="#changeToEventDetailView" text="Event Details" />
             <Button fx:id="eventButtonPerformance1" mnemonicParsing="false" onAction="#continueButton" text="Continue" />
-         </children>
-      </HBox>
+         </buttons>
+      </ButtonBar>
    </children>
 </AnchorPane>

@@ -80,13 +80,30 @@
                                                                 <VBox layoutX="14.0" layoutY="14.0" spacing="10.0">
                                                                     <children>
                                                                         <Label text="%bookings.search.performancename"/>
-                                                                        <TextField fx:id="performanceNameField"/>
+                                                                        <TextField fx:id="performanceNameField" onAction="#searchForReservations"/>
+                                                                        <Label fx:id="performanceNameErrorLabel"
+                                                                               prefHeight="16.0" prefWidth="290.0"
+                                                                               textFill="RED">
+                                                                            <VBox.margin>
+                                                                                <Insets bottom="10.0"/>
+                                                                            </VBox.margin>
+                                                                        </Label>
                                                                         <Label
                                                                             text="%bookings.search.customerfirstname"/>
-                                                                        <TextField fx:id="customerFirstNameField"/>
+                                                                        <TextField fx:id="customerFirstNameField" onAction="#searchForReservations"/>
+                                                                        <Label fx:id="customerFirstNameErrorLabel"
+                                                                               prefHeight="16.0" prefWidth="290.0"
+                                                                               textFill="RED">
+                                                                            <VBox.margin>
+                                                                                <Insets bottom="10.0"/>
+                                                                            </VBox.margin>
+                                                                        </Label>
                                                                         <Label
                                                                             text="%bookings.search.customerlastname"/>
-                                                                        <TextField fx:id="customerLastNameField"/>
+                                                                        <TextField fx:id="customerLastNameField" onAction="#searchForReservations"/>
+                                                                        <Label fx:id="customerLastNameErrorLabel"
+                                                                               prefHeight="16.0" prefWidth="290.0"
+                                                                               textFill="RED"/>
                                                                     </children>
                                                                 </VBox>
                                                             </children>
@@ -101,7 +118,10 @@
                                                                     <children>
                                                                         <Label
                                                                             text="%bookings.main.search.reservationnr"/>
-                                                                        <TextField fx:id="reservationNrField"/>
+                                                                        <TextField fx:id="reservationNrField" onAction="#searchForReservations"/>
+                                                                        <Label fx:id="reservationNumberErrorLabel"
+                                                                               prefHeight="16.0" prefWidth="290.0"
+                                                                               textFill="RED"/>
                                                                     </children>
                                                                 </VBox>
                                                             </children>
