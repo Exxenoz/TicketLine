@@ -13,7 +13,7 @@
                 <Separator />
                 <HBox>
                     <children>
-                        <Label contentDisplay="TOP" prefHeight="27.0" text="%bookings.main.activefilters"/>
+                        <Label fx:id="activeFiltersLabel" contentDisplay="TOP" prefHeight="27.0" text="%bookings.main.activefilters"/>
                         <Label prefWidth="10.0"/>
                         <Label fx:id="activeFiltersListLabel" prefHeight="27.0"
                                text="%bookings.main.criteria.placeholder"/>
@@ -73,13 +73,13 @@
                                     <children>
                                         <Accordion maxHeight="1.7976931348623157E308" maxWidth="292.0" prefHeight="546.0" prefWidth="292.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                                             <panes>
-                                                <TitledPane animated="false" text="%bookings.main.search.eventperformance">
+                                                <TitledPane fx:id="eventPerformanceTitledPane" animated="false" text="%bookings.main.search.eventperformance">
                                                     <content>
                                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                             <children>
                                                                 <VBox layoutX="14.0" layoutY="14.0" spacing="10.0">
                                                                     <children>
-                                                                        <Label text="%bookings.search.performancename"/>
+                                                                        <Label fx:id="performanceNameLabel" text="%bookings.search.performancename"/>
                                                                         <TextField fx:id="performanceNameField" onAction="#searchForReservations"/>
                                                                         <Label fx:id="performanceNameErrorLabel"
                                                                                prefHeight="16.0" prefWidth="290.0"
@@ -88,7 +88,7 @@
                                                                                 <Insets bottom="10.0"/>
                                                                             </VBox.margin>
                                                                         </Label>
-                                                                        <Label
+                                                                        <Label fx:id="customerFirstNameLabel"
                                                                             text="%bookings.search.customerfirstname"/>
                                                                         <TextField fx:id="customerFirstNameField" onAction="#searchForReservations"/>
                                                                         <Label fx:id="customerFirstNameErrorLabel"
@@ -98,7 +98,7 @@
                                                                                 <Insets bottom="10.0"/>
                                                                             </VBox.margin>
                                                                         </Label>
-                                                                        <Label
+                                                                        <Label fx:id="customerLastNameLabel"
                                                                             text="%bookings.search.customerlastname"/>
                                                                         <TextField fx:id="customerLastNameField" onAction="#searchForReservations"/>
                                                                         <Label fx:id="customerLastNameErrorLabel"
@@ -110,13 +110,13 @@
                                                         </AnchorPane>
                                                     </content>
                                                 </TitledPane>
-                                                <TitledPane animated="false" text="%bookings.main.search.reservationnr">
+                                                <TitledPane fx:id="reservationNrTitledPane" animated="false" text="%bookings.main.search.reservationnr">
                                                     <content>
                                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                             <children>
                                                                 <VBox layoutX="10.0" layoutY="9.0" spacing="10.0">
                                                                     <children>
-                                                                        <Label
+                                                                        <Label fx:id="reservationNumberLabel"
                                                                             text="%bookings.main.search.reservationnr"/>
                                                                         <TextField fx:id="reservationNrField" onAction="#searchForReservations"/>
                                                                         <Label fx:id="reservationNumberErrorLabel"
