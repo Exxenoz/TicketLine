@@ -1,6 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.unittests.reservation;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalCancelationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
@@ -24,6 +25,7 @@ import java.util.Optional;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
@@ -83,6 +85,32 @@ public class ReservationServiceUnitTests {
         assertThat(reservation.getPaid(), is(false));
 
     }
+
+    @Test
+    public void cancel() throws InternalCancelationException, InternalSeatReservationException, InvalidReservationException {
+        Performance performance = newPerformance();
+        Seat seat = newSeat();
+        Customer customer = newCustomer();
+
+        Reservation reservation = new Reservation();
+        reservation.setCustomer(customer);
+        reservation.setPerformance(performance);
+        reservation.setSeats(List.of(seat));
+
+        when(reservationRepositoryMock.save(reservation)).thenReturn(newReservation(customer, performance, List.of(seat)));
+        when(reservationRepositoryMock.findById(reservation.getId())).thenReturn(Optional.of(reservation));
+        when(performanceRepositoryMock.findById(performance.getId())).thenReturn(Optional.of(newPerformance()));
+        when(seatsServiceMock.createSeats(List.of(seat))).thenReturn(List.of(newSeat()));
+
+        reservation = reservationService.createReservation(reservation);
+        Reservation returned = reservationService.cancelReservation(reservation.getId());
+
+
+        assertThat(returned.isCanceled(), is(true));
+    }
+
+
+
 
     private Reservation newReservation(Customer customer, Performance performance, List<Seat> seats) {
         Reservation reservation = new Reservation();
