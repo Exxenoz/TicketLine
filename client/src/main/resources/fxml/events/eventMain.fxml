@@ -13,10 +13,10 @@
                 <URL value="@/css/events.css" />
             </stylesheets>
             <tabs>
-                <Tab text="%events.main.tab1">
+                <Tab fx:id="mainTab1" text="%events.main.tab1">
                     <fx:include fx:id="eventSearch" source="eventTabSearch.fxml" />
                 </Tab>
-                <Tab text="%events.main.tab2">
+                <Tab fx:id="mainTab2" text="%events.main.tab2">
                     <fx:include fx:id="eventTop10" source="eventTabTop10.fxml" />
                 </Tab>
             </tabs>
