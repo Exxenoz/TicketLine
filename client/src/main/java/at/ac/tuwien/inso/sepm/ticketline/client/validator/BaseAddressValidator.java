@@ -7,6 +7,7 @@ import javafx.scene.control.TextField;
 
 public class BaseAddressValidator{
 
+    private static final String STRING_REGEX = "^[-' a-zA-ZöüöäÜÖÄ]+$";
 
     public static String validateStreet(TextField streetTextField) throws AddressValidationException {
         String street = streetTextField.getText();
@@ -29,6 +30,10 @@ public class BaseAddressValidator{
     }
 
     private static String validationOfLength(String stringToValidate) throws AddressValidationException {
+
+        if(!stringToValidate.matches(STRING_REGEX)){
+            throw new AddressValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.string"));
+        }
 
         if (stringToValidate.length() < 1 || stringToValidate.length() > 50) {
             throw new AddressValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_length"));

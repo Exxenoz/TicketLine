@@ -374,6 +374,9 @@ public class ReservationsController {
     }
 
     public void searchForReservations() {
+
+        clearfilters();
+
         performanceName = performanceNameField.getText();
         customerFirstName = customerFirstNameField.getText();
         customerLastName = customerLastNameField.getText();
@@ -486,5 +489,12 @@ public class ReservationsController {
 
         clear();
         loadData();
+    }
+
+    private void clearfilters(){
+        reservationNumberErrorLabel.setText("");
+        customerLastNameErrorLabel.setText("");
+        customerFirstNameErrorLabel.setText("");
+        performanceNameErrorLabel.setText("");
     }
 }
