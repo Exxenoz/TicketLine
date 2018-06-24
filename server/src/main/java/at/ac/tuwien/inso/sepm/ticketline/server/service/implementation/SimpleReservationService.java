@@ -38,6 +38,8 @@ public class SimpleReservationService implements ReservationService {
     @Autowired
     private SeatsService seatsService;
 
+    private long lastReservationNumber = 16777216;
+
     public ReservationRepository getReservationRepository() {
         return reservationRepository;
     }
@@ -271,7 +273,7 @@ public class SimpleReservationService implements ReservationService {
         return createdReservation;
     }
 
-    public String generateReservationNumber() {
+  /*  public String generateReservationNumber() {
         String reservationNumber = "";
         final String ALPHA_NUMERIC_STRING = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789";
         while (reservationNumber.length() <= 6) {
@@ -279,9 +281,14 @@ public class SimpleReservationService implements ReservationService {
             reservationNumber += ALPHA_NUMERIC_STRING.charAt(character);
         }
         return reservationNumber;
+    } */
+
+    public String generateReservationNumber() {
+        lastReservationNumber++;
+        String reservationNumber = Long.toHexString(lastReservationNumber);
+        reservationNumber = reservationNumber.toUpperCase();
+        return reservationNumber;
     }
-
-
 
 
     @Override
