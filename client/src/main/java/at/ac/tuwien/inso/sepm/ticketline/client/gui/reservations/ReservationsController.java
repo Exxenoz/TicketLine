@@ -44,6 +44,7 @@ import static at.ac.tuwien.inso.sepm.ticketline.client.validator.CustomerValidat
 import static at.ac.tuwien.inso.sepm.ticketline.client.validator.CustomerValidator.validateLastName;
 import static at.ac.tuwien.inso.sepm.ticketline.client.validator.ReservationSearchValidator.validatePerformanceName;
 import static at.ac.tuwien.inso.sepm.ticketline.client.validator.ReservationSearchValidator.validateReservationNumber;
+import static javafx.scene.control.ButtonType.OK;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.TICKET;
 
 
@@ -199,11 +200,11 @@ public class ReservationsController {
             + ".pdf";
         File invoiceFile = new File(filepath);
         try {
-            LOGGER.debug("getting file {}...", filepath);
+            LOGGER.debug("getting the file and storing it in {}...", filepath);
             invoiceService.downloadAndStorePDF(reservationDTO.getReservationNumber(), invoiceFile);
             invoiceService.openPDF(invoiceFile);
         } catch (DataAccessException d) {
-            LOGGER.error("An Error occurred whilst the handling of the file: {}", d.getMessage());
+            LOGGER.error("An Error occurred whilst handling the file: {}", d.getMessage());
         }
         return invoiceFile;
     }
@@ -212,15 +213,20 @@ public class ReservationsController {
         ResourceBundle ex = BundleManager.getExceptionBundle();
         int row = foundReservationsTableView.getSelectionModel().getFocusedIndex();
         ReservationDTO selected = reservationList.get(row);
-        try {
-            selected = reservationService.cancelReservation(selected.getId());
-            foundReservationsTableView.getItems().get(row).setCanceled(true);
-            foundReservationsTableView.refresh();
-            //   reservationList.remove(reservationDTO);
-            //   foundReservationsTableView.getItems().remove(row);
-            printInvoiceDialog(selected);
-        } catch (DataAccessException e) {
-            LOGGER.error("The reservation with id {} couldn't be canceld", selected.getId(), e);
+        if (!selected.isPaid()) {
+            try {
+                selected = reservationService.cancelReservation(selected.getId());
+                foundReservationsTableView.getItems().get(row).setCanceled(true);
+                foundReservationsTableView.refresh();
+                //   reservationList.remove(reservationDTO);
+                //   foundReservationsTableView.getItems().remove(row);
+                printInvoiceDialog(selected);
+            } catch (DataAccessException e) {
+                LOGGER.error("The reservation with id {} couldn't be canceled", selected.getId(), e);
+            }
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR, ex.getString("exception.reservation.cancel.alreadypaid"), OK);
+            alert.showAndWait();
         }
 
     }

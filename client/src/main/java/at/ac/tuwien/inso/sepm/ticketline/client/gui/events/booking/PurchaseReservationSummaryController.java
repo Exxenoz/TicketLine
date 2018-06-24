@@ -131,11 +131,11 @@ public class PurchaseReservationSummaryController {
             + ".pdf";
         File invoiceFile = new File(filepath);
         try {
-            LOGGER.debug("getting file {}...", filepath);
+            LOGGER.debug("getting pdf and storing it in {}...", filepath);
             invoiceService.downloadAndStorePDF(reservation.getReservationNumber(), invoiceFile);
             invoiceService.openPDF(invoiceFile);
         } catch (DataAccessException d) {
-            LOGGER.error("An Error occurred whilst the handling of the file: {}", d.getMessage());
+            LOGGER.error("An Error occurred whilst handling the file: {}", d.getMessage());
         }
         return invoiceFile;
     }
