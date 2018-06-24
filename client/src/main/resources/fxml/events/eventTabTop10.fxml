@@ -62,7 +62,7 @@
                         <CategoryAxis fx:id="barAxisX" label="Events" side="BOTTOM" />
                     </xAxis>
                     <yAxis>
-                        <NumberAxis fx:id="barAxisY" label="%events.main.ticket_sales" side="LEFT" />
+                        <NumberAxis animated="false" fx:id="barAxisY" label="%events.main.ticket_sales" side="LEFT" />
                     </yAxis>
                 </BarChart>
                 <HBox maxHeight="35.0" prefHeight="35.0" spacing="15.0">
