@@ -22,7 +22,7 @@ public class SeatIdsToSeatsMapper {
 
     @SeatIdToSeat
     public Seat seatIDtoSeat(Long seatId) {
-        return Seat.builder().id(seatId).build();
+        return Seat.SeatBuilder.aSeat().withId(seatId).build();
     }
 
 }

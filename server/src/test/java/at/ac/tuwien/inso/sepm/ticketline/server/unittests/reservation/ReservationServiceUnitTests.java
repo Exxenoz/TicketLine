@@ -105,11 +105,8 @@ public class ReservationServiceUnitTests {
         reservation = reservationService.createReservation(reservation);
         Reservation returned = reservationService.cancelReservation(reservation.getId());
 
-
         assertThat(returned.isCanceled(), is(true));
     }
-
-
 
 
     private Reservation newReservation(Customer customer, Performance performance, List<Seat> seats) {
