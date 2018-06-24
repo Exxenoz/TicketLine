@@ -290,10 +290,9 @@ public class SimpleReservationService implements ReservationService {
         List<Seat> seatsOfReservation = reservation.getSeats();
         reservation.setSeats(null);
         reservation.setCanceled(true);
-        Reservation canceledReservation = reservationRepository.save(reservation);
+        reservationRepository.save(reservation);
         seatsOfReservation.forEach(seat -> seatsService.deleteSeat(seat));
-
-        return canceledReservation;
+        return reservation;
     }
 
     @Override
