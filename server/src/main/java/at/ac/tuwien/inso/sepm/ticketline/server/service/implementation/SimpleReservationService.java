@@ -38,6 +38,8 @@ public class SimpleReservationService implements ReservationService {
     @Autowired
     private SeatsService seatsService;
 
+    //   private long lastReservationNumber = 16777216;
+
     public ReservationRepository getReservationRepository() {
         return reservationRepository;
     }
@@ -250,17 +252,8 @@ public class SimpleReservationService implements ReservationService {
         Performance currentPerformance = performanceRepository.findById(reservation.getPerformance().getId()).get();
 
         Reservation createdReservation = null;
-        //Generate a unique ID for the reservation
-        boolean unique = false;
-        do {
-            try {
-                reservation.setReservationNumber(generateReservationNumber());
-                //When ID creation is successful, store the reservation
-                unique = true;
-            } catch (ConstraintViolationException e) {
-                unique = false;
-            }
-        } while (!unique);
+
+        reservation.setReservationNumber(generateReservationNumber());
 
         //Set all the information we need and save
         reservation.setSeats(createdSeats);
@@ -271,7 +264,7 @@ public class SimpleReservationService implements ReservationService {
         return createdReservation;
     }
 
-    public String generateReservationNumber() {
+  /*  public String generateReservationNumber() {
         String reservationNumber = "";
         final String ALPHA_NUMERIC_STRING = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789";
         while (reservationNumber.length() <= 6) {
@@ -279,9 +272,26 @@ public class SimpleReservationService implements ReservationService {
             reservationNumber += ALPHA_NUMERIC_STRING.charAt(character);
         }
         return reservationNumber;
+    } */
+
+
+    public String generateReservationNumber() {
+        String reservationNumber;
+        Reservation previous = reservationRepository.findFirstByOrderByIdDesc();
+        //if this is the first generated reservation
+        if (previous == null) {
+            //First HEX Number with 7 Numbers
+            long first = 16777216;
+            reservationNumber = Long.toHexString(first);
+            reservationNumber = reservationNumber.toUpperCase();
+        } else {
+            String lastNumber = previous.getReservationNumber();
+            Long lastNumberLong = Long.parseLong(lastNumber, 16);
+            reservationNumber = Long.toHexString(++lastNumberLong);
+            reservationNumber = reservationNumber.toUpperCase();
+        }
+        return reservationNumber;
     }
-
-
 
 
     @Override

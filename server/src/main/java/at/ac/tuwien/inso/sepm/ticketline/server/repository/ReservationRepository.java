@@ -76,4 +76,11 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      * @return the list of found reservations
      */
     List<Reservation> findAllByPerformanceId(Long performanceId);
+
+    /**
+     * returns the last reservation that was saved
+     *
+     * @return last saved reservation
+     */
+    Reservation findFirstByOrderByIdDesc();
 }
