@@ -24,9 +24,9 @@ public class ReservationMapperTest {
 
     private static final long PERFORMANCE_ID = 2L;
     private static final long CUSTOMER_ID = 3L;
-    private static final Seat SEAT_1 = Seat.builder().id(1L).build();
-    private static final Seat SEAT_2 = Seat.builder().id(2L).build();
-    private static final Seat SEAT_3 = Seat.builder().id(3L).build();
+    private static final Seat SEAT_1 = Seat.SeatBuilder.aSeat().withId(1L).build();
+    private static final Seat SEAT_2 = Seat.SeatBuilder.aSeat().withId(2L).build();
+    private static final Seat SEAT_3 = Seat.SeatBuilder.aSeat().withId(3L).build();
 
     @Configuration
     @ComponentScan(basePackages = "at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper")

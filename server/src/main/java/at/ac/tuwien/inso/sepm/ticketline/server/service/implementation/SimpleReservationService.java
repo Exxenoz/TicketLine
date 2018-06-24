@@ -23,7 +23,6 @@ import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 public class SimpleReservationService implements ReservationService {
@@ -114,14 +113,19 @@ public class SimpleReservationService implements ReservationService {
         List<Seat> onlyNewSeats = getNewSeats(changedSeats);//the not yet saved seats
 
         //First, get the picked performance for this reservation
-        Performance performance = performanceRepository.findById(reservation.getPerformance().getId()).orElse(null);
+        List<Sector> sectors = null;
+        Performance performance = null;
+        if (performanceRepository.findById(reservation.getPerformance().getId()).isPresent()) {
+            performance = performanceRepository.findById(reservation.getPerformance().getId()).get();
+            sectors = performance.getHall().getSectors();
+        }
 
         //Then, too fail fast, we check the integrity of the seats according to the hall plan and the sectors
         try {
-            if (performance != null) {
-                hallPlanService.checkSeatsAgainstSectors(onlyNewSeats, performance.getHall().getSectors());
+            if (sectors != null) {
+                hallPlanService.checkSeatsAgainstSectors(onlyNewSeats, sectors);
             } else {
-                LOGGER.error("Could not find the the Reservation");
+                LOGGER.error("Could not find the the Sectors for this reservation");
                 throw new InvalidReservationException("The Performance was not set");
             }
         } catch (InternalHallValidationException i) {
