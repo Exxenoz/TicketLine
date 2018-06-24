@@ -115,11 +115,23 @@ public interface ReservationService {
      */
     List<Reservation> findReservationsForPerformance(Long id);
 
-
     /**
-     * Calculates the price of a reservation
+     * Calculates the price of a reservation with tax
      * @param reservation the reservation whose price will be checked
      * @return the price of this reservation in cents
      */
     Long calculatePrice(Reservation reservation);
+
+    /**
+     * Calculates the price of a reservation without tax
+     * @param reservation the reservation whose price will be checked
+     * @return the price of this reservation in cents
+     */
+    Long calculatePreTaxPrice(Reservation reservation);
+
+    /**
+     * Returns the regular tax rate of price calculation
+     * @return the regular tax rate
+     */
+    Double getRegularTaxRate();
 }
