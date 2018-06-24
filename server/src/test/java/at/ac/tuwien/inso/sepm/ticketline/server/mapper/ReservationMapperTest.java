@@ -49,7 +49,7 @@ public class ReservationMapperTest {
         createReservationDTO.setPerformanceID(PERFORMANCE_ID);
         createReservationDTO.setCustomerID(CUSTOMER_ID);
 
-        createReservationDTO.setSeats(List.of(seatMapper.seatToSeatDTO(SEAT_1), seatMapper.seatToSeatDTO(SEAT_1),
+        createReservationDTO.setSeats(List.of(seatMapper.seatToSeatDTO(SEAT_1), seatMapper.seatToSeatDTO(SEAT_2),
             seatMapper.seatToSeatDTO(SEAT_3)));
 
         // WHEN
