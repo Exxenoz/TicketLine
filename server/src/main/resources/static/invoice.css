@@ -1,0 +1,16 @@
+*
+{
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
+}
+
+table, th, td {
+    background-color: cornflowerblue;
+}
+
+.company-info {
+    display: block;
+    margin-left: 60%;
+    margin-right: auto;
+    width: 100%;
+    font-size: 12px;
+}

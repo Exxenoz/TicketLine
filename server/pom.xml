@@ -115,6 +115,12 @@
             <artifactId>openhtmltopdf-slf4j</artifactId>
             <version>${openhtml.version}</version>
         </dependency>
+        <dependency>
+            <!-- HTML5 parsing support. -->
+            <groupId>com.openhtmltopdf</groupId>
+            <artifactId>openhtmltopdf-jsoup-dom-converter</artifactId>
+            <version>${openhtml.version}</version>
+        </dependency>
         <!-- test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -66,6 +66,7 @@ public class SimpleInvoiceService implements InvoiceService {
         try {
             runRendererBuilder(source, reservation.getReservationNumber());
         } catch (ExternalRendererException | IOException e) {
+            e.printStackTrace();
             throw new InternalInvoiceGenerationException();
         }
     }
