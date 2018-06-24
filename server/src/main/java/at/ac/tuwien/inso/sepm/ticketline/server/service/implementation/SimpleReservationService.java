@@ -109,7 +109,8 @@ public class SimpleReservationService implements ReservationService {
     @Override
     public Reservation editReservation(Reservation reservation) throws InvalidReservationException {
         List<Seat> changedSeats = reservation.getSeats();//the changed seats
-        List<Seat> savedSeats = reservationRepository.findByPaidFalseAndId(reservation.getId()).getSeats(); //the old seat config
+        Reservation savedReservation = reservationRepository.findByPaidFalseAndId(reservation.getId());
+        List<Seat> savedSeats = savedReservation.getSeats();//the old seat config
         List<Seat> onlyNewSeats = getNewSeats(changedSeats);//the not yet saved seats
 
         //First, get the picked performance for this reservation
