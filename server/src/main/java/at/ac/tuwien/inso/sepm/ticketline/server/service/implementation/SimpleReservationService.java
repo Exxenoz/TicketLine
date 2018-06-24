@@ -1,5 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
+import at.ac.tuwien.inso.sepm.ticketline.server.configuration.properties.PriceCalculationProperties;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalCancelationException;
@@ -39,7 +40,11 @@ public class SimpleReservationService implements ReservationService {
     @Autowired
     private SeatsService seatsService;
 
+    private PriceCalculationProperties priceCalculationProperties;
 
+    public SimpleReservationService(PriceCalculationProperties priceCalculationProperties) {
+        this.priceCalculationProperties = priceCalculationProperties;
+    }
     @Override
     public List<Reservation> findAllByEventId(Long eventId) {
         return reservationRepository.findAllByEventId(eventId);
@@ -279,12 +284,24 @@ public class SimpleReservationService implements ReservationService {
 
     @Override
     public Long calculatePrice(Reservation reservation) {
+        Long calculatedPrice = calculatePreTaxPrice(reservation);
+
+        calculatedPrice += Math.round(calculatedPrice * priceCalculationProperties.getSalesTax());
+        return calculatedPrice;
+    }
+
+    @Override
+    public Long calculatePreTaxPrice(Reservation reservation) {
         Long performancePrice = reservation.getPerformance().getPrice();
         Long calculatedPrice = 0l;
         for(Seat s: reservation.getSeats()) {
             calculatedPrice += performancePrice * s.getSector().getCategory().getBasePriceMod();
         }
-
         return calculatedPrice;
+    }
+
+    @Override
+    public Double getRegularTaxRate() {
+        return priceCalculationProperties.getSalesTax();
     }
 }

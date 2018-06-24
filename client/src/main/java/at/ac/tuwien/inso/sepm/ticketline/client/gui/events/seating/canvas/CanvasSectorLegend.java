@@ -1,11 +1,9 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas;
 
-import at.ac.tuwien.inso.sepm.ticketline.client.util.PriceUtils;
+import at.ac.tuwien.inso.sepm.ticketline.rest.util.PriceUtils;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-
-import java.text.DecimalFormat;
 
 public class CanvasSectorLegend implements CanvasComponent {
     //Drawing
