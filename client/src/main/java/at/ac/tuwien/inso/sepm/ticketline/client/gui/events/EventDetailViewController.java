@@ -156,7 +156,7 @@ public class EventDetailViewController {
         eventHeading.setText(event.getName());
         eventNameEvent.setText(event.getName());
         descriptionText.setText(event.getDescription());
-        eventTypeEvent.setText(event.getEventType() == SEAT ? "yes" : "no");
+        eventTypeEvent.setText(event.getEventType() == SEAT ? BundleManager.getBundle().getString("events.eventDetailView.seatingOption.yes") : BundleManager.getBundle().getString("events.eventDetailView.seatingOption.no"));
 
         //find first page of performances for the given event
         loadData();
