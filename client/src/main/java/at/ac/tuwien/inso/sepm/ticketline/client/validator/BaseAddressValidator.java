@@ -30,13 +30,12 @@ public class BaseAddressValidator{
     }
 
     private static String validationOfLength(String stringToValidate) throws AddressValidationException {
+        if (stringToValidate.length() < 1 || stringToValidate.length() > 50) {
+            throw new AddressValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_length"));
+        }
 
         if(!stringToValidate.matches(STRING_REGEX)){
             throw new AddressValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.string"));
-        }
-
-        if (stringToValidate.length() < 1 || stringToValidate.length() > 50) {
-            throw new AddressValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_length"));
         }
 
         return stringToValidate;
