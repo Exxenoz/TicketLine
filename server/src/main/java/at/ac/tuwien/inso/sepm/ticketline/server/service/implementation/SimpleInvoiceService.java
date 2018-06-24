@@ -60,7 +60,7 @@ public class SimpleInvoiceService implements InvoiceService {
             throw new InternalNotFoundException("Could not find reservation for reservation number: " + reservationNumber);
         }
         //First we want to transform the reservation to HTML
-        String source = htmlBuilderService.buildInvoiceHtml(reservation);
+        String source = htmlBuilderService.buildBasicInvoiceHtml(reservation);
 
         //Then we render it to pdf and store it as file, we use the reservation number as invoice name
         try {
