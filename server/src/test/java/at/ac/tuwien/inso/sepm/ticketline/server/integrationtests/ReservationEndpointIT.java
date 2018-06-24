@@ -29,6 +29,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 public class ReservationEndpointIT extends BaseIT {
@@ -327,7 +329,41 @@ public class ReservationEndpointIT extends BaseIT {
         assertThat(reservationDTO.isPaid(), is(true));
     }
 
-    //TODO: test for cancel
+    @Test
+    public void cancelReservationAsUser() {
+        // GIVEN
+        Performance performance = newPerformance();
+        Seat seat = newSeat();
+        Customer customer = customerRepository.save(newCustomer());
+        performance.setHall(hallforPerformances);
+        performance = performanceRepository.save(performance);
+        Reservation reservation = newReservation(customer, performance, List.of(seat));
+        Reservation savedReservation = reservationRepository.save(reservation);
+
+        //WHEN
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().post(RESERVATION_ENDPOINT + "/cancel/id/{id}", savedReservation.getId())
+            .then().extract().response();
+
+        //THEN
+        assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        Reservation reservationResponse = response.as(Reservation.class);
+        assertThat(reservationResponse.isCanceled(), is(true));
+        assertNull(reservationResponse.getSeats());
+    }
+
+    private Reservation newReservation(Customer customer, Performance performance, List<Seat> seats) {
+        Reservation reservation = new Reservation();
+        reservation.setCustomer(customer);
+        reservation.setPerformance(performance);
+        reservation.setSeats(seats);
+        reservation.setPaid(false);
+        reservation.setReservationNumber("0000000");
+        return reservation;
+    }
 
     private Performance newPerformance() {
         Performance performance = new Performance();
