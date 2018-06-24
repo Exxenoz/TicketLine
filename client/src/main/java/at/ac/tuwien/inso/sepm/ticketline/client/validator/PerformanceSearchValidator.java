@@ -7,18 +7,24 @@ import javafx.scene.control.TextField;
 
 public class PerformanceSearchValidator {
 
-    private static final String NAME_REGEX = "[0-9]*";
+    private static final String NUMBER_REGEX = "[0-9]*";
     private static final String PRICE_REGEX = "^\\d{0,8}(,\\d{2})?$";
+    private static final String STRING_REGEX = "^[-' a-zA-ZöüöäÜÖÄ]+$";
 
     public static String validateArtistFirstName(TextField artistFirstNameTextField) throws PerformanceSearchValidationException {
         String artistFirstName = artistFirstNameTextField.getText();
+
+        if(!artistFirstName.matches(STRING_REGEX)){
+            throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.string"));
+        }
+
         return validationOfLength(artistFirstName);
     }
 
     public static String validateArtistLastName(TextField artistLastNameTextField) throws PerformanceSearchValidationException {
         String artistLastName = artistLastNameTextField.getText();
 
-        if (!artistLastName.matches(NAME_REGEX)) {
+        if (!artistLastName.matches(NUMBER_REGEX)) {
             throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.numberFormat"));
         }
 
@@ -27,13 +33,18 @@ public class PerformanceSearchValidator {
 
     public static String validateEventName(TextField eventNameTextField) throws PerformanceSearchValidationException {
         String eventName = eventNameTextField.getText();
+
+        if(!eventName.matches(STRING_REGEX)){
+            throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.string"));
+        }
+
         return validationOfLength(eventName);
     }
 
     public static String validateDuration(TextField durationTextField) throws PerformanceSearchValidationException {
         String durationString = durationTextField.getText();
 
-        if(!durationString.matches(NAME_REGEX)){
+        if(!durationString.matches(NUMBER_REGEX)){
             throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.numberFormat"));
         }
 

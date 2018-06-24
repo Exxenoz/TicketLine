@@ -10,7 +10,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationSearchMapper;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpBadRequestException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpConflictException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpNotFoundException;

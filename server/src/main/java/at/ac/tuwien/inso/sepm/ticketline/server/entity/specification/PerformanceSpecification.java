@@ -24,6 +24,7 @@ public class PerformanceSpecification implements Specification<Performance> {
      */
     private final static Long PRICE_UPPER_BOUND_RANGE = 1000L;
 
+    private final String performanceName;
     private final Long price;
     private final LocalDateTime start;
     private final Duration duration;
@@ -33,7 +34,8 @@ public class PerformanceSpecification implements Specification<Performance> {
     private final String country;
     private final String postalCode;
 
-    public PerformanceSpecification(Long price,
+    public PerformanceSpecification(String performanceName,
+        Long price,
                                     LocalDateTime start,
                                     Duration duration,
                                     String locationName,
@@ -41,6 +43,7 @@ public class PerformanceSpecification implements Specification<Performance> {
                                     String city,
                                     String country,
                                     String postalCode) {
+        this.performanceName = performanceName;
         this.price = price;
         this.start = start;
         this.duration = duration;
@@ -110,6 +113,10 @@ public class PerformanceSpecification implements Specification<Performance> {
 
         if (!isNullOrEmpty(postalCode)) {
             predicates.add(fulltextSearch(builder, locationAddress.get("postalCode"), postalCode));
+        }
+
+        if (!isNullOrEmpty(performanceName)) {
+            predicates.add(fulltextSearch(builder, root.get("name"), performanceName));
         }
 
         return builder.and(predicates.toArray(new Predicate[]{}));

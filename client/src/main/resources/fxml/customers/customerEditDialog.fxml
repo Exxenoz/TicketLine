@@ -99,12 +99,18 @@
          <children>
             <VBox>
                <children>
-                  <Label text="%customers.dialog.create.street" />
+                   <HBox>
+                       <children>
+                           <Label text="%customers.dialog.create.street" />
+                           <Label text="*" textFill="#cc0000" />
+                       </children>
+                   </HBox>
                   <TextField fx:id="streetTextfield" />
-                  <Label fx:id="streetErrorLabel" textFill="#cc0000">
-                      <font>
-                          <Font size="9.0" />
-                      </font></Label>
+                   <TextFlow VBox.vgrow="ALWAYS">
+                        <children>
+                            <Label VBox.vgrow="ALWAYS" fx:id="streetErrorLabel" prefWidth="280.0" textFill="RED" wrapText="true" />
+                        </children>
+                   </TextFlow>
                </children>
                <VBox.margin>
                   <Insets bottom="8.0" />
@@ -112,12 +118,18 @@
             </VBox>
             <VBox layoutX="10.0" layoutY="10.0">
                <children>
-                  <Label text="%customers.dialog.create.postal_code" />
+                   <HBox>
+                       <children>
+                           <Label text="%customers.dialog.create.postal_code" />
+                           <Label text="*" textFill="#cc0000" />
+                       </children>
+                   </HBox>
                   <TextField fx:id="postalCodeTextfield" />
-                  <Label fx:id="postalCodeErrorLabel" textFill="#cc0000">
-                      <font>
-                          <Font size="9.0" />
-                      </font></Label>
+                   <TextFlow VBox.vgrow="ALWAYS">
+                       <children>
+                           <Label VBox.vgrow="ALWAYS" fx:id="postalCodeErrorLabel" prefWidth="280.0" textFill="RED" wrapText="true" />
+                       </children>
+                   </TextFlow>
                </children>
                <VBox.margin>
                   <Insets bottom="8.0" />
@@ -125,12 +137,18 @@
             </VBox>
             <VBox layoutX="10.0" layoutY="83.0">
                <children>
-                  <Label text="%customers.dialog.create.city" />
+                   <HBox>
+                       <children>
+                           <Label text="%customers.dialog.create.city" />
+                           <Label text="*" textFill="#cc0000" />
+                       </children>
+                   </HBox>
                   <TextField fx:id="cityTextfield" />
-                  <Label fx:id="cityErrorLabel" textFill="#cc0000">
-                      <font>
-                          <Font size="9.0" />
-                      </font></Label>
+                   <TextFlow VBox.vgrow="ALWAYS">
+                       <children>
+                           <Label VBox.vgrow="ALWAYS" fx:id="cityErrorLabel" prefWidth="280.0" textFill="RED" wrapText="true" />
+                       </children>
+                   </TextFlow>
                </children>
                <VBox.margin>
                   <Insets bottom="8.0" />
@@ -138,12 +156,18 @@
             </VBox>
             <VBox layoutX="10.0" layoutY="156.0">
                <children>
-                  <Label text="%customers.dialog.create.country" />
+                   <HBox>
+                       <children>
+                           <Label text="%customers.dialog.create.country" />
+                           <Label text="*" textFill="#cc0000" />
+                       </children>
+                   </HBox>
                   <TextField fx:id="countryTextfield" />
-                  <Label fx:id="countryErrorLabel" textFill="#cc0000">
-                      <font>
-                          <Font size="9.0" />
-                      </font></Label>
+                   <TextFlow VBox.vgrow="ALWAYS">
+                       <children>
+                           <Label VBox.vgrow="ALWAYS" fx:id="countryErrorLabel" prefWidth="280.0" textFill="RED" wrapText="true" />
+                       </children>
+                   </TextFlow>
                </children>
                <VBox.margin>
                   <Insets bottom="8.0" />

@@ -2,15 +2,20 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationSearch;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalCancelationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InvalidReservationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
+import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface ReservationService {
+
+
+    void setSeatsService(SeatsService seatsService);
 
     /**
      * Find all reservation entries by event id.
@@ -134,4 +139,21 @@ public interface ReservationService {
      * @return the regular tax rate
      */
     Double getRegularTaxRate();
+
+
+    /**
+     * setter for reservation repository
+     *
+     * @param reservationRepository
+     */
+    public void setReservationRepository(ReservationRepository reservationRepository);
+
+    /**
+     * setter for performance repository
+     *
+     * @param performanceRepository
+     */
+    public void setPerformanceRepository(PerformanceRepository performanceRepository);
+
+
 }

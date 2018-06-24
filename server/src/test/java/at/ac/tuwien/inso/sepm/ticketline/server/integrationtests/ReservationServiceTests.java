@@ -1,10 +1,10 @@
-package at.ac.tuwien.inso.sepm.ticketline.server.unittests.reservation;
+package at.ac.tuwien.inso.sepm.ticketline.server.integrationtests;
 
 
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalCancelationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import org.junit.After;
@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -26,6 +27,8 @@ import java.util.List;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+
+//TODO: RENAME CLASS
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -58,10 +61,12 @@ public class ReservationServiceTests {
 
     @Before
     public void setUp() {
-        Performance performance = performanceRepository.save(newPerformance());
-        PERFORMANCE_TEST_ID = performance.getId();
+        Performance performance = newPerformance();
         Seat seat = seatRepository.save(newSeat());
         SEAT_TEST_ID = seat.getId();
+        performance.setHall(hallforPerformances);
+        performance = performanceRepository.save(performance);
+        PERFORMANCE_TEST_ID = performance.getId();
 
         LinkedList<Seat> seats = new LinkedList<>();
         seats.add(seat);
@@ -86,6 +91,9 @@ public class ReservationServiceTests {
         performanceRepository.deleteAll();
         customerRepository.deleteAll();
         seatRepository.deleteAll();
+        sectorRepository.deleteAll();
+        hallRepository.deleteAll();
+        sectorCategoryRepository.deleteAll();
     }
 
 
@@ -112,19 +120,46 @@ public class ReservationServiceTests {
         Assert.assertFalse(seatOpt.isPresent());
     }
 
+    @Transactional
     @Test(expected = InvalidReservationException.class)
-    public void addLockedSeatToReservation() throws InvalidReservationException {
-        //get reservation
-        var reservation = reservationService.findOneByPaidFalseAndId(RESERVATION_TEST_ID);
-        Assert.assertNotNull(reservation);
-        Assert.assertEquals(false, reservation.isPaid());
+    public void addAlreadyReservedSeatToReservationShouldThrowInvalidReservationException() throws InvalidReservationException {
+        //create reservation
+        Performance performance = performanceRepository.save(newPerformance());
+        Seat seat = Seat.SeatBuilder.aSeat()
+            .withPositionX(5)
+            .withPositionY(5)
+            .withSector(newSector())
+            .build();
+        seat = seatRepository.save(seat);
+        Customer customer = customerRepository.save(newCustomer());
+        performance.setHall(hallforPerformances);
+        performanceRepository.save(performance);
 
-        //remove seats
-        List<Seat> seats = reservation.getSeats();
+        Reservation reservation = Reservation.Builder.aReservation()
+            .withPaid(false)
+            .withCustomer(customer)
+            .withPerformance(performance)
+            .withSeats(List.of(seat))
+            .withReservationNumber("1111111")
+            .build();
+        reservation = reservationRepository.save(reservation);
+
+        //get reservation
+        var reservationToBeEdited = reservationService.findOneByPaidFalseAndId(RESERVATION_TEST_ID);
+        Assert.assertNotNull(reservationToBeEdited);
+        Assert.assertEquals(false, reservationToBeEdited.isPaid());
+
+        //try to reserve already reserved Seat
+        List<Seat> seats = reservationToBeEdited.getSeats();
         Assert.assertEquals(1, seats.size());
-        seats.add(newSeat());
-        reservation.setSeats(seats);
-        reservation = reservationService.editReservation(reservation);
+        Seat invalidSeat = Seat.SeatBuilder.aSeat()
+            .withPositionX(5)
+            .withPositionY(5)
+            .withSector(newSector())
+            .build();
+        seats.add(invalidSeat);
+        reservationToBeEdited.setSeats(seats);
+        reservationService.editReservation(reservationToBeEdited);//<-- should throw the exception
     }
 
 
@@ -218,14 +253,16 @@ public class ReservationServiceTests {
     @Test
     public void createReservation() {
         Performance performance = performanceRepository.save(newPerformance());
-        Seat seat = seatRepository.save(newSeat());
+        Seat seat = newSeat();
         Customer customer = customerRepository.save(newCustomer());
+        performance.setHall(hallforPerformances);
+        performanceRepository.save(performance);
 
         Reservation reservation = new Reservation();
         reservation.setCustomer(customer);
         reservation.setPerformance(performance);
         reservation.setSeats(List.of(seat));
-        reservation.setReservationNumber("000001");
+        // reservation.setReservationNumber("000001");
 
         Reservation returned = null;
         try {
@@ -245,11 +282,14 @@ public class ReservationServiceTests {
 
     }
 
-    @Test(expected = InvalidReservationException.class)
+
+    @Test(expected = InternalSeatReservationException.class)
     public void createInvalidReservation() throws InvalidReservationException, InternalSeatReservationException {
         Performance performance = performanceRepository.save(newPerformance());
-        Seat seat = seatRepository.save(newSeat());
+        Seat seat = newSeat();
         Customer customer = customerRepository.save(newCustomer());
+        performance.setHall(hallforPerformances);
+        performanceRepository.save(performance);
 
         Reservation reservation = new Reservation();
         reservation.setCustomer(customer);
@@ -272,15 +312,15 @@ public class ReservationServiceTests {
     @Test
     public void createAndPay() {
         Performance performance = performanceRepository.save(newPerformance());
-        Seat seat = seatRepository.save(newSeat());
+        Seat seat = newSeat();
         Customer customer = customerRepository.save(newCustomer());
-
+        performance.setHall(hallforPerformances);
+        performanceRepository.save(performance);
 
         Reservation reservation = new Reservation();
         reservation.setCustomer(customer);
         reservation.setPerformance(performance);
         reservation.setSeats(List.of(seat));
-        reservation.setReservationNumber("000002");
 
         Reservation returned = null;
         try {
