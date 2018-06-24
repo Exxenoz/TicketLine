@@ -15,25 +15,29 @@ public class CustomerValidator {
 
         if(firstName == null) {
             throw new CustomerValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.customer.firstname.is_null")
+                BundleManager.getExceptionBundle().getString("exception.validator.customer.firstname.is_null"),
+                "exception.validator.customer.firstname.is_null"
             );
         }
 
         if(firstName.length() < 2) {
             throw new CustomerValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.customer.firstname.too_short")
+                BundleManager.getExceptionBundle().getString("exception.validator.customer.firstname.too_short"),
+                "exception.validator.customer.firstname.too_short"
             );
         }
 
         if(firstName.length() > 50) {
             throw new CustomerValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.customer.firstname.too_long")
+                BundleManager.getExceptionBundle().getString("exception.validator.customer.firstname.too_long"),
+                "exception.validator.customer.firstname.too_long"
             );
         }
 
         if(!firstName.matches(nameRegex)) {
             throw new CustomerValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.customer.firstname.invalid_characters")
+                BundleManager.getExceptionBundle().getString("exception.validator.customer.firstname.invalid_characters"),
+                "exception.validator.customer.firstname.invalid_characters"
             );
         }
 
@@ -45,25 +49,29 @@ public class CustomerValidator {
 
         if(lastName == null) {
             throw new CustomerValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.customer.lastname.is_null")
+                BundleManager.getExceptionBundle().getString("exception.validator.customer.lastname.is_null"),
+                "exception.validator.customer.lastname.is_null"
             );
         }
 
         if(lastName.length() < 2) {
             throw new CustomerValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.customer.lastname.too_short")
+                BundleManager.getExceptionBundle().getString("exception.validator.customer.lastname.too_short"),
+                "exception.validator.customer.lastname.too_short"
             );
         }
 
         if(lastName.length() > 50) {
             throw new CustomerValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.customer.lastname.too_long")
+                BundleManager.getExceptionBundle().getString("exception.validator.customer.lastname.too_long"),
+                "exception.validator.customer.lastname.too_long"
             );
         }
 
         if(!lastName.matches(nameRegex)) {
             throw new CustomerValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.customer.lastname.invalid_characters")
+                BundleManager.getExceptionBundle().getString("exception.validator.customer.lastname.invalid_characters"),
+                "exception.validator.customer.lastname.invalid_characters"
             );
         }
 
@@ -75,13 +83,15 @@ public class CustomerValidator {
 
         if (telephoneNumber == null) {
             throw new CustomerValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.customer.telephone_number.is_null")
+                BundleManager.getExceptionBundle().getString("exception.validator.customer.telephone_number.is_null"),
+                "exception.validator.customer.telephone_number.is_null"
             );
         }
 
         if(!telephoneNumber.matches("^[\\d\\/\\s+-]{7,25}$")) {
             throw new CustomerValidationException(
-                BundleManager.getExceptionBundle().getString("exception.validator.customer.telephone_number.invalid")
+                BundleManager.getExceptionBundle().getString("exception.validator.customer.telephone_number.invalid"),
+                "exception.validator.customer.telephone_number.invalid"
             );
         }
 
@@ -99,7 +109,8 @@ public class CustomerValidator {
             Matcher matcher = emailRegex.matcher(email);
             if(!matcher.find()) {
                 throw new CustomerValidationException(
-                    BundleManager.getExceptionBundle().getString("exception.validator.customer.email.invalid")
+                    BundleManager.getExceptionBundle().getString("exception.validator.customer.email.invalid"),
+                    "exception.validator.customer.email.invalid"
                 );
             }
         }

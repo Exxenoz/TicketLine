@@ -13,6 +13,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
+import com.sun.javafx.tools.packager.bundlers.Bundler;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -66,9 +67,39 @@ public class ReservationsController {
     public TextField customerFirstNameField;
     public TextField customerLastNameField;
     public TextField reservationNrField;
+
+    @FXML
+    public Label activeFiltersLabel;
+
+    @FXML
+    public Button clearButton;
+
+    @FXML
     public Button showReservationDetailsButton;
+
     @FXML
     public Button cancelReservationButton;
+
+    @FXML
+    public Button searchButton;
+
+    @FXML
+    public TitledPane eventPerformanceTitledPane;
+
+    @FXML
+    public Label performanceNameLabel;
+
+    @FXML
+    public Label customerFirstNameLabel;
+
+    @FXML
+    public Label customerLastNameLabel;
+
+    @FXML
+    public TitledPane reservationNrTitledPane;
+
+    @FXML
+    public Label reservationNumberLabel;
 
     private final SpringFxmlLoader fxmlLoader;
     private final ReservationService reservationService;
@@ -103,14 +134,36 @@ public class ReservationsController {
     @FXML
     private void initialize() {
         tabHeaderController.setIcon(TICKET);
-        tabHeaderController.setTitle(BundleManager.getBundle().getString("bookings.tab.header"));
+        tabHeaderController.setTitleBinding(BundleManager.getStringBinding("bookings.tab.header"));
 
         ButtonBar.setButtonUniformSize(showReservationDetailsButton, false);
         ButtonBar.setButtonUniformSize(cancelReservationButton, false);
 
+        initI18N();
         initializeTableView();
     }
 
+    private void initI18N() {
+        reservationIDColumn.textProperty().bind(BundleManager.getStringBinding("bookings.table.reservationID"));
+        eventColumn.textProperty().bind(BundleManager.getStringBinding("bookings.table.event"));
+        customerColumn.textProperty().bind(BundleManager.getStringBinding("bookings.table.customer"));
+        paidColumn.textProperty().bind(BundleManager.getStringBinding("bookings.table.paid"));
+
+        activeFiltersLabel.textProperty().bind(BundleManager.getStringBinding("bookings.main.activefilters"));
+
+        eventPerformanceTitledPane.textProperty().bind(BundleManager.getStringBinding("bookings.main.search.eventperformance"));
+        performanceNameLabel.textProperty().bind(BundleManager.getStringBinding("bookings.search.performancename"));
+        customerFirstNameLabel.textProperty().bind(BundleManager.getStringBinding("bookings.search.customerfirstname"));
+        customerLastNameLabel.textProperty().bind(BundleManager.getStringBinding("bookings.search.customerlastname"));
+
+        reservationNrTitledPane.textProperty().bind(BundleManager.getStringBinding("bookings.main.search.reservationnr"));
+        reservationNumberLabel.textProperty().bind(BundleManager.getStringBinding("bookings.main.search.reservationnr"));
+
+        clearButton.textProperty().bind(BundleManager.getStringBinding("bookings.main.button.clear"));
+        showReservationDetailsButton.textProperty().bind(BundleManager.getStringBinding("bookings.main.button.details"));
+        cancelReservationButton.textProperty().bind(BundleManager.getStringBinding("bookings.main.cancelReservationsButton"));
+        searchButton.textProperty().bind(BundleManager.getStringBinding("bookings.main.button.search"));
+    }
 
     public void cancelReservation(ActionEvent event) {
         ResourceBundle ex = BundleManager.getExceptionBundle();
@@ -265,12 +318,12 @@ public class ReservationsController {
         paidColumn.setCellValueFactory(cellData -> {
             if (cellData.getValue().isCanceled() == false) {
                 if (cellData.getValue().isPaid()) {
-                    return new SimpleStringProperty(BundleManager.getBundle().getString("bookings.table.paid.true"));
+                    return BundleManager.getStringBinding("bookings.table.paid.true");
                 } else {
-                    return new SimpleStringProperty(BundleManager.getBundle().getString("bookings.table.paid.false"));
+                    return BundleManager.getStringBinding("bookings.table.paid.false");
                 }
             } else {
-                return new SimpleStringProperty(BundleManager.getBundle().getString("bookings.table.canceled.true"));
+                return BundleManager.getStringBinding("bookings.table.canceled.true");
             }
         });
 
@@ -321,6 +374,9 @@ public class ReservationsController {
     }
 
     public void searchForReservations() {
+
+        clearfilters();
+
         performanceName = performanceNameField.getText();
         customerFirstName = customerFirstNameField.getText();
         customerLastName = customerLastNameField.getText();
@@ -334,15 +390,19 @@ public class ReservationsController {
 
             try {
                 customerFirstName = validateFirstName(customerFirstNameField);
+                customerFirstNameErrorLabel.textProperty().unbind();
+                customerFirstNameErrorLabel.setText("");
             } catch (CustomerValidationException e) {
                 LOGGER.error("Error with customer first name value, ", e);
-                customerFirstNameErrorLabel.setText(e.getMessage());
+                customerFirstNameErrorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
             }
             try {
                 customerLastName = validateLastName(customerLastNameField);
+                customerLastNameErrorLabel.textProperty().unbind();
+                customerLastNameErrorLabel.setText("");
             } catch (CustomerValidationException e) {
                 LOGGER.error("Error with customer last name value, ", e);
-                customerLastNameErrorLabel.setText(e.getMessage());
+                customerLastNameErrorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
             }
 
             try {
@@ -358,9 +418,11 @@ public class ReservationsController {
                 foundReservationsTableView.refresh();
                 filtered = true;
                 LOGGER.debug("Found {} page(s) satisfying the given criteria", totalPages);
+                performanceNameErrorLabel.textProperty().unbind();
+                performanceNameErrorLabel.setText("");
             } catch (ReservationSearchValidationException e) {
                 LOGGER.error("Error with performance name value, ", e);
-                performanceNameErrorLabel.setText(e.getMessage());
+                performanceNameErrorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
             }
 
         } else if ((performanceName.equals(""))
@@ -386,9 +448,11 @@ public class ReservationsController {
                 }
                 foundReservationsTableView.refresh();
                 filtered = true;
+                reservationNumberErrorLabel.textProperty().unbind();
+                reservationNumberErrorLabel.setText("");
             } catch (ReservationSearchValidationException e) {
                 LOGGER.error("Error with given ReservationNumber", e);
-                reservationNumberErrorLabel.setText(e.getMessage());
+                reservationNumberErrorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
             }
         } else {
             filtered = false;
@@ -413,6 +477,11 @@ public class ReservationsController {
         customerLastName = "";
         activeFilters = "";
 
+        reservationNumberErrorLabel.textProperty().unbind();
+        customerLastNameErrorLabel.textProperty().unbind();
+        customerFirstNameErrorLabel.textProperty().unbind();
+        performanceNameErrorLabel.textProperty().unbind();
+
         reservationNumberErrorLabel.setText("");
         customerLastNameErrorLabel.setText("");
         customerFirstNameErrorLabel.setText("");
@@ -420,5 +489,12 @@ public class ReservationsController {
 
         clear();
         loadData();
+    }
+
+    private void clearfilters(){
+        reservationNumberErrorLabel.setText("");
+        customerLastNameErrorLabel.setText("");
+        customerFirstNameErrorLabel.setText("");
+        performanceNameErrorLabel.setText("");
     }
 }

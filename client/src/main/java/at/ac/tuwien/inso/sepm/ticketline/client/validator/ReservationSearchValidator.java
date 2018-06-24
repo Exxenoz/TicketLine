@@ -13,10 +13,10 @@ public class ReservationSearchValidator {
     public static String validateReservationNumber(TextField reservationNumberTextField) throws ReservationSearchValidationException {
         String reservationNumber = reservationNumberTextField.getText();
         if (reservationNumber.length() != 7) {
-            throw new ReservationSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.reservationnumber_length"));
+            throw new ReservationSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.reservationnumber_length"), "exception.validator.reservation.reservationnumber_length");
         }
         if (!reservationNumber.matches(RESERVATION_NUMBER_REGEX)) {
-            throw new ReservationSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.reservationnumber_characters"));
+            throw new ReservationSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.reservationnumber_characters"), "exception.validator.reservation.reservationnumber_characters");
         }
         return reservationNumber;
     }
@@ -24,13 +24,13 @@ public class ReservationSearchValidator {
     public static String validatePerformanceName(TextField performanceNameField) throws ReservationSearchValidationException {
         String performanceName = performanceNameField.getText();
         if (performanceName.length() < 1) {
-            throw new ReservationSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_length"));
+            throw new ReservationSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_length"), "exception.validator.reservation.performancename_length");
         }
         if (performanceName.length() > 100) {
-            throw new ReservationSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_length"));
+            throw new ReservationSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_length"), "exception.validator.reservation.performancename_length");
         }
         if (!performanceName.matches(PERFORMANCE_NAME_REGEX)) {
-            throw new ReservationSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_characters"));
+            throw new ReservationSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_characters"), "exception.validator.reservation.performancename_characters");
         }
         return performanceName;
 

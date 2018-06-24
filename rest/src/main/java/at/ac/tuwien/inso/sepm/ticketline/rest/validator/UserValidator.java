@@ -107,7 +107,7 @@ public abstract class UserValidator {
                 "User Validation failed: strikes faulty"
             );
         } else {
-            if ((userDTO.getStrikes() < 0) && (userDTO.getStrikes() > 5)) {
+            if ((userDTO.getStrikes() < 0) || (userDTO.getStrikes() > 5+1)) {
                 throw new UserValidatorException(
                     "User Validation failed: strikes faulty"
                 );
