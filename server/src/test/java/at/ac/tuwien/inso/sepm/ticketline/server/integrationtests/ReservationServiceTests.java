@@ -12,12 +12,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -61,11 +61,12 @@ public class ReservationServiceTests {
 
     @Before
     public void setUp() {
-
-        Performance performance = performanceRepository.save(newPerformance());
-        PERFORMANCE_TEST_ID = performance.getId();
+        Performance performance = newPerformance();
         Seat seat = seatRepository.save(newSeat());
         SEAT_TEST_ID = seat.getId();
+        performance.setHall(hallforPerformances);
+        performance = performanceRepository.save(performance);
+        PERFORMANCE_TEST_ID = performance.getId();
 
         LinkedList<Seat> seats = new LinkedList<>();
         seats.add(seat);
@@ -90,6 +91,9 @@ public class ReservationServiceTests {
         performanceRepository.deleteAll();
         customerRepository.deleteAll();
         seatRepository.deleteAll();
+        sectorRepository.deleteAll();
+        hallRepository.deleteAll();
+        sectorCategoryRepository.deleteAll();
     }
 
 
@@ -116,19 +120,46 @@ public class ReservationServiceTests {
         Assert.assertFalse(seatOpt.isPresent());
     }
 
+    @Transactional
     @Test(expected = InvalidReservationException.class)
-    public void addLockedSeatToReservation() throws InvalidReservationException {
-        //get reservation
-        var reservation = reservationService.findOneByPaidFalseAndId(RESERVATION_TEST_ID);
-        Assert.assertNotNull(reservation);
-        Assert.assertEquals(false, reservation.isPaid());
+    public void addAlreadyReservedSeatToReservationShouldThrowInvalidReservationException() throws InvalidReservationException {
+        //create reservation
+        Performance performance = performanceRepository.save(newPerformance());
+        Seat seat = Seat.SeatBuilder.aSeat()
+            .withPositionX(5)
+            .withPositionY(5)
+            .withSector(newSector())
+            .build();
+        seat = seatRepository.save(seat);
+        Customer customer = customerRepository.save(newCustomer());
+        performance.setHall(hallforPerformances);
+        performanceRepository.save(performance);
 
-        //remove seats
-        List<Seat> seats = reservation.getSeats();
+        Reservation reservation = Reservation.Builder.aReservation()
+            .withPaid(false)
+            .withCustomer(customer)
+            .withPerformance(performance)
+            .withSeats(List.of(seat))
+            .withReservationNumber("1111111")
+            .build();
+        reservation = reservationRepository.save(reservation);
+
+        //get reservation
+        var reservationToBeEdited = reservationService.findOneByPaidFalseAndId(RESERVATION_TEST_ID);
+        Assert.assertNotNull(reservationToBeEdited);
+        Assert.assertEquals(false, reservationToBeEdited.isPaid());
+
+        //try to reserve already reserved Seat
+        List<Seat> seats = reservationToBeEdited.getSeats();
         Assert.assertEquals(1, seats.size());
-        seats.add(newSeat());
-        reservation.setSeats(seats);
-        reservation = reservationService.editReservation(reservation);
+        Seat invalidSeat = Seat.SeatBuilder.aSeat()
+            .withPositionX(5)
+            .withPositionY(5)
+            .withSector(newSector())
+            .build();
+        seats.add(invalidSeat);
+        reservationToBeEdited.setSeats(seats);
+        reservationService.editReservation(reservationToBeEdited);//<-- should throw the exception
     }
 
 
