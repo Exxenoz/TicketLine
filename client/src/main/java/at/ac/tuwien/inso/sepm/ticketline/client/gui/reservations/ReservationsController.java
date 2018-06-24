@@ -5,6 +5,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.ReservationSearchValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking.PurchaseReservationSummaryController;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.InvoiceService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
@@ -34,7 +35,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.lang.invoke.MethodHandles;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static at.ac.tuwien.inso.sepm.ticketline.client.validator.CustomerValidator.validateFirstName;
@@ -72,12 +75,14 @@ public class ReservationsController {
 
     private final SpringFxmlLoader fxmlLoader;
     private final ReservationService reservationService;
+    private static final String INVOICES_FOLDER = "invoices/";
     private final PurchaseReservationSummaryController PRSController;
     private ObservableList<ReservationDTO> reservationList;
     private int page = 0;
     private int totalPages = 0;
     private static final int RESERVATIONS_PER_PAGE = 50;
     private static final int RESERVATION_FIRST_PAGE = 0;
+    private final InvoiceService invoiceService;
 
     private String activeFilters = "";
     private String performanceName = null;
@@ -89,11 +94,13 @@ public class ReservationsController {
 
     public ReservationsController(SpringFxmlLoader fxmlLoader,
                                   ReservationService reservationService,
+                                  InvoiceService invoiceService,
                                   PurchaseReservationSummaryController PRSController) {
         this.fxmlLoader = fxmlLoader;
         this.reservationService = reservationService;
         this.PRSController = PRSController;
         this.reservationList = FXCollections.observableArrayList();
+        this.invoiceService = invoiceService;
     }
 
     public void loadData() {
@@ -112,18 +119,59 @@ public class ReservationsController {
     }
 
 
+    private void printInvoiceDialog(ReservationDTO reservationDTO) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(BundleManager.getBundle().getString("bookings.cancel.print.title"));
+        alert.setHeaderText(BundleManager.getBundle().getString("bookings.cancel.print.text"));
+        ButtonType buttonTypeYes = new ButtonType(
+            BundleManager.getBundle().getString("bookings.cancel.print.yes")
+        );
+        ButtonType buttonTypeCancel = new ButtonType(
+            BundleManager.getBundle().getString("bookings.cancel.print.no"),
+            ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeCancel);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == buttonTypeYes) {
+            LOGGER.debug("print invoice");
+            File pdf = openPDFFile(reservationDTO);
+//            invoiceService.deletePDF(pdf);
+        } else {
+            LOGGER.debug("do not print invoice");
+        }
+    }
+
+    private File openPDFFile(ReservationDTO reservationDTO) {
+        String filepath = INVOICES_FOLDER
+            + reservationDTO.getReservationNumber()
+            + "_cancelled"
+            + ".pdf";
+        File invoiceFile = new File(filepath);
+        try {
+            LOGGER.debug("getting file {}...", filepath);
+            invoiceService.downloadAndStorePDF(reservationDTO.getReservationNumber(), invoiceFile);
+            invoiceService.openPDF(invoiceFile);
+        } catch (DataAccessException d) {
+            LOGGER.error("An Error occurred whilst the handling of the file: {}", d.getMessage());
+        }
+        return invoiceFile;
+    }
+
     public void cancelReservation(ActionEvent event) {
         ResourceBundle ex = BundleManager.getExceptionBundle();
         int row = foundReservationsTableView.getSelectionModel().getFocusedIndex();
         ReservationDTO selected = reservationList.get(row);
         if (!selected.isPaid()) {
+            ReservationDTO reservationDTO = null;
             try {
-                ReservationDTO reservationDTO = reservationService.cancelReservation(selected.getId());
+                reservationDTO = reservationService.cancelReservation(selected.getId());
                 reservationList.remove(reservationDTO);
                 foundReservationsTableView.getItems().remove(row);
+                printInvoiceDialog(reservationDTO);
             } catch (DataAccessException e) {
                 LOGGER.debug(ex.getString("exception.reservation.cancel.alreadypaid"), e);
             }
+            loadReservationTable(RESERVATION_FIRST_PAGE);
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR, ex.getString("exception.reservation.cancel.alreadypaid"), OK);
             alert.showAndWait();
@@ -154,11 +202,11 @@ public class ReservationsController {
         }
 
         ChangeListener<TableColumn.SortType> tableColumnSortChangeListener = (observable, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 var property = (ObjectProperty<TableColumn.SortType>) observable;
                 sortedColumn = (TableColumn) property.getBean();
                 for (TableColumn tableColumn : foundReservationsTableView.getColumns()) {
-                    if(tableColumn != sortedColumn) {
+                    if (tableColumn != sortedColumn) {
                         tableColumn.setSortType(null);
                     }
                 }
@@ -168,7 +216,7 @@ public class ReservationsController {
             }
         };
 
-        for(TableColumn tableColumn : foundReservationsTableView.getColumns()) {
+        for (TableColumn tableColumn : foundReservationsTableView.getColumns()) {
             tableColumn.setSortType(null);
         }
         eventColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
@@ -237,7 +285,7 @@ public class ReservationsController {
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch reservations from server!");
             //JavaFXUtils.createErrorDialog(e.getMessage(),
-                //content.getScene().getWindow()).showAndWait();
+            //content.getScene().getWindow()).showAndWait();
         }
     }
 
@@ -248,7 +296,7 @@ public class ReservationsController {
             return "customer.lastName";
         } else if (sortedColumn == paidColumn) {
             return "paid";
-        } else if(sortedColumn == reservationIDColumn){
+        } else if (sortedColumn == reservationIDColumn) {
             return "reservationNumber";
         }
         return "id";

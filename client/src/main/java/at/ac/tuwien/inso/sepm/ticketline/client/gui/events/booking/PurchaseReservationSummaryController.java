@@ -6,7 +6,6 @@ import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.event.ActionEvent;
@@ -15,14 +14,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import javax.xml.crypto.Data;
 import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.time.format.DateTimeFormatter;
@@ -134,10 +131,11 @@ public class PurchaseReservationSummaryController {
             + ".pdf";
         File invoiceFile = new File(filepath);
         try {
-            invoiceService.downdloadAndStorePDF(reservation.getReservationNumber(), invoiceFile);
+            LOGGER.debug("getting file {}...", filepath);
+            invoiceService.downloadAndStorePDF(reservation.getReservationNumber(), invoiceFile);
             invoiceService.openPDF(invoiceFile);
         } catch (DataAccessException d) {
-            d.printStackTrace();
+            LOGGER.error("An Error occurred whilst the handling of the file: {}", d.getMessage());
         }
         return invoiceFile;
     }

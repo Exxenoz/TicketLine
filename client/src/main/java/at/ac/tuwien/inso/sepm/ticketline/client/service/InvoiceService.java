@@ -25,7 +25,7 @@ public interface InvoiceService {
      * @param file the PDF-file that will be stored after downloading
      * @throws DataAccessException in case something went wrong during API call
      */
-    void downdloadAndStorePDF(String reservationNumber, File file) throws DataAccessException;
+    void downloadAndStorePDF(String reservationNumber, File file) throws DataAccessException;
 
     /**
      * Opens an existing PDF

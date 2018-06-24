@@ -2,8 +2,6 @@ package at.ac.tuwien.inso.sepm.ticketline.client.service.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.InvoiceRestClient;
-import at.ac.tuwien.inso.sepm.ticketline.client.rest.implementation.RestClient;
-import at.ac.tuwien.inso.sepm.ticketline.client.rest.implementation.SimpleInvoiceRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.InvoiceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +27,7 @@ public class SimpleInvoiceService implements InvoiceService {
     }
 
     @Override
-    public void downdloadAndStorePDF(String reservationNumber, File file) throws DataAccessException {
+    public void downloadAndStorePDF(String reservationNumber, File file) throws DataAccessException {
         downloadPDF(reservationNumber);
         storePDF(file);
     }
