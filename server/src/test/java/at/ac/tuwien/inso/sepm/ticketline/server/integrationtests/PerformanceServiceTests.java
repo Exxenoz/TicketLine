@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -88,56 +90,59 @@ public class PerformanceServiceTests {
     @Autowired
     private ArtistRepository artistRepository;
 
-    /**
+
     @Test
     public void findAll() {
+        Pageable pageable = Pageable.unpaged();
         createPerformances();
-
-        List<Performance> performances = service.findAll();
+        Page<Performance> performances = service.findAll(pageable);
 
         assertThat(performances).containsExactlyInAnyOrder(PERFORMANCE_1, PERFORMANCE_2, PERFORMANCE_3);
     }
 
     @Test
     public void simpleSearchByPerformanceName() {
+        Pageable pageable = Pageable.unpaged();
         createPerformances();
         SearchDTO searchDTO = new SearchDTO();
         searchDTO.setPerformanceName("zauberflöte");
 
-        List<Performance> performances = service.findAll(searchDTO);
-
+        Page<Performance> performances = service.findAll(searchDTO, pageable);
         assertThat(performances).containsExactly(PERFORMANCE_1);
     }
 
     @Test
     public void searchByCity() {
+        Pageable pageable = Pageable.unpaged();
         createPerformances();
         SearchDTO searchDTO = new SearchDTO();
         searchDTO.setCity("Vienna");
 
-        List<Performance> performances = service.findAll(searchDTO);
+        Page<Performance> performances = service.findAll(searchDTO, pageable);
 
         assertThat(performances).containsExactlyInAnyOrder(PERFORMANCE_1, PERFORMANCE_2, PERFORMANCE_3);
     }
 
     @Test
     public void searchByFutureDate() {
+        Pageable pageable = Pageable.unpaged();
         createPerformances();
         SearchDTO searchDTO = new SearchDTO();
         searchDTO.setPerformanceStart(LocalDateTime.now().plusDays(22));
 
-        List<Performance> performances = service.findAll(searchDTO);
+        Page<Performance> performances = service.findAll(searchDTO, pageable);
 
         assertThat(performances).doesNotContain(PERFORMANCE_1, PERFORMANCE_2, PERFORMANCE_3);
     }
 
     @Test
     public void searchByArtistFirstName() {
+        Pageable pageable = Pageable.unpaged();
         createPerformances();
         SearchDTO searchDTO = new SearchDTO();
         searchDTO.setFirstName("artist C");
 
-        List<Performance> performances = service.findAll(searchDTO);
+        Page<Performance> performances = service.findAll(searchDTO, pageable);
 
         assertThat(performances).containsExactly(PERFORMANCE_2);
     }
@@ -147,6 +152,4 @@ public class PerformanceServiceTests {
         artistRepository.saveAll(List.of(ARTIST_1, ARTIST_2, ARTIST_3, ARTIST_4));
         repository.saveAll(List.of(PERFORMANCE_1, PERFORMANCE_2, PERFORMANCE_3));
     }
-
-    */
 }
