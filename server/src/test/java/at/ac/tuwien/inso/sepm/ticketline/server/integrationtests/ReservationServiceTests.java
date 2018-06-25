@@ -443,7 +443,7 @@ public class ReservationServiceTests {
         Performance performance = new Performance();
         performance.setName("test");
         performance.setPrice(100L);
-        performance.setPerformanceStart(LocalDateTime.now());
+        performance.setPerformanceStart(LocalDateTime.now().plusYears(10));
         performance.setDuration(Duration.ofMinutes(20));
 
         LocationAddress address = new LocationAddress();

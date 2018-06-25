@@ -21,7 +21,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -417,7 +416,7 @@ public class ReservationServiceUnitTests {
         performance.setId(1L);
         performance.setName("test");
         performance.setPrice(100L);
-        performance.setPerformanceStart(LocalDateTime.of(2018, Month.APRIL, 21, 1, 1));
+        performance.setPerformanceStart(LocalDateTime.now().plusYears(10));
         performance.setDuration(Duration.ofMinutes(20));
         performance.setHall(newHall());
 
