@@ -32,6 +32,7 @@ public class SimpleInvoiceService implements InvoiceService {
 
     private final ReservationService reservationService;
     private final HtmlBuilderService htmlBuilderService;
+    private final InvoiceConfigurationProperties invoiceConfigurationProperties;
 
     private final Path invoiceLocation;
 
@@ -39,6 +40,7 @@ public class SimpleInvoiceService implements InvoiceService {
                                 InvoiceConfigurationProperties invoiceConfigurationProperties) {
         this.reservationService = reservationService;
         this.htmlBuilderService = htmlBuilderService;
+        this.invoiceConfigurationProperties = invoiceConfigurationProperties;
         this.invoiceLocation = Paths.get(invoiceConfigurationProperties.getLocation());
     }
 
@@ -60,7 +62,13 @@ public class SimpleInvoiceService implements InvoiceService {
             throw new InternalNotFoundException("Could not find reservation for reservation number: " + reservationNumber);
         }
         //First we want to transform the reservation to HTML
-        String source = htmlBuilderService.buildBasicInvoiceHtml(reservation);
+        //and check pricing to decide on invoice type
+        String source = "";
+        if (reservationService.calculatePrice(reservation) >= this.invoiceConfigurationProperties.getDetailedInvoiceLimit()) {
+            source = htmlBuilderService.buildDetailedInvoiceHtml(reservation);
+        } else {
+            source = htmlBuilderService.buildBasicInvoiceHtml(reservation);
+        }
 
         //Then we render it to pdf and store it as file, we use the reservation number as invoice name
         try {
@@ -72,8 +80,26 @@ public class SimpleInvoiceService implements InvoiceService {
     }
 
     @Override
-    public String generateCancellationInvoice(String reservationNumber) throws InternalNotFoundException, InternalInvoiceGenerationException {
-        return null;
+    public void generateCancellationInvoice(String reservationNumber) throws InternalNotFoundException, InternalInvoiceGenerationException {
+        Reservation reservation = reservationService.findOneByReservationNumber(reservationNumber);
+
+        if (reservation == null) {
+            throw new InternalNotFoundException("Could not find reservation for reservation number: " + reservationNumber);
+        }
+        //Check pricing to decide on invoice type
+        String source = "";
+        if (reservationService.calculatePrice(reservation) >= this.invoiceConfigurationProperties.getDetailedInvoiceLimit()) {
+            source = htmlBuilderService.buildDetailedCancellationHtml(reservation);
+        } else {
+            source = htmlBuilderService.buildBasicCancellationHtml(reservation);
+        }
+
+        try {
+            runRendererBuilder(source, reservation.getReservationNumber());
+        } catch (ExternalRendererException | IOException e) {
+            e.printStackTrace();
+            throw new InternalInvoiceGenerationException();
+        }
     }
 
     @Override
@@ -84,10 +110,10 @@ public class SimpleInvoiceService implements InvoiceService {
 
     @Override
     public Resource serveInvoice(String reservationNumber) throws InternalNotFoundException {
-        //Then get the file to put it into response
         try {
             Path file = load(reservationNumber + ".pdf");
             Resource resource = new UrlResource(file.toUri());
+
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             } else {
@@ -100,12 +126,24 @@ public class SimpleInvoiceService implements InvoiceService {
 
     @Override
     public void deletePDF(String reservationNumber) throws InternalNotFoundException {
+        try {
+            Path file = load(reservationNumber + ".pdf");
+            Resource resource = new UrlResource(file.toUri());
 
-    }
+            if (resource.exists() || resource.isReadable()) {
 
-    @Override
-    public void deletePDFByPath(String path) throws InternalNotFoundException {
-
+                try {
+                    resource.getFile().delete();
+                } catch (IOException i) {
+                    LOGGER.warn("Could not delete file {}", resource.getFilename());
+                    throw new InternalNotFoundException("Could not delete invoice file.");
+                }
+            } else {
+                throw new InternalNotFoundException("Could not find invoice file to delete.");
+            }
+        } catch (MalformedURLException m) {
+            throw new InternalNotFoundException("URL for PDF itself could not be resolved.");
+        }
     }
 
     private void runRendererBuilder(String richText, String name) throws IOException, ExternalRendererException {

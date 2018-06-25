@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class InvoiceConfigurationProperties {
 
     private String location = "server-invoices-dir";
+    private Long detailedInvoiceLimit = 40000L;
 
     public String getLocation() {
         return location;
@@ -15,5 +16,13 @@ public class InvoiceConfigurationProperties {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public Long getDetailedInvoiceLimit() {
+        return detailedInvoiceLimit;
+    }
+
+    public void setDetailedInvoiceLimit(Long detailedInvoiceLimit) {
+        this.detailedInvoiceLimit = detailedInvoiceLimit;
     }
 }

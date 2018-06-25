@@ -60,8 +60,7 @@ public class InvoiceEndpoint {
     @PreAuthorize("hasRole('USER')")
     @ApiOperation("Updates the invoice for a cancelled reservation and serves it")
     public ResponseEntity<Resource> updateForCancellationAndServeInvoice(@PathVariable Long reservationNumber) {
-        //TODO: define service method for invoice and use it
-        Resource file = null;
+
 
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
             "attachment; filename=\"" + file.getFilename() + "\"").body(file);
