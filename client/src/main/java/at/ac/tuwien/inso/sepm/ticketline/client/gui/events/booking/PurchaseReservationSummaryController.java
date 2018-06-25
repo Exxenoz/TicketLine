@@ -48,13 +48,13 @@ public class PurchaseReservationSummaryController {
     private final SpringFxmlLoader fxmlLoader;
     public Label customerName;
     public Label performanceDate;
+    public Button printButton;
     private Stage stage;
 
     private ReservationDTO reservation;
     private final ReservationService reservationService;
     private boolean isReservation = false;
     private boolean showDetails = false;
-    private static final String INVOICES_FOLDER = "invoices/";
     private final InvoiceService invoiceService;
 
     PurchaseReservationSummaryController(
@@ -84,6 +84,9 @@ public class PurchaseReservationSummaryController {
         if (isReservation) {
             performanceHeader.setText("Reservation Summary");
             buyButtonPRS.setText("Continue");
+            printButton.setDisable(true);
+            printButton.setVisible(false);
+            printButton.setManaged(false);
         }
 
         if (showDetails) {
@@ -91,6 +94,9 @@ public class PurchaseReservationSummaryController {
             //make sure the reservation is still unpaid
             if (!reservation.isPaid() && !reservation.isCanceled()) {
                 cancelButtonPRS.setText("Edit Reservation");
+                printButton.setDisable(true);
+                printButton.setVisible(false);
+                printButton.setManaged(false);
             } else {
                 cancelButtonPRS.setDisable(true);
                 cancelButtonPRS.setVisible(false);
@@ -99,6 +105,9 @@ public class PurchaseReservationSummaryController {
                 buyButtonPRS.setDisable(true);
                 buyButtonPRS.setVisible(false);
                 buyButtonPRS.setManaged(false);
+                printButton.setDisable(false);
+                printButton.setVisible(true);
+                printButton.setManaged(true);
             }
         }
     }
@@ -129,16 +138,13 @@ public class PurchaseReservationSummaryController {
     private void openPDFFile() {
         try {
             invoiceService.createAndStoreInvoice(reservation.getReservationNumber());
-            runLater(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        invoiceService.openInvoice(reservation.getReservationNumber());
-                    } catch (InvoiceFileException i) {
-                        LOGGER.error("An error occured while trying to store the file: {}", i.getMessage());
-                        Alert alert = new Alert(Alert.AlertType.ERROR, BundleManager.getExceptionBundle().getString("exception.invoice.file"), OK);
-                        alert.showAndWait();
-                    }
+            runLater(() -> {
+                try {
+                    invoiceService.openInvoice(reservation.getReservationNumber());
+                } catch (InvoiceFileException i) {
+                    LOGGER.error("An error occured while trying to store the file: {}", i.getMessage());
+                    Alert alert = new Alert(Alert.AlertType.ERROR, BundleManager.getExceptionBundle().getString("exception.invoice.file"), OK);
+                    alert.showAndWait();
                 }
             });
         } catch (DataAccessException d) {
@@ -148,6 +154,11 @@ public class PurchaseReservationSummaryController {
             Alert alert = new Alert(Alert.AlertType.ERROR, BundleManager.getExceptionBundle().getString("exception.invoice.file"), OK);
             alert.showAndWait();
         }
+    }
+
+    @FXML
+    public void openPDFFileAction() {
+        openPDFFile();
     }
 
     public void buyTicketsButton(ActionEvent event) throws DataAccessException {
