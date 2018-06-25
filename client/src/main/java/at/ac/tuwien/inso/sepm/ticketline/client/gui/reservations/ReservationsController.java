@@ -35,6 +35,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
+import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
 import static at.ac.tuwien.inso.sepm.ticketline.client.validator.CustomerValidator.validateFirstName;
@@ -177,18 +178,25 @@ public class ReservationsController {
         alert.getDialogPane().setMinWidth(500);
         alert.getDialogPane().setMinHeight(100);
 
-        if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
-            try {
-                selected = reservationService.cancelReservation(selected.getId());
-                foundReservationsTableView.getItems().get(row).setCanceled(true);
-                foundReservationsTableView.refresh();
-                //   reservationList.remove(reservationDTO);
-                //   foundReservationsTableView.getItems().remove(row);
-            } catch (DataAccessException e) {
-                LOGGER.error("The reservation with id {} couldn't be canceld", selected.getId(), e);
-            }
+        if (selected.getPerformance().getPerformanceStart().isBefore(LocalDateTime.now())) {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setTitle(BundleManager.getBundle().getString("bookings.cancel.alreadyStartedPerformance.title "));
+            errorAlert.setContentText(BundleManager.getBundle().getString("bookings.cancel.alreadyStartedPerformance.text"));
+            alert.showAndWait();
         } else {
-            alert.close();
+            if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+                try {
+                    selected = reservationService.cancelReservation(selected.getId());
+                    foundReservationsTableView.getItems().get(row).setCanceled(true);
+                    foundReservationsTableView.refresh();
+                    //   reservationList.remove(reservationDTO);
+                    //   foundReservationsTableView.getItems().remove(row);
+                } catch (DataAccessException e) {
+                    LOGGER.error("The reservation with id {} couldn't be canceld", selected.getId(), e);
+                }
+            } else {
+                alert.close();
+            }
         }
     }
 
