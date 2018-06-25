@@ -1,6 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.InvoiceFileException;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.InvoiceService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
@@ -26,6 +27,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+
+import static javafx.scene.control.ButtonType.OK;
 
 @Component
 public class PurchaseReservationSummaryController {
@@ -136,6 +139,10 @@ public class PurchaseReservationSummaryController {
             invoiceService.openPDF(invoiceFile);
         } catch (DataAccessException d) {
             LOGGER.error("An Error occurred whilst handling the file: {}", d.getMessage());
+        } catch (InvoiceFileException i) {
+            LOGGER.error("An error occured while trying to store the file: {}", i.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR, BundleManager.getExceptionBundle().getString("exception.invoice.file"), OK);
+            alert.showAndWait();
         }
         return invoiceFile;
     }

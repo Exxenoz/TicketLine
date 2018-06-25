@@ -2,6 +2,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.reservations;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.CustomerValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.InvoiceFileException;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.ReservationSearchValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking.PurchaseReservationSummaryController;
@@ -204,7 +205,13 @@ public class ReservationsController {
             invoiceService.downloadAndStorePDF(reservationDTO.getReservationNumber(), invoiceFile);
             invoiceService.openPDF(invoiceFile);
         } catch (DataAccessException d) {
-            LOGGER.error("An Error occurred whilst handling the file: {}", d.getMessage());
+            LOGGER.error("An error occurred whilst handling the file: {}", d.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR, BundleManager.getExceptionBundle().getString("exception.invoice.error"), OK);
+            alert.showAndWait();
+        } catch (InvoiceFileException i) {
+            LOGGER.error("An error occured while trying to store the file: {}", i.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR, BundleManager.getExceptionBundle().getString("exception.invoice.file"), OK);
+            alert.showAndWait();
         }
         return invoiceFile;
     }
