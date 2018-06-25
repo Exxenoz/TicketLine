@@ -40,17 +40,17 @@
                         <ChoiceBox fx:id="categoryChoiceBox" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                         </ChoiceBox>
                         <Button fx:id="showTopTenButton" mnemonicParsing="false" onAction="#showTopTenClicked" text="%events.main.button.show" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                        <Label text="%events.main.year" GridPane.columnIndex="0">
+                        <Label fx:id="yearLabel" text="%events.main.year" GridPane.columnIndex="0">
                             <font>
                                 <Font name="System Bold" size="19.0" />
                             </font>
                         </Label>
-                        <Label text="%events.main.month" GridPane.columnIndex="1">
+                        <Label fx:id="monthLabel" text="%events.main.month" GridPane.columnIndex="1">
                             <font>
                                 <Font name="System Bold" size="19.0" />
                             </font>
                         </Label>
-                        <Label text="%events.main.categories" GridPane.columnIndex="2">
+                        <Label fx:id="categoryLabel" text="%events.main.categories" GridPane.columnIndex="2">
                             <font>
                                 <Font name="System Bold" size="19.0" />
                             </font>
@@ -59,7 +59,7 @@
                 </GridPane>
                 <BarChart fx:id="topTenBarChart" animated="false" VBox.vgrow="ALWAYS">
                     <xAxis>
-                        <CategoryAxis fx:id="barAxisX" label="Events" side="BOTTOM" />
+                        <CategoryAxis fx:id="barAxisX" label="%events.main.events" side="BOTTOM" />
                     </xAxis>
                     <yAxis>
                         <NumberAxis animated="false" fx:id="barAxisY" label="%events.main.ticket_sales" side="LEFT" />
@@ -67,7 +67,7 @@
                 </BarChart>
                 <HBox maxHeight="35.0" prefHeight="35.0" spacing="15.0">
                     <children>
-                        <Label text="Event:">
+                        <Label fx:id="eventLabel" text="%events.main.event">
                             <font>
                                 <Font name="System Bold" size="16.0" />
                             </font>

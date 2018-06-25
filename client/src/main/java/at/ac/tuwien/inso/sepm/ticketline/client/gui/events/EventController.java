@@ -6,6 +6,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import org.springframework.stereotype.Component;
 
+import java.util.Locale;
+
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.CALENDAR_ALT;
 
 @Component
@@ -36,5 +38,9 @@ public class EventController {
     public void loadData() {
         eventSearchController.loadData();
         eventTop10Controller.loadData();
+    }
+
+    public void onChangeLanguage(Locale language) {
+        eventTop10Controller.onChangeLanguage(language);
     }
 }
