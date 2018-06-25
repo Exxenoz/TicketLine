@@ -80,6 +80,9 @@ public class PurchaseReservationSummaryController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
         performanceDate.setText(reservation.getPerformance().getPerformanceStart().format(formatter));
         performancePrice.setText(reservation.getPerformance().getPrice().toString());
+        printButton.setDisable(true);
+        printButton.setVisible(false);
+        printButton.setManaged(false);
 
         if (isReservation) {
             performanceHeader.setText("Reservation Summary");
