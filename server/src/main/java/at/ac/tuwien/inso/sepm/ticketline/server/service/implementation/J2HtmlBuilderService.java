@@ -164,7 +164,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
 
                     //Some polite phrasing and performance information phrasing
                     div(
-                        text(
+                        p(
                             BundleManager.getBundle().getString("invoice.thankyou")
                         )
                     ).withClass("block"),
@@ -267,7 +267,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
 
                     //Cancellation text
                     div(
-                        text(
+                        p(
                             BundleManager.getBundle().getString("invoice.cancellation.text")
                         )
                     ).withClass("block"),
