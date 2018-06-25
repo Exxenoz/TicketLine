@@ -16,9 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
@@ -109,6 +108,7 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
+    @Transactional
     public Reservation editReservation(Reservation reservation) throws InvalidReservationException {
         List<Seat> changedSeats = reservation.getSeats();//the changed seats
         Reservation savedReservation = reservationRepository.findByPaidFalseAndId(reservation.getId());
