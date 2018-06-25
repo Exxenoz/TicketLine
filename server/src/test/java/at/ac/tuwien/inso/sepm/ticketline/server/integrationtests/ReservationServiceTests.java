@@ -287,6 +287,43 @@ public class ReservationServiceTests {
     }
 
     @Test
+    public void searchForReservationWithWrongCustomerAndPerformanceDataShouldGetEmptyResult() {
+        Performance performance = newPerformance();
+        Seat seat = seatRepository.save(newSeat());
+        performance.setHall(hallforPerformances);
+        performance = performanceRepository.save(performance);
+
+        LinkedList<Seat> seats = new LinkedList<>();
+        seats.add(seat);
+        Customer customer = customerRepository.save(newCustomer());
+
+        Reservation createdReservation = new Reservation();
+        createdReservation.setPaid(false);
+        createdReservation.setSeats(seats);
+        createdReservation.setPerformance(performance);
+        createdReservation.setCustomer(customer);
+        createdReservation.setReservationNumber("000000");
+
+        createdReservation = reservationRepository.save(createdReservation);
+
+        var reservationSearch = ReservationSearch.Builder.aReservationSearch()
+            .withFirstName("bla")
+            .withLastName("bla")
+            .withPerfomanceName("bla")
+            .build();
+
+
+        //search
+        Pageable pageable = Pageable.unpaged();
+        var reservationPage = reservationService.findAllByCustomerNameAndPerformanceName(
+            reservationSearch, pageable);
+        var reservations = reservationPage.getContent();
+
+        //assert result
+        Assert.assertEquals(0, reservations.size());
+    }
+
+    @Test
     public void createReservation() {
         Performance performance = performanceRepository.save(newPerformance());
         Seat seat = newSeat();
