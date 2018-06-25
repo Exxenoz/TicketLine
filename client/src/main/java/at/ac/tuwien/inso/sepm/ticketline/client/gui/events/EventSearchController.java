@@ -13,6 +13,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -71,6 +72,19 @@ public class EventSearchController {
     public TitledPane eventsTitledPane;
     public TitledPane timeTitledPane;
     public TitledPane cityTitledPane;
+    public Label activeFiltersLabel;
+    public Label artistFirstnameLabel;
+    public Label artistLastnameLabel;
+    public Label eventNameLabel;
+    public Label lengthInMinutesLabel;
+    public Label seatingLabel;
+    public Label beginTimeLabel;
+    public Label priceLabel;
+    public Label locationNameLabel;
+    public Label streetLabel;
+    public Label cityLabel;
+    public Label postalCodeLabel;
+    public Label countryLabel;
 
     // ---------- Show all and search tab -----------
 
@@ -162,10 +176,10 @@ public class EventSearchController {
         beginTimeMinuteSpinner.setValueFactory(beginTimeMinutesFactory);
 
         tabHeaderController.setIcon(CALENDAR_ALT);
-        tabHeaderController.setTitle(BundleManager.getBundle().getString("bookings.table.event"));
+        tabHeaderController.setTitleBinding(BundleManager.getStringBinding("bookings.table.event"));
         initializeTableView();
 
-
+        initI18N();
     }
 
     private void initializeTableView() {
@@ -173,7 +187,7 @@ public class EventSearchController {
             cellData.getValue().getName()));
         eventColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
             cellData.getValue().getEvent().getName()));
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm");
         startTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
             cellData.getValue().getPerformanceStart().format(formatter)));
         locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLocationAddress().getCountry() + ", " +
@@ -189,6 +203,42 @@ public class EventSearchController {
 
     }
 
+    private void initI18N() {
+        activeFiltersLabel.textProperty().bind(BundleManager.getStringBinding("events.main.activefilters"));
+
+        clearButton.textProperty().bind(BundleManager.getStringBinding("events.main.button.clear"));
+
+        nameColumn.textProperty().bind(BundleManager.getStringBinding("events.table.name"));
+        eventColumn.textProperty().bind(BundleManager.getStringBinding("events.table.event"));
+        startTimeColumn.textProperty().bind(BundleManager.getStringBinding("events.table.starttime"));
+        locationColumn.textProperty().bind(BundleManager.getStringBinding("events.table.location"));
+
+        artistTitledPane.textProperty().bind(BundleManager.getStringBinding("events.main.search.artist"));
+        artistFirstnameLabel.textProperty().bind(BundleManager.getStringBinding("events.search.artistfirstname"));
+        artistLastnameLabel.textProperty().bind(BundleManager.getStringBinding("events.search.artistlastname"));
+
+        eventsTitledPane.textProperty().bind(BundleManager.getStringBinding("events.main.search.event"));
+        eventNameLabel.textProperty().bind(BundleManager.getStringBinding("events.search.eventname"));
+        lengthInMinutesLabel.textProperty().bind(BundleManager.getStringBinding("events.search.length"));
+        seatingLabel.textProperty().bind(BundleManager.getStringBinding("events.search.seating"));
+        seatingYesButton.textProperty().bind(BundleManager.getStringBinding("events.search.seatingyes"));
+        seatingNoButton.textProperty().bind(BundleManager.getStringBinding("events.search.seatingno"));
+
+        timeTitledPane.textProperty().bind(BundleManager.getStringBinding("events.main.search.time"));
+        beginTimeLabel.textProperty().bind(BundleManager.getStringBinding("events.search.begintime"));
+        priceLabel.textProperty().bind(BundleManager.getStringBinding("events.search.price"));
+
+        cityTitledPane.textProperty().bind(BundleManager.getStringBinding("events.main.search.city"));
+        locationNameLabel.textProperty().bind(BundleManager.getStringBinding("events.search.locationname"));
+        streetLabel.textProperty().bind(BundleManager.getStringBinding("events.search.street"));
+        cityLabel.textProperty().bind(BundleManager.getStringBinding("events.search.city"));
+        postalCodeLabel.textProperty().bind(BundleManager.getStringBinding("events.search.postalcode"));
+        countryLabel.textProperty().bind(BundleManager.getStringBinding("events.search.contry"));
+
+        bookButton.textProperty().bind(BundleManager.getStringBinding("events.main.button.book"));
+        searchButton.textProperty().bind(BundleManager.getStringBinding("events.main.button.search"));
+    }
+
     //+++++++++++++++++LOAD DATA+++++++++++++++
     public void loadData() {
         final ScrollBar scrollBar = getVerticalScrollbar(foundEventsTableView);
@@ -198,7 +248,6 @@ public class EventSearchController {
                 if ((value == scrollBar.getMax()) && (page + 1 < totalPages)) {
                     page++;
                     double targetValue = value * performanceData.size();
-                    LOGGER.debug("VAL: " + (targetValue / performanceData.size()));
                     loadPerformanceTable(page);
                     scrollBar.setValue(targetValue / performanceData.size());
                 }
@@ -319,9 +368,7 @@ public class EventSearchController {
                                        TextField currentTextField,
                                        String bundleName,
                                        TitledPane currentTitledPane,
-                                       Label errorLabel)
-        throws PerformanceSearchValidationException, AddressValidationException {
-        ResourceBundle labels = BundleManager.getBundle();
+                                       Label errorLabel) {
         String returnString = null;
         Text currentTextChunk = null;
 
@@ -332,7 +379,8 @@ public class EventSearchController {
                     if(limitForActiveFiltersString.length() >= 50) {
                     limitForActiveFiltersString = returnString.substring(0, 50);
                     }
-                currentTextChunk = new Text(labels.getString(bundleName) + " " + limitForActiveFiltersString + " ");
+                currentTextChunk = new Text();
+                currentTextChunk.textProperty().bind(Bindings.concat(BundleManager.getStringBinding(bundleName), " " + limitForActiveFiltersString + " "));
                 textChunks.add(currentTextChunk);
 
                 switch (toValidate){
@@ -368,9 +416,17 @@ public class EventSearchController {
                         break;
                 }
             }
-        } catch (PerformanceSearchValidationException | AddressValidationException e) {
+            errorLabel.textProperty().unbind();
+            errorLabel.setText("");
+        } catch (PerformanceSearchValidationException e) {
             LOGGER.error("Error with artist first name value: ", e.getMessage());
-            errorLabel.setText(e.getMessage());
+            errorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
+            int index = textChunks.indexOf(currentTextChunk);
+            textChunks.get(index).setFill(Paint.valueOf("red"));
+            currentTitledPane.setTextFill(Paint.valueOf("red"));
+        } catch (AddressValidationException e) {
+            LOGGER.error("Error with artist first name value: ", e.getMessage());
+            errorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
             int index = textChunks.indexOf(currentTextChunk);
             textChunks.get(index).setFill(Paint.valueOf("red"));
             currentTitledPane.setTextFill(Paint.valueOf("red"));
@@ -380,7 +436,7 @@ public class EventSearchController {
     }
 
     @FXML
-    void searchForPerformancesButton(ActionEvent event) throws PerformanceSearchValidationException, AddressValidationException {
+    void searchForPerformancesButton(ActionEvent event) {
         clearErrorLabels();
         textChunks = new ArrayList<>();
         updateCurrentFlowPane();
@@ -431,7 +487,7 @@ public class EventSearchController {
             beginTimeHours = beginTimeHourSpinner.getValue();
             beginTimeMinutes = beginTimeMinuteSpinner.getValue();
             beginDateAndTime = LocalDateTime.of(beginDate, LocalTime.of(beginTimeHours, beginTimeMinutes));
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm");
             Text dateText = new Text(labels.getString("events.search.begintime") + " " + beginDateAndTime.format(formatter) + " ");
             textChunks.add(dateText);
         }
@@ -545,25 +601,22 @@ public class EventSearchController {
         countryTextField.setText("");
         postalCodeTextField.setText("");
 
-        locationnameErrorLabel.setText("");
-        streetErrorLabel.setText("");
-        cityErrorLabel.setText("");
-        postalcodeErrorLabel.setText("");
-        artistfirstnameErrorLabel.setText("");
-        artistlastnameErrorLabel.setText("");
-        eventnameErrorLabel.setText("");
-        eventdurationErrorLabel.setText("");
-        starttimeErrorLabel.setText("");
-        priceErrorLabel.setText("");
-        countryErrorLabel.setText("");
-
-        eventsTitledPane.setTextFill(Paint.valueOf("black"));
-        artistTitledPane.setTextFill(Paint.valueOf("black"));
-        timeTitledPane.setTextFill(Paint.valueOf("black"));
-        cityTitledPane.setTextFill(Paint.valueOf("black"));
+        clearErrorLabels();
     }
 
     private void clearErrorLabels(){
+        locationnameErrorLabel.textProperty().unbind();
+        streetErrorLabel.textProperty().unbind();
+        cityErrorLabel.textProperty().unbind();
+        postalcodeErrorLabel.textProperty().unbind();
+        artistfirstnameErrorLabel.textProperty().unbind();
+        artistlastnameErrorLabel.textProperty().unbind();
+        eventnameErrorLabel.textProperty().unbind();
+        eventdurationErrorLabel.textProperty().unbind();
+        starttimeErrorLabel.textProperty().unbind();
+        priceErrorLabel.textProperty().unbind();
+        countryErrorLabel.textProperty().unbind();
+
         locationnameErrorLabel.setText("");
         streetErrorLabel.setText("");
         cityErrorLabel.setText("");
