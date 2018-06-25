@@ -5,6 +5,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.HtmlBuilderService;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.server.util.BundleManager;
+import j2html.tags.ContainerTag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
             "    }\n" +
             "\n" +
             "    td, th {\n" +
+            "        padding-right: 12px;\n" +
             "        width: auto\n" +
             "    }\n" +
             "\n" +
@@ -53,7 +55,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
             "    .company-info {\n" +
             "        background-color: lightgrey;\n" +
             "        display: block;\n" +
-            "        margin-left: 40%;\n" +
+            "        margin-left: 30%;\n" +
             "        margin-right: auto;\n" +
             "        width: auto;\n" +
             "        font-size: 12px;\n" +
@@ -68,7 +70,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
             "    }\n" +
             "\n" +
             "    .regular-table tr td {\n" +
-            "       padding: 8px;\n" +
+            "        padding: 8px;\n" +
             "        width: 40%;\n" +
             "    }\n" +
             "\n" +
@@ -87,7 +89,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
             "\n" +
             "    .large-font {\n" +
             "        font-size: 16px;\n" +
-            "    }\n";
+            "    }";
 
     private final ReservationService reservationService;
 
@@ -105,30 +107,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
                 ),
                 body(
                     //Company information
-                    div(
-                        table(
-                            tbody(
-                                tr(
-                                    th(BundleManager.getBundle().getString("invoice.company")),
-                                    th(BundleManager.getBundle().getString("invoice.uid")),
-                                    th(BundleManager.getBundle().getString("invoice.address.header"))
-                                ),
-                                tr(
-                                    td(BundleManager.getBundle().getString("invoice.company.name")),
-                                    td(BundleManager.getBundle().getString("invoice.uid.number")),
-                                    td(BundleManager.getBundle().getString("invoice.address.value"))
-                                )
-                            ),
-                            tbody(
-                                tr(
-                                    th(BundleManager.getBundle().getString("invoice.creation.date"))
-                                ),
-                                tr(
-                                    td(DATETIME_FORMATTER.format(LocalDateTime.now()))
-                                )
-                            )
-                        ).withClass("company-info")
-                    ),
+                    buildCompanyInformationDiv(),
 
                     //Some polite phrasing and performance information phrasing
                     h1(BundleManager.getBundle().getString("invoice.header")),
@@ -140,81 +119,27 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
 
                     //Performance information
                     h3(BundleManager.getBundle().getString("invoice.performance.info") + ":"),
-                    div(
-                        table(
-                            tr(
-                                th(BundleManager.getBundle().getString("invoice.performance")),
-                                td(reservation.getPerformance().getName())
-                            ),
-                            tr(
-                                th(BundleManager.getBundle().getString("invoice.performance.date")),
-                                td(DATETIME_FORMATTER.format(reservation.getPerformance().getPerformanceStart()))
-                            ),
-                            tr(
-                                th(BundleManager.getBundle().getString("invoice.artist")),
-                                td(buildArtistsRepresentation(reservation.getPerformance().getArtists()))
-                            )
-                        ).withClass("regular-table")
-                    ).withClass("block")
-                ),
+                    buildPerformanceInformationDiv(reservation),
 
-                //Ticket info phrasing
-                div(
+                    //Ticket info phrasing
                     h3(BundleManager.getBundle().getString("invoice.tickets.intro") + ":"),
-                    //Ticket information
-                    table(
-                        tr(
-                            th(),
-                            th(BundleManager.getBundle().getString("invoice.sector")),
-                            th(BundleManager.getBundle().getString("invoice.row")),
-                            th(BundleManager.getBundle().getString("invoice.seat"))
-                        ),
-                        each(reservation.getSeats(), seat ->
-                            tr(
-                                td(BundleManager.getBundle().getString("invoice.ticket")
-                                    + " " + getCountForSeat(reservation.getSeats(), seat)),
-                                td(Integer.toString(seat.getSector().getHallNumber())),
-                                //Make positions human friendly by adding 1
-                                td(getSeatYRepresentation(seat, reservation)),
-                                td(getSeatXRepresentation(seat, reservation))
-                            )
-                        )
-                    ).withClass("regular-table")
-                ).withClass("bordered-div"),
+                    buildTicketInformationDiv(reservation),
 
-                //Pricing
-                div(
-                    table(
-                        tr(
-                            th(BundleManager.getBundle().getString("invoice.price.pretax")),
-                            td(PriceUtils.priceToRepresentation(reservationService.calculatePreTaxPrice(reservation)))
-                        ),
-                        tr(
-                            th(BundleManager.getBundle().getString("invoice.price.tax")),
-                            td(Double.toString(reservationService.getRegularTaxRate()) + "% " +
-                                BundleManager.getBundle().getString("invoice.vat")))
-                        ,
-                        tr(
-                            th(BundleManager.getBundle().getString("invoice.price.taxed")),
-                            td(PriceUtils.priceToRepresentation(reservationService.calculatePrice(reservation))
-                                + " " + BundleManager.getBundle().getString("invoice.include.vat"))
-                        )
-                    ).withClass("regular-table")
-                ).withClass("bordered-div"),
-                div(
-                    h4(BundleManager.getBundle().getString("invoice.performance.paidat")
-                        + ":"
-                        + "\n"
-                        + DATETIME_FORMATTER.format(reservation.getPaidAt()))
-                ),
+                    //Pricing
+                    h3(BundleManager.getBundle().getString("invoice.pricing") + ": "),
+                    buildPricingInformationDiv(reservation),
 
-                //Goodbye
-                div(
-                    text(BundleManager.getBundle().getString("invoice.wishes"))
-                ).withClasses("block", "offset-top", "large-font"),
-                div(
-                    text(BundleManager.getBundle().getString("invoice.yourteam"))
-                ).withClasses("block", "large-font")
+                    //Paid date
+                    buildPaidDateDiv(reservation),
+
+                    //Goodbye
+                    div(
+                        text(BundleManager.getBundle().getString("invoice.wishes"))
+                    ).withClasses("block", "offset-top", "large-font"),
+                    div(
+                        text(BundleManager.getBundle().getString("invoice.yourteam"))
+                    ).withClasses("block", "large-font")
+                )
             ).render();
         LOGGER.debug("Created html: {}", source);
         return source;
@@ -230,49 +155,18 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
                 ),
                 body(
                     //Company information
-                    div(
-                        table(
-                            tbody(
-                                tr(
-                                    th(BundleManager.getBundle().getString("invoice.company")),
-                                    th(BundleManager.getBundle().getString("invoice.uid")),
-                                    th(BundleManager.getBundle().getString("invoice.address.header"))
-                                ),
-                                tr(
-                                    td(BundleManager.getBundle().getString("invoice.company.name")),
-                                    td(BundleManager.getBundle().getString("invoice.uid.number")),
-                                    td(BundleManager.getBundle().getString("invoice.address.value"))
-                                )
-                            ),
-                            tbody(
-                                tr(
-                                    th(BundleManager.getBundle().getString("invoice.creation.date"))
-                                ),
-                                tr(
-                                    td(DATETIME_FORMATTER.format(LocalDateTime.now()))
-                                )
-                            )
-                        ).withClass("company-info")
-                    ),
+                    buildCompanyInformationDiv(),
 
-
-                    //Customer information
+                    //Some polite phrasing and performance information phrasing
+                    h1(BundleManager.getBundle().getString("invoice.header")),
                     div(
-                        table(
-                            tbody(
-                                tr(
-                                    th(BundleManager.getBundle().getString("invoice.first.name")),
-                                    th(BundleManager.getBundle().getString("invoice.last.name")),
-                                    th(BundleManager.getBundle().getString("invoice.address"))
-                                ),
-                                tr(
-                                    td(reservation.getCustomer().getFirstName()),
-                                    td(reservation.getCustomer().getLastName()),
-                                    td(buildAddress(reservation.getCustomer()))
-                                )
-                            )
+                        text(
+                            BundleManager.getBundle().getString("invoice.thankyou")
                         )
                     ).withClass("block"),
+
+                    //Customer information
+                    buildCustomerInformationDiv(reservation),
 
                     //Some polite phrasing and performance information phrasing
                     h1(BundleManager.getBundle().getString("invoice.header")),
@@ -284,81 +178,27 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
 
                     //Performance information
                     h3(BundleManager.getBundle().getString("invoice.performance.info") + ":"),
-                    div(
-                        table(
-                            tr(
-                                th(BundleManager.getBundle().getString("invoice.performance")),
-                                td(reservation.getPerformance().getName())
-                            ),
-                            tr(
-                                th(BundleManager.getBundle().getString("invoice.performance.date")),
-                                td(DATETIME_FORMATTER.format(reservation.getPerformance().getPerformanceStart()))
-                            ),
-                            tr(
-                                th(BundleManager.getBundle().getString("invoice.artist")),
-                                td(buildArtistsRepresentation(reservation.getPerformance().getArtists()))
-                            )
-                        ).withClass("regular-table")
-                    ).withClass("block")
-                ),
+                    buildPerformanceInformationDiv(reservation),
 
-                //Ticket info phrasing
-                div(
+                    //Ticket info phrasing
                     h3(BundleManager.getBundle().getString("invoice.tickets.intro") + ":"),
-                    //Ticket information
-                    table(
-                        tr(
-                            th(),
-                            th(BundleManager.getBundle().getString("invoice.sector")),
-                            th(BundleManager.getBundle().getString("invoice.row")),
-                            th(BundleManager.getBundle().getString("invoice.seat"))
-                        ),
-                        each(reservation.getSeats(), seat ->
-                            tr(
-                                td(BundleManager.getBundle().getString("invoice.ticket")
-                                    + " " + getCountForSeat(reservation.getSeats(), seat)),
-                                td(Integer.toString(seat.getSector().getHallNumber())),
-                                //Make positions human friendly by adding 1
-                                td(getSeatYRepresentation(seat, reservation)),
-                                td(getSeatXRepresentation(seat, reservation))
-                            )
-                        )
-                    ).withClass("regular-table")
-                ).withClass("bordered-div"),
+                    buildTicketInformationDiv(reservation),
 
-                //Pricing
-                div(
-                    table(
-                        tr(
-                            th(BundleManager.getBundle().getString("invoice.price.pretax")),
-                            td(PriceUtils.priceToRepresentation(reservationService.calculatePreTaxPrice(reservation)))
-                        ),
-                        tr(
-                            th(BundleManager.getBundle().getString("invoice.price.tax")),
-                            td(Double.toString(reservationService.getRegularTaxRate()) + "% " +
-                                BundleManager.getBundle().getString("invoice.vat")))
-                        ,
-                        tr(
-                            th(BundleManager.getBundle().getString("invoice.price.taxed")),
-                            td(PriceUtils.priceToRepresentation(reservationService.calculatePrice(reservation))
-                                + " " + BundleManager.getBundle().getString("invoice.include.vat"))
-                        )
-                    ).withClass("regular-table")
-                ).withClass("bordered-div"),
-                div(
-                    h4(BundleManager.getBundle().getString("invoice.performance.paidat")
-                        + ":"
-                        + "\n"
-                        + DATETIME_FORMATTER.format(reservation.getPaidAt()))
-                ),
+                    //Pricing
+                    h3(BundleManager.getBundle().getString("invoice.pricing") + ": "),
+                    buildPricingInformationDiv(reservation),
 
-                //Goodbye
-                div(
-                    text(BundleManager.getBundle().getString("invoice.wishes"))
-                ).withClasses("block", "offset-top", "large-font"),
-                div(
-                    text(BundleManager.getBundle().getString("invoice.yourteam"))
-                ).withClasses("block", "large-font")
+                    //Paid date
+                    buildPaidDateDiv(reservation),
+
+                    //Goodbye
+                    div(
+                        text(BundleManager.getBundle().getString("invoice.wishes"))
+                    ).withClasses("block", "offset-top", "large-font"),
+                    div(
+                        text(BundleManager.getBundle().getString("invoice.yourteam"))
+                    ).withClasses("block", "large-font")
+                )
             ).render();
         LOGGER.debug("Created html: {}", source);
         return source;
@@ -366,15 +206,289 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
 
     @Override
     public String buildBasicCancellationHtml(Reservation reservation) {
-        return null;
+        String source =
+            //Adding head manually to enable style sheet href
+            html(
+                head(
+                    style(CSS_STYLE)
+                ),
+                body(
+                    //Company information
+                    buildCompanyInformationDiv(),
+
+                    //Some polite phrasing and performance information phrasing
+                    h1(BundleManager.getBundle().getString("invoice.header")),
+                    div(
+                        text(
+                            BundleManager.getBundle().getString("invoice.cancellation.text")
+                        )
+                    ).withClass("block"),
+
+                    //Performance information
+                    h3(BundleManager.getBundle().getString("invoice.performance.info") + ":"),
+                    buildPerformanceInformationDiv(reservation),
+
+                    //Ticket info phrasing
+                    buildTicketInformationDiv(reservation),
+
+                    //Pricing
+                    h3(BundleManager.getBundle().getString("invoice.reimbursed") + ": "),
+                    buildCancellationPricingInformationDiv(reservation),
+
+                    //Paid date
+                    buildPaidDateDiv(reservation),
+
+                    //Goodbye
+                    div(
+                        text(BundleManager.getBundle().getString("invoice.thanks"))
+                    ).withClasses("block", "offset-top", "large-font"),
+
+                    div(
+                        text(BundleManager.getBundle().getString("invoice.yourteam"))
+                    ).withClasses("block", "large-font")
+                )
+            ).render();
+
+        return source;
     }
 
     @Override
     public String buildDetailedCancellationHtml(Reservation reservation) {
-        return null;
+        String source =
+            //Adding head manually to enable style sheet href
+            html(
+                head(
+                    style(CSS_STYLE)
+                ),
+                body(
+                    //Company information
+                    buildCompanyInformationDiv(),
+
+                    //Some polite phrasing and performance information phrasing
+                    h1(BundleManager.getBundle().getString("invoice.header")),
+                    div(
+                        text(
+                            BundleManager.getBundle().getString("invoice.cancellation.text")
+                        )
+                    ).withClass("block"),
+
+                    //Customer information
+                    buildCustomerInformationDiv(reservation),
+
+                    //Performance information
+                    h3(BundleManager.getBundle().getString("invoice.performance.info") + ":"),
+                    buildPerformanceInformationDiv(reservation),
+
+                    //Ticket info phrasing
+                    buildTicketInformationDiv(reservation),
+
+                    //Pricing
+                    h3(BundleManager.getBundle().getString("invoice.reimbursed") + ": "),
+                    buildCancellationPricingInformationDiv(reservation),
+
+                    //Paid date
+                    buildPaidDateDiv(reservation),
+
+                    //Goodbye
+                    div(
+                        text(BundleManager.getBundle().getString("invoice.thanks"))
+                    ).withClasses("block", "offset-top", "large-font"),
+
+                    div(
+                        text(BundleManager.getBundle().getString("invoice.yourteam"))
+                    ).withClasses("block", "large-font")
+                )
+            ).render();
+
+        return source;
     }
 
-    private int getCountForSeat(List<Seat> seats, Seat seat) {
+    /**
+     * Builds an html div for the company information
+     *
+     * @return the built company information div
+     */
+    private ContainerTag buildCompanyInformationDiv() {
+        return div(
+            table(
+                tbody(
+                    tr(
+                        th(BundleManager.getBundle().getString("invoice.company")),
+                        th(BundleManager.getBundle().getString("invoice.uid")),
+                        th(BundleManager.getBundle().getString("invoice.address.header"))
+                    ),
+                    tr(
+                        td(BundleManager.getBundle().getString("invoice.company.name")),
+                        td(BundleManager.getBundle().getString("invoice.uid.number")),
+                        td(BundleManager.getBundle().getString("invoice.address.value"))
+                    )
+                ),
+                tbody(
+                    tr(
+                        th(BundleManager.getBundle().getString("invoice.creation.date"))
+                    ),
+                    tr(
+                        td(DATETIME_FORMATTER.format(LocalDateTime.now()))
+                    )
+                )
+            ).withClass("company-info")
+        );
+    }
+
+
+    /**
+     * Builds an html div for the performance information
+     *
+     * @param reservation the reservation the the performance information
+     * @return the built performance information div
+     */
+    private ContainerTag buildPerformanceInformationDiv(Reservation reservation) {
+        return div(
+            table(
+                tr(
+                    th(BundleManager.getBundle().getString("invoice.reservationnumber")),
+                    td(reservation.getReservationNumber())
+                ),
+
+                tr(
+                    th(BundleManager.getBundle().getString("invoice.performance")),
+                    td(reservation.getPerformance().getName())
+                ),
+                tr(
+                    th(BundleManager.getBundle().getString("invoice.performance.date")),
+                    td(DATETIME_FORMATTER.format(reservation.getPerformance().getPerformanceStart()))
+                ),
+                tr(
+                    th(BundleManager.getBundle().getString("invoice.artist")),
+                    td(buildArtistsRepresentation(reservation.getPerformance().getArtists()))
+                )
+            ).withClass("regular-table")
+        ).withClass("block");
+    }
+
+    /**
+     * Builds an html div for the ticket information
+     *
+     * @param reservation the reservation the ticket information stems from
+     * @return the built ticket information div
+     */
+    private ContainerTag buildTicketInformationDiv(Reservation reservation) {
+        return div(
+            //Ticket information
+            table(
+                tr(
+                    th(),
+                    th(BundleManager.getBundle().getString("invoice.sector")),
+                    th(BundleManager.getBundle().getString("invoice.row")),
+                    th(BundleManager.getBundle().getString("invoice.seat"))
+                ),
+                each(reservation.getSeats(), seat ->
+                    tr(
+                        td(BundleManager.getBundle().getString("invoice.ticket")
+                            + " " + getIndexForSeat(reservation.getSeats(), seat)),
+                        td(Integer.toString(seat.getSector().getHallNumber())),
+                        //Make positions human friendly by adding 1
+                        td(getSeatYRepresentation(seat, reservation)),
+                        td(getSeatXRepresentation(seat, reservation))
+                    )
+                )
+            ).withClass("regular-table")
+        ).withClass("bordered-div");
+    }
+
+    /**
+     * Builds an html div for the pricing
+     *
+     * @param reservation the reservation the pricing stems from
+     * @return the built pricing div
+     */
+    private ContainerTag buildPricingInformationDiv(Reservation reservation) {
+        return div(
+            table(
+                tr(
+                    th(BundleManager.getBundle().getString("invoice.price.pretax")),
+                    td(PriceUtils.priceToRepresentation(reservationService.calculatePreTaxPrice(reservation)))
+                ),
+                tr(
+                    th(BundleManager.getBundle().getString("invoice.price.tax")),
+                    td(Double.toString(reservationService.getRegularTaxRate()) + "% " +
+                        BundleManager.getBundle().getString("invoice.vat")))
+                ,
+                tr(
+                    th(BundleManager.getBundle().getString("invoice.price.taxed")),
+                    td(PriceUtils.priceToRepresentation(reservationService.calculatePrice(reservation))
+                        + " " + BundleManager.getBundle().getString("invoice.include.vat"))
+                )
+            ).withClass("regular-table")
+        ).withClass("bordered-div");
+    }
+
+    /**
+     * Builds an html div for the cancellation pricing
+     *
+     * @param reservation the reservation the cancellation pricing stems from
+     * @return the built cancellation pricing div
+     */
+    private ContainerTag buildCancellationPricingInformationDiv(Reservation reservation) {
+        return div(
+            table(
+                tr(
+                    th(BundleManager.getBundle().getString("invoice.total")),
+                    td(PriceUtils.priceToRepresentation(reservationService.calculateReimbursedAmount(reservation))
+                        + " " + BundleManager.getBundle().getString("invoice.include.vat"))
+                )
+            ).withClass("regular-table")
+        ).withClass("bordered-div");
+    }
+
+    /**
+     * Builds an html div for the customer information
+     *
+     * @param reservation the reservation the customer information stems from
+     * @return the built customer information div
+     */
+    private ContainerTag buildCustomerInformationDiv(Reservation reservation) {
+        return div(
+            table(
+                tbody(
+                    tr(
+                        th(BundleManager.getBundle().getString("invoice.first.name")),
+                        th(BundleManager.getBundle().getString("invoice.last.name")),
+                        th(BundleManager.getBundle().getString("invoice.address"))
+                    ),
+                    tr(
+                        td(reservation.getCustomer().getFirstName()),
+                        td(reservation.getCustomer().getLastName()),
+                        td(buildAddress(reservation.getCustomer()))
+                    )
+                )
+            )
+        ).withClass("block");
+    }
+
+    /**
+     * Builds an html div for the paid date information
+     *
+     * @param reservation the reservation the paid date information stems from
+     * @return the built paid date information div in html
+     */
+    private ContainerTag buildPaidDateDiv(Reservation reservation) {
+        return div(
+            h4(BundleManager.getBundle().getString("invoice.performance.paidat")
+                + ":"
+                + "\n"
+                + DATETIME_FORMATTER.format(reservation.getPaidAt()))
+        );
+    }
+
+    /**
+     * Determines the index of a seat in a list of seats
+     *
+     * @param seats the list of seats in which we are looking for a certain seat
+     * @param seat  the seat that we are looking for
+     * @return the index of the seat
+     */
+    private int getIndexForSeat(List<Seat> seats, Seat seat) {
         int i = 0;
         for (Seat s : seats) {
             i++;
@@ -385,6 +499,13 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
         return i;
     }
 
+    /**
+     * Builds the artist representation for a performance, especially takes out the last delimiter
+     * between several artists.
+     *
+     * @param artists the list of artists that will be concatenated
+     * @return a string representation of all artists
+     */
     private String buildArtistsRepresentation(Set<Artist> artists) {
         String out = "";
         int i = 0;
@@ -400,6 +521,13 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
         return out;
     }
 
+    /**
+     * Returns a readable representation of the x-position of a seat
+     *
+     * @param seat        the seat we determine the x-position for
+     * @param reservation the reservation this seat belongs to
+     * @return the readable x-position
+     */
     private String getSeatXRepresentation(Seat seat, Reservation reservation) {
         if (reservation.getPerformance().getEvent().getEventType() == EventType.SECTOR) {
             return BundleManager.getBundle().getString("invoice.free.seating");
@@ -408,6 +536,13 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
         }
     }
 
+    /**
+     * Returns a readable representation fo the y-position of a seat
+     *
+     * @param seat        the seat we determine the x-position for
+     * @param reservation the reservation this seat blongs to
+     * @return the readabe y-position
+     */
     private String getSeatYRepresentation(Seat seat, Reservation reservation) {
         if (reservation.getPerformance().getEvent().getEventType() == EventType.SECTOR) {
             return BundleManager.getBundle().getString("invoice.free.seating");
@@ -416,6 +551,12 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
         }
     }
 
+    /**
+     * Builds the address representation for a customer
+     *
+     * @param customer the customer we build a representation for
+     * @return the built address representation
+     */
     private String buildAddress(Customer customer) {
         String out = "";
         out += customer.getBaseAddress().getStreet() + ", ";

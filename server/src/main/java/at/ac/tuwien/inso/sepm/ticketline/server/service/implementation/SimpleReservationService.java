@@ -300,6 +300,17 @@ public class SimpleReservationService implements ReservationService {
         return calculatedPrice;
     }
 
+    /**
+     * For now we simply return the whole amount of money
+     */
+    @Override
+    public Long calculateReimbursedAmount(Reservation reservation) {
+        Long calculatedPrice = calculatePreTaxPrice(reservation);
+
+        calculatedPrice += Math.round(calculatedPrice * priceCalculationProperties.getSalesTax());
+        return calculatedPrice;
+    }
+
     @Override
     public Double getRegularTaxRate() {
         return priceCalculationProperties.getSalesTax();

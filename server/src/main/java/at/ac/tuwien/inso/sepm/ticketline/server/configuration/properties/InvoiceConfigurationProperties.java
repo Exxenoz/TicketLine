@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("invoice")
 public class InvoiceConfigurationProperties {
 
-    private String location = "invoices-dir";
+    private String location = "server-invoices-dir";
 
     public String getLocation() {
         return location;

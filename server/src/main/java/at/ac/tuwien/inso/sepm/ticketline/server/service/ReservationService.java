@@ -130,6 +130,13 @@ public interface ReservationService {
     Long calculatePreTaxPrice(Reservation reservation);
 
     /**
+     * Calculates the reimbursed amount of a reservation
+     * @param reservation the reservation for which we calculate the reimbursed amount
+     * @return the calculated amount that has to be reimbursed
+     */
+    Long calculateReimbursedAmount(Reservation reservation);
+
+    /**
      * Returns the regular tax rate of price calculation
      * @return the regular tax rate
      */
