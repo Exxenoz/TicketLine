@@ -14,19 +14,21 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
@@ -43,6 +45,18 @@ public class ReservationServiceUnitTests {
     private SeatsService seatsServiceMock;
 
     private Sector testSector;
+    private static final Seat SEAT_TEST = Seat.SeatBuilder.aSeat()
+        .withPositionX(2)
+        .withPositionY(2)
+        .build();
+    private static final Long RESERVATION_TEST_ID_1 = 1L;
+    private static final String RESERVATION_NUMBER_TEST_1 = "0000000";
+    private static final String RESERVATION_NUMBER_TEST_2 = "0000001";
+    private static final Long RESERVATION_TEST_ID_2 = 2L;
+    private static final Long PERFORMANCE_TEST_ID = 1L;
+    private static final Long SEAT_TEST_ID_1 = 1L;
+    private static final Long SEAT_TEST_ID_2 = 2L;
+
 
     @Before
     public void setUp() {
@@ -108,6 +122,286 @@ public class ReservationServiceUnitTests {
         assertThat(returned.isCanceled(), is(true));
     }
 
+    @Test
+    public void purchaseReservation() {
+        Performance performance = newPerformance();
+        Seat seat = newSeat();
+        List<Seat> seats = new LinkedList<>();
+        seats.add(seat);
+        Customer customer = newCustomer();
+
+        Reservation reservation = newReservation(customer, performance, seats);
+        reservation.setId(RESERVATION_TEST_ID_1);
+        reservation.setReservationNumber(RESERVATION_NUMBER_TEST_1);
+
+        when(reservationRepositoryMock.save(reservation)).thenReturn(
+            Reservation.Builder.aReservation()
+                .withCustomer(customer)
+                .withPerformance(performance)
+                .withReservationNumber(RESERVATION_NUMBER_TEST_1)
+                .withSeats(seats)
+                .withId(RESERVATION_TEST_ID_1)
+                .withPaid(true)
+                .withPaidAt(LocalDateTime.now())
+                .build()
+        );
+
+        Reservation purchasedReservation = reservationService.purchaseReservation(reservation);
+        assertTrue(purchasedReservation.isPaid());
+        assertNotNull(purchasedReservation.getPaidAt());
+    }
+
+    @Test
+    public void addSeatToExistingReservation() throws InvalidReservationException {
+        Performance performance = newPerformance();
+        performance.setId(PERFORMANCE_TEST_ID);
+        Seat seat = newSeat();
+        List<Seat> seats = new LinkedList<>();
+        seats.add(seat);
+        Customer customer = newCustomer();
+
+        Reservation reservation = newReservation(customer, performance, seats);
+        reservation.setId(RESERVATION_TEST_ID_1);
+        reservation.setReservationNumber(RESERVATION_NUMBER_TEST_1);
+        reservation.setPaid(false);
+
+        Seat newSeat = SEAT_TEST;
+        newSeat.setSector(testSector);
+        seats.add(newSeat);
+
+        when(reservationRepositoryMock.findByPaidFalseAndId(RESERVATION_TEST_ID_1))
+            .thenReturn(
+                Reservation.Builder.aReservation()
+                    .withId(RESERVATION_TEST_ID_1)
+                    .withSeats(List.of(seat))
+                    .withReservationNumber(reservation.getReservationNumber())
+                    .withPerformance(performance)
+                    .withCustomer(customer)
+                    .withPaid(false)
+                    .withPaidAt(null)
+                    .build()
+            );
+        when(performanceRepositoryMock.findById(PERFORMANCE_TEST_ID)).thenReturn(Optional.of(performance));
+        when(seatsServiceMock.createSeats(seats)).thenReturn(seats);
+        when(reservationRepositoryMock.save(reservation)).thenReturn(
+            Reservation.Builder.aReservation()
+                .withId(RESERVATION_TEST_ID_1)
+                .withSeats(seats)
+                .withReservationNumber(reservation.getReservationNumber())
+                .withPerformance(performance)
+                .withCustomer(customer)
+                .withPaid(false)
+                .withPaidAt(null)
+                .build()
+        );
+
+        reservation.setSeats(seats);
+        var updatedReservation = reservationService.editReservation(reservation);
+        assertEquals(seats.size(), updatedReservation.getSeats().size());
+        for (int i = 0; i < seats.size(); i++) {
+            assertEquals(seats.get(i), updatedReservation.getSeats().get(i));
+        }
+    }
+
+    @Test
+    public void removeSeatFromExistingReservation() throws InvalidReservationException {
+        Performance performance = newPerformance();
+        performance.setId(PERFORMANCE_TEST_ID);
+        Seat seat = newSeat();
+        List<Seat> seats = new LinkedList<>();
+        seats.add(seat);
+        Customer customer = newCustomer();
+
+        Reservation reservation = newReservation(customer, performance, seats);
+        reservation.setId(RESERVATION_TEST_ID_1);
+        reservation.setReservationNumber(RESERVATION_NUMBER_TEST_1);
+        reservation.setPaid(false);
+
+        when(reservationRepositoryMock.findByPaidFalseAndId(RESERVATION_TEST_ID_1))
+            .thenReturn(
+                Reservation.Builder.aReservation()
+                    .withId(RESERVATION_TEST_ID_1)
+                    .withSeats(List.of(seat))
+                    .withReservationNumber(reservation.getReservationNumber())
+                    .withPerformance(performance)
+                    .withCustomer(customer)
+                    .withPaid(false)
+                    .withPaidAt(null)
+                    .build()
+            );
+        when(performanceRepositoryMock.findById(PERFORMANCE_TEST_ID)).thenReturn(Optional.of(performance));
+        when(seatsServiceMock.createSeats(seats)).thenReturn(seats);
+        when(reservationRepositoryMock.save(reservation)).thenReturn(
+            Reservation.Builder.aReservation()
+                .withId(RESERVATION_TEST_ID_1)
+                .withSeats(new LinkedList<>())
+                .withReservationNumber(reservation.getReservationNumber())
+                .withPerformance(performance)
+                .withCustomer(customer)
+                .withPaid(false)
+                .withPaidAt(null)
+                .build()
+        );
+        seats.clear();
+        reservation.setSeats(seats);
+        var updatedReservation = reservationService.editReservation(reservation);
+        assertEquals(0, updatedReservation.getSeats().size());
+    }
+
+    @Test(expected = InvalidReservationException.class)
+    public void tryToAddAlreadyReservedSeatToReservationShouldThrowInvalidReservationException() throws InvalidReservationException {
+        Performance performance = newPerformance();
+        performance.setId(PERFORMANCE_TEST_ID);
+        Seat seat = newSeat();
+        List<Seat> seats = new LinkedList<>();
+        seats.add(seat);
+        Customer customer = newCustomer();
+
+        Reservation reservation = newReservation(customer, performance, seats);
+        reservation.setId(RESERVATION_TEST_ID_1);
+        reservation.setReservationNumber(RESERVATION_NUMBER_TEST_1);
+        reservation.setPaid(false);
+
+        Seat newSeat = Seat.SeatBuilder.aSeat()
+            .withSector(testSector)
+            .withPositionX(seat.getPositionX())
+            .withPositionY(seat.getPositionY())
+            .build();
+        Reservation anotherReservation = newReservation(customer, performance,
+            List.of(newSeat)
+        );
+        anotherReservation.setId(RESERVATION_TEST_ID_2);
+        anotherReservation.setReservationNumber(RESERVATION_NUMBER_TEST_2);
+        anotherReservation.setPaid(false);
+
+        when(reservationRepositoryMock.findByPaidFalseAndId(RESERVATION_TEST_ID_1))
+            .thenReturn(
+                Reservation.Builder.aReservation()
+                    .withId(RESERVATION_TEST_ID_1)
+                    .withSeats(List.of(seat))
+                    .withReservationNumber(reservation.getReservationNumber())
+                    .withPerformance(performance)
+                    .withCustomer(customer)
+                    .withPaid(false)
+                    .withPaidAt(null)
+                    .build()
+            );
+        when(reservationRepositoryMock.findByPaidFalseAndId(RESERVATION_TEST_ID_2))
+            .thenReturn(
+                Reservation.Builder.aReservation()
+                    .withId(RESERVATION_TEST_ID_2)
+                    .withSeats(new LinkedList<>())
+                    .withReservationNumber(anotherReservation.getReservationNumber())
+                    .withPerformance(performance)
+                    .withCustomer(customer)
+                    .withPaid(false)
+                    .withPaidAt(null)
+                    .build()
+            );
+        when(performanceRepositoryMock.findById(PERFORMANCE_TEST_ID)).thenReturn(Optional.of(performance));
+        when(seatsServiceMock.createSeats(seats)).thenReturn(seats);
+        when(reservationRepositoryMock.save(reservation)).thenReturn(
+            Reservation.Builder.aReservation()
+                .withId(RESERVATION_TEST_ID_2)
+                .withSeats(new LinkedList<>())
+                .withReservationNumber(reservation.getReservationNumber())
+                .withPerformance(performance)
+                .withCustomer(customer)
+                .withPaid(false)
+                .withPaidAt(null)
+                .build()
+        );
+        List<Reservation> reservations = new LinkedList<>();
+        reservations.add(reservation);
+        reservations.add(anotherReservation);
+        when(reservationRepositoryMock.findAllByPerformanceId(PERFORMANCE_TEST_ID))
+            .thenReturn(reservations);
+
+        reservation.setSeats(seats);
+        var updatedReservation = reservationService.editReservation(anotherReservation);
+    }
+
+    @Test
+    public void addAndRemoveSeatsToAnExistingReservation() throws InvalidReservationException {
+        Performance performance = newPerformance();
+        performance.setId(PERFORMANCE_TEST_ID);
+        Seat seat = newSeat();
+        List<Seat> seats = new LinkedList<>();
+        seats.add(seat);
+        Customer customer = newCustomer();
+
+        Reservation reservation = newReservation(customer, performance, seats);
+        reservation.setId(RESERVATION_TEST_ID_1);
+        reservation.setReservationNumber(RESERVATION_NUMBER_TEST_1);
+        reservation.setPaid(false);
+
+        when(reservationRepositoryMock.findByPaidFalseAndId(RESERVATION_TEST_ID_1))
+            .thenReturn(
+                Reservation.Builder.aReservation()
+                    .withId(RESERVATION_TEST_ID_1)
+                    .withSeats(List.of(seat))
+                    .withReservationNumber(reservation.getReservationNumber())
+                    .withPerformance(performance)
+                    .withCustomer(customer)
+                    .withPaid(false)
+                    .withPaidAt(null)
+                    .build()
+            );
+        when(performanceRepositoryMock.findById(PERFORMANCE_TEST_ID)).thenReturn(Optional.of(performance));
+        when(seatsServiceMock.createSeats(seats)).thenReturn(seats);
+        Seat newSeat = SEAT_TEST;
+        newSeat.setSector(testSector);
+        when(reservationRepositoryMock.save(reservation)).thenReturn(
+            Reservation.Builder.aReservation()
+                .withId(RESERVATION_TEST_ID_1)
+                .withSeats(List.of(newSeat))
+                .withReservationNumber(reservation.getReservationNumber())
+                .withPerformance(performance)
+                .withCustomer(customer)
+                .withPaid(false)
+                .withPaidAt(null)
+                .build()
+        );
+        seats.remove(0);
+        seats.add(newSeat);
+        reservation.setSeats(seats);
+        var updatedReservation = reservationService.editReservation(reservation);
+        assertEquals(1, updatedReservation.getSeats().size());
+        assertEquals(seats.get(0), updatedReservation.getSeats().get(0));
+    }
+
+    @Test
+    public void findExistingReservationWithCustomerAndPerformance() {
+        Performance performance = newPerformance();
+        performance.setId(PERFORMANCE_TEST_ID);
+        Seat seat = newSeat();
+        List<Seat> seats = new LinkedList<>();
+        seats.add(seat);
+        Customer customer = newCustomer();
+
+        Reservation reservation = newReservation(customer, performance, seats);
+        reservation.setId(RESERVATION_TEST_ID_1);
+        reservation.setReservationNumber(RESERVATION_NUMBER_TEST_1);
+        reservation.setPaid(false);
+
+        when(reservationRepositoryMock.findAllByCustomerNameAndPerformanceName(
+            customer.getFirstName(), customer.getLastName(), performance.getName(),
+            PageRequest.of(0, 10)
+        )).thenReturn(new PageImpl<>(List.of(reservation)));
+
+        List<Reservation> foundReservations = reservationService.findAllByCustomerNameAndPerformanceName(
+            ReservationSearch.Builder.aReservationSearch()
+                .withPerfomanceName(performance.getName())
+                .withFirstName(customer.getFirstName())
+                .withLastName(customer.getLastName())
+                .build(),
+            PageRequest.of(0, 10)
+        ).getContent();
+
+        assertEquals(1, foundReservations.size());
+        Reservation foundReservation = foundReservations.get(0);
+        assertEquals(reservation.getId(), foundReservation.getId());
+    }
 
     private Reservation newReservation(Customer customer, Performance performance, List<Seat> seats) {
         Reservation reservation = new Reservation();
@@ -139,7 +433,7 @@ public class ReservationServiceUnitTests {
 
     private Seat newSeat() {
         Seat seat = new Seat();
-        seat.setId(1L);
+        seat.setId(SEAT_TEST_ID_1);
         seat.setPositionX(1);
         seat.setPositionY(2);
         seat.setSector(testSector);

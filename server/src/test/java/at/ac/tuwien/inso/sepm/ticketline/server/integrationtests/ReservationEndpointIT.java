@@ -29,7 +29,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
@@ -361,7 +360,7 @@ public class ReservationEndpointIT extends BaseIT {
         reservation.setPerformance(performance);
         reservation.setSeats(seats);
         reservation.setPaid(false);
-        reservation.setReservationNumber("0000000");
+        reservation.setReservationNumber(RESERVATIONNUMBER_TEST);
         return reservation;
     }
 
