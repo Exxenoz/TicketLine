@@ -61,11 +61,11 @@ public class UserEndpointIT extends BaseIT {
     @Override
     public void beforeBase() throws InternalPasswordResetException, InternalUserPasswordWrongException, InternalUserNotFoundException, InternalForbiddenException, InternalUserValidationException {
         BDDMockito.
-            given(userRepository.findByUsername("user")).
+            given(userRepository.findByUsername(BaseIT.USER_USERNAME)).
             willReturn(User.builder()
                 .id(1L)
-                .username("user")
-                .password(new BCryptPasswordEncoder(10).encode("password"))
+                .username(BaseIT.USER_USERNAME)
+                .password(new BCryptPasswordEncoder(10).encode(BaseIT.USER_PASSWORD))
                 .enabled(true)
                 .strikes(0)
                 .passwordChangeKey(null)
@@ -73,11 +73,11 @@ public class UserEndpointIT extends BaseIT {
                 .readNews(new HashSet<>())
                 .build());
         BDDMockito.
-            given(userRepository.findByUsername("admin")).
+            given(userRepository.findByUsername(BaseIT.ADMIN_USERNAME)).
             willReturn(User.builder()
                 .id(2L)
-                .username("admin")
-                .password(new BCryptPasswordEncoder(10).encode("password"))
+                .username(BaseIT.ADMIN_USERNAME)
+                .password(new BCryptPasswordEncoder(10).encode(BaseIT.ADMIN_PASSWORD))
                 .enabled(true)
                 .strikes(0)
                 .passwordChangeKey(null)
