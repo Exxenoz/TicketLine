@@ -85,7 +85,7 @@ public class ReservationServiceUnitTests {
         //  reservation.setReservationNumber("000001");
 
         when(reservationRepositoryMock.save(reservation)).thenReturn(newReservation(customer, performance, List.of(seat)));
-        when(performanceRepositoryMock.findById(performance.getId())).thenReturn(Optional.of(newPerformance()));
+        when(performanceRepositoryMock.findById(performance.getId())).thenReturn(Optional.of(performance));
         when(seatsServiceMock.createSeats(List.of(seat))).thenReturn(List.of(newSeat()));
 
         Reservation returned = reservationService.createReservation(reservation);
