@@ -25,13 +25,14 @@ public interface PerformanceRepository extends JpaRepository<Performance, Long>,
 
     /**
      * Finds a list of all performances that match the given criteria
-     * @param searchDTO holds all given criterias
+     * @param searchDTO holds all given criteria
      * @return all performances that match the given criteria
      */
     default Page<Performance> findAll(SearchDTO searchDTO, Pageable pageable) {
         var artistSpecs = new ArtistSpecification(searchDTO.getFirstName(), searchDTO.getLastName());
         var eventSpecs = new EventSpecification(searchDTO.getEventName(), searchDTO.getEventType());
         var performanceSpecs = new PerformanceSpecification(
+            searchDTO.getPerformanceName(),
             searchDTO.getPrice(),
             searchDTO.getPerformanceStart(),
             searchDTO.getDuration(),
