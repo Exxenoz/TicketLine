@@ -56,7 +56,7 @@ public class SimpleInvoiceRestClient implements InvoiceRestClient {
     }
 
     @Override
-    public void createInvoice(String reservationNumber) throws DataAccessException, InvoiceFileException {
+    public byte[] createInvoice(String reservationNumber) throws DataAccessException  {
         try {
             ResponseEntity<byte[]> response =
                 restClient.exchange(
@@ -64,11 +64,9 @@ public class SimpleInvoiceRestClient implements InvoiceRestClient {
                     byte[].class);
 
             if(response.getStatusCode() == HttpStatus.OK) {
-                try {
-                    Files.write(Paths.get(invoiceConfigurationProperties.getLocation() + "/" + reservationNumber + ".pdf"), response.getBody());
-                } catch (IOException io) {
-                    throw new InvoiceFileException(BundleManager.getExceptionBundle().getString("exception.invoice.file"));
-                }
+                return response.getBody();
+            } else {
+                return null;
             }
         } catch (HttpStatusCodeException e) {
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));

@@ -202,8 +202,8 @@ public class ReservationsController {
         File invoiceFile = new File(filepath);
         try {
             LOGGER.debug("getting the file and storing it in {}...", filepath);
-            invoiceService.downloadAndStorePDF(reservationDTO.getReservationNumber(), invoiceFile);
-            invoiceService.openPDF(invoiceFile);
+            invoiceService.downloadAndStorePDF(reservationDTO.getReservationNumber());
+            invoiceService.openPDF(reservationDTO.getReservationNumber());
         } catch (DataAccessException d) {
             LOGGER.error("An error occurred whilst handling the file: {}", d.getMessage());
             Alert alert = new Alert(Alert.AlertType.ERROR, BundleManager.getExceptionBundle().getString("exception.invoice.error"), OK);

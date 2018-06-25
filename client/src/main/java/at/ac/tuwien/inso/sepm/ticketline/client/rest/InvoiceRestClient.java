@@ -12,7 +12,7 @@ public interface InvoiceRestClient {
      * @param reservationNumber the reservation number of the reservation we create the invoice for
      * @throws DataAccessException in case anything goes wrong during invoice creation
      */
-    void createInvoice(String reservationNumber) throws DataAccessException, InvoiceFileException;
+    byte[] createInvoice(String reservationNumber) throws DataAccessException, InvoiceFileException;
 
     /**
      * Simply fetches an invoice

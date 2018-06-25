@@ -28,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import static javafx.application.Platform.runLater;
 import static javafx.scene.control.ButtonType.OK;
 
 @Component
@@ -118,7 +119,7 @@ public class PurchaseReservationSummaryController {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == buttonTypeYes) {
             LOGGER.debug("print invoice");
-            File pdf = openPDFFile();
+            openPDFFile();
 //            invoiceService.deletePDF(pdf);
         } else {
             LOGGER.debug("do not print invoice");
@@ -126,17 +127,21 @@ public class PurchaseReservationSummaryController {
         closeWindow();
     }
 
-    private File openPDFFile() {
-        String filepath = INVOICES_FOLDER
-            + reservation.getReservationNumber()
-            + "_"
-            + reservation.getPaidAt()
-            + ".pdf";
-        File invoiceFile = new File(filepath);
+    private void openPDFFile() {
         try {
-            LOGGER.debug("getting pdf and storing it in {}...", filepath);
-            invoiceService.downloadAndStorePDF(reservation.getReservationNumber(), invoiceFile);
-            invoiceService.openPDF(invoiceFile);
+            invoiceService.downloadAndStorePDF(reservation.getReservationNumber());
+            runLater(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        invoiceService.openPDF(reservation.getReservationNumber());
+                    } catch (InvoiceFileException i) {
+                        LOGGER.error("An error occured while trying to store the file: {}", i.getMessage());
+                        Alert alert = new Alert(Alert.AlertType.ERROR, BundleManager.getExceptionBundle().getString("exception.invoice.file"), OK);
+                        alert.showAndWait();
+                    }
+                }
+            });
         } catch (DataAccessException d) {
             LOGGER.error("An Error occurred whilst handling the file: {}", d.getMessage());
         } catch (InvoiceFileException i) {
@@ -144,7 +149,6 @@ public class PurchaseReservationSummaryController {
             Alert alert = new Alert(Alert.AlertType.ERROR, BundleManager.getExceptionBundle().getString("exception.invoice.file"), OK);
             alert.showAndWait();
         }
-        return invoiceFile;
     }
 
     public void buyTicketsButton(ActionEvent event) throws DataAccessException {
