@@ -107,7 +107,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
                 ),
                 body(
                     //Company information
-                    buildCompanyInformationDiv(),
+                    buildCompanyInformationAndDateDiv(),
 
                     //Some polite phrasing and performance information phrasing
                     h1(BundleManager.getBundle().getString("invoice.header")),
@@ -155,21 +155,14 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
                 ),
                 body(
                     //Company information
-                    buildCompanyInformationDiv(),
-
-                    //Some polite phrasing and performance information phrasing
+                    buildCompanyInformationAndDateDiv(),
                     h1(BundleManager.getBundle().getString("invoice.header")),
-                    div(
-                        text(
-                            BundleManager.getBundle().getString("invoice.thankyou")
-                        )
-                    ).withClass("block"),
 
                     //Customer information
+                    h3(BundleManager.getBundle().getString("invoice.dear")),
                     buildCustomerInformationDiv(reservation),
 
                     //Some polite phrasing and performance information phrasing
-                    h1(BundleManager.getBundle().getString("invoice.header")),
                     div(
                         text(
                             BundleManager.getBundle().getString("invoice.thankyou")
@@ -214,9 +207,9 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
                 ),
                 body(
                     //Company information
-                    buildCompanyInformationDiv(),
+                    buildCompanyInformationAndDateDiv(),
 
-                    //Some polite phrasing and performance information phrasing
+                    //Some polite phrasing and performance cancellation text
                     h1(BundleManager.getBundle().getString("invoice.header")),
                     div(
                         text(
@@ -229,6 +222,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
                     buildPerformanceInformationDiv(reservation),
 
                     //Ticket info phrasing
+                    h3(BundleManager.getBundle().getString("invoice.performance.outro") + ":"),
                     buildTicketInformationDiv(reservation),
 
                     //Pricing
@@ -262,24 +256,28 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
                 ),
                 body(
                     //Company information
-                    buildCompanyInformationDiv(),
+                    buildCompanyInformationAndDateDiv(),
 
                     //Some polite phrasing and performance information phrasing
                     h1(BundleManager.getBundle().getString("invoice.header")),
+
+                    //Customer information
+                    h3(BundleManager.getBundle().getString("invoice.dears")),
+                    buildCustomerInformationDiv(reservation),
+
+                    //Cancellation text
                     div(
                         text(
                             BundleManager.getBundle().getString("invoice.cancellation.text")
                         )
                     ).withClass("block"),
 
-                    //Customer information
-                    buildCustomerInformationDiv(reservation),
-
                     //Performance information
                     h3(BundleManager.getBundle().getString("invoice.performance.info") + ":"),
                     buildPerformanceInformationDiv(reservation),
 
                     //Ticket info phrasing
+                    h3(BundleManager.getBundle().getString("invoice.performance.info") + ":"),
                     buildTicketInformationDiv(reservation),
 
                     //Pricing
@@ -308,7 +306,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
      *
      * @return the built company information div
      */
-    private ContainerTag buildCompanyInformationDiv() {
+    private ContainerTag buildCompanyInformationAndDateDiv() {
         return div(
             table(
                 tbody(

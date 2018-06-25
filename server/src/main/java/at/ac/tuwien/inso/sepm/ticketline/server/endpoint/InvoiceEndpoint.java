@@ -59,11 +59,20 @@ public class InvoiceEndpoint {
     @PutMapping("/{reservationNumber}")
     @PreAuthorize("hasRole('USER')")
     @ApiOperation("Updates the invoice for a cancelled reservation and serves it")
-    public ResponseEntity<Resource> updateForCancellationAndServeInvoice(@PathVariable Long reservationNumber) {
+    public ResponseEntity<Resource> updateForCancellationAndServeInvoice(@PathVariable String reservationNumber) {
+        try {
+            //First we delete the concerning actual PDF
+            invoiceService.deletePDF(reservationNumber);
 
-
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-            "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+            //The we generate a new one and serve it
+            Resource file = invoiceService.generateAndServeCancellationInvoice(reservationNumber);
+            return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+        } catch(InternalNotFoundException n) {
+            throw new HttpNotFoundException();
+        } catch (InternalInvoiceGenerationException g) {
+            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/{reservationID}")

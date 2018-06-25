@@ -109,6 +109,12 @@ public class SimpleInvoiceService implements InvoiceService {
     }
 
     @Override
+    public Resource generateAndServeCancellationInvoice(String reservationNumber) throws InternalNotFoundException, InternalInvoiceGenerationException {
+        generateCancellationInvoice(reservationNumber);
+        return serveInvoice(reservationNumber);
+    }
+
+    @Override
     public Resource serveInvoice(String reservationNumber) throws InternalNotFoundException {
         try {
             Path file = load(reservationNumber + ".pdf");
