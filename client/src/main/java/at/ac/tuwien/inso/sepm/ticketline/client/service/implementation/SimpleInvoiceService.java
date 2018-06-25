@@ -6,6 +6,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.InvoiceFileException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.InvoiceRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.InvoiceService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.DesktopApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -60,6 +61,9 @@ public class SimpleInvoiceService implements InvoiceService {
                 LOGGER.warn("Couldn't open PDF-File");
                 throw new InvoiceFileException(BundleManager.getExceptionBundle().getString("exception.invoice.file.open"));
             }
+        } else {
+            File myFile = new File(invoiceConfigurationProperties.getLocation() + "/" + reservationNumber + ".pdf");
+            DesktopApi.open(myFile);
         }
     }
 
