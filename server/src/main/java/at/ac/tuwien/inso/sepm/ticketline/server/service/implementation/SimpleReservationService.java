@@ -264,15 +264,6 @@ public class SimpleReservationService implements ReservationService {
         return createdReservation;
     }
 
-  /*  public String generateReservationNumber() {
-        String reservationNumber = "";
-        final String ALPHA_NUMERIC_STRING = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789";
-        while (reservationNumber.length() <= 6) {
-            int character = (int) (Math.random() * ALPHA_NUMERIC_STRING.length());
-            reservationNumber += ALPHA_NUMERIC_STRING.charAt(character);
-        }
-        return reservationNumber;
-    } */
 
 
     public String generateReservationNumber() {
@@ -297,6 +288,9 @@ public class SimpleReservationService implements ReservationService {
     @Override
     public Reservation cancelReservation(Long id) throws InternalCancelationException {
         Reservation reservation = reservationRepository.findById(id).orElseThrow(InternalCancelationException::new);
+        if (reservation.getPerformance().getPerformanceStart().isBefore(LocalDateTime.now())) {
+            throw new InternalCancelationException("The performance has already started and the booking can't be canceled!");
+        }
         List<Seat> seatsOfReservation = reservation.getSeats();
         reservation.setSeats(null);
         reservation.setCanceled(true);

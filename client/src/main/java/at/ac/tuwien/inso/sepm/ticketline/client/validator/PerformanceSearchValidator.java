@@ -15,7 +15,7 @@ public class PerformanceSearchValidator {
         String artistFirstName = artistFirstNameTextField.getText();
 
         if(!artistFirstName.matches(STRING_REGEX)){
-            throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.string"));
+            throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.string"), "exception.validator.performance.string");
         }
 
         return validationOfLength(artistFirstName);
@@ -25,7 +25,7 @@ public class PerformanceSearchValidator {
         String artistLastName = artistLastNameTextField.getText();
 
         if (!artistLastName.matches(NUMBER_REGEX)) {
-            throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.numberFormat"));
+            throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.numberFormat"), "exception.validator.performance.numberFormat");
         }
 
         return validationOfLength(artistLastName);
@@ -35,7 +35,7 @@ public class PerformanceSearchValidator {
         String eventName = eventNameTextField.getText();
 
         if(!eventName.matches(STRING_REGEX)){
-            throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.string"));
+            throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.string"), "exception.validator.performance.string");
         }
 
         return validationOfLength(eventName);
@@ -45,7 +45,7 @@ public class PerformanceSearchValidator {
         String durationString = durationTextField.getText();
 
         if(!durationString.matches(NUMBER_REGEX)){
-            throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.numberFormat"));
+            throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.numberFormat"), "exception.validator.performance.numberFormat");
         }
 
         return validationOfLength(durationString);
@@ -55,7 +55,7 @@ public class PerformanceSearchValidator {
         String price = priceTextField.getText();
 
         if(!price.matches(PRICE_REGEX)){
-            throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.numberFormatPositive"));
+            throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.numberFormatPositive"), "exception.validator.performance.numberFormatPositive");
         }
 
         return price;
@@ -64,7 +64,7 @@ public class PerformanceSearchValidator {
     private static String validationOfLength(String stringToValidate) throws PerformanceSearchValidationException {
 
          if (stringToValidate.length() < 1 || stringToValidate.length() > 50) {
-         throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_length"));
+         throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_length"), "exception.validator.reservation.performancename_length");
          }
 
          return stringToValidate;
