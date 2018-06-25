@@ -91,24 +91,45 @@ public class Seat {
             '}';
     }
 
-    public static Seat.SeatBuilder builder() {
-        return new Seat.SeatBuilder();
-    }
-
     public static final class SeatBuilder {
         private Long id;
+        private Integer positionX;
+        private Integer positionY;
+        private Sector sector;
 
         private SeatBuilder() {
         }
 
-        public Seat.SeatBuilder id(Long id) {
+        public static SeatBuilder aSeat() {
+            return new SeatBuilder();
+        }
+
+        public SeatBuilder withId(Long id) {
             this.id = id;
+            return this;
+        }
+
+        public SeatBuilder withPositionX(Integer positionX) {
+            this.positionX = positionX;
+            return this;
+        }
+
+        public SeatBuilder withPositionY(Integer positionY) {
+            this.positionY = positionY;
+            return this;
+        }
+
+        public SeatBuilder withSector(Sector sector) {
+            this.sector = sector;
             return this;
         }
 
         public Seat build() {
             Seat seat = new Seat();
             seat.setId(id);
+            seat.setPositionX(positionX);
+            seat.setPositionY(positionY);
+            seat.setSector(sector);
             return seat;
         }
     }

@@ -168,14 +168,14 @@ public class EventTop10Controller {
 
         try {
             List<EventResponseTopTenDTO> events = eventService.findTopTenByMonthAndCategory(new EventRequestTopTenDTO(month, year, categoryId));
-            showTopTenEvents(events);
+            showTopTenEvents(events, true);
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch top 10 events from server for month: " + month + " " + e.getMessage());
             JavaFXUtils.createErrorDialog(e.getMessage(), monthChoiceBox.getScene().getWindow()).showAndWait();
         }
     }
 
-    private void showTopTenEvents(List<EventResponseTopTenDTO> response) {
+    private void showTopTenEvents(List<EventResponseTopTenDTO> response, boolean repeat) {
         currentEvents.clear();
         topTenBarChart.getData().clear();
         barAxisX.getCategories().clear();
@@ -223,6 +223,10 @@ public class EventTop10Controller {
         }
 
         registerBarChartListener(barSeries);
+
+        if (repeat) {
+            showTopTenEvents(response, false);
+        }
     }
 
     private void registerBarChartListener(XYChart.Series<String, Long> barSeries) {

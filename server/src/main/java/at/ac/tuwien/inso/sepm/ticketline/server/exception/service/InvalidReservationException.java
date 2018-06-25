@@ -1,4 +1,4 @@
-package at.ac.tuwien.inso.sepm.ticketline.server.exception;
+package at.ac.tuwien.inso.sepm.ticketline.server.exception.service;
 
 public class InvalidReservationException extends Exception {
 

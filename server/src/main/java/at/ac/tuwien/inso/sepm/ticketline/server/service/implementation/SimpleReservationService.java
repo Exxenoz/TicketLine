@@ -2,10 +2,10 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.configuration.properties.PriceCalculationProperties;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalCancelationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalHallValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.HallPlanService;
@@ -24,7 +24,6 @@ import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 public class SimpleReservationService implements ReservationService {
@@ -41,6 +40,26 @@ public class SimpleReservationService implements ReservationService {
     private SeatsService seatsService;
 
     private PriceCalculationProperties priceCalculationProperties;
+    //   private long lastReservationNumber = 16777216;
+
+    public ReservationRepository getReservationRepository() {
+        return reservationRepository;
+    }
+
+    @Override
+    public void setReservationRepository(ReservationRepository reservationRepository) {
+        this.reservationRepository = reservationRepository;
+    }
+
+    @Override
+    public void setPerformanceRepository(PerformanceRepository performanceRepository) {
+        this.performanceRepository = performanceRepository;
+    }
+
+    @Override
+    public void setSeatsService(SeatsService seatsService) {
+        this.seatsService = seatsService;
+    }
 
     public SimpleReservationService(PriceCalculationProperties priceCalculationProperties) {
         this.priceCalculationProperties = priceCalculationProperties;
@@ -83,6 +102,7 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
+    @Transactional
     public Reservation createAndPayReservation(Reservation reservation) throws InvalidReservationException, InternalSeatReservationException {
         createReservation(reservation);
         return purchaseReservation(reservation);
@@ -96,18 +116,24 @@ public class SimpleReservationService implements ReservationService {
     @Override
     public Reservation editReservation(Reservation reservation) throws InvalidReservationException {
         List<Seat> changedSeats = reservation.getSeats();//the changed seats
-        List<Seat> savedSeats = reservationRepository.findByPaidFalseAndId(reservation.getId()).getSeats(); //the old seat config
+        Reservation savedReservation = reservationRepository.findByPaidFalseAndId(reservation.getId());
+        List<Seat> savedSeats = savedReservation.getSeats();//the old seat config
         List<Seat> onlyNewSeats = getNewSeats(changedSeats);//the not yet saved seats
 
         //First, get the picked performance for this reservation
-        Performance performance = performanceRepository.findById(reservation.getPerformance().getId()).orElse(null);
+        List<Sector> sectors = null;
+        Performance performance = null;
+        if (performanceRepository.findById(reservation.getPerformance().getId()).isPresent()) {
+            performance = performanceRepository.findById(reservation.getPerformance().getId()).get();
+            sectors = performance.getHall().getSectors();
+        }
 
         //Then, too fail fast, we check the integrity of the seats according to the hall plan and the sectors
         try {
-            if (performance != null) {
-                hallPlanService.checkSeatsAgainstSectors(onlyNewSeats, performance.getHall().getSectors());
+            if (sectors != null) {
+                hallPlanService.checkSeatsAgainstSectors(onlyNewSeats, sectors);
             } else {
-                LOGGER.error("Could not find the the Reservation");
+                LOGGER.error("Could not find the the Sectors for this reservation");
                 throw new InvalidReservationException("The Performance was not set");
             }
         } catch (InternalHallValidationException i) {
@@ -231,17 +257,8 @@ public class SimpleReservationService implements ReservationService {
         Performance currentPerformance = performanceRepository.findById(reservation.getPerformance().getId()).get();
 
         Reservation createdReservation = null;
-        //Generate a unique ID for the reservation
-        boolean unique = false;
-        do {
-            try {
-                reservation.setReservationNumber(generateReservationNumber());
-                //When ID creation is successful, store the reservation
-                unique = true;
-            } catch (ConstraintViolationException e) {
-                unique = false;
-            }
-        } while (!unique);
+
+        reservation.setReservationNumber(generateReservationNumber());
 
         //Set all the information we need and save
         reservation.setSeats(createdSeats);
@@ -252,7 +269,7 @@ public class SimpleReservationService implements ReservationService {
         return createdReservation;
     }
 
-    public String generateReservationNumber() {
+  /*  public String generateReservationNumber() {
         String reservationNumber = "";
         final String ALPHA_NUMERIC_STRING = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789";
         while (reservationNumber.length() <= 6) {
@@ -260,10 +277,25 @@ public class SimpleReservationService implements ReservationService {
             reservationNumber += ALPHA_NUMERIC_STRING.charAt(character);
         }
         return reservationNumber;
+    }*/
+
+    public String generateReservationNumber() {
+        String reservationNumber;
+        Reservation previous = reservationRepository.findFirstByOrderByIdDesc();
+        //if this is the first generated reservation
+        if (previous == null) {
+            //First HEX Number with 7 Numbers
+            long first = 16777216;
+            reservationNumber = Long.toHexString(first);
+            reservationNumber = reservationNumber.toUpperCase();
+        } else {
+            String lastNumber = previous.getReservationNumber();
+            Long lastNumberLong = Long.parseLong(lastNumber, 16);
+            reservationNumber = Long.toHexString(++lastNumberLong);
+            reservationNumber = reservationNumber.toUpperCase();
+        }
+        return reservationNumber;
     }
-
-
-
 
     @Override
     public Reservation cancelReservation(Long id) throws InternalCancelationException {
