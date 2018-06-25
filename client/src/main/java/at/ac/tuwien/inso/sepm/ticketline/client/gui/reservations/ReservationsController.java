@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -45,6 +44,7 @@ import static at.ac.tuwien.inso.sepm.ticketline.client.validator.CustomerValidat
 import static at.ac.tuwien.inso.sepm.ticketline.client.validator.CustomerValidator.validateLastName;
 import static at.ac.tuwien.inso.sepm.ticketline.client.validator.ReservationSearchValidator.validatePerformanceName;
 import static at.ac.tuwien.inso.sepm.ticketline.client.validator.ReservationSearchValidator.validateReservationNumber;
+import static javafx.application.Platform.runLater;
 import static javafx.scene.control.ButtonType.OK;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.TICKET;
 
@@ -106,7 +106,6 @@ public class ReservationsController {
 
     private final SpringFxmlLoader fxmlLoader;
     private final ReservationService reservationService;
-    private static final String INVOICES_FOLDER = "invoices/";
     private final PurchaseReservationSummaryController PRSController;
     private ObservableList<ReservationDTO> reservationList;
     private int page = 0;
@@ -187,33 +186,32 @@ public class ReservationsController {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == buttonTypeYes) {
             LOGGER.debug("print invoice");
-            File pdf = openPDFFile(reservationDTO);
+            openPDFFile(reservationDTO);
 //            invoiceService.deletePDF(pdf);
         } else {
             LOGGER.debug("do not print invoice");
         }
     }
 
-    private File openPDFFile(ReservationDTO reservationDTO) {
-        String filepath = INVOICES_FOLDER
-            + reservationDTO.getReservationNumber()
-            + "_cancelled"
-            + ".pdf";
-        File invoiceFile = new File(filepath);
+    private void openPDFFile(ReservationDTO reservationDTO) {
         try {
-            LOGGER.debug("getting the file and storing it in {}...", filepath);
             invoiceService.downloadAndStorePDF(reservationDTO.getReservationNumber());
-            invoiceService.openPDF(reservationDTO.getReservationNumber());
+            runLater(() -> {
+                try {
+                    invoiceService.openPDF(reservationDTO.getReservationNumber());
+                } catch (InvoiceFileException i) {
+                    LOGGER.error("An error occured while trying to store the file: {}", i.getMessage());
+                    Alert alert = new Alert(Alert.AlertType.ERROR, BundleManager.getExceptionBundle().getString("exception.invoice.file"), OK);
+                    alert.showAndWait();
+                }
+            });
         } catch (DataAccessException d) {
-            LOGGER.error("An error occurred whilst handling the file: {}", d.getMessage());
-            Alert alert = new Alert(Alert.AlertType.ERROR, BundleManager.getExceptionBundle().getString("exception.invoice.error"), OK);
-            alert.showAndWait();
+            LOGGER.error("An Error occurred whilst handling the file: {}", d.getMessage());
         } catch (InvoiceFileException i) {
             LOGGER.error("An error occured while trying to store the file: {}", i.getMessage());
             Alert alert = new Alert(Alert.AlertType.ERROR, BundleManager.getExceptionBundle().getString("exception.invoice.file"), OK);
             alert.showAndWait();
         }
-        return invoiceFile;
     }
 
     public void cancelReservation(ActionEvent event) {
