@@ -386,7 +386,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
                     tr(
                         td(BundleManager.getBundle().getString("invoice.ticket")
                             + " " + getIndexForSeat(reservation.getSeats(), seat)),
-                        td(Integer.toString(seat.getSector().getHallNumber())),
+                        td(Integer.toString(seat.getSector().getHallNumber()) + 1),
                         //Make positions human friendly by adding 1
                         td(getSeatYRepresentation(seat, reservation)),
                         td(getSeatXRepresentation(seat, reservation))
