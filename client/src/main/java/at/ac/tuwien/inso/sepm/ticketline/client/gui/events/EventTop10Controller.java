@@ -176,9 +176,11 @@ public class EventTop10Controller {
         initMonthChoiceBox();
         monthChoiceBox.getSelectionModel().select(selectedIndex);
 
-        selectedIndex = categoryChoiceBox.getSelectionModel().getSelectedIndex();
-        updateCategories();
-        categoryChoiceBox.getSelectionModel().select(selectedIndex);
+        if (categoryChoiceBox.getItems().size() > 0) {
+            selectedIndex = categoryChoiceBox.getSelectionModel().getSelectedIndex();
+            categoryChoiceBox.getItems().set(0, BundleManager.getBundle().getString("events.main.all"));
+            categoryChoiceBox.getSelectionModel().select(selectedIndex);
+        }
     }
 
     public void loadData() {
