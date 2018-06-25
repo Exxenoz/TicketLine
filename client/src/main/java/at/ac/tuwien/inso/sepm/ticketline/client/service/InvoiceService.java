@@ -12,27 +12,27 @@ public interface InvoiceService {
      * @param reservationNumber the established generated and unique identifier of a reservation
      * @throws DataAccessException in case something went wrong during API call
      */
-    byte[] downloadPDF(String reservationNumber) throws DataAccessException, InvoiceFileException;
+    byte[] createInvoice(String reservationNumber) throws DataAccessException, InvoiceFileException;
 
     /**
      * Storing a PDF
      * @param reservationNumber the established generated and unique identifier of a reservation
      * @param pdf the pdf file that will be stored as byte-array
      */
-    void storePDF(String reservationNumber, byte[] pdf) throws InvoiceFileException;
+    void storeInvoice(String reservationNumber, byte[] pdf) throws InvoiceFileException;
 
     /**
      * Combines the actions of downloading and storing a PDF
      * @param reservationNumber the established generated and unique identifier of a reservation
      * @throws DataAccessException in case something went wrong during API call
      */
-    void downloadAndStorePDF(String reservationNumber) throws DataAccessException, InvoiceFileException;
+    void createAndStoreInvoice(String reservationNumber) throws DataAccessException, InvoiceFileException;
 
     /**
      * Opens an existing PDF
      * @param reservationNumber The reservation number of the PDF-file that will be opened
      */
-    void openPDF(String reservationNumber) throws InvoiceFileException;
+    void openInvoice(String reservationNumber) throws InvoiceFileException;
 
     /**
      * Deletes an existing PDF locally on the client

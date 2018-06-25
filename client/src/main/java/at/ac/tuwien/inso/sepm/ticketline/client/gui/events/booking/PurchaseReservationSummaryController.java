@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
@@ -129,12 +128,12 @@ public class PurchaseReservationSummaryController {
 
     private void openPDFFile() {
         try {
-            invoiceService.downloadAndStorePDF(reservation.getReservationNumber());
+            invoiceService.createAndStoreInvoice(reservation.getReservationNumber());
             runLater(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        invoiceService.openPDF(reservation.getReservationNumber());
+                        invoiceService.openInvoice(reservation.getReservationNumber());
                     } catch (InvoiceFileException i) {
                         LOGGER.error("An error occured while trying to store the file: {}", i.getMessage());
                         Alert alert = new Alert(Alert.AlertType.ERROR, BundleManager.getExceptionBundle().getString("exception.invoice.file"), OK);

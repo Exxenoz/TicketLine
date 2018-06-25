@@ -32,18 +32,20 @@ public class SimpleInvoiceService implements InvoiceService {
     }
 
     @Override
-    public byte[] downloadPDF(String reservationNumber) throws DataAccessException, InvoiceFileException {
+    public byte[] createInvoice(String reservationNumber) throws DataAccessException, InvoiceFileException {
         return restClient.createInvoice(reservationNumber);
     }
 
+
+
     @Override
-    public void downloadAndStorePDF(String reservationNumber) throws DataAccessException, InvoiceFileException {
-        byte[] pdf =  downloadPDF(reservationNumber);
-        storePDF(reservationNumber, pdf);
+    public void createAndStoreInvoice(String reservationNumber) throws DataAccessException, InvoiceFileException {
+        byte[] pdf =  createInvoice(reservationNumber);
+        storeInvoice(reservationNumber, pdf);
     }
 
     @Override
-    public void storePDF(String reservationNumber, byte[] pdf) throws InvoiceFileException{
+    public void storeInvoice(String reservationNumber, byte[] pdf) throws InvoiceFileException{
         try {
             Files.write(Paths.get(invoiceConfigurationProperties.getLocation() + "/" + reservationNumber + ".pdf"), pdf);
         } catch (IOException io) {
@@ -52,7 +54,7 @@ public class SimpleInvoiceService implements InvoiceService {
     }
 
     @Override
-    public void openPDF(String reservationNumber) throws InvoiceFileException {
+    public void openInvoice(String reservationNumber) throws InvoiceFileException {
         if (Desktop.isDesktopSupported()) {
             try {
                 File myFile = new File(invoiceConfigurationProperties.getLocation() + "/" + reservationNumber + ".pdf");
