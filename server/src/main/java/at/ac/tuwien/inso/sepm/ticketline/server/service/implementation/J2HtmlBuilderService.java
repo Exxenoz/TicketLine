@@ -1,10 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.util.PriceUtils;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Artist;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.EventType;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Seat;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.HtmlBuilderService;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.server.util.BundleManager;
@@ -119,7 +116,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
                                 tr(
                                     td(BundleManager.getBundle().getString("invoice.company.name")),
                                     td(BundleManager.getBundle().getString("invoice.uid.number")),
-                                    td(BundleManager.getBundle().getString("invoice.address"))
+                                    td(BundleManager.getBundle().getString("invoice.address.value"))
                                 )
                             ),
                             tbody(
@@ -225,7 +222,146 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
 
     @Override
     public String buildDetailedInvoiceHtml(Reservation reservation) {
-        return null;
+        String source =
+            //Adding head manually to enable style sheet href
+            html(
+                head(
+                    style(CSS_STYLE)
+                ),
+                body(
+                    //Company information
+                    div(
+                        table(
+                            tbody(
+                                tr(
+                                    th(BundleManager.getBundle().getString("invoice.company")),
+                                    th(BundleManager.getBundle().getString("invoice.uid")),
+                                    th(BundleManager.getBundle().getString("invoice.address.header"))
+                                ),
+                                tr(
+                                    td(BundleManager.getBundle().getString("invoice.company.name")),
+                                    td(BundleManager.getBundle().getString("invoice.uid.number")),
+                                    td(BundleManager.getBundle().getString("invoice.address.value"))
+                                )
+                            ),
+                            tbody(
+                                tr(
+                                    th(BundleManager.getBundle().getString("invoice.creation.date"))
+                                ),
+                                tr(
+                                    td(DATETIME_FORMATTER.format(LocalDateTime.now()))
+                                )
+                            )
+                        ).withClass("company-info")
+                    ),
+
+
+                    //Customer information
+                    div(
+                        table(
+                            tbody(
+                                tr(
+                                    th(BundleManager.getBundle().getString("invoice.first.name")),
+                                    th(BundleManager.getBundle().getString("invoice.last.name")),
+                                    th(BundleManager.getBundle().getString("invoice.address"))
+                                ),
+                                tr(
+                                    td(reservation.getCustomer().getFirstName()),
+                                    td(reservation.getCustomer().getLastName()),
+                                    td(buildAddress(reservation.getCustomer()))
+                                )
+                            )
+                        )
+                    ).withClass("block"),
+
+                    //Some polite phrasing and performance information phrasing
+                    h1(BundleManager.getBundle().getString("invoice.header")),
+                    div(
+                        text(
+                            BundleManager.getBundle().getString("invoice.thankyou")
+                        )
+                    ).withClass("block"),
+
+                    //Performance information
+                    h3(BundleManager.getBundle().getString("invoice.performance.info") + ":"),
+                    div(
+                        table(
+                            tr(
+                                th(BundleManager.getBundle().getString("invoice.performance")),
+                                td(reservation.getPerformance().getName())
+                            ),
+                            tr(
+                                th(BundleManager.getBundle().getString("invoice.performance.date")),
+                                td(DATETIME_FORMATTER.format(reservation.getPerformance().getPerformanceStart()))
+                            ),
+                            tr(
+                                th(BundleManager.getBundle().getString("invoice.artist")),
+                                td(buildArtistsRepresentation(reservation.getPerformance().getArtists()))
+                            )
+                        ).withClass("regular-table")
+                    ).withClass("block")
+                ),
+
+                //Ticket info phrasing
+                div(
+                    h3(BundleManager.getBundle().getString("invoice.tickets.intro") + ":"),
+                    //Ticket information
+                    table(
+                        tr(
+                            th(),
+                            th(BundleManager.getBundle().getString("invoice.sector")),
+                            th(BundleManager.getBundle().getString("invoice.row")),
+                            th(BundleManager.getBundle().getString("invoice.seat"))
+                        ),
+                        each(reservation.getSeats(), seat ->
+                            tr(
+                                td(BundleManager.getBundle().getString("invoice.ticket")
+                                    + " " + getCountForSeat(reservation.getSeats(), seat)),
+                                td(Integer.toString(seat.getSector().getHallNumber())),
+                                //Make positions human friendly by adding 1
+                                td(getSeatYRepresentation(seat, reservation)),
+                                td(getSeatXRepresentation(seat, reservation))
+                            )
+                        )
+                    ).withClass("regular-table")
+                ).withClass("bordered-div"),
+
+                //Pricing
+                div(
+                    table(
+                        tr(
+                            th(BundleManager.getBundle().getString("invoice.price.pretax")),
+                            td(PriceUtils.priceToRepresentation(reservationService.calculatePreTaxPrice(reservation)))
+                        ),
+                        tr(
+                            th(BundleManager.getBundle().getString("invoice.price.tax")),
+                            td(Double.toString(reservationService.getRegularTaxRate()) + "% " +
+                                BundleManager.getBundle().getString("invoice.vat")))
+                        ,
+                        tr(
+                            th(BundleManager.getBundle().getString("invoice.price.taxed")),
+                            td(PriceUtils.priceToRepresentation(reservationService.calculatePrice(reservation))
+                                + " " + BundleManager.getBundle().getString("invoice.include.vat"))
+                        )
+                    ).withClass("regular-table")
+                ).withClass("bordered-div"),
+                div(
+                    h4(BundleManager.getBundle().getString("invoice.performance.paidat")
+                        + ":"
+                        + "\n"
+                        + DATETIME_FORMATTER.format(reservation.getPaidAt()))
+                ),
+
+                //Goodbye
+                div(
+                    text(BundleManager.getBundle().getString("invoice.wishes"))
+                ).withClasses("block", "offset-top", "large-font"),
+                div(
+                    text(BundleManager.getBundle().getString("invoice.yourteam"))
+                ).withClasses("block", "large-font")
+            ).render();
+        LOGGER.debug("Created html: {}", source);
+        return source;
     }
 
     @Override
@@ -265,7 +401,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
     }
 
     private String getSeatXRepresentation(Seat seat, Reservation reservation) {
-        if(reservation.getPerformance().getEvent().getEventType() == EventType.SECTOR) {
+        if (reservation.getPerformance().getEvent().getEventType() == EventType.SECTOR) {
             return BundleManager.getBundle().getString("invoice.free.seating");
         } else {
             return Integer.toString(seat.getPositionX() + 1);
@@ -273,10 +409,19 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
     }
 
     private String getSeatYRepresentation(Seat seat, Reservation reservation) {
-        if(reservation.getPerformance().getEvent().getEventType() == EventType.SECTOR) {
+        if (reservation.getPerformance().getEvent().getEventType() == EventType.SECTOR) {
             return BundleManager.getBundle().getString("invoice.free.seating");
         } else {
             return Integer.toString(seat.getPositionY() + 1);
         }
+    }
+
+    private String buildAddress(Customer customer) {
+        String out = "";
+        out += customer.getBaseAddress().getStreet() + ", ";
+        out += customer.getBaseAddress().getPostalCode() + " ";
+        out += customer.getBaseAddress().getCity() + ", ";
+        out += customer.getBaseAddress().getCountry();
+        return out;
     }
 }

@@ -95,6 +95,7 @@ public class SimpleAuthenticationService implements AuthenticationService, Dispo
         authenticationInformationService.clearAuthentication();
         authenticationToken = null;
         taskScheduler.shutdown();
+
         if (schedule != null) {
             schedule.cancel(true);
         }
