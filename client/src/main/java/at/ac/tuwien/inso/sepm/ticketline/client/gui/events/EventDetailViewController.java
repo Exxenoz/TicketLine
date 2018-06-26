@@ -131,6 +131,7 @@ public class EventDetailViewController {
 
     @FXML
     public void changeToPerformanceDetailView(ActionEvent event) {
+        LOGGER.debug("User clicked the show performanceDetailView button with {}", chosenPerformance);
         if (chosenPerformance == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
@@ -147,6 +148,7 @@ public class EventDetailViewController {
     }
 
     public void backButton(ActionEvent event) {
+        LOGGER.debug("User clicked the back button");
         Stage stage = (Stage) eventHeading.getScene().getWindow();
         stage.close();
     }
@@ -163,7 +165,7 @@ public class EventDetailViewController {
     }
 
     private void loadPerformanceTable(int page) {
-        LOGGER.debug("Loading Performances of page {}", page);
+        LOGGER.debug("Loading Performances of Page {}", page);
         PageRequestDTO pageRequestDTO = null;
         if (sortedColumn != null) {
             Sort.Direction sortDirection =

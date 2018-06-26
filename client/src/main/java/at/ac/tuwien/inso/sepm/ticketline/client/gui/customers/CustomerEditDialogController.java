@@ -140,7 +140,7 @@ public class CustomerEditDialogController {
     @FXML
     private void onClickSaveCustomerButton(ActionEvent actionEvent) {
 
-        LOGGER.debug("Clicked save customer button");
+        LOGGER.debug("User clicked save customer button");
 
         CustomerDTO customerDTO = new CustomerDTO();
 
@@ -296,6 +296,7 @@ public class CustomerEditDialogController {
     }
 
     private void reserveWithNewCustomer(CustomerDTO newCustomer) {
+        LOGGER.debug("User clicked the reserve with customer button");
         reservation.setCustomer(newCustomer);
         PRSController.fill(reservation, isReservation, stage);
         Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");

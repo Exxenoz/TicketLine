@@ -2,14 +2,12 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.customers;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
-import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationInformationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.CustomerService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
-import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -18,7 +16,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -31,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
 import static javafx.stage.Modality.APPLICATION_MODAL;
@@ -127,7 +123,9 @@ public class CustomerController {
                 double scrollValue = newValue.doubleValue();
                 if (scrollValue == scrollBar.getMax() && (customerTablePage + 1) < customerTablePageCount) {
                     double targetValue = scrollValue * customerList.size();
-                    loadCustomerTable(customerTablePage + 1);
+                    customerTablePage += 1;
+                    LOGGER.debug("Getting next customer Page {}", customerTablePage);
+                    loadCustomerTable(customerTablePage);
                     scrollBar.setValue(targetValue / customerList.size());
                 }
             });
@@ -198,11 +196,11 @@ public class CustomerController {
     }
 
     public void loadCustomerTable(int page) {
+        LOGGER.debug("Loading Customers of page {}", page);
         if (page < 0 || page >= customerTablePageCount) {
             LOGGER.error("Could not load customer table page, because page parameter is invalid!");
             return;
         }
-
         PageRequestDTO pageRequestDTO = null;
 
         if (sortedColumn != null) {
@@ -230,6 +228,7 @@ public class CustomerController {
     }
 
     public void addCustomer(CustomerDTO customerDTO) {
+        LOGGER.debug("User clicked the add button");
         if (customerDTO == null) {
             LOGGER.warn("Could not add customer to table, because object reference is null!");
             return;
@@ -260,7 +259,7 @@ public class CustomerController {
 
     @FXML
     public void onClickCreateCustomerButton(ActionEvent actionEvent) {
-        LOGGER.debug("Clicked create customer button");
+        LOGGER.debug("User clicked create customer button");
 
         final var stage = (Stage) customerTable.getScene().getWindow();
         final var dialog = new Stage();
@@ -276,7 +275,7 @@ public class CustomerController {
 
     @FXML
     public void onClickEditCustomerButton(ActionEvent actionEvent) {
-        LOGGER.debug("Clicked edit customer button");
+        LOGGER.debug("User clicked edit customer button");
 
         CustomerDTO selectedCustomerDTO = customerTable.getSelectionModel().getSelectedItem();
 

@@ -16,12 +16,19 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.RowConstraints;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import java.lang.invoke.MethodHandles;
 
 import static javafx.scene.control.ProgressIndicator.INDETERMINATE_PROGRESS;
 
 @Component
 public class AuthenticationPasswordChangeController {
+
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @FXML
     public Label passwordResetLabel;
@@ -122,6 +129,7 @@ public class AuthenticationPasswordChangeController {
 
     @FXML
     private void handleAuthenticate(ActionEvent actionEvent) {
+        LOGGER.debug("User clicked the reset button");
         final var task = new Task<AuthenticationTokenInfo>() {
             @Override
             protected AuthenticationTokenInfo call() throws DataAccessException {

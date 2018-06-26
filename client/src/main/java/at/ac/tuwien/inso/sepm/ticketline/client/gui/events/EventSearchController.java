@@ -45,11 +45,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import static at.ac.tuwien.inso.sepm.ticketline.client.validator.LocationAddressValidator.*;
+import static at.ac.tuwien.inso.sepm.ticketline.client.validator.PerformanceSearchValidator.*;
 import static javafx.collections.FXCollections.observableArrayList;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.CALENDAR_ALT;
-
-import static at.ac.tuwien.inso.sepm.ticketline.client.validator.PerformanceSearchValidator.*;
-import static at.ac.tuwien.inso.sepm.ticketline.client.validator.LocationAddressValidator.*;
 
 @Component
 public class EventSearchController {
@@ -250,6 +249,7 @@ public class EventSearchController {
                 if ((value == scrollBar.getMax()) && (page + 1 < totalPages)) {
                     page++;
                     double targetValue = value * performanceData.size();
+                    LOGGER.debug("Getting next Page {}", page);
                     loadPerformanceTable(page);
                     scrollBar.setValue(targetValue / performanceData.size());
                 }
@@ -301,6 +301,7 @@ public class EventSearchController {
     }
 
     private void loadPerformanceTable(int page) {
+        LOGGER.debug("Loading Perfomances of Page {}", page);
         PageRequestDTO pageRequestDTO = null;
 
         if (sortedColumn != null) {
@@ -350,6 +351,7 @@ public class EventSearchController {
     //++++++++++++++BUTTONS+++++++++++++++
     @FXML
     private void bookPerformanceButton(ActionEvent event) {
+        LOGGER.debug("User clicked the book button");
         Stage stage = new Stage();
         int row = foundEventsTableView.getSelectionModel().getFocusedIndex();
         performanceDetailViewController.fill(performanceData.get(row), stage);
@@ -439,6 +441,7 @@ public class EventSearchController {
 
     @FXML
     void searchForPerformancesButton(ActionEvent event) {
+        LOGGER.debug("User clicked the search button");
         clearErrorLabels();
         textChunks = new ArrayList<>();
         updateCurrentFlowPane();
@@ -581,6 +584,7 @@ public class EventSearchController {
 
     @FXML
     private void clearAndReloadButton(ActionEvent event) {
+        LOGGER.debug("User clicked the clear button");
         clear();
         loadPerformanceTable(0);
         foundEventsTableView.refresh();
