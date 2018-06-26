@@ -29,6 +29,9 @@ public class SectorDTO {
     @ApiModelProperty(readOnly = true, name= "The number of rows")
     private int rows;
 
+    @ApiModelProperty(readOnly = true, name= "The hall specific order of this sector.")
+    private int hallNumber;
+
     public Long getId() {
         return id;
     }
@@ -76,17 +79,13 @@ public class SectorDTO {
     public void setCategory(SectorCategoryDTO category) {
         this.category = category;
     }
-//kleinesgackiwarda
-    @Override
-    public String toString() {
-        return "SectorDTO{" +
-            "id=" + id +
-            ", category=" + category +
-            ", startPositionX=" + startPositionX +
-            ", startPositionY=" + startPositionY +
-            ", seatsPerRow=" + seatsPerRow +
-            ", rows=" + rows +
-            '}';
+
+    public int getHallNumber() {
+        return hallNumber;
+    }
+
+    public void setHallNumber(int hallNumber) {
+        this.hallNumber = hallNumber;
     }
 
     @Override
@@ -98,6 +97,7 @@ public class SectorDTO {
             getStartPositionY() == sectorDTO.getStartPositionY() &&
             getSeatsPerRow() == sectorDTO.getSeatsPerRow() &&
             getRows() == sectorDTO.getRows() &&
+            getHallNumber() == sectorDTO.getHallNumber() &&
             Objects.equals(getId(), sectorDTO.getId()) &&
             Objects.equals(getCategory(), sectorDTO.getCategory());
     }
@@ -105,6 +105,19 @@ public class SectorDTO {
     @Override
     public int hashCode() {
 
-        return Objects.hash(getId(), getCategory(), getStartPositionX(), getStartPositionY(), getSeatsPerRow(), getRows());
+        return Objects.hash(getId(), getCategory(), getStartPositionX(), getStartPositionY(), getSeatsPerRow(), getRows(), getHallNumber());
+    }
+
+    @Override
+    public String toString() {
+        return "SectorDTO{" +
+            "id=" + id +
+            ", category=" + category +
+            ", startPositionX=" + startPositionX +
+            ", startPositionY=" + startPositionY +
+            ", seatsPerRow=" + seatsPerRow +
+            ", rows=" + rows +
+            ", hallNumber=" + hallNumber +
+            '}';
     }
 }

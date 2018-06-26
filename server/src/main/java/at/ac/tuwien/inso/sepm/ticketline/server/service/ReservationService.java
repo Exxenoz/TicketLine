@@ -2,15 +2,20 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationSearch;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalCancelationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InvalidReservationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
+import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface ReservationService {
+
+
+    void setSeatsService(SeatsService seatsService);
 
     /**
      * Find all reservation entries by event id.
@@ -115,11 +120,47 @@ public interface ReservationService {
      */
     List<Reservation> findReservationsForPerformance(Long id);
 
-
     /**
-     * Calculates the price of a reservation
+     * Calculates the price of a reservation with tax
      * @param reservation the reservation whose price will be checked
      * @return the price of this reservation in cents
      */
     Long calculatePrice(Reservation reservation);
+
+    /**
+     * Calculates the price of a reservation without tax
+     * @param reservation the reservation whose price will be checked
+     * @return the price of this reservation in cents
+     */
+    Long calculatePreTaxPrice(Reservation reservation);
+
+    /**
+     * Calculates the reimbursed amount of a reservation
+     * @param reservation the reservation for which we calculate the reimbursed amount
+     * @return the calculated amount that has to be reimbursed
+     */
+    Long calculateReimbursedAmount(Reservation reservation);
+
+    /**
+     * Returns the regular tax rate of price calculation
+     * @return the regular tax rate
+     */
+    Double getRegularTaxRate();
+
+
+    /**
+     * setter for reservation repository
+     *
+     * @param reservationRepository
+     */
+    public void setReservationRepository(ReservationRepository reservationRepository);
+
+    /**
+     * setter for performance repository
+     *
+     * @param performanceRepository
+     */
+    public void setPerformanceRepository(PerformanceRepository performanceRepository);
+
+
 }

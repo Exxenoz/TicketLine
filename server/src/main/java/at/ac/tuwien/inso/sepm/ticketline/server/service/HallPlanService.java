@@ -10,6 +10,14 @@ import java.util.List;
 public interface HallPlanService {
 
     /**
+     * Gets a Hall by ID
+     *
+     * @param id the id of the Hall
+     * @return the found Hall
+     */
+    Hall findHallPlanById(Long id);
+
+    /**
      * Checks whether or not the given sectors are coherent and valid against a chosen hall
      * @param sectors the list of sectors that will be checked
      * @param hall the hall the list of sectors is being checked against

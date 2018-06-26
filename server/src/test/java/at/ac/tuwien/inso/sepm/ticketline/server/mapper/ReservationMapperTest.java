@@ -24,9 +24,9 @@ public class ReservationMapperTest {
 
     private static final long PERFORMANCE_ID = 2L;
     private static final long CUSTOMER_ID = 3L;
-    private static final Seat SEAT_1 = Seat.builder().id(1L).build();
-    private static final Seat SEAT_2 = Seat.builder().id(2L).build();
-    private static final Seat SEAT_3 = Seat.builder().id(3L).build();
+    private static final Seat SEAT_1 = Seat.SeatBuilder.aSeat().withId(1L).build();
+    private static final Seat SEAT_2 = Seat.SeatBuilder.aSeat().withId(2L).build();
+    private static final Seat SEAT_3 = Seat.SeatBuilder.aSeat().withId(3L).build();
 
     @Configuration
     @ComponentScan(basePackages = "at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper")
@@ -49,7 +49,7 @@ public class ReservationMapperTest {
         createReservationDTO.setPerformanceID(PERFORMANCE_ID);
         createReservationDTO.setCustomerID(CUSTOMER_ID);
 
-        createReservationDTO.setSeats(List.of(seatMapper.seatToSeatDTO(SEAT_1), seatMapper.seatToSeatDTO(SEAT_1),
+        createReservationDTO.setSeats(List.of(seatMapper.seatToSeatDTO(SEAT_1), seatMapper.seatToSeatDTO(SEAT_2),
             seatMapper.seatToSeatDTO(SEAT_3)));
 
         // WHEN

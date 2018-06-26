@@ -14,10 +14,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.RowConstraints;
 import org.springframework.stereotype.Component;
 
@@ -27,16 +24,37 @@ import static javafx.scene.control.ProgressIndicator.INDETERMINATE_PROGRESS;
 public class AuthenticationPasswordChangeController {
 
     @FXML
+    public Label passwordResetLabel;
+
+    @FXML
+    public Label passwordResetKeyInstructionsLabel;
+
+    @FXML
     public RowConstraints errorLabelRow1;
 
     @FXML
     public RowConstraints errorLabelRow2;
 
     @FXML
+    public ButtonBar buttonBar;
+
+    @FXML
+    public Button backButton;
+
+    @FXML
+    public Label passwordResetKeyLabel;
+
+    @FXML
     private TextField txtPasswordResetKey;
 
     @FXML
+    public Label passwordLabel;
+
+    @FXML
     private PasswordField txtPassword;
+
+    @FXML
+    public Label passwordRepeatLabel;
 
     @FXML
     private PasswordField txtPasswordRepeat;
@@ -64,6 +82,34 @@ public class AuthenticationPasswordChangeController {
         this.authenticationService = authenticationService;
         this.userService = userService;
         this.mainController = mainController;
+    }
+
+    @FXML
+    private void initialize() {
+        ButtonBar.setButtonUniformSize(backButton, false);
+        ButtonBar.setButtonUniformSize(btnAuthenticate, false);
+
+        initI18N();
+    }
+
+    private void initI18N() {
+        passwordResetLabel.textProperty().bind(BundleManager.getStringBinding("authenticate.password_reset"));
+        passwordResetKeyInstructionsLabel.textProperty().bind(BundleManager.getStringBinding("authenticate.password_reset_key_instructions"));
+
+        passwordResetKeyLabel.textProperty().bind(BundleManager.getStringBinding("authenticate.password_reset_key"));
+        passwordLabel.textProperty().bind(BundleManager.getStringBinding("authenticate.password"));
+        passwordRepeatLabel.textProperty().bind(BundleManager.getStringBinding("authenticate.password_repeat"));
+
+        txtPasswordResetKey.promptTextProperty().bind(BundleManager.getStringBinding("authenticate.password_reset_key"));
+        txtPassword.promptTextProperty().bind(BundleManager.getStringBinding("authenticate.password"));
+        txtPasswordRepeat.promptTextProperty().bind(BundleManager.getStringBinding("authenticate.password"));
+
+        passwordResetKeyMissingLabel.textProperty().bind(BundleManager.getStringBinding("authenticate.password_reset_key_missing"));
+        passwordMissingLabel.textProperty().bind(BundleManager.getStringBinding("authenticate.password_missing"));
+        passwordNotMatchingLabel.textProperty().bind(BundleManager.getStringBinding("authenticate.password_not_matching"));
+
+        backButton.textProperty().bind(BundleManager.getStringBinding("authenticate.password_change.back"));
+        btnAuthenticate.textProperty().bind(BundleManager.getStringBinding("authenticate.submit"));
     }
 
     public void setUsername(String username) {

@@ -61,6 +61,12 @@ public class EventDetailViewController {
     private Label eventTypeEvent;
 
     @FXML
+    private Button backButton;
+
+    @FXML
+    private Button performanceDetailButton;
+
+    @FXML
     private TableView<PerformanceDTO> performanceDatesTableView;
 
     @FXML
@@ -101,14 +107,11 @@ public class EventDetailViewController {
         this.performanceService = performanceService;
     }
 
-    public Button performanceButtonEvent;
-    @FXML
-    private Button bookButtonEvent;
-
-
     @FXML
     private void initialize() {
         initializeTableView();
+        ButtonBar.setButtonUniformSize(backButton, false);
+        ButtonBar.setButtonUniformSize(performanceDetailButton, false);
     }
 
     private ScrollBar getVerticalScrollbar(TableView<?> table) {
@@ -153,7 +156,7 @@ public class EventDetailViewController {
         eventHeading.setText(event.getName());
         eventNameEvent.setText(event.getName());
         descriptionText.setText(event.getDescription());
-        eventTypeEvent.setText(event.getEventType() == SEAT ? "yes" : "no");
+        eventTypeEvent.setText(event.getEventType() == SEAT ? BundleManager.getBundle().getString("events.eventDetailView.seatingOption.yes") : BundleManager.getBundle().getString("events.eventDetailView.seatingOption.no"));
 
         //find first page of performances for the given event
         loadData();

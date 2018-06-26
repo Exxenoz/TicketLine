@@ -1,6 +1,8 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.AddressValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
+import at.ac.tuwien.inso.sepm.ticketline.client.exception.PerformanceSearchValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
@@ -11,6 +13,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -23,6 +26,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.paint.Paint;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -36,16 +42,52 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import static javafx.collections.FXCollections.observableArrayList;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.CALENDAR_ALT;
 
+import static at.ac.tuwien.inso.sepm.ticketline.client.validator.PerformanceSearchValidator.*;
+import static at.ac.tuwien.inso.sepm.ticketline.client.validator.LocationAddressValidator.*;
+
 @Component
 public class EventSearchController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+
+    public Label locationnameErrorLabel;
+    public Label streetErrorLabel;
+    public Label cityErrorLabel;
+    public Label postalcodeErrorLabel;
+    public Label artistfirstnameErrorLabel;
+    public Label artistlastnameErrorLabel;
+    public Label eventnameErrorLabel;
+    public Label eventdurationErrorLabel;
+    public Label starttimeErrorLabel;
+    public Label priceErrorLabel;
+    public Label countryErrorLabel;
+    public FlowPane flowpane;
+    public TitledPane artistTitledPane;
+    public TitledPane eventsTitledPane;
+    public TitledPane timeTitledPane;
+    public TitledPane cityTitledPane;
+    public Label activeFiltersLabel;
+    public Label artistFirstnameLabel;
+    public Label artistLastnameLabel;
+    public Label eventNameLabel;
+    public Label lengthInMinutesLabel;
+    public Label seatingLabel;
+    public Label beginTimeLabel;
+    public Label priceLabel;
+    public Label locationNameLabel;
+    public Label streetLabel;
+    public Label cityLabel;
+    public Label postalCodeLabel;
+    public Label countryLabel;
+
     // ---------- Show all and search tab -----------
+
     @FXML
     private TabHeaderController tabHeaderController;
     @FXML
@@ -104,20 +146,21 @@ public class EventSearchController {
     private final SpringFxmlLoader fxmlLoader;
     private final PerformanceService performanceService;
     private final PerformanceDetailViewController performanceDetailViewController;
+    private static final int PERFORMANCES_PER_PAGE = 50;
 
     private ObservableList<PerformanceDTO> performanceData = observableArrayList();
     private int page = 0;
     private int totalPages = 0;
-    private static final int PERFORMANCES_PER_PAGE = 50;
-
-    private String activeFilters = "";
+    private ArrayList<Text> textChunks = new ArrayList<Text>();
     private TableColumn sortedColumn;
+    private enum Validate { artistFristName, artistLastName, eventName, duration, price, locationName, city, street, country, postalcode }
 
     public EventSearchController(SpringFxmlLoader fxmlLoader, PerformanceService performanceService, PerformanceDetailViewController performanceDetailViewController) {
         this.fxmlLoader = fxmlLoader;
         this.performanceService = performanceService;
         this.performanceDetailViewController = performanceDetailViewController;
     }
+
 
     //+++++++++++INITIALIZE+++++++++++++++
     public void initialize() {
@@ -133,10 +176,10 @@ public class EventSearchController {
         beginTimeMinuteSpinner.setValueFactory(beginTimeMinutesFactory);
 
         tabHeaderController.setIcon(CALENDAR_ALT);
-        tabHeaderController.setTitle(BundleManager.getBundle().getString("bookings.table.event"));
+        tabHeaderController.setTitleBinding(BundleManager.getStringBinding("bookings.table.event"));
         initializeTableView();
 
-
+        initI18N();
     }
 
     private void initializeTableView() {
@@ -144,10 +187,10 @@ public class EventSearchController {
             cellData.getValue().getName()));
         eventColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
             cellData.getValue().getEvent().getName()));
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm");
         startTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
             cellData.getValue().getPerformanceStart().format(formatter)));
-        locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty( cellData.getValue().getLocationAddress().getCountry() + ", " +
+        locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLocationAddress().getCountry() + ", " +
             cellData.getValue().getLocationAddress().getCity()));
 
         startTimeColumn.setComparator((d1, d2) -> {
@@ -160,6 +203,42 @@ public class EventSearchController {
 
     }
 
+    private void initI18N() {
+        activeFiltersLabel.textProperty().bind(BundleManager.getStringBinding("events.main.activefilters"));
+
+        clearButton.textProperty().bind(BundleManager.getStringBinding("events.main.button.clear"));
+
+        nameColumn.textProperty().bind(BundleManager.getStringBinding("events.table.name"));
+        eventColumn.textProperty().bind(BundleManager.getStringBinding("events.table.event"));
+        startTimeColumn.textProperty().bind(BundleManager.getStringBinding("events.table.starttime"));
+        locationColumn.textProperty().bind(BundleManager.getStringBinding("events.table.location"));
+
+        artistTitledPane.textProperty().bind(BundleManager.getStringBinding("events.main.search.artist"));
+        artistFirstnameLabel.textProperty().bind(BundleManager.getStringBinding("events.search.artistfirstname"));
+        artistLastnameLabel.textProperty().bind(BundleManager.getStringBinding("events.search.artistlastname"));
+
+        eventsTitledPane.textProperty().bind(BundleManager.getStringBinding("events.main.search.event"));
+        eventNameLabel.textProperty().bind(BundleManager.getStringBinding("events.search.eventname"));
+        lengthInMinutesLabel.textProperty().bind(BundleManager.getStringBinding("events.search.length"));
+        seatingLabel.textProperty().bind(BundleManager.getStringBinding("events.search.seating"));
+        seatingYesButton.textProperty().bind(BundleManager.getStringBinding("events.search.seatingyes"));
+        seatingNoButton.textProperty().bind(BundleManager.getStringBinding("events.search.seatingno"));
+
+        timeTitledPane.textProperty().bind(BundleManager.getStringBinding("events.main.search.time"));
+        beginTimeLabel.textProperty().bind(BundleManager.getStringBinding("events.search.begintime"));
+        priceLabel.textProperty().bind(BundleManager.getStringBinding("events.search.price"));
+
+        cityTitledPane.textProperty().bind(BundleManager.getStringBinding("events.main.search.city"));
+        locationNameLabel.textProperty().bind(BundleManager.getStringBinding("events.search.locationname"));
+        streetLabel.textProperty().bind(BundleManager.getStringBinding("events.search.street"));
+        cityLabel.textProperty().bind(BundleManager.getStringBinding("events.search.city"));
+        postalCodeLabel.textProperty().bind(BundleManager.getStringBinding("events.search.postalcode"));
+        countryLabel.textProperty().bind(BundleManager.getStringBinding("events.search.contry"));
+
+        bookButton.textProperty().bind(BundleManager.getStringBinding("events.main.button.book"));
+        searchButton.textProperty().bind(BundleManager.getStringBinding("events.main.button.search"));
+    }
+
     //+++++++++++++++++LOAD DATA+++++++++++++++
     public void loadData() {
         final ScrollBar scrollBar = getVerticalScrollbar(foundEventsTableView);
@@ -169,7 +248,6 @@ public class EventSearchController {
                 if ((value == scrollBar.getMax()) && (page + 1 < totalPages)) {
                     page++;
                     double targetValue = value * performanceData.size();
-                    LOGGER.debug("VAL: " + (targetValue / performanceData.size()));
                     loadPerformanceTable(page);
                     scrollBar.setValue(targetValue / performanceData.size());
                 }
@@ -185,7 +263,7 @@ public class EventSearchController {
         }
 
         ChangeListener<TableColumn.SortType> tableColumnSortChangeListener = (observable, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 var property = (ObjectProperty<TableColumn.SortType>) observable;
                 sortedColumn = (TableColumn) property.getBean();
                 for (TableColumn tableColumn : foundEventsTableView.getColumns()) {
@@ -198,7 +276,7 @@ public class EventSearchController {
             }
         };
 
-        for(TableColumn tableColumn : foundEventsTableView.getColumns()) {
+        for (TableColumn tableColumn : foundEventsTableView.getColumns()) {
             tableColumn.setSortType(null);
         }
         nameColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
@@ -220,7 +298,7 @@ public class EventSearchController {
         }
     }
 
-    private void loadPerformanceTable(int page){
+    private void loadPerformanceTable(int page) {
         PageRequestDTO pageRequestDTO = null;
 
         if (sortedColumn != null) {
@@ -235,14 +313,15 @@ public class EventSearchController {
             performanceData.addAll(responseDTO.getContent());
             totalPages = responseDTO.getTotalPages();
             foundEventsTableView.refresh();
-        }catch (DataAccessException e){
+        } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch performance from server!");
         }
     }
 
+
     private ScrollBar getVerticalScrollbar(TableView<?> table){
         ScrollBar result = null;
-        for (Node n : table.lookupAll(".scroll-bar")){
+        for (Node n : table.lookupAll(".scroll-bar")) {
             if (n instanceof ScrollBar) {
                 ScrollBar bar = (ScrollBar) n;
                 if (bar.getOrientation().equals(Orientation.VERTICAL)) {
@@ -285,35 +364,120 @@ public class EventSearchController {
         stage.showAndWait();
     }
 
+    String setActiveFiltersAndValidate(Validate toValidate,
+                                       TextField currentTextField,
+                                       String bundleName,
+                                       TitledPane currentTitledPane,
+                                       Label errorLabel) {
+        String returnString = null;
+        Text currentTextChunk = null;
+
+        try {
+            if (currentTextField.getText() != null && !currentTextField.getText().equals("")) {
+                returnString = currentTextField.getText();
+                String limitForActiveFiltersString = currentTextField.getText();
+                    if(limitForActiveFiltersString.length() >= 50) {
+                    limitForActiveFiltersString = returnString.substring(0, 50);
+                    }
+                currentTextChunk = new Text();
+                currentTextChunk.textProperty().bind(Bindings.concat(BundleManager.getStringBinding(bundleName), " " + limitForActiveFiltersString + " "));
+                textChunks.add(currentTextChunk);
+
+                switch (toValidate){
+                    case artistFristName:
+                        returnString = validateArtistFirstName(currentTextField);
+                        break;
+                    case artistLastName:
+                        returnString = validateArtistLastName(currentTextField);
+                        break;
+                    case eventName:
+                        returnString = validateEventName(currentTextField);
+                        break;
+                    case duration:
+                        returnString = validateDuration(currentTextField);
+                        break;
+                    case price:
+                        returnString = validatePrice(currentTextField);
+                        break;
+                    case locationName:
+                        returnString = validateLocationName(currentTextField);
+                        break;
+                    case street:
+                        returnString = validateStreet(currentTextField);
+                        break;
+                    case city:
+                        returnString = validateCity(currentTextField);
+                        break;
+                    case country:
+                        returnString = validateCountry(currentTextField);
+                        break;
+                    case postalcode:
+                        returnString = validatePostalCode(currentTextField);
+                        break;
+                }
+            }
+            errorLabel.textProperty().unbind();
+            errorLabel.setText("");
+        } catch (PerformanceSearchValidationException e) {
+            LOGGER.error("Error with artist first name value: ", e.getMessage());
+            errorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
+            int index = textChunks.indexOf(currentTextChunk);
+            textChunks.get(index).setFill(Paint.valueOf("red"));
+            currentTitledPane.setTextFill(Paint.valueOf("red"));
+        } catch (AddressValidationException e) {
+            LOGGER.error("Error with artist first name value: ", e.getMessage());
+            errorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
+            int index = textChunks.indexOf(currentTextChunk);
+            textChunks.get(index).setFill(Paint.valueOf("red"));
+            currentTitledPane.setTextFill(Paint.valueOf("red"));
+        }
+
+        return returnString;
+    }
+
     @FXML
     void searchForPerformancesButton(ActionEvent event) {
-        activeFilters = "";
-        updateCurrentSearchParameters();
+        clearErrorLabels();
+        textChunks = new ArrayList<>();
+        updateCurrentFlowPane();
         ResourceBundle labels = BundleManager.getBundle();
 
+        //+++++++++++++++++++++++ARTIST++++++++++++++++++++
 
-        String artistFirstName = artistFirstNameTextField.getText();
-        addToCurrentSearchParameters(labels.getString("events.search.artistfirstname") + " " + artistFirstName);
-        String artistLastName = artistLastNameTextField.getText();
-        addToCurrentSearchParameters(labels.getString("events.search.artistlastname") + " " + artistLastName);
+        String artistFirstNameBundle = "events.search.artistfirstname";
+        String artistFirstName = setActiveFiltersAndValidate(Validate.artistFristName, artistFirstNameTextField, artistFirstNameBundle, artistTitledPane, artistfirstnameErrorLabel);
 
-        String eventName = eventNameTextField.getText();
-        addToCurrentSearchParameters(labels.getString("events.search.eventname") + " " + eventName);
+        String artistLastNameBundle = "events.search.artistlastname";
+        String artistLastName = setActiveFiltersAndValidate(Validate.artistLastName, artistLastNameTextField, artistLastNameBundle, artistTitledPane, artistlastnameErrorLabel);
+
+        //+++++++++++++++++++++++EVENT++++++++++++++++++++
+
+        String eventNameBundle = "events.search.eventname";
+        String eventName = setActiveFiltersAndValidate(Validate.eventName, eventNameTextField, eventNameBundle, eventsTitledPane, eventnameErrorLabel);
+
         EventTypeDTO eventType = null;
         if (seatingYesButton.isSelected()) {
             eventType = EventTypeDTO.SEAT;
-            addToCurrentSearchParameters(labels.getString("events.search.seating") + " " + eventType.toString());
+            Text eventTypeText = new Text(labels.getString("events.search.seating") + " " + eventType.toString());
+            textChunks.add(eventTypeText);
         } else if (seatingNoButton.isSelected()) {
             eventType = EventTypeDTO.SECTOR;
-            addToCurrentSearchParameters(labels.getString("events.search.seating") + " " + eventType.toString());
+            Text eventTypeText = new Text(labels.getString("events.search.seating") + " " + eventType.toString());
+            textChunks.add(eventTypeText);
         }
-        String durationString = lengthInMinutesTextField.getText();
-        Duration duration = null;
 
-        if (durationString.matches("[0-9]+")) {
-            addToCurrentSearchParameters(labels.getString("events.search.length") + " " + durationString + " min");
-            duration = Duration.ofMinutes(Integer.parseInt(durationString));
+        String durationBundle = "events.search.length";
+        String durationStringValue = setActiveFiltersAndValidate(Validate.duration, lengthInMinutesTextField, durationBundle, eventsTitledPane, eventdurationErrorLabel);
+        Duration duration = null;
+        if(durationStringValue != null) {
+            try {
+                duration = Duration.ofMinutes(Integer.parseInt(durationStringValue));
+            }catch (NumberFormatException e){
+                //ignore;
+            }
         }
+
+        //+++++++++++++++++++++++TIME++++++++++++++++++++
 
         LocalDate beginDate = beginTimeDatePicker.getValue();
         LocalDateTime beginDateAndTime = null;
@@ -323,29 +487,51 @@ public class EventSearchController {
             beginTimeHours = beginTimeHourSpinner.getValue();
             beginTimeMinutes = beginTimeMinuteSpinner.getValue();
             beginDateAndTime = LocalDateTime.of(beginDate, LocalTime.of(beginTimeHours, beginTimeMinutes));
-            addToCurrentSearchParameters(labels.getString("events.search.begintime") + " " + beginDateAndTime.toString());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm");
+            Text dateText = new Text(labels.getString("events.search.begintime") + " " + beginDateAndTime.format(formatter) + " ");
+            textChunks.add(dateText);
         }
 
-        String priceString = priceTextField.getText();
+        String priceBundle = "events.search.price";
+        String priceString = setActiveFiltersAndValidate(Validate.price, priceTextField, priceBundle, timeTitledPane, priceErrorLabel);
         Long price = null;
-        try {
-            price = Long.valueOf(priceString);
-            addToCurrentSearchParameters(labels.getString("events.search.price") + " " + priceString);
-        } catch (NumberFormatException ignored) {
+        if(priceString != null) {
+            try {
+                price = Long.valueOf(priceString);
+            }catch (NumberFormatException e){
+                //ignore;
+            }
         }
 
-        String locationName = locationNameTextField.getText();
-        addToCurrentSearchParameters(labels.getString("events.search.locationname") + " " + locationName);
-        String street = streetTextField.getText();
-        addToCurrentSearchParameters(labels.getString("events.search.street") + " " + street);
-        String city = cityTextField.getText();
-        addToCurrentSearchParameters(labels.getString("events.search.city") + " " + city);
-        String country = countryTextField.getText();
-        addToCurrentSearchParameters(labels.getString("events.search.contry") + " " + country);
-        String postalCode = postalCodeTextField.getText();
-        addToCurrentSearchParameters(labels.getString("events.search.postalcode") + " " + postalCode);
+        //+++++++++++++++++++++++LOCATION++++++++++++++++++++
 
-        SearchDTO searchParameters = new SearchDTO(null, eventName, artistFirstName, artistLastName, eventType, beginDateAndTime, price, locationName, street, city, country, postalCode, duration);
+        String locationBundle = "events.search.locationname";
+        String locationName = setActiveFiltersAndValidate(Validate.locationName, locationNameTextField, locationBundle, cityTitledPane, locationnameErrorLabel);
+
+        String streetBundle = "events.search.street";
+        String street = setActiveFiltersAndValidate(Validate.street, streetTextField, streetBundle, cityTitledPane, streetErrorLabel);
+
+        String cityBundle = "events.search.city";
+        String city = setActiveFiltersAndValidate(Validate.city, cityTextField, cityBundle, cityTitledPane, cityErrorLabel);
+
+        String countryBundle = "events.search.contry";
+        String country = setActiveFiltersAndValidate(Validate.country, countryTextField, countryBundle, cityTitledPane, countryErrorLabel);
+
+        String postalCodeBundle = "events.search.postalcode";
+        String postalCode = setActiveFiltersAndValidate(Validate.postalcode, postalCodeTextField, postalCodeBundle, cityTitledPane, postalcodeErrorLabel);
+
+
+
+
+
+        SearchDTO searchParameters = new SearchDTO(
+            null, eventName,
+            artistFirstName, artistLastName,
+            eventType, beginDateAndTime,
+            price, locationName,
+            street, city,
+            country, postalCode,
+            duration);
 
         try {
             PageRequestDTO pageRequestDTO = new PageRequestDTO();
@@ -357,26 +543,13 @@ public class EventSearchController {
             totalPages = response.getTotalPages();
             initializeTableView();
             foundEventsTableView.refresh();
-            updateCurrentSearchParameters();
+            updateCurrentFlowPane();
         } catch (DataAccessException e) {
             LOGGER.error("Search failed!", e);
             JavaFXUtils.createErrorDialog(e.getMessage(),
                 priceTextField.getScene().getWindow()).showAndWait();
         }
 
-    }
-
-    private void addToCurrentSearchParameters(String searchParameter) {
-        if (searchParameter != null && !searchParameter.equals("")) {
-            char last = searchParameter.charAt(searchParameter.length() - 1);
-            if (!(last == ':' || last == ' ')) {
-                if (activeFilters.length() <= 1) {
-                    activeFilters += searchParameter;
-                } else {
-                    activeFilters += ", " + searchParameter;
-                }
-            }
-        }
     }
 
     private SpinnerValueFactory<Integer> buildSpinner(int maxValue) {
@@ -403,33 +576,70 @@ public class EventSearchController {
         };
     }
 
+
     @FXML
     private void clearAndReloadButton(ActionEvent event) {
         clear();
-            loadPerformanceTable(0);
-            foundEventsTableView.refresh();
-            activeFilters = "";
-            updateCurrentSearchParameters();
+        loadPerformanceTable(0);
+        foundEventsTableView.refresh();
+        textChunks.clear();
+        updateCurrentFlowPane();
 
-            artistFirstNameTextField.setText("");
-            artistLastNameTextField.setText("");
-            eventNameTextField.setText("");
-            seatingYesButton.setSelected(false);
-            seatingNoButton.setSelected(false);
-            lengthInMinutesTextField.setText("");
-            beginTimeDatePicker.setValue(null);
-            beginTimeHourSpinner.getValueFactory().setValue(0);
-            beginTimeMinuteSpinner.getValueFactory().setValue(0);
-            priceTextField.setText("");
-            locationNameTextField.setText("");
-            streetTextField.setText("");
-            cityTextField.setText("");
-            countryTextField.setText("");
-            postalCodeTextField.setText("");
+        artistFirstNameTextField.setText("");
+        artistLastNameTextField.setText("");
+        eventNameTextField.setText("");
+        seatingYesButton.setSelected(false);
+        seatingNoButton.setSelected(false);
+        lengthInMinutesTextField.setText("");
+        beginTimeDatePicker.setValue(null);
+        beginTimeHourSpinner.getValueFactory().setValue(0);
+        beginTimeMinuteSpinner.getValueFactory().setValue(0);
+        priceTextField.setText("");
+        locationNameTextField.setText("");
+        streetTextField.setText("");
+        cityTextField.setText("");
+        countryTextField.setText("");
+        postalCodeTextField.setText("");
+
+        clearErrorLabels();
     }
 
-    private void updateCurrentSearchParameters() {
-        activeFiltersListLabel.setText(activeFilters);
+    private void clearErrorLabels(){
+        locationnameErrorLabel.textProperty().unbind();
+        streetErrorLabel.textProperty().unbind();
+        cityErrorLabel.textProperty().unbind();
+        postalcodeErrorLabel.textProperty().unbind();
+        artistfirstnameErrorLabel.textProperty().unbind();
+        artistlastnameErrorLabel.textProperty().unbind();
+        eventnameErrorLabel.textProperty().unbind();
+        eventdurationErrorLabel.textProperty().unbind();
+        starttimeErrorLabel.textProperty().unbind();
+        priceErrorLabel.textProperty().unbind();
+        countryErrorLabel.textProperty().unbind();
+
+        locationnameErrorLabel.setText("");
+        streetErrorLabel.setText("");
+        cityErrorLabel.setText("");
+        postalcodeErrorLabel.setText("");
+        artistfirstnameErrorLabel.setText("");
+        artistlastnameErrorLabel.setText("");
+        eventnameErrorLabel.setText("");
+        eventdurationErrorLabel.setText("");
+        starttimeErrorLabel.setText("");
+        priceErrorLabel.setText("");
+        countryErrorLabel.setText("");
+
+        eventsTitledPane.setTextFill(Paint.valueOf("black"));
+        artistTitledPane.setTextFill(Paint.valueOf("black"));
+        timeTitledPane.setTextFill(Paint.valueOf("black"));
+        cityTitledPane.setTextFill(Paint.valueOf("black"));
+
     }
+
+    private void updateCurrentFlowPane(){
+        flowpane.getChildren().clear();
+        flowpane.getChildren().addAll(textChunks);
+    }
+
 
 }

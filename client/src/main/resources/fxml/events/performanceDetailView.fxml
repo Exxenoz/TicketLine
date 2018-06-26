@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.*?>
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="427.0" prefWidth="688.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.PerformanceDetailViewController">
+<AnchorPane prefHeight="427.0" prefWidth="688.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.PerformanceDetailViewController">
    <children>
       <Group AnchorPane.leftAnchor="251.0" AnchorPane.rightAnchor="234.35205078125">
          <children>
@@ -19,8 +24,8 @@
       </Group>
       <GridPane layoutX="70.0" layoutY="95.0" prefHeight="197.0" prefWidth="564.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="240.0" minWidth="10.0" prefWidth="136.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="430.0" minWidth="10.0" prefWidth="427.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="240.0" minWidth="10.0" prefWidth="185.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="430.0" minWidth="10.0" prefWidth="379.0"/>
         </columnConstraints>
         <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -29,10 +34,10 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="Location:" GridPane.rowIndex="1" />
-            <Label text="Start Time:" GridPane.rowIndex="2" />
-            <Label text="Performing Artists:" GridPane.rowIndex="3" />
-            <Label text="Part of Event:" />
+             <Label text="%events.performanceDetailView.location" GridPane.rowIndex="1"/>
+             <Label text="%events.performanceDetailView.starttime" GridPane.rowIndex="2"/>
+             <Label text="%events.performanceDetailView.artist" GridPane.rowIndex="3"/>
+             <Label prefWidth="169.0" text="%events.performanceDetailView.eventname"/>
             <Label fx:id="locationName" text="Location Name, City" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label fx:id="startTime" text="Date and Time" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label fx:id="artistNamePerformance" text="Artist Name" GridPane.columnIndex="1" GridPane.rowIndex="3" />
@@ -45,12 +50,15 @@
          </font>
       </Label>
       <Label layoutX="410.0" layoutY="319.0" text="Tickets starting at" />
-      <HBox layoutX="326.0" layoutY="373.0" prefHeight="27.0" prefWidth="255.0" spacing="15.0">
-         <children>
-            <Button fx:id="eventButtonPerformance" mnemonicParsing="false" onAction="#backButton" text="Back" />
-            <Button fx:id="bookButtonPerformance" mnemonicParsing="false" onAction="#changeToEventDetailView" text="Event Details" />
-            <Button fx:id="eventButtonPerformance1" mnemonicParsing="false" onAction="#continueButton" text="Continue" />
-         </children>
-      </HBox>
+      <ButtonBar layoutX="326.0" layoutY="373.0">
+         <buttons>
+             <Button fx:id="eventButtonPerformance" mnemonicParsing="false" onAction="#backButton"
+                     text="%events.performanceDetailView.buttonBack"/>
+             <Button fx:id="bookButtonPerformance" mnemonicParsing="false" onAction="#changeToEventDetailView"
+                     text="%events.performanceDetailView.buttonEventDetails"/>
+             <Button fx:id="eventButtonPerformance1" mnemonicParsing="false" onAction="#continueButton"
+                     text="%events.performanceDetailView.buttonContinue"/>
+         </buttons>
+      </ButtonBar>
    </children>
 </AnchorPane>

@@ -120,7 +120,7 @@ public interface ReservationService {
     List<ReservationDTO> findReservationsForPerformance(Long id) throws DataAccessException;
 
     /**
-     * Calculates the price of a reservation with a given list of seats.
+     * Calculates the price of a reservation with a given list of seats, with tax.
      * @param seats list of picked seats.
      * @param performanceDTO the performance for which the seats are intended to be reserved
      * @return the calculated price for the complete reservation
@@ -128,7 +128,7 @@ public interface ReservationService {
     Long calculateCompletePrice(List<SeatDTO> seats, PerformanceDTO performanceDTO);
 
     /**
-     * Calculates the price for a single seat of a reservation.
+     * Calculates the price for a single seat of a reservation with tax.
      * @param seat the seat whose price will be calculated
      * @param performanceDTO the performance for which the seats are intended to be reserved
      * @return the calculated price for a single seat

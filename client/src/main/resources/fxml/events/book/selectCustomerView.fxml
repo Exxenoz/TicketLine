@@ -10,10 +10,10 @@
             <children>
                 <ButtonBar layoutX="0.8000001907348633" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                     <buttons>
-                        <Button mnemonicParsing="false" onAction="#goBack" text="%dialog.back" />
-                        <Button mnemonicParsing="false" onAction="#goNextWithCustomer" text="%dialog.select_customer.selected" />
-                        <Button mnemonicParsing="false" onAction="#goNextWithoutCustomer" text="%dialog.select_customer.anonymous" />
-                        <Button mnemonicParsing="false" onAction="#createNewCustomer" text="%dialog.select_customer.new" />
+                        <Button fx:id="btnBack" mnemonicParsing="false" onAction="#goBack" text="%dialog.back" />
+                        <Button fx:id="btnWithCustomer" mnemonicParsing="false" onAction="#goNextWithCustomer" text="%dialog.select_customer.selected" />
+                        <Button fx:id="btnWithoutCustomer" mnemonicParsing="false" onAction="#goNextWithoutCustomer" text="%dialog.select_customer.anonymous" />
+                        <Button fx:id="btnCreateNewCustomer" mnemonicParsing="false" onAction="#createNewCustomer" text="%dialog.select_customer.new" />
                     </buttons>
                 </ButtonBar>
             </children>

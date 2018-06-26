@@ -37,6 +37,10 @@ public class ReservationDTO {
     @ApiModelProperty(required = true, readOnly = true, name = "The cancelation state of the reservation")
     private boolean canceled;
 
+    @ApiModelProperty(required = false, readOnly = true, name = "Maps the price of a reservatition for cancellation purposed." +
+        "Do not use it for important calculations")
+    private Long elusivePrice;
+
     public Long getId() {
         return id;
     }
@@ -93,6 +97,36 @@ public class ReservationDTO {
         this.canceled = canceled;
     }
 
+    public Long getElusivePrice() {
+        return elusivePrice;
+    }
+
+    public void setElusivePrice(Long elusivePrice) {
+        this.elusivePrice = elusivePrice;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ReservationDTO)) return false;
+        ReservationDTO that = (ReservationDTO) o;
+        return isCanceled() == that.isCanceled() &&
+            Objects.equals(getId(), that.getId()) &&
+            Objects.equals(getCustomer(), that.getCustomer()) &&
+            Objects.equals(getPerformance(), that.getPerformance()) &&
+            Objects.equals(getSeats(), that.getSeats()) &&
+            Objects.equals(isPaid, that.isPaid) &&
+            Objects.equals(getPaidAt(), that.getPaidAt()) &&
+            Objects.equals(getReservationNumber(), that.getReservationNumber()) &&
+            Objects.equals(getElusivePrice(), that.getElusivePrice());
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(getId(), getCustomer(), getPerformance(), getSeats(), isPaid, getPaidAt(), getReservationNumber(), isCanceled(), getElusivePrice());
+    }
+
     @Override
     public String toString() {
         return "ReservationDTO{" +
@@ -104,28 +138,8 @@ public class ReservationDTO {
             ", paidAt=" + paidAt +
             ", reservationNumber='" + reservationNumber + '\'' +
             ", canceled=" + canceled +
+            ", elusivePrice=" + elusivePrice +
             '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ReservationDTO that = (ReservationDTO) o;
-        return canceled == that.canceled &&
-            Objects.equals(id, that.id) &&
-            Objects.equals(customer, that.customer) &&
-            Objects.equals(performance, that.performance) &&
-            Objects.equals(seats, that.seats) &&
-            Objects.equals(isPaid, that.isPaid) &&
-            Objects.equals(paidAt, that.paidAt) &&
-            Objects.equals(reservationNumber, that.reservationNumber);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(id, customer, performance, seats, isPaid, paidAt, reservationNumber, canceled);
     }
 
     public static Builder builder() {
@@ -147,6 +161,7 @@ public class ReservationDTO {
         private List<SeatDTO> seats;
         private Boolean isPaid;
         private LocalDateTime paidAt;
+        private Long elusivePrice;
 
 
         private Builder() {
@@ -186,6 +201,11 @@ public class ReservationDTO {
             return this;
         }
 
+        public Builder withElusivePrice(Long elusivePrice) {
+            this.elusivePrice = elusivePrice;
+            return this;
+        }
+
         public ReservationDTO build() {
             ReservationDTO reservationDTO = new ReservationDTO();
             reservationDTO.setId(id);
@@ -194,6 +214,7 @@ public class ReservationDTO {
             reservationDTO.setPaidAt(paidAt);
             reservationDTO.customer = this.customer;
             reservationDTO.isPaid = this.isPaid;
+            reservationDTO.elusivePrice = this.elusivePrice;
             return reservationDTO;
         }
     }

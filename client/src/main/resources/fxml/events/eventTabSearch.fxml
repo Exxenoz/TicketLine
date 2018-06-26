@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" style="-fx-background-color: derive(#3c3f41, 25%);" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventSearchController">
+
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" style="-fx-background-color: derive(#3c3f41, 25%);" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventSearchController">
     <children>
         <VBox spacing="5.0" style="-fx-background-color: #f4f4f4; -fx-background-radius: 0 3 3 3;" VBox.vgrow="ALWAYS">
             <children>
@@ -11,9 +15,15 @@
                 <Separator />
                 <HBox>
                     <children>
-                        <Label contentDisplay="TOP" prefHeight="27.0" text="%events.main.activefilters" />
+                        <Label fx:id="activeFiltersLabel" contentDisplay="TOP" prefHeight="27.0" text="%events.main.activefilters" />
                         <Label prefWidth="10.0" />
-                        <Label fx:id="activeFiltersListLabel" prefHeight="27.0" text="Criteria 1, Criteria 2,...." />
+                        <FlowPane fx:id="flowpane" nodeOrientation="LEFT_TO_RIGHT" prefHeight="0.0" prefWidth="800.0" rowValignment="BOTTOM">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <padding>
+                        <Insets top="5.0" />
+                     </padding></FlowPane>
                         <ButtonBar HBox.hgrow="ALWAYS">
                             <buttons>
                                 <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAndReloadButton" text="%events.main.button.clear" textAlignment="CENTER" HBox.hgrow="ALWAYS">
@@ -57,41 +67,45 @@
                                     <children>
                                         <Accordion maxHeight="1.7976931348623157E308" maxWidth="292.0" prefWidth="292.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                                             <panes>
-                                                <TitledPane animated="false" text="%events.main.search.artist">
+                                                <TitledPane fx:id="artistTitledPane" animated="false" text="%events.main.search.artist">
                                                     <content>
                                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                             <children>
-                                                                <VBox layoutX="14.0" layoutY="14.0" spacing="10.0">
+                                                                <VBox layoutX="14.0" layoutY="14.0" prefHeight="172.0" prefWidth="269.0" spacing="10.0">
                                                                     <children>
-                                                                        <Label text="%events.search.artistfirstname" />
-                                                                        <TextField fx:id="artistFirstNameTextField" onAction="#searchForPerformancesButton" />
-                                                                        <Label text="%events.search.artistlastname" />
+                                                                        <Label fx:id="artistFirstnameLabel" text="%events.search.artistfirstname" />
+                                                                        <TextField fx:id="artistFirstNameTextField" onAction="#searchForPerformancesButton" prefHeight="27.0" prefWidth="264.0" />
+                                                      <Label fx:id="artistfirstnameErrorLabel" prefHeight="16.0" prefWidth="290.0" textFill="RED" />
+                                                                        <Label fx:id="artistLastnameLabel" text="%events.search.artistlastname" />
                                                                         <TextField fx:id="artistLastNameTextField" onAction="#searchForPerformancesButton" />
+                                                      <Label fx:id="artistlastnameErrorLabel" prefHeight="16.0" prefWidth="290.0" textFill="RED" />
                                                                     </children>
                                                                 </VBox>
                                                             </children>
                                                         </AnchorPane>
                                                     </content>
                                                 </TitledPane>
-                                                <TitledPane animated="false" text="%events.main.search.event">
+                                                <TitledPane fx:id="eventsTitledPane" animated="false" text="%events.main.search.event">
                                                     <content>
                                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                             <children>
-                                                                <VBox layoutX="10.0" layoutY="9.0" spacing="10.0">
+                                                                <VBox layoutX="10.0" layoutY="9.0" prefHeight="227.0" prefWidth="271.0" spacing="10.0">
                                                                     <children>
-                                                                        <Label text="%events.search.eventname" />
+                                                                        <Label fx:id="eventNameLabel" text="%events.search.eventname" />
                                                                         <TextField fx:id="eventNameTextField" onAction="#searchForPerformancesButton" />
-                                                                        <Label text="%events.search.length" />
+                                                      <Label fx:id="eventnameErrorLabel" prefHeight="16.0" prefWidth="290.0" textFill="RED" />
+                                                                        <Label fx:id="lengthInMinutesLabel" text="%events.search.length" />
                                                                         <TextField fx:id="lengthInMinutesTextField" onAction="#searchForPerformancesButton" />
-                                                                        <Label text="%events.search.seating" />
+                                                      <Label fx:id="eventdurationErrorLabel" prefHeight="16.0" prefWidth="290.0" textFill="RED" />
+                                                                        <Label fx:id="seatingLabel" text="%events.search.seating" />
                                                                         <HBox spacing="15.0">
                                                                             <children>
-                                                                                <RadioButton fx:id="seatingYesButton" mnemonicParsing="false" text="%events.search.seatingyes" onAction="#searchForPerformancesButton" >
+                                                                                <RadioButton fx:id="seatingYesButton" mnemonicParsing="false" onAction="#searchForPerformancesButton" text="%events.search.seatingyes">
                                                                                     <toggleGroup>
                                                                                         <ToggleGroup fx:id="seatingToggleGroup" />
                                                                                     </toggleGroup>
                                                                                 </RadioButton>
-                                                                                <RadioButton fx:id="seatingNoButton" mnemonicParsing="false" text="%events.search.seatingno" toggleGroup="$seatingToggleGroup" onAction="#searchForPerformancesButton" />
+                                                                                <RadioButton fx:id="seatingNoButton" mnemonicParsing="false" onAction="#searchForPerformancesButton" text="%events.search.seatingno" toggleGroup="$seatingToggleGroup" />
                                                                             </children>
                                                                         </HBox>
                                                                     </children>
@@ -100,14 +114,14 @@
                                                         </AnchorPane>
                                                     </content>
                                                 </TitledPane>
-                                                <TitledPane animated="false" text="%events.main.search.time">
+                                                <TitledPane fx:id="timeTitledPane" animated="false" text="%events.main.search.time">
                                                     <content>
                                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                             <children>
-                                                                <VBox layoutX="10.0" layoutY="9.0" spacing="10.0">
+                                                                <VBox layoutX="10.0" layoutY="9.0" prefHeight="220.0" prefWidth="268.0" spacing="10.0">
                                                                     <children>
-                                                                        <Label text="%events.search.begintime" />
-                                                                        <DatePicker fx:id="beginTimeDatePicker" prefHeight="26.0" prefWidth="177.0" />
+                                                                        <Label fx:id="beginTimeLabel" text="%events.search.begintime" />
+                                                                        <DatePicker fx:id="beginTimeDatePicker" editable="false" prefHeight="26.0" prefWidth="177.0" />
                                                                         <HBox spacing="15.0">
                                                                             <children>
                                                                                 <Spinner fx:id="beginTimeHourSpinner" prefHeight="26.0" prefWidth="71.0" />
@@ -115,8 +129,10 @@
                                                                                 <Spinner fx:id="beginTimeMinuteSpinner" prefHeight="26.0" prefWidth="71.0" />
                                                                             </children>
                                                                         </HBox>
-                                                                        <Label text="%events.search.price" />
-                                                                        <TextField fx:id="priceTextField" prefHeight="26.0" prefWidth="73.0" onAction="#searchForPerformancesButton" />
+                                                      <Label fx:id="starttimeErrorLabel" prefHeight="16.0" prefWidth="290.0" textFill="RED" />
+                                                                        <Label fx:id="priceLabel" text="%events.search.price" />
+                                                                        <TextField fx:id="priceTextField" onAction="#searchForPerformancesButton" prefHeight="26.0" prefWidth="73.0" />
+                                                      <Label fx:id="priceErrorLabel" prefHeight="16.0" prefWidth="290.0" textFill="RED" wrapText="true" />
                                                                         <HBox spacing="15.0" />
                                                                     </children>
                                                                 </VBox>
@@ -124,23 +140,28 @@
                                                         </AnchorPane>
                                                     </content>
                                                 </TitledPane>
-                                                <TitledPane animated="false" layoutX="10.0" layoutY="581.0" text="%events.main.search.city">
+                                                <TitledPane fx:id="cityTitledPane" animated="false" layoutX="10.0" layoutY="581.0" text="%events.main.search.city">
                                                     <content>
                                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="333.0" prefWidth="216.0">
                                                             <children>
-                                                                <VBox layoutX="7.0" layoutY="10.0" prefHeight="248.0" prefWidth="198.0" spacing="10.0">
+                                                                <VBox layoutX="7.0" layoutY="10.0" prefHeight="455.0" prefWidth="272.0" spacing="10.0">
                                                                     <children>
-                                                                        <Label text="%events.search.locationname" />
-                                                                        <TextField fx:id="locationNameTextField" prefHeight="26.0" prefWidth="73.0" onAction="#searchForPerformancesButton"  />
-                                                                        <Label text="%events.search.street" />
+                                                                        <Label fx:id="locationNameLabel" text="%events.search.locationname" />
+                                                                        <TextField fx:id="locationNameTextField" onAction="#searchForPerformancesButton" prefHeight="26.0" prefWidth="73.0" />
+                                                      <Label fx:id="locationnameErrorLabel" prefHeight="16.0" prefWidth="290.0" textFill="RED" />
+                                                                        <Label fx:id="streetLabel" text="%events.search.street" />
                                                                         <HBox spacing="15.0" />
-                                                                        <TextField fx:id="streetTextField" prefHeight="26.0" prefWidth="73.0" onAction="#searchForPerformancesButton" />
-                                                                        <Label text="%events.search.city" />
-                                                                        <TextField fx:id="cityTextField" prefHeight="26.0" prefWidth="73.0" onAction="#searchForPerformancesButton" />
-                                                                        <Label text="%events.search.postalcode" />
-                                                                        <TextField fx:id="postalCodeTextField" prefHeight="26.0" prefWidth="73.0" onAction="#searchForPerformancesButton" />
-                                                                        <Label text="%events.search.contry" />
-                                                                        <TextField fx:id="countryTextField" prefHeight="26.0" prefWidth="73.0" onAction="#searchForPerformancesButton" />
+                                                                        <TextField fx:id="streetTextField" onAction="#searchForPerformancesButton" prefHeight="26.0" prefWidth="73.0" />
+                                                      <Label fx:id="streetErrorLabel" prefHeight="16.0" prefWidth="290.0" textFill="RED" />
+                                                                        <Label fx:id="cityLabel" text="%events.search.city" />
+                                                                        <TextField fx:id="cityTextField" onAction="#searchForPerformancesButton" prefHeight="26.0" prefWidth="73.0" />
+                                                      <Label fx:id="cityErrorLabel" prefHeight="16.0" prefWidth="290.0" textFill="RED" />
+                                                                        <Label fx:id="postalCodeLabel" text="%events.search.postalcode" />
+                                                                        <TextField fx:id="postalCodeTextField" onAction="#searchForPerformancesButton" prefHeight="26.0" prefWidth="73.0" />
+                                                      <Label fx:id="postalcodeErrorLabel" prefHeight="16.0" prefWidth="290.0" textFill="RED" />
+                                                                        <Label fx:id="countryLabel" text="%events.search.contry" />
+                                                                        <TextField fx:id="countryTextField" onAction="#searchForPerformancesButton" prefHeight="26.0" prefWidth="73.0" />
+                                                      <Label fx:id="countryErrorLabel" prefHeight="16.0" prefWidth="290.0" textFill="RED" />
                                                                     </children>
                                                                 </VBox>
                                                             </children>

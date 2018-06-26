@@ -13,6 +13,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventRequestTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventResponseTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.sector.SectorCategoryDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
+import javafx.beans.binding.StringBinding;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,11 +22,14 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -34,6 +38,7 @@ import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.CALENDAR_ALT;
 
@@ -45,7 +50,19 @@ public class EventTop10Controller {
     @FXML
     public CategoryAxis barAxisX;
 
+    @FXML
+    public NumberAxis barAxisY;
+
     // ---------- Top Ten Tab -----------
+
+    @FXML
+    public Label yearLabel;
+
+    @FXML
+    public Label monthLabel;
+
+    @FXML
+    public Label categoryLabel;
 
     @FXML
     public ChoiceBox yearChoiceBox;
@@ -57,10 +74,16 @@ public class EventTop10Controller {
     public ChoiceBox categoryChoiceBox;
 
     @FXML
+    public Button showTopTenButton;
+
+    @FXML
     private BarChart<String, Long> topTenBarChart;
 
     @FXML
     private ChoiceBox<String> topTenEventChoiceBox;
+
+    @FXML
+    public Label eventLabel;
 
     @FXML
     private Button bookTopTenEventButton;
@@ -103,7 +126,9 @@ public class EventTop10Controller {
 
         //Initialize tab header
         tabHeaderController.setIcon(CALENDAR_ALT);
-        tabHeaderController.setTitle(BundleManager.getBundle().getString("events.topten.title"));
+        tabHeaderController.setTitleBinding(BundleManager.getStringBinding("events.topten.title"));
+
+        initI18N();
     }
 
     private void initYearChoiceBox() {
@@ -130,6 +155,32 @@ public class EventTop10Controller {
             BundleManager.getBundle().getString("events.main.november"),
             BundleManager.getBundle().getString("events.main.december"));
         monthChoiceBox.getSelectionModel().selectFirst();
+    }
+
+    private void initI18N() {
+        yearLabel.textProperty().bind(BundleManager.getStringBinding("events.main.year"));
+        monthLabel.textProperty().bind(BundleManager.getStringBinding("events.main.month"));
+        categoryLabel.textProperty().bind(BundleManager.getStringBinding("events.main.categories"));
+
+        showTopTenButton.textProperty().bind(BundleManager.getStringBinding("events.main.button.show"));
+
+        barAxisX.labelProperty().bind(BundleManager.getStringBinding("events.main.events"));
+        barAxisY.labelProperty().bind(BundleManager.getStringBinding("events.main.ticket_sales"));
+
+        eventLabel.textProperty().bind(BundleManager.getStringBinding("events.main.event"));
+        bookTopTenEventButton.textProperty().bind(BundleManager.getStringBinding("events.main.button.book"));
+    }
+
+    public void onChangeLanguage(Locale language) {
+        int selectedIndex = monthChoiceBox.getSelectionModel().getSelectedIndex();
+        initMonthChoiceBox();
+        monthChoiceBox.getSelectionModel().select(selectedIndex);
+
+        if (categoryChoiceBox.getItems().size() > 0) {
+            selectedIndex = categoryChoiceBox.getSelectionModel().getSelectedIndex();
+            categoryChoiceBox.getItems().set(0, BundleManager.getBundle().getString("events.main.all"));
+            categoryChoiceBox.getSelectionModel().select(selectedIndex);
+        }
     }
 
     public void loadData() {
@@ -168,14 +219,14 @@ public class EventTop10Controller {
 
         try {
             List<EventResponseTopTenDTO> events = eventService.findTopTenByMonthAndCategory(new EventRequestTopTenDTO(month, year, categoryId));
-            showTopTenEvents(events);
+            showTopTenEvents(events, true);
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch top 10 events from server for month: " + month + " " + e.getMessage());
             JavaFXUtils.createErrorDialog(e.getMessage(), monthChoiceBox.getScene().getWindow()).showAndWait();
         }
     }
 
-    private void showTopTenEvents(List<EventResponseTopTenDTO> response) {
+    private void showTopTenEvents(List<EventResponseTopTenDTO> response, boolean repeat) {
         currentEvents.clear();
         topTenBarChart.getData().clear();
         barAxisX.getCategories().clear();
@@ -223,6 +274,10 @@ public class EventTop10Controller {
         }
 
         registerBarChartListener(barSeries);
+
+        if (repeat) {
+            showTopTenEvents(response, false);
+        }
     }
 
     private void registerBarChartListener(XYChart.Series<String, Long> barSeries) {

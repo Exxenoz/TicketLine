@@ -1,0 +1,64 @@
+* {
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
+}
+
+table {
+    background-color: cornflowerblue;
+    border: 1px solid #ddd;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+th {
+    text-align: left;
+}
+
+td, th {
+    width: auto
+}
+
+.bordered-div {
+    border-top: 2px solid lightgray;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    padding: 10px;
+}
+
+.company-info {
+    background-color: lightgrey;
+    display: block;
+    margin-left: 40%;
+    margin-right: auto;
+    width: auto;
+    font-size: 12px;
+}
+
+.regular-table {
+    clear: left;
+    display: block;
+    margin-left: 0%;
+    margin-right: auto;
+    width: 60%;
+}
+
+.regular-table tr td {
+    padding: 8px;
+    width: 40%;
+}
+
+.regular-table tr th {
+    padding: 8px;
+    width: 40%;
+}
+
+.block {
+    display: block;
+}
+
+.offset-top {
+    margin-top: 20px;
+}
+
+.large-font {
+    font-size: 16px;
+}

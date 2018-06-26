@@ -1,4 +1,4 @@
-package at.ac.tuwien.inso.sepm.ticketline.client.util;
+package at.ac.tuwien.inso.sepm.ticketline.rest.util;
 
 import java.text.NumberFormat;
 import java.util.Locale;

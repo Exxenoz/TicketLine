@@ -104,6 +104,10 @@ public class UserController {
         tabHeaderController.setIcon(LOCK);
         tabHeaderController.setTitleBinding(BundleManager.getStringBinding("usertab.header"));
 
+        ButtonBar.setButtonUniformSize(toggleEnableButton, false);
+        ButtonBar.setButtonUniformSize(passwordResetButton, false);
+        ButtonBar.setButtonUniformSize(createUserButton, false);
+
         initI18N();
         initializeUserTable();
     }

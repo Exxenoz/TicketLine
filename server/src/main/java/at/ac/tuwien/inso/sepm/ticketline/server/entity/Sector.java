@@ -31,6 +31,9 @@ public class Sector {
     @Max(30)
     private int rows;
 
+    @Column
+    private int hallNumber;
+
     public Long getId() {
         return id;
     }
@@ -79,6 +82,14 @@ public class Sector {
         this.rows = rows;
     }
 
+    public int getHallNumber() {
+        return hallNumber;
+    }
+
+    public void setHallNumber(int hallNumber) {
+        this.hallNumber = hallNumber;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -88,6 +99,7 @@ public class Sector {
             getStartPositionY() == sector.getStartPositionY() &&
             getSeatsPerRow() == sector.getSeatsPerRow() &&
             getRows() == sector.getRows() &&
+            getHallNumber() == sector.getHallNumber() &&
             Objects.equals(getId(), sector.getId()) &&
             Objects.equals(getCategory(), sector.getCategory());
     }
@@ -95,7 +107,7 @@ public class Sector {
     @Override
     public int hashCode() {
 
-        return Objects.hash(getId(), getCategory(), getStartPositionX(), getStartPositionY(), getSeatsPerRow(), getRows());
+        return Objects.hash(getId(), getCategory(), getStartPositionX(), getStartPositionY(), getSeatsPerRow(), getRows(), getHallNumber());
     }
 
     @Override
@@ -107,6 +119,7 @@ public class Sector {
             ", startPositionY=" + startPositionY +
             ", seatsPerRow=" + seatsPerRow +
             ", rows=" + rows +
+            ", hallNumber=" + hallNumber +
             '}';
     }
 
@@ -117,6 +130,7 @@ public class Sector {
         private int startPositionY;
         private int seatsPerRow;
         private int rows;
+        private int hallNumber;
 
         private Builder() {
         }
@@ -155,6 +169,11 @@ public class Sector {
             return this;
         }
 
+        public Builder withHallNumber(int hallNumber) {
+            this.hallNumber = hallNumber;
+            return this;
+        }
+
         public Sector build() {
             Sector sector = new Sector();
             sector.setId(id);
@@ -163,6 +182,7 @@ public class Sector {
             sector.setStartPositionY(startPositionY);
             sector.setSeatsPerRow(seatsPerRow);
             sector.setRows(rows);
+            sector.setHallNumber(hallNumber);
             return sector;
         }
     }

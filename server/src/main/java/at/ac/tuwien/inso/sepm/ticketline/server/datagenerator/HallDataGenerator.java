@@ -88,6 +88,8 @@ public class HallDataGenerator implements DataGenerator {
                     s.setRows(sectorRows);
                     s.setStartPositionX(x);
                     s.setStartPositionY(y);
+                    //Set hall order number
+                    s.setHallNumber(j);
 
                     // And set a sector category
                     if(sectorCategoryRepository.count() == 0) {

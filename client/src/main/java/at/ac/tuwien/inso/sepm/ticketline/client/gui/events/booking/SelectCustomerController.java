@@ -38,6 +38,7 @@ public class SelectCustomerController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static final int CUSTOMERS_PER_PAGE = 30;
+    private static final String anonymousUser = "anonymous";
 
     @FXML
     public TableView<CustomerDTO> customerTable;
@@ -53,8 +54,21 @@ public class SelectCustomerController {
 
     @FXML
     public TableColumn<CustomerDTO, String> customerTableColumnEMail;
+
     @FXML
     public AnchorPane content;
+
+    @FXML
+    public Button btnBack;
+
+    @FXML
+    public Button btnWithCustomer;
+
+    @FXML
+    public Button btnWithoutCustomer;
+
+    @FXML
+    public Button btnCreateNewCustomer;
 
     private CustomerService customerService;
 
@@ -73,6 +87,7 @@ public class SelectCustomerController {
     private final CustomerEditDialogController customerEditDialogController;
 
     private TableColumn sortedColumn;
+    private CustomerDTO anonymousCustomer;
 
     public SelectCustomerController(SpringFxmlLoader fxmlLoader,
                                     CustomerService customerService,
@@ -86,6 +101,11 @@ public class SelectCustomerController {
 
     @FXML
     private void initialize() {
+        ButtonBar.setButtonUniformSize(btnBack, false);
+        ButtonBar.setButtonUniformSize(btnWithCustomer, false);
+        ButtonBar.setButtonUniformSize(btnWithoutCustomer, false);
+        ButtonBar.setButtonUniformSize(btnCreateNewCustomer, false);
+
         initTable();
     }
 
@@ -209,7 +229,8 @@ public class SelectCustomerController {
         try {
             PageResponseDTO<CustomerDTO> response = customerService.findAll(pageRequestDTO);
             items.addAll(response.getContent());
-            items.removeIf(customer -> customer.getLastName().equals("anonymous") && customer.getFirstName().equals("anonymous"));
+            anonymousCustomer = items.get(0);
+            items.removeIf(customer -> customer.getLastName().equals(anonymousUser) && customer.getFirstName().equals(anonymousUser));
             totalPages = response.getTotalPages();
             customerTable.refresh();
         } catch (DataAccessException e) {
@@ -247,7 +268,7 @@ public class SelectCustomerController {
     }
 
     public void goNextWithoutCustomer(ActionEvent actionEvent) {
-        reservation.setCustomer(customerTable.getItems().get(0));
+        reservation.setCustomer(anonymousCustomer);
         continueOrReserve();
     }
 
