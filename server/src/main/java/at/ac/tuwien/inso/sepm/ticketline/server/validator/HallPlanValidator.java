@@ -1,4 +1,4 @@
-package at.ac.tuwien.inso.sepm.ticketline.server.service;
+package at.ac.tuwien.inso.sepm.ticketline.server.validator;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Hall;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Seat;
@@ -7,7 +7,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalHallVa
 
 import java.util.List;
 
-public interface HallPlanService {
+public interface HallPlanValidator {
 
     /**
      * Gets a Hall by ID

@@ -8,7 +8,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatRe
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
-import at.ac.tuwien.inso.sepm.ticketline.server.service.HallPlanService;
+import at.ac.tuwien.inso.sepm.ticketline.server.validator.HallPlanValidator;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.SeatsService;
 import org.slf4j.Logger;
@@ -34,7 +34,7 @@ public class SimpleReservationService implements ReservationService {
     @Autowired
     private ReservationRepository reservationRepository;
     @Autowired
-    private HallPlanService hallPlanService;
+    private HallPlanValidator hallPlanValidator;
     @Autowired
     private SeatsService seatsService;
 
@@ -131,7 +131,7 @@ public class SimpleReservationService implements ReservationService {
         //Then, too fail fast, we check the integrity of the seats according to the hall plan and the sectors
         try {
             if (sectors != null) {
-                hallPlanService.checkSeatsAgainstSectors(onlyNewSeats, sectors);
+                hallPlanValidator.checkSeatsAgainstSectors(onlyNewSeats, sectors);
             } else {
                 LOGGER.error("Could not find the the Sectors for this reservation");
                 throw new InvalidReservationException("The Performance was not set");
@@ -226,7 +226,7 @@ public class SimpleReservationService implements ReservationService {
             List<Seat> seatst = reservation.getSeats();
             Hall hall = performance.getHall();
             List<Sector> sectort = hall.getSectors();
-            hallPlanService.checkSeatsAgainstSectors(reservation.getSeats(), performance.getHall().getSectors());
+            hallPlanValidator.checkSeatsAgainstSectors(reservation.getSeats(), performance.getHall().getSectors());
         } catch (InternalHallValidationException i) {
             LOGGER.warn("The sectors of the reservation do not match the hall '{}", performance.getHall());
             throw new InvalidReservationException("Hall plan is not coherent with sectors or seats.");
