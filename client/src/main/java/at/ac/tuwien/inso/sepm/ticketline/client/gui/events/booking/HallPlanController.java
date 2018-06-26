@@ -112,7 +112,7 @@ public class HallPlanController implements SeatSelectionListener {
         seatsRowColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SeatDTO, Integer>, ObservableValue>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<SeatDTO, Integer> param) {
-                if(reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SEAT) {
+                if (reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SEAT) {
                     //Increase position by one so we dont start at position 0
                     return new SimpleStringProperty(Integer.toString(param.getValue().getPositionY() + 1));
                 } else {
@@ -124,7 +124,7 @@ public class HallPlanController implements SeatSelectionListener {
         seatsSeatColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SeatDTO, Integer>, ObservableValue>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<SeatDTO, Integer> param) {
-                if(reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SEAT) {
+                if (reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SEAT) {
                     //Increase position by one so we dont start at position 0
                     return new SimpleStringProperty(Integer.toString(param.getValue().getPositionX() + 1));
                 } else {
@@ -136,8 +136,8 @@ public class HallPlanController implements SeatSelectionListener {
         seatsPriceColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SeatDTO, Long>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<SeatDTO, Long> param) {
-                return new SimpleStringProperty(Long.toString(
-                    reservationService.calculateSinglePrice(param.getValue(), reservation.getPerformance())));
+                return new SimpleStringProperty(
+                    PriceUtils.priceToRepresentation(reservationService.calculateSinglePrice(param.getValue(), reservation.getPerformance())));
             }
         });
 

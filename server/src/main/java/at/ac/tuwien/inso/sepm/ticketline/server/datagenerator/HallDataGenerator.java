@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static java.lang.Long.valueOf;
 
@@ -31,6 +32,7 @@ public class HallDataGenerator implements DataGenerator {
     private final static int SECTOR_COUNT_MAX = 8;
     private final static int SECTOR_WIDTH_MAX = 10;
     private final static int SECTOR_HEIGHT_MAX = 6;
+    private final static int SECTOR_CATEGORY_COUNT = 8;
 
     private final HallRepository hallRepository;
     private final SectorCategoryRepository sectorCategoryRepository;
@@ -94,11 +96,13 @@ public class HallDataGenerator implements DataGenerator {
                     // And set a sector category
                     if(sectorCategoryRepository.count() == 0) {
                         LOGGER.debug("Could net set sector category since the corresponding repository is empty");
-                        SectorCategory sectorCategory = new SectorCategory();
-                        sectorCategory.setBasePriceMod(valueOf(500L));
-                        sectorCategory.setName(faker.hipster().word());
-                        s.setCategory(sectorCategory);
-                        sectorCategoryRepository.save(sectorCategory);
+
+                        //Create a few sector categories
+                        for(int k = 0; k < SECTOR_CATEGORY_COUNT; k++) {
+                            sectorCategoryRepository.save(createSectorCategory());
+                        }
+                        s.setCategory(sectorCategoryRepository.findAll().get(faker.number()
+                            .numberBetween(0, Math.toIntExact(sectorCategoryRepository.count()) - 1)));
                     } else {
                         s.setCategory(sectorCategoryRepository.findAll().get(faker.number()
                             .numberBetween(0, Math.toIntExact(sectorCategoryRepository.count()) - 1)));
@@ -126,5 +130,13 @@ public class HallDataGenerator implements DataGenerator {
                 hallRepository.save(hall);
             }
         }
+    }
+
+    public SectorCategory createSectorCategory() {
+        LOGGER.debug("Could net set sector category since the corresponding repository is empty");
+        SectorCategory sectorCategory = new SectorCategory();
+        sectorCategory.setBasePriceMod(valueOf(faker.number().digit()));
+        sectorCategory.setName(faker.hipster().word());
+        return sectorCategory;
     }
 }
