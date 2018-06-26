@@ -202,6 +202,10 @@ public class HallPlanController implements SeatSelectionListener {
                 }
             }
         }
+
+        //Just intialize fields
+        updateSeatsInformation(seats);
+        updatePrice(seats, reservation.getPerformance());
     }
 
     public void updateSeatsInformation(List<SeatDTO> seats) {

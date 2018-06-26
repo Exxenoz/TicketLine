@@ -8,6 +8,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.util.PriceUtils;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -78,7 +79,7 @@ public class PurchaseReservationSummaryController {
         customerName.setText(reservation.getCustomer().getFirstName() + " " + reservation.getCustomer().getLastName());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
         performanceDate.setText(reservation.getPerformance().getPerformanceStart().format(formatter));
-        performancePrice.setText(reservation.getPerformance().getPrice().toString());
+        performancePrice.setText(PriceUtils.priceToRepresentation(reservationService.calculateCompletePrice(reservation.getSeats(), reservation.getPerformance())));
         printButton.setDisable(true);
         printButton.setVisible(false);
         printButton.setManaged(false);

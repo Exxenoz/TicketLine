@@ -5,6 +5,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.sector.SectorDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.util.PriceUtils;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -111,7 +112,7 @@ public class SectorController {
 
     public Label createPriceLabel(SectorDTO sectorDTO) {
         Label priceLabel = new Label();
-        priceLabel.setText(Long.toString(sectorDTO.getCategory().getBasePriceMod() * performance.getPrice()));
+        priceLabel.setText(PriceUtils.priceToRepresentation(sectorDTO.getCategory().getBasePriceMod() * performance.getPrice()));
         return priceLabel;
     }
 
