@@ -147,6 +147,7 @@ public class NewsCreateController {
     }
 
     public void onClickChooseImageFileButton(ActionEvent actionEvent) {
+        LOGGER.debug("User clicked the choose img button");
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(BundleManager.getBundle().getString("news.filechooser.title"));
 
@@ -165,7 +166,7 @@ public class NewsCreateController {
     }
 
     public void onClickSaveNewsClicked(ActionEvent actionEvent) {
-        LOGGER.debug("Clicked save news button");
+        LOGGER.debug("User clicked save news button");
 
         DetailedNewsDTO detailedNewsDTO = new DetailedNewsDTO();
 

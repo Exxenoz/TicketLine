@@ -54,6 +54,7 @@ public class NewsElementController {
 
         if(vbox != null) {
             String idString = vbox.getId();
+            LOGGER.debug("User clicked a news element {}", idString);
             if(idString != null) {
                 if (idString.startsWith("unreadNews")) {
                     int id = Integer.valueOf(idString.substring(10));

@@ -15,33 +15,31 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollBar;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import static javafx.scene.control.ProgressIndicator.INDETERMINATE_PROGRESS;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.NEWSPAPER_ALT;
 
 @Component
@@ -114,6 +112,7 @@ public class NewsUnreadController {
                 double scrollValue = newValue.doubleValue();
                 if (scrollValue == scrollBar.getMax() && (page + 1) < totalPages) {
                     double targetValue = scrollValue * loadedNews.size();
+                    LOGGER.debug("Getting next Page {}", page + 1);
                     loadNewsList(page + 1);
                     scrollBar.setValue(targetValue / loadedNews.size());
                 }
@@ -138,6 +137,7 @@ public class NewsUnreadController {
     }
 
     private boolean loadNewsList(int page) {
+        LOGGER.debug("Loading news of Page {}", page);
         if (page < 0 || page >= totalPages) {
             LOGGER.error("Could not load news table page, because page parameter is invalid: " + page);
             return false;
