@@ -190,7 +190,9 @@ public class EventSearchController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm");
         startTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
             cellData.getValue().getPerformanceStart().format(formatter)));
-        locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLocationAddress().getCountry() + ", " +
+        locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
+            cellData.getValue().getLocationAddress().getLocationName() + ", " +
+            cellData.getValue().getLocationAddress().getCountry() + ", " +
             cellData.getValue().getLocationAddress().getCity()));
 
         startTimeColumn.setComparator((d1, d2) -> {
