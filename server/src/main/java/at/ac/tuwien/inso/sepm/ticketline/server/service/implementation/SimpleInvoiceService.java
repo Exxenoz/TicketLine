@@ -137,7 +137,6 @@ public class SimpleInvoiceService implements InvoiceService {
             Resource resource = new UrlResource(file.toUri());
 
             if (resource.exists() || resource.isReadable()) {
-
                 try {
                     resource.getFile().delete();
                 } catch (IOException i) {

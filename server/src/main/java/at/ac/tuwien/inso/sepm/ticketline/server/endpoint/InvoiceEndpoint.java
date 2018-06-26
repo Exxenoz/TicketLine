@@ -7,6 +7,8 @@ import at.ac.tuwien.inso.sepm.ticketline.server.service.InvoiceService;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,10 +17,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpServerErrorException;
 
+import java.lang.invoke.MethodHandles;
+
 @RestController
 @RequestMapping(value="/invoice")
 @Api(value="invoice")
 public class InvoiceEndpoint {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private final InvoiceService invoiceService;
 
@@ -62,7 +68,11 @@ public class InvoiceEndpoint {
     public ResponseEntity<Resource> updateForCancellationAndServeInvoice(@PathVariable String reservationNumber) {
         try {
             //First we delete the concerning actual PDF
-            invoiceService.deletePDF(reservationNumber);
+            try {
+                invoiceService.deletePDF(reservationNumber);
+            } catch (InternalNotFoundException i) {
+                LOGGER.debug("Could not find pdf-File for that reservation number");
+            }
 
             //The we generate a new one and serve it
             Resource file = invoiceService.generateAndServeCancellationInvoice(reservationNumber);
