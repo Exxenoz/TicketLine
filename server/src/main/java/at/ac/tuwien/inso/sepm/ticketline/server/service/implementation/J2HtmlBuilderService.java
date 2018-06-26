@@ -463,12 +463,16 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
      * @return the built paid date information div in html
      */
     private ContainerTag buildPaidDateDiv(Reservation reservation) {
-        return div(
-            h4(BundleManager.getBundle().getString("invoice.performance.paidat")
-                + ":"
-                + "\n"
-                + DATETIME_FORMATTER.format(reservation.getPaidAt()))
-        );
+        if(reservation.getPaid() != null) {
+            return div(
+                h4(BundleManager.getBundle().getString("invoice.performance.paidat")
+                    + ":"
+                    + "\n"
+                    + DATETIME_FORMATTER.format(reservation.getPaidAt()))
+            );
+        } else {
+            return div();
+        }
     }
 
     /**
