@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox prefHeight="700.0" prefWidth="1100.0" spacing="5.0" style="-fx-background-color: derive(#3c3f41, 25%);"
-      xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.reservations.ReservationsController">
+
+<VBox prefHeight="700.0" prefWidth="1100.0" spacing="5.0" style="-fx-background-color: derive(#3c3f41, 25%);" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.reservations.ReservationsController">
     <children>
         <VBox fx:id="content" prefHeight="700.0" prefWidth="1100.0" spacing="5.0" style="-fx-background-color: #f4f4f4; -fx-background-radius: 3 3 3 3;" VBox.vgrow="ALWAYS">
             <children>
@@ -13,16 +13,14 @@
                 <Separator />
                 <HBox>
                     <children>
-                        <Label fx:id="activeFiltersLabel" contentDisplay="TOP" prefHeight="27.0" text="%bookings.main.activefilters"/>
-                        <Label prefWidth="10.0"/>
-                        <Label fx:id="activeFiltersListLabel" prefHeight="27.0"
-                               text="%bookings.main.criteria.placeholder"/>
+                        <Label fx:id="activeFiltersLabel" contentDisplay="TOP" prefHeight="27.0" text="%bookings.main.activefilters" />
+                        <Label prefWidth="10.0" />
+                        <Label fx:id="activeFiltersListLabel" prefHeight="27.0" text="%bookings.main.criteria.placeholder" />
                         <ButtonBar HBox.hgrow="ALWAYS">
                             <buttons>
-                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearFilters"
-                                        text="%bookings.main.button.clear" textAlignment="CENTER" HBox.hgrow="ALWAYS">
+                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearFilters" text="%bookings.main.button.clear" textAlignment="CENTER" HBox.hgrow="ALWAYS">
                                     <VBox.margin>
-                                        <Insets right="16.0"/>
+                                        <Insets right="16.0" />
                                     </VBox.margin>
                                 </Button>
                             </buttons>
@@ -35,18 +33,12 @@
                             <children>
                                 <VBox alignment="TOP_RIGHT" spacing="10.0" HBox.hgrow="ALWAYS">
                                     <children>
-                                        <TableView fx:id="foundReservationsTableView" maxHeight="1.7976931348623157E308"
-                                                   maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS"
-                                                   VBox.vgrow="ALWAYS">
+                                        <TableView fx:id="foundReservationsTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                                             <columns>
-                                                <TableColumn fx:id="reservationIDColumn"
-                                                             text="%bookings.table.reservationID"/>
-                                                <TableColumn fx:id="eventColumn"
-                                                             text="%bookings.table.event"/>
-                                                <TableColumn fx:id="customerColumn"
-                                                             text="%bookings.table.customer"/>
-                                                <TableColumn fx:id="paidColumn"
-                                                             text="%bookings.table.paid"/>
+                                                <TableColumn fx:id="reservationIDColumn" minWidth="200.0" prefWidth="200.0" resizable="false" text="%bookings.table.reservationID" />
+                                                <TableColumn fx:id="eventColumn" minWidth="200.0" prefWidth="200.0" resizable="false" text="%bookings.table.event" />
+                                                <TableColumn fx:id="customerColumn" minWidth="200.0" prefWidth="200.0" resizable="false" text="%bookings.table.customer" />
+                                                <TableColumn fx:id="paidColumn" minWidth="200.0" prefWidth="200.0" resizable="false" text="%bookings.table.paid" />
                                             </columns>
                                             <columnResizePolicy>
                                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -54,17 +46,12 @@
                                         </TableView>
                                         <ButtonBar maxHeight="35.0" prefHeight="35.0" VBox.vgrow="ALWAYS">
                                             <buttons>
-                                                <Button fx:id="showReservationDetailsButton" disable="false"
-                                                        mnemonicParsing="false" onAction="#showReservationDetailsButton"
-                                                        text="%bookings.main.button.details" HBox.hgrow="ALWAYS"
-                                                        VBox.vgrow="ALWAYS">
+                                                <Button fx:id="showReservationDetailsButton" disable="false" mnemonicParsing="false" onAction="#showReservationDetailsButton" text="%bookings.main.button.details" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                                                     <VBox.margin>
                                                         <Insets right="16.0" />
                                                     </VBox.margin>
                                                 </Button>
-                                                <Button fx:id="cancelReservationButton" mnemonicParsing="false"
-                                                        onAction="#cancelReservation"
-                                                        text="%bookings.main.cancelReservationsButton"/>
+                                                <Button fx:id="cancelReservationButton" mnemonicParsing="false" onAction="#cancelReservation" text="%bookings.main.cancelReservationsButton" />
                                             </buttons>
                                         </ButtonBar>
                                     </children>
@@ -79,31 +66,23 @@
                                                             <children>
                                                                 <VBox layoutX="14.0" layoutY="14.0" spacing="10.0">
                                                                     <children>
-                                                                        <Label fx:id="performanceNameLabel" text="%bookings.search.performancename"/>
-                                                                        <TextField fx:id="performanceNameField" onAction="#searchForReservations"/>
-                                                                        <Label fx:id="performanceNameErrorLabel"
-                                                                               prefHeight="16.0" prefWidth="290.0"
-                                                                               textFill="RED">
+                                                                        <Label fx:id="performanceNameLabel" text="%bookings.search.performancename" />
+                                                                        <TextField fx:id="performanceNameField" onAction="#searchForReservations" />
+                                                                        <Label fx:id="performanceNameErrorLabel" prefHeight="16.0" prefWidth="290.0" textFill="RED">
                                                                             <VBox.margin>
-                                                                                <Insets bottom="10.0"/>
+                                                                                <Insets bottom="10.0" />
                                                                             </VBox.margin>
                                                                         </Label>
-                                                                        <Label fx:id="customerFirstNameLabel"
-                                                                            text="%bookings.search.customerfirstname"/>
-                                                                        <TextField fx:id="customerFirstNameField" onAction="#searchForReservations"/>
-                                                                        <Label fx:id="customerFirstNameErrorLabel"
-                                                                               prefHeight="16.0" prefWidth="290.0"
-                                                                               textFill="RED">
+                                                                        <Label fx:id="customerFirstNameLabel" text="%bookings.search.customerfirstname" />
+                                                                        <TextField fx:id="customerFirstNameField" onAction="#searchForReservations" />
+                                                                        <Label fx:id="customerFirstNameErrorLabel" prefHeight="16.0" prefWidth="290.0" textFill="RED">
                                                                             <VBox.margin>
-                                                                                <Insets bottom="10.0"/>
+                                                                                <Insets bottom="10.0" />
                                                                             </VBox.margin>
                                                                         </Label>
-                                                                        <Label fx:id="customerLastNameLabel"
-                                                                            text="%bookings.search.customerlastname"/>
-                                                                        <TextField fx:id="customerLastNameField" onAction="#searchForReservations"/>
-                                                                        <Label fx:id="customerLastNameErrorLabel"
-                                                                               prefHeight="16.0" prefWidth="290.0"
-                                                                               textFill="RED"/>
+                                                                        <Label fx:id="customerLastNameLabel" text="%bookings.search.customerlastname" />
+                                                                        <TextField fx:id="customerLastNameField" onAction="#searchForReservations" />
+                                                                        <Label fx:id="customerLastNameErrorLabel" prefHeight="16.0" prefWidth="290.0" textFill="RED" />
                                                                     </children>
                                                                 </VBox>
                                                             </children>
@@ -116,12 +95,9 @@
                                                             <children>
                                                                 <VBox layoutX="10.0" layoutY="9.0" spacing="10.0">
                                                                     <children>
-                                                                        <Label fx:id="reservationNumberLabel"
-                                                                            text="%bookings.main.search.reservationnr"/>
-                                                                        <TextField fx:id="reservationNrField" onAction="#searchForReservations"/>
-                                                                        <Label fx:id="reservationNumberErrorLabel"
-                                                                               prefHeight="16.0" prefWidth="290.0"
-                                                                               textFill="RED"/>
+                                                                        <Label fx:id="reservationNumberLabel" text="%bookings.main.search.reservationnr" />
+                                                                        <TextField fx:id="reservationNrField" onAction="#searchForReservations" />
+                                                                        <Label fx:id="reservationNumberErrorLabel" prefHeight="16.0" prefWidth="290.0" textFill="RED" />
                                                                     </children>
                                                                 </VBox>
                                                             </children>
@@ -132,9 +108,7 @@
                                         </Accordion>
                                         <ButtonBar maxHeight="35.0" prefHeight="35.0" VBox.vgrow="ALWAYS">
                                             <buttons>
-                                                <Button fx:id="searchButton" disable="false" mnemonicParsing="false"
-                                                        onAction="#searchForReservations"
-                                                        text="%bookings.main.button.search">
+                                                <Button fx:id="searchButton" disable="false" mnemonicParsing="false" onAction="#searchForReservations" text="%bookings.main.button.search">
                                                     <VBox.margin>
                                                         <Insets right="16.0" />
                                                     </VBox.margin>
