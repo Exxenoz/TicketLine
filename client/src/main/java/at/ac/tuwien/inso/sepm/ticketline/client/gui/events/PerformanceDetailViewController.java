@@ -3,10 +3,10 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking.HallPlanController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
-import at.ac.tuwien.inso.sepm.ticketline.rest.util.PriceUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.util.PriceUtils;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -101,6 +101,7 @@ public class PerformanceDetailViewController {
 
     @FXML
     void continueButton(ActionEvent event) {
+        LOGGER.debug("User clicked the continue button");
         reservation.setPerformance(performance);
         hallPlanController.fill(reservation, stage);
 
@@ -125,6 +126,7 @@ public class PerformanceDetailViewController {
 
     @FXML
     void changeToEventDetailView(ActionEvent event) {
+        LOGGER.debug("User clicked the change to EventDetailView button");
         Parent parent = fxmlLoader.load("/fxml/events/eventDetailView.fxml");
         eventDetailViewController.fill(performance.getEvent(), stage);
         stage.setScene(new Scene(parent));
@@ -134,6 +136,7 @@ public class PerformanceDetailViewController {
 
     @FXML
     void backButton(ActionEvent event) {
+        LOGGER.debug("User clicked the back button");
         Stage stage = (Stage) performanceHeader.getScene().getWindow();
         stage.close();
     }

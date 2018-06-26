@@ -70,7 +70,6 @@ public class PurchaseReservationSummaryController {
 
     @FXML
     private void initialize() {
-        LOGGER.debug("Entering initialize method of PRSController.");
         eventName.setText(reservation.getPerformance().getEvent().getName());
         performanceName.setText(reservation.getPerformance().getName());
         String totalAmountTickets = "" + reservation.getSeats().size();
@@ -128,10 +127,10 @@ public class PurchaseReservationSummaryController {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == buttonTypeYes) {
-            LOGGER.debug("print invoice");
+            LOGGER.debug("User wants to print invoice");
             handleInvoice(reservation);
         } else {
-            LOGGER.debug("do not print invoice");
+            LOGGER.debug("User does not want to print invoice");
         }
         closeWindow();
     }
@@ -156,10 +155,12 @@ public class PurchaseReservationSummaryController {
 
     @FXML
     public void openPDFFileAction() {
+        LOGGER.debug("User clicked the open invoice button");
         handleInvoice(reservation);
     }
 
     public void buyTicketsButton(ActionEvent event) throws DataAccessException {
+        LOGGER.debug("User clicked the buy button");
         CreateReservationDTO createReservationDTO = new CreateReservationDTO();
         createReservationDTO.setCustomerID(reservation.getCustomer() != null ? reservation.getCustomer().getId() : null);
         createReservationDTO.setPerformanceID(reservation.getPerformance().getId());
@@ -200,7 +201,9 @@ public class PurchaseReservationSummaryController {
         }
     }
 
+    @FXML
     public void cancelButton(ActionEvent event) {
+        LOGGER.debug("User clicked the cancel button");
         if (showDetails) {
             hallPlanController.changeReservationDetails(reservation, stage);
             Parent parent = fxmlLoader.load("/fxml/events/book/hallPlanView.fxml");
@@ -211,6 +214,7 @@ public class PurchaseReservationSummaryController {
     }
 
     public void backButton(ActionEvent event) {
+        LOGGER.debug("User clicked the back button");
         if (showDetails) {
             closeWindow();
         } else {

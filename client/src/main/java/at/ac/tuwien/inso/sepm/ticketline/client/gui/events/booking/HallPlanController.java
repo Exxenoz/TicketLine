@@ -5,14 +5,14 @@ import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.PerformanceDetailView
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SeatMapController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SeatSelectionListener;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SectorController;
-import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
-import at.ac.tuwien.inso.sepm.ticketline.rest.util.PriceUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.util.PriceUtils;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -174,6 +174,7 @@ public class HallPlanController implements SeatSelectionListener {
 
     @FXML
     public void backButton(ActionEvent event) {
+        LOGGER.debug("User clicked the back button");
         if (changeDetails) {
             closeWindow();
         } else {
@@ -186,17 +187,20 @@ public class HallPlanController implements SeatSelectionListener {
 
     @FXML
     public void continueButton(ActionEvent event) {
+        LOGGER.debug("User clicked the buy button");
         continueOrReserve();
     }
 
     @FXML
     public void reserveButton() {
+        LOGGER.debug("User clicked the reserve button");
         isReservation = true;
         continueOrReserve();
     }
 
     @Override
     public void onSeatSelected(SeatDTO seatDTO) {
+        LOGGER.debug("User selected a Seat {}", seatDTO);
         seats.add(seatDTO);
         updateSeatsInformation(this.seats);
         updatePrice(this.seats, this.reservation.getPerformance());
@@ -204,6 +208,7 @@ public class HallPlanController implements SeatSelectionListener {
 
     @Override
     public void onSeatDeselected(SeatDTO seatDTO) {
+        LOGGER.debug("User deselected a Seat {}", seatDTO);
         seats.remove(seatDTO);
         updateSeatsInformation(this.seats);
         updatePrice(this.seats, this.reservation.getPerformance());

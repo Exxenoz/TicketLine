@@ -13,7 +13,6 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventRequestTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventResponseTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.sector.SectorCategoryDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
-import javafx.beans.binding.StringBinding;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -29,7 +28,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -205,6 +203,7 @@ public class EventTop10Controller {
 
     @FXML
     void showTopTenClicked(ActionEvent event) {
+        LOGGER.debug("User clicked the show button");
         topTenEventChoiceBox.getItems().clear();
 
         Integer month = monthChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? monthChoiceBox.getSelectionModel().getSelectedIndex() + 1 : 1;
@@ -298,6 +297,7 @@ public class EventTop10Controller {
             });
 
             node.setOnMouseClicked(event -> {
+                LOGGER.debug("user clicked the bar chart {}", data.getXValue());
                 topTenEventChoiceBox.getSelectionModel().select(data.getXValue());
                 node.getStyleClass().remove("mouse-down");
             });
@@ -306,6 +306,7 @@ public class EventTop10Controller {
 
     @FXML
     void bookTopTenEvent(ActionEvent event) {
+        LOGGER.debug("user clicked the book button");
         int selectedIndex = topTenEventChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? topTenEventChoiceBox.getSelectionModel().getSelectedIndex() : 0;
         if (currentEvents.size() > 0) {
             Stage stage = new Stage();

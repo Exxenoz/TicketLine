@@ -216,7 +216,7 @@ public class SelectCustomerController {
     }
 
     private void loadCustomersTable(int page) {
-        LOGGER.debug("Loading Customers of page {}", page);
+        LOGGER.debug("Loading Customers of Page {}", page);
         PageRequestDTO pageRequestDTO = null;
         if (sortedColumn != null) {
             Sort.Direction sortDirection =
@@ -245,6 +245,7 @@ public class SelectCustomerController {
     }
 
     public void goBack(ActionEvent actionEvent) {
+        LOGGER.debug("User clicked the back button");
         Parent parent = fxmlLoader.load("/fxml/events/book/hallPlanView.fxml");
         stage.setScene(new Scene(parent));
         if (reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SEAT) {
@@ -256,6 +257,7 @@ public class SelectCustomerController {
     }
 
     public void goNextWithCustomer(ActionEvent event) {
+        LOGGER.debug("User clicked the go next with selected customer button");
         if (chosenCustomer.getId() == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
@@ -268,6 +270,7 @@ public class SelectCustomerController {
     }
 
     public void goNextWithoutCustomer(ActionEvent actionEvent) {
+        LOGGER.debug("User clicked the go next without customer button");
         reservation.setCustomer(anonymousCustomer);
         continueOrReserve();
     }
@@ -287,6 +290,7 @@ public class SelectCustomerController {
     }
 
     public void createNewCustomer(ActionEvent actionEvent) {
+        LOGGER.debug("User clicked the go next with new customer button");
         customerEditDialogController.fill(reservationWithNewCustomer, reservation, isReservation, stage);
         Parent parent = fxmlLoader.load("/fxml/customers/customerEditDialog.fxml");
         stage.setScene(new Scene(parent));
