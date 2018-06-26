@@ -23,7 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.*;
 
 @Component
 public class SimpleInvoiceRestClient implements InvoiceRestClient {
@@ -76,17 +76,56 @@ public class SimpleInvoiceRestClient implements InvoiceRestClient {
     }
 
     @Override
-    public void getInvoice(String reservationNumber) throws DataAccessException {
+    public byte[] getInvoice(String reservationNumber) throws DataAccessException {
+        try {
+            ResponseEntity<byte[]> response =
+                restClient.exchange(
+                    new RequestEntity<>(reservationNumber, GET, invoiceURI.resolve(reservationNumber)),
+                    byte[].class);
 
+            if(response.getStatusCode() == HttpStatus.OK) {
+                return response.getBody();
+            } else {
+                return null;
+            }
+        } catch (HttpStatusCodeException e) {
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
+        } catch (RestClientException e) {
+            throw new DataAccessException(e.getMessage(), e);
+        }
     }
 
     @Override
-    public void createCancellationInvoice(String reservationNumber) throws DataAccessException {
+    public byte[] createCancellationInvoice(String reservationNumber) throws DataAccessException {
+        try {
+            ResponseEntity<byte[]> response =
+                restClient.exchange(
+                    new RequestEntity<>(reservationNumber, PUT, invoiceURI.resolve(reservationNumber)),
+                    byte[].class);
 
+            if(response.getStatusCode() == HttpStatus.OK) {
+                return response.getBody();
+            } else {
+                return null;
+            }
+        } catch (HttpStatusCodeException e) {
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
+        } catch (RestClientException e) {
+            throw new DataAccessException(e.getMessage(), e);
+        }
     }
 
     @Override
     public void deleteInvoice(String reservationNumber) throws DataAccessException {
-
+//        try {
+//            ResponseEntity<String> response =
+//                restClient.exchange(
+//                    new RequestEntity<>(reservationNumber, DELETE, invoiceURI.resolve(reservationNumber), String);
+//
+//        } catch (HttpStatusCodeException e) {
+//            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
+//        } catch (RestClientException e) {
+//            throw new DataAccessException(e.getMessage(), e);
+//        }
     }
 }

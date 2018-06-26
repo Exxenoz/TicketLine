@@ -186,25 +186,16 @@ public class ReservationsController {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == buttonTypeYes) {
             LOGGER.debug("print invoice");
-            openPDFFile(reservationDTO);
-//            invoiceService.deletePDF(pdf);
+            handleCancellationInvoice(reservationDTO);
         } else {
             LOGGER.debug("do not print invoice");
         }
     }
 
-    private void openPDFFile(ReservationDTO reservationDTO) {
+    private void handleCancellationInvoice(ReservationDTO reservationDTO) {
         try {
-            invoiceService.createAndStoreInvoice(reservationDTO.getReservationNumber());
-            runLater(() -> {
-                try {
-                    invoiceService.openInvoice(reservationDTO.getReservationNumber());
-                } catch (InvoiceFileException i) {
-                    LOGGER.error("An error occured while trying to store the file: {}", i.getMessage());
-                    Alert alert = new Alert(Alert.AlertType.ERROR, BundleManager.getExceptionBundle().getString("exception.invoice.file"), OK);
-                    alert.showAndWait();
-                }
-            });
+            invoiceService.createAndStoreCancellationInvoice(reservationDTO.getReservationNumber());
+            invoiceService.openInvoice(reservationDTO.getReservationNumber());
         } catch (DataAccessException d) {
             LOGGER.error("An Error occurred whilst handling the file: {}", d.getMessage());
         } catch (InvoiceFileException i) {
@@ -214,11 +205,12 @@ public class ReservationsController {
         }
     }
 
+    @FXML
     public void cancelReservation(ActionEvent event) {
         ResourceBundle ex = BundleManager.getExceptionBundle();
         int row = foundReservationsTableView.getSelectionModel().getFocusedIndex();
         ReservationDTO selected = reservationList.get(row);
-        if (!selected.isPaid()) {
+//        if (!selected.isPaid()) {
             try {
                 selected = reservationService.cancelReservation(selected.getId());
                 foundReservationsTableView.getItems().get(row).setCanceled(true);
@@ -229,11 +221,10 @@ public class ReservationsController {
             } catch (DataAccessException e) {
                 LOGGER.error("The reservation with id {} couldn't be canceled", selected.getId(), e);
             }
-        } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR, ex.getString("exception.reservation.cancel.alreadypaid"), OK);
-            alert.showAndWait();
-        }
-
+//        } else {
+//            Alert alert = new Alert(Alert.AlertType.ERROR, ex.getString("exception.reservation.cancel.alreadypaid"), OK);
+//            alert.showAndWait();
+//        }
     }
 
     public void loadReservations() {

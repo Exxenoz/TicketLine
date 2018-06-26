@@ -19,14 +19,14 @@ public interface InvoiceRestClient {
      * @param reservationNumber the reservation number of the reservation that we want to fetch
      * @throws DataAccessException in case anything goes wrong during invoice fetching
      */
-    void getInvoice(String reservationNumber) throws DataAccessException;
+    byte[] getInvoice(String reservationNumber) throws DataAccessException;
 
     /**
      * Creates and fetches a cancellaton invoice
      * @param reservationNumber the reservation number of the reservation that we create the cancellation invoice for
      * @throws DataAccessException in case anything goes wrong during cancellation invoice creation
      */
-    void createCancellationInvoice(String reservationNumber) throws DataAccessException;
+    byte[] createCancellationInvoice(String reservationNumber) throws DataAccessException;
 
     /**
      * Deletes an invoice

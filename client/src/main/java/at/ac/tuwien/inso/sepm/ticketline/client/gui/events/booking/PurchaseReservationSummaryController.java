@@ -127,26 +127,18 @@ public class PurchaseReservationSummaryController {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == buttonTypeYes) {
             LOGGER.debug("print invoice");
-            openPDFFile();
-//            invoiceService.deletePDF(pdf);
+            handleInvoice(reservation);
         } else {
             LOGGER.debug("do not print invoice");
         }
         closeWindow();
     }
 
-    private void openPDFFile() {
+    private void handleInvoice(ReservationDTO reservationDTO) {
         try {
-            invoiceService.createAndStoreInvoice(reservation.getReservationNumber());
-            runLater(() -> {
-                try {
-                    invoiceService.openInvoice(reservation.getReservationNumber());
-                } catch (InvoiceFileException i) {
-                    LOGGER.error("An error occured while trying to store the file: {}", i.getMessage());
-                    Alert alert = new Alert(Alert.AlertType.ERROR, BundleManager.getExceptionBundle().getString("exception.invoice.file"), OK);
-                    alert.showAndWait();
-                }
-            });
+            invoiceService.createAndStoreInvoice(reservationDTO.getReservationNumber());
+            invoiceService.openInvoice(reservationDTO.getReservationNumber());
+
         } catch (DataAccessException d) {
             LOGGER.error("An Error occurred whilst handling the file: {}", d.getMessage());
         } catch (InvoiceFileException i) {
@@ -158,7 +150,7 @@ public class PurchaseReservationSummaryController {
 
     @FXML
     public void openPDFFileAction() {
-        openPDFFile();
+        handleInvoice(reservation);
     }
 
     public void buyTicketsButton(ActionEvent event) throws DataAccessException {

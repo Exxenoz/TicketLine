@@ -1,8 +1,12 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +17,9 @@ import java.util.List;
  */
 
 public class DesktopApi {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
 
     public static boolean browse(URI uri) {
 
@@ -143,7 +150,6 @@ public class DesktopApi {
 
 
     private static boolean runCommand(String command, String args, String file) {
-
         logOut("Trying to exec:\n   cmd = " + command + "\n   args = " + args + "\n   %s = " + file);
 
         String[] parts = prepareCommand(command, args, file);
@@ -164,6 +170,9 @@ public class DesktopApi {
             } catch (IllegalThreadStateException itse) {
                 logErr("Process is running.");
                 return true;
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//                return false;
             }
         } catch (IOException e) {
             logErr("Error running command.", e);
@@ -189,16 +198,16 @@ public class DesktopApi {
     }
 
     private static void logErr(String msg, Throwable t) {
-        System.err.println(msg);
+        LOGGER.error("Desktop file handling error: {}", msg);
         t.printStackTrace();
     }
 
     private static void logErr(String msg) {
-        System.err.println(msg);
+        LOGGER.error("Desktop file handling error: {}", msg);
     }
 
     private static void logOut(String msg) {
-        System.out.println(msg);
+        LOGGER.info("Desktop file handling error: {}", msg);
     }
 
     public static enum EnumOS {

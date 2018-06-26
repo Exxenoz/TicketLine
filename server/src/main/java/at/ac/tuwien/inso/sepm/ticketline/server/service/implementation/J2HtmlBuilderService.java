@@ -221,10 +221,6 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
                     h3(BundleManager.getBundle().getString("invoice.performance.info") + ":"),
                     buildPerformanceInformationDiv(reservation),
 
-                    //Ticket info phrasing
-                    h3(BundleManager.getBundle().getString("invoice.performance.outro") + ":"),
-                    buildTicketInformationDiv(reservation),
-
                     //Pricing
                     h3(BundleManager.getBundle().getString("invoice.reimbursed") + ": "),
                     buildCancellationPricingInformationDiv(reservation),
@@ -275,10 +271,6 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
                     //Performance information
                     h3(BundleManager.getBundle().getString("invoice.performance.info") + ":"),
                     buildPerformanceInformationDiv(reservation),
-
-                    //Ticket info phrasing
-                    h3(BundleManager.getBundle().getString("invoice.performance.info") + ":"),
-                    buildTicketInformationDiv(reservation),
 
                     //Pricing
                     h3(BundleManager.getBundle().getString("invoice.reimbursed") + ": "),

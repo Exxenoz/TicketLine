@@ -33,14 +33,35 @@ public class SimpleInvoiceService implements InvoiceService {
 
     @Override
     public byte[] createInvoice(String reservationNumber) throws DataAccessException, InvoiceFileException {
-        return restClient.createInvoice(reservationNumber);
+        byte[] responseBody = restClient.createInvoice(reservationNumber);
+        if(responseBody != null) {
+            return responseBody;
+        } else {
+            throw new InvoiceFileException(BundleManager.getBundle().getString("exception.invoice.fetch"));
+        }
     }
-
-
 
     @Override
     public void createAndStoreInvoice(String reservationNumber) throws DataAccessException, InvoiceFileException {
         byte[] pdf =  createInvoice(reservationNumber);
+        storeInvoice(reservationNumber, pdf);
+    }
+
+    @Override
+    public byte[] createCancellationInvoice(String reservationNumber) throws DataAccessException, InvoiceFileException {
+       byte[] responseBody = restClient.createCancellationInvoice(reservationNumber);
+       if(responseBody != null) {
+           return responseBody;
+       } else {
+           throw new InvoiceFileException(BundleManager.getBundle().getString("exception.invoice.fetch"));
+       }
+    }
+
+    @Override
+    public void createAndStoreCancellationInvoice(String reservationNumber) throws DataAccessException, InvoiceFileException {
+        //We can assume that there is already a reservation before
+        deleteInvoice(reservationNumber);
+        byte[] pdf = createCancellationInvoice(reservationNumber);
         storeInvoice(reservationNumber, pdf);
     }
 
@@ -57,8 +78,8 @@ public class SimpleInvoiceService implements InvoiceService {
     public void openInvoice(String reservationNumber) throws InvoiceFileException {
         if (Desktop.isDesktopSupported()) {
             try {
-                File myFile = new File(invoiceConfigurationProperties.getLocation() + "/" + reservationNumber + ".pdf");
-                Desktop.getDesktop().open(myFile);
+                File file = new File(invoiceConfigurationProperties.getLocation() + "/" + reservationNumber + ".pdf");
+                Desktop.getDesktop().open(file);
             } catch (IOException ex) {
                 LOGGER.warn("Couldn't open PDF-File");
                 throw new InvoiceFileException(BundleManager.getExceptionBundle().getString("exception.invoice.file.open"));
@@ -70,7 +91,11 @@ public class SimpleInvoiceService implements InvoiceService {
     }
 
     @Override
-    public void deletePDF(File file) {
+    public void deleteInvoice(String reservationNumber) {
+        File file = new File(invoiceConfigurationProperties.getLocation() + "/" + reservationNumber + ".pdf");
 
+        if(file.exists()) {
+            file.delete();
+        }
     }
 }
