@@ -17,9 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
@@ -114,6 +113,7 @@ public class SimpleReservationService implements ReservationService {
     }
 
     @Override
+    @Transactional
     public Reservation editReservation(Reservation reservation) throws InvalidReservationException {
         List<Seat> changedSeats = reservation.getSeats();//the changed seats
         Reservation savedReservation = reservationRepository.findByPaidFalseAndId(reservation.getId());
@@ -272,15 +272,7 @@ public class SimpleReservationService implements ReservationService {
         return createdReservation;
     }
 
-  /*  public String generateReservationNumber() {
-        String reservationNumber = "";
-        final String ALPHA_NUMERIC_STRING = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789";
-        while (reservationNumber.length() <= 6) {
-            int character = (int) (Math.random() * ALPHA_NUMERIC_STRING.length());
-            reservationNumber += ALPHA_NUMERIC_STRING.charAt(character);
-        }
-        return reservationNumber;
-    }*/
+
 
     public String generateReservationNumber() {
         String reservationNumber;
@@ -303,13 +295,15 @@ public class SimpleReservationService implements ReservationService {
     @Override
     public Reservation cancelReservation(Long id) throws InternalCancelationException {
         Reservation reservation = reservationRepository.findById(id).orElseThrow(InternalCancelationException::new);
+        if (reservation.getPerformance().getPerformanceStart().isBefore(LocalDateTime.now())) {
+            throw new InternalCancelationException("The performance has already started and the booking can't be canceled!");
+        }
         List<Seat> seatsOfReservation = reservation.getSeats();
         reservation.setSeats(null);
         reservation.setCanceled(true);
-        Reservation canceledReservation = reservationRepository.save(reservation);
+        reservationRepository.save(reservation);
         seatsOfReservation.forEach(seat -> seatsService.deleteSeat(seat));
-
-        return canceledReservation;
+        return reservation;
     }
 
     @Override

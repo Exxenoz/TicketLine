@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 public class ReservationEndpointIT extends BaseIT {
@@ -115,6 +116,35 @@ public class ReservationEndpointIT extends BaseIT {
     }
 
     @Test
+    public void purchaseReservationUnauthorizedAsAnonymous() {
+        Performance performance = newPerformance();
+        Seat seat = newSeat();
+        Customer customer = customerRepository.save(newCustomer());
+        performance.setHall(hallforPerformances);
+        performance = performanceRepository.save(performance);
+        Reservation reservation = Reservation.Builder.aReservation()
+            .withCustomer(customer)
+            .withPaid(false)
+            .withPerformance(performance)
+            .withSeats(List.of(seat))
+            .withReservationNumber(RESERVATIONNUMBER_TEST)
+            .build();
+        reservation = reservationRepository.save(reservation);
+        var reservationDTO = reservationMapper.reservationToReservationDTO(reservation);
+
+        //create and send request - purchase reservation
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .body(reservationDTO)
+            .when().post(RESERVATION_ENDPOINT + "/purchase")
+            .then().extract().response();
+
+        //assert result
+        Assert.assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getStatusCode());
+    }
+
+    @Test
     public void findReservationWithCustomerNameAsUser() {
         Performance performance = newPerformance();
         Seat seat = newSeat();
@@ -161,6 +191,94 @@ public class ReservationEndpointIT extends BaseIT {
     }
 
     @Test
+    public void findReservationWithWrongCustomerAndPerformanceDataAsUserShouldThrowNotFoundHttpError() {
+        Performance performance = newPerformance();
+        Seat seat = newSeat();
+        Customer customer = customerRepository.save(newCustomer());
+        performance.setHall(hallforPerformances);
+        performance = performanceRepository.save(performance);
+        Reservation reservation = Reservation.Builder.aReservation()
+            .withCustomer(customer)
+            .withPaid(false)
+            .withPerformance(performance)
+            .withSeats(List.of(seat))
+            .withReservationNumber(RESERVATIONNUMBER_TEST)
+            .build();
+        reservation = reservationRepository.save(reservation);
+
+        var reservationDTO = reservationMapper.reservationToReservationDTO(reservation);
+        var customerDTO = customerMapper.customerToCustomerDTO(customer);
+        var performanceDTO = performanceMapper.performanceToPerformanceDTO(performance);
+        Assert.assertNotNull(customerDTO);
+        Assert.assertNotNull(performanceDTO);
+
+        //create reservation findAll DTO
+        var reservationSearchDTO = ReservationSearchDTO.Builder.aReservationSearchDTO()
+            .withFirstName("bla")
+            .withLastName("bla")
+            .withPerformanceName("bla")
+            .withPage(0)
+            .withSize(10)
+            .withSortColumnName("id")
+            .withSortDirection(Sort.Direction.ASC)
+            .build();
+
+        //create and send request - find not yet purchased reservation from the customer and for the performance
+        //with the given name
+        RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .body(reservationSearchDTO)
+            .when().post(RESERVATION_ENDPOINT + "/find")
+            .then().statusCode(HttpStatus.NOT_FOUND.value());
+    }
+
+
+    @Test
+    public void findReservationWithCustomerNameUnauthorizedAsAnonymous() {
+        Performance performance = newPerformance();
+        Seat seat = newSeat();
+        Customer customer = customerRepository.save(newCustomer());
+        performance.setHall(hallforPerformances);
+        performance = performanceRepository.save(performance);
+        Reservation reservation = Reservation.Builder.aReservation()
+            .withCustomer(customer)
+            .withPaid(false)
+            .withPerformance(performance)
+            .withSeats(List.of(seat))
+            .withReservationNumber(RESERVATIONNUMBER_TEST)
+            .build();
+        reservation = reservationRepository.save(reservation);
+
+        var reservationDTO = reservationMapper.reservationToReservationDTO(reservation);
+        var customerDTO = customerMapper.customerToCustomerDTO(customer);
+        var performanceDTO = performanceMapper.performanceToPerformanceDTO(performance);
+        Assert.assertNotNull(customerDTO);
+        Assert.assertNotNull(performanceDTO);
+
+        //create reservation findAll DTO
+        var reservationSearchDTO = ReservationSearchDTO.Builder.aReservationSearchDTO()
+            .withFirstName(customerDTO.getFirstName())
+            .withLastName(customerDTO.getLastName())
+            .withPerformanceName(performanceDTO.getName())
+            .withPage(0)
+            .withSize(10)
+            .withSortColumnName("id")
+            .withSortDirection(Sort.Direction.ASC)
+            .build();
+
+        //create and send request - find not yet purchased reservation from the customer and for the performance
+        //with the given name
+        RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .body(reservationSearchDTO)
+            .when().post(RESERVATION_ENDPOINT + "/find")
+            .then().statusCode(HttpStatus.UNAUTHORIZED.value());
+    }
+
+    @Test
     public void removeSeatFromReservationAsUser() {
         Performance performance = newPerformance();
         Seat seat = newSeat();
@@ -199,6 +317,42 @@ public class ReservationEndpointIT extends BaseIT {
         Assert.assertNotNull(result.getId());
         var resultSeatDTOs = result.getSeats();
         Assert.assertEquals(0, resultSeatDTOs.size());
+    }
+
+    @Test
+    public void removeSeatFromReservationUnauthorizedAsAnonymous() {
+        Performance performance = newPerformance();
+        Seat seat = newSeat();
+        Customer customer = customerRepository.save(newCustomer());
+        performance.setHall(hallforPerformances);
+        performance = performanceRepository.save(performance);
+        Reservation reservation = Reservation.Builder.aReservation()
+            .withCustomer(customer)
+            .withPaid(false)
+            .withPerformance(performance)
+            .withSeats(List.of(seat))
+            .withReservationNumber(RESERVATIONNUMBER_TEST)
+            .build();
+        reservation = reservationRepository.save(reservation);
+        ReservationDTO reservationDTO = reservationMapper.reservationToReservationDTO(reservation);
+        Assert.assertNotNull(reservationDTO);
+
+        //edit reservation -> remove one seat
+        var seatDTOs = reservationDTO.getSeats();
+        Assert.assertEquals(1, seatDTOs.size());
+        seatDTOs.remove(0);
+        reservationDTO.setSeats(seatDTOs);
+
+        //create and send request - update reservation with new data
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .body(reservationDTO)
+            .when().post(RESERVATION_ENDPOINT + "/edit")
+            .then().extract().response();
+
+        //assert result
+        Assert.assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getStatusCode());
     }
 
     @Test
@@ -327,13 +481,47 @@ public class ReservationEndpointIT extends BaseIT {
         assertThat(reservationDTO.isPaid(), is(true));
     }
 
-    //TODO: test for cancel
+    @Test
+    public void cancelReservationAsUser() {
+        // GIVEN
+        Performance performance = newPerformance();
+        Seat seat = newSeat();
+        Customer customer = customerRepository.save(newCustomer());
+        performance.setHall(hallforPerformances);
+        performance = performanceRepository.save(performance);
+        Reservation reservation = newReservation(customer, performance, List.of(seat));
+        Reservation savedReservation = reservationRepository.save(reservation);
+
+        //WHEN
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().post(RESERVATION_ENDPOINT + "/cancel/id/{id}", savedReservation.getId())
+            .then().extract().response();
+
+        //THEN
+        assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        Reservation reservationResponse = response.as(Reservation.class);
+        assertThat(reservationResponse.isCanceled(), is(true));
+        assertNull(reservationResponse.getSeats());
+    }
+
+    private Reservation newReservation(Customer customer, Performance performance, List<Seat> seats) {
+        Reservation reservation = new Reservation();
+        reservation.setCustomer(customer);
+        reservation.setPerformance(performance);
+        reservation.setSeats(seats);
+        reservation.setPaid(false);
+        reservation.setReservationNumber(RESERVATIONNUMBER_TEST);
+        return reservation;
+    }
 
     private Performance newPerformance() {
         Performance performance = new Performance();
         performance.setName("test");
         performance.setPrice(100L);
-        performance.setPerformanceStart(LocalDateTime.now());
+        performance.setPerformanceStart(LocalDateTime.now().plusYears(10));
         performance.setDuration(Duration.ofMinutes(20));
 
         LocationAddress address = new LocationAddress();

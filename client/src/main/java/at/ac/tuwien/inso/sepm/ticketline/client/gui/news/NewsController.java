@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.news;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.MainController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationInformationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.NewsService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
@@ -29,6 +30,8 @@ import static org.controlsfx.glyphfont.FontAwesome.Glyph.NEWSPAPER_ALT;
 @Component
 public class NewsController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
     @FXML
     private NewsUnreadController newsUnreadController;
 
@@ -47,6 +50,12 @@ public class NewsController {
     @FXML
     public Tab createNewsTab;
 
+    private AuthenticationInformationService authenticationInformationService;
+
+    public NewsController(AuthenticationInformationService authenticationInformationService) {
+        this.authenticationInformationService = authenticationInformationService;
+    }
+
     @FXML
     private void initialize() {
         initI18N();
@@ -61,5 +70,9 @@ public class NewsController {
     public void loadNews() {
         newsUnreadController.loadNews();
         newsReadController.loadNews();
+        LOGGER.debug(authenticationInformationService.getCurrentAuthenticationTokenInfo().get().getRoles() +"");
+        if (authenticationInformationService.getCurrentAuthenticationTokenInfo().get().getRoles().contains("ROLE_ADMIN")) {
+            createNewsTab.setDisable(false);
+        }
     }
 }

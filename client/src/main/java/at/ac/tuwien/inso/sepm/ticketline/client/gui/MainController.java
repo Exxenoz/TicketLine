@@ -279,6 +279,8 @@ public class MainController {
         checkMenuItemLanguageGerman.setSelected(false);
 
         BundleManager.changeLocale(ENGLISH);
+
+        eventController.onChangeLanguage(ENGLISH);
     }
 
     public void onClickLanguageGerman(ActionEvent actionEvent) {
@@ -290,5 +292,7 @@ public class MainController {
         checkMenuItemLanguageEnglish.setSelected(false);
 
         BundleManager.changeLocale(GERMAN);
+
+        eventController.onChangeLanguage(GERMAN);
     }
 }

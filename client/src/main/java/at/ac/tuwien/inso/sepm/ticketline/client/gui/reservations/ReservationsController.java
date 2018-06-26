@@ -38,6 +38,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Optional;
+import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
 import static at.ac.tuwien.inso.sepm.ticketline.client.validator.CustomerValidator.validateFirstName;
@@ -210,21 +211,34 @@ public class ReservationsController {
         ResourceBundle ex = BundleManager.getExceptionBundle();
         int row = foundReservationsTableView.getSelectionModel().getFocusedIndex();
         ReservationDTO selected = reservationList.get(row);
-//        if (!selected.isPaid()) {
-            try {
-                selected = reservationService.cancelReservation(selected.getId());
-                foundReservationsTableView.getItems().get(row).setCanceled(true);
-                foundReservationsTableView.refresh();
-                //   reservationList.remove(reservationDTO);
-                //   foundReservationsTableView.getItems().remove(row);
-                printInvoiceDialog(selected);
-            } catch (DataAccessException e) {
-                LOGGER.error("The reservation with id {} couldn't be canceled", selected.getId(), e);
+        ReservationDTO reservationDTO = null;
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(BundleManager.getBundle().getString("bookings.cancel.confirmationHeader"));
+        alert.setHeaderText(BundleManager.getBundle().getString("bookings.cancel.confirmationTitle"));
+        alert.setContentText(BundleManager.getBundle().getString("bookings.cancel.confirmationText"));
+        alert.getDialogPane().setMinWidth(500);
+        alert.getDialogPane().setMinHeight(100);
+
+        if (selected.getPerformance().getPerformanceStart().isBefore(LocalDateTime.now())) {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setTitle(BundleManager.getBundle().getString("bookings.cancel.alreadyStartedPerformance.title "));
+            errorAlert.setContentText(BundleManager.getBundle().getString("bookings.cancel.alreadyStartedPerformance.text"));
+            alert.showAndWait();
+        } else {
+            if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+                try {
+                    selected = reservationService.cancelReservation(selected.getId());
+                    foundReservationsTableView.getItems().get(row).setCanceled(true);
+                    foundReservationsTableView.refresh();
+                    printInvoiceDialog(selected);
+                } catch (DataAccessException e) {
+                    LOGGER.error("The reservation with id {} couldn't be canceld", selected.getId(), e);
+                }
+            } else {
+                alert.close();
             }
-//        } else {
-//            Alert alert = new Alert(Alert.AlertType.ERROR, ex.getString("exception.reservation.cancel.alreadypaid"), OK);
-//            alert.showAndWait();
-//        }
+        }
     }
 
     public void loadReservations() {
