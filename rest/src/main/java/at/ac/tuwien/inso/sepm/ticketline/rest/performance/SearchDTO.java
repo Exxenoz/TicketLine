@@ -1,5 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.rest.performance;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.address.BaseAddressDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.address.LocationAddressDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -187,5 +189,13 @@ public class SearchDTO extends PageResponseDTO {
             lastName, eventType, performanceStart,
             price, locationName, street,
             city, country, postalCode, duration);
+    }
+
+    public LocationAddressDTO getLocationAddressDTO(){
+        return new LocationAddressDTO(locationName, street, city, country, postalCode);
+    }
+
+    public BaseAddressDTO getBaseAddressDTO(){
+        return new BaseAddressDTO(street, city, country, postalCode);
     }
 }

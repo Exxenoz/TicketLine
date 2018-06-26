@@ -1,11 +1,17 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 
+import at.ac.tuwien.inso.sepm.ticketline.rest.exception.AddressValidationException;
+import at.ac.tuwien.inso.sepm.ticketline.rest.exception.PerformanceSearchValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.validator.BaseAddressValidator;
+import at.ac.tuwien.inso.sepm.ticketline.rest.validator.LocationAddressValidator;
+import at.ac.tuwien.inso.sepm.ticketline.rest.validator.PerformanceSearchValidator;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.performance.PerformanceMapper;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpBadRequestException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.PerformanceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -55,6 +61,13 @@ public class PerformanceEndpoint {
     @ApiOperation("Get a list of all the performances that match the given criteria")
     @PreAuthorize("hasRole('USER')")
     public PageResponseDTO<PerformanceDTO> findAll(SearchDTO search, Pageable pageable) {
+        try {
+            PerformanceSearchValidator.validatePerformanceSearchDTO(search);
+            LocationAddressValidator.validateLocationAddressDTO(search.getLocationAddressDTO());
+            BaseAddressValidator.validate(search.getBaseAddressDTO());
+        } catch (PerformanceSearchValidationException | AddressValidationException e) {
+            throw new HttpBadRequestException();
+        }
         Page<Performance> performancePage = performanceService.findAll(search, pageable);
         List<PerformanceDTO> performanceDTOList = performanceMapper.performanceToPerformanceDTO(performancePage.getContent());
         return new PageResponseDTO<>(performanceDTOList, performancePage.getTotalPages());
