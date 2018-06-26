@@ -64,6 +64,7 @@ public class SimpleInvoiceService implements InvoiceService {
         //First we want to transform the reservation to HTML
         //and check pricing to decide on invoice type
         String source = "";
+
         if (reservationService.calculatePrice(reservation) >= this.invoiceConfigurationProperties.getDetailedInvoiceLimit()) {
             source = htmlBuilderService.buildDetailedInvoiceHtml(reservation);
         } else {

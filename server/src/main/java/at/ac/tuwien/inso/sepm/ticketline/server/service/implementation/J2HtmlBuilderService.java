@@ -420,15 +420,19 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
      * @return the built cancellation pricing div
      */
     private ContainerTag buildCancellationPricingInformationDiv(Reservation reservation) {
-        return div(
-            table(
-                tr(
-                    th(BundleManager.getBundle().getString("invoice.total")),
-                    td(PriceUtils.priceToRepresentation(reservationService.calculateReimbursedAmount(reservation))
-                        + " " + BundleManager.getBundle().getString("invoice.include.vat"))
-                )
-            ).withClass("regular-table")
-        ).withClass("bordered-div");
+        if(reservation.getElusivePrice() != null) {
+            return div(
+                table(
+                    tr(
+                        th(BundleManager.getBundle().getString("invoice.total")),
+                        td(PriceUtils.priceToRepresentation(reservation.getElusivePrice())
+                            + " " + BundleManager.getBundle().getString("invoice.include.vat"))
+                    )
+                ).withClass("regular-table")
+            ).withClass("bordered-div");
+        } else {
+            return div();
+        }
     }
 
     /**

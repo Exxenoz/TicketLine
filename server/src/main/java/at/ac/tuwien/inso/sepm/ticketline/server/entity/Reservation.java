@@ -36,6 +36,9 @@ public class Reservation {
     @Column
     private boolean canceled = false;
 
+    @Column
+    private Long elusivePrice;
+
     public Long getId() {
         return id;
     }
@@ -104,6 +107,36 @@ public class Reservation {
         this.reservationNumber = reservationNumber;
     }
 
+    public Long getElusivePrice() {
+        return elusivePrice;
+    }
+
+    public void setElusivePrice(Long elusivePrice) {
+        this.elusivePrice = elusivePrice;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Reservation)) return false;
+        Reservation that = (Reservation) o;
+        return isCanceled() == that.isCanceled() &&
+            Objects.equals(getId(), that.getId()) &&
+            Objects.equals(getCustomer(), that.getCustomer()) &&
+            Objects.equals(getPerformance(), that.getPerformance()) &&
+            Objects.equals(getSeats(), that.getSeats()) &&
+            Objects.equals(getPaid(), that.getPaid()) &&
+            Objects.equals(getPaidAt(), that.getPaidAt()) &&
+            Objects.equals(getReservationNumber(), that.getReservationNumber()) &&
+            Objects.equals(getElusivePrice(), that.getElusivePrice());
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(getId(), getCustomer(), getPerformance(), getSeats(), getPaid(), getPaidAt(), getReservationNumber(), isCanceled(), getElusivePrice());
+    }
+
     @Override
     public String toString() {
         return "Reservation{" +
@@ -115,28 +148,8 @@ public class Reservation {
             ", paidAt=" + paidAt +
             ", reservationNumber='" + reservationNumber + '\'' +
             ", canceled=" + canceled +
+            ", elusivePrice=" + elusivePrice +
             '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Reservation that = (Reservation) o;
-        return canceled == that.canceled &&
-            Objects.equals(id, that.id) &&
-            Objects.equals(customer, that.customer) &&
-            Objects.equals(performance, that.performance) &&
-            Objects.equals(seats, that.seats) &&
-            Objects.equals(paid, that.paid) &&
-            Objects.equals(paidAt, that.paidAt) &&
-            Objects.equals(reservationNumber, that.reservationNumber);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(id, customer, performance, seats, paid, paidAt, reservationNumber, canceled);
     }
 
     public static final class Builder {
@@ -147,6 +160,7 @@ public class Reservation {
         private Boolean paid;
         private LocalDateTime paidAt;
         private String reservationNumber;
+        private Long elusivePrice;
 
         private Builder() {
         }
@@ -190,6 +204,11 @@ public class Reservation {
             return this;
         }
 
+        public Builder withElusivePrice(Long elusivePrice) {
+            this.elusivePrice = elusivePrice;
+            return this;
+        }
+
         public Reservation build() {
             Reservation reservation = new Reservation();
             reservation.setId(id);
@@ -199,6 +218,7 @@ public class Reservation {
             reservation.setPaid(paid);
             reservation.setPaidAt(paidAt);
             reservation.setReservationNumber(reservationNumber);
+            reservation.setElusivePrice(elusivePrice);
             return reservation;
         }
     }

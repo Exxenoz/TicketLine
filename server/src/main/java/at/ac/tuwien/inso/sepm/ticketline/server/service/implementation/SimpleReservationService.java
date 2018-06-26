@@ -264,6 +264,9 @@ public class SimpleReservationService implements ReservationService {
         reservation.setSeats(createdSeats);
         reservation.setPerformance(currentPerformance);
 
+        Long elusivePrice = calculatePrice(reservation);
+        reservation.setElusivePrice(elusivePrice);
+
         LOGGER.debug("Storing reservation");
         createdReservation = reservationRepository.save(reservation);
         return createdReservation;
