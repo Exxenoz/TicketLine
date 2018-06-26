@@ -27,7 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import static javafx.application.Platform.runLater;
 import static javafx.scene.control.ButtonType.OK;
 
 @Component
@@ -139,7 +138,11 @@ public class PurchaseReservationSummaryController {
 
     private void handleInvoice(ReservationDTO reservationDTO) {
         try {
-            invoiceService.createAndStoreInvoice(reservationDTO.getReservationNumber());
+            if (!reservationDTO.isCanceled()) {
+                invoiceService.createAndStoreInvoice(reservationDTO.getReservationNumber());
+            } else {
+                invoiceService.createAndStoreCancellationInvoice(reservationDTO.getReservationNumber());
+            }
             invoiceService.openInvoice(reservationDTO.getReservationNumber());
 
         } catch (DataAccessException d) {
