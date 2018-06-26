@@ -186,10 +186,10 @@ public class ReservationsController {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == buttonTypeYes) {
-            LOGGER.debug("print invoice");
+            LOGGER.debug("Show invoice");
             handleCancellationInvoice(reservationDTO);
         } else {
-            LOGGER.debug("do not print invoice");
+            LOGGER.debug("Do not show invoice");
         }
     }
 

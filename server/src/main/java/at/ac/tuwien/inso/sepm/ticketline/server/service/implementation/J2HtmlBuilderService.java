@@ -210,7 +210,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
                     buildCompanyInformationAndDateDiv(),
 
                     //Some polite phrasing and performance cancellation text
-                    h1(BundleManager.getBundle().getString("invoice.header")),
+                    h1(BundleManager.getBundle().getString("invoice.header.cancellation")),
                     div(
                         text(
                             BundleManager.getBundle().getString("invoice.cancellation.text")
@@ -255,7 +255,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
                     buildCompanyInformationAndDateDiv(),
 
                     //Some polite phrasing and performance information phrasing
-                    h1(BundleManager.getBundle().getString("invoice.header")),
+                    h1(BundleManager.getBundle().getString("invoice.header.cancellation")),
 
                     //Customer information
                     h3(BundleManager.getBundle().getString("invoice.dears")),
@@ -467,7 +467,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
      * @return the built paid date information div in html
      */
     private ContainerTag buildPaidDateDiv(Reservation reservation) {
-        if(reservation.getPaid() != null) {
+        if(reservation.getPaidAt() != null) {
             return div(
                 h4(BundleManager.getBundle().getString("invoice.performance.paidat")
                     + ":"

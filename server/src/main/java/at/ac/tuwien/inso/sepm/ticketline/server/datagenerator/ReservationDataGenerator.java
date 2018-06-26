@@ -83,6 +83,7 @@ public class ReservationDataGenerator implements DataGenerator {
                     if (faker.random().nextBoolean()) {
                         reservation.setPaid(true);
                         reservation.setPaidAt(LocalDateTime.of(getRandomLocalDateForCurrentYear(), LocalTime.now()));
+                        reservation.setElusivePrice(reservationService.calculatePrice(reservation));
                     }
                     else {
                         reservation.setPaid(false);
