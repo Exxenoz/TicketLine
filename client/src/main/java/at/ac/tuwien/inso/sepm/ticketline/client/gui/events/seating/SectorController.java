@@ -162,4 +162,18 @@ public class SectorController {
             }
         });
     }
+
+    /**
+     * Checks for all javafx views if they are correctly initialized
+     * to give us information about the controller state
+     * @return true if everything is initialized, else false
+     */
+    public boolean isInitialized() {
+        if(sectorDetailsVBox != null && sectorScrollPane != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

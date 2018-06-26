@@ -18,6 +18,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -25,12 +26,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.LinkedList;
 import java.util.List;
@@ -63,12 +66,13 @@ public class HallPlanController implements SeatSelectionListener {
     @FXML
     public TableColumn seatsPriceColumn;
     @FXML
-
     public Button continueButton;
     @FXML
     public Button backButton;
     @FXML
     public Button reserveButton;
+    @FXML
+    AnchorPane controllerPane;
 
     private final SpringFxmlLoader fxmlLoader;
     private final SelectCustomerController selectCustomerController;
@@ -108,6 +112,16 @@ public class HallPlanController implements SeatSelectionListener {
         } else {
             amountOfTicketsLabel.setText("0");
         }
+
+        //Initialize correct seat picker layout
+        Parent root;
+        if (reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SEAT) {
+            root = fxmlLoader.load("/fxml/reservation/seatMapPicker.fxml");
+        } else {
+            root = fxmlLoader.load("/fxml/reservation/sectorSeatPicker.fxml");
+        }
+        controllerPane.getChildren().add(root);
+
         //Initialize table view
         seatsRowColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SeatDTO, Integer>, ObservableValue>() {
             @Override
@@ -182,7 +196,7 @@ public class HallPlanController implements SeatSelectionListener {
                 if (seatMapController.isInitialized()) {
                     this.seatMapController.setSeatSelectionListener(this);
                     this.seatMapController.fill(this.reservation.getPerformance(), reservationDTOS);
-                } else if (sectorController != null) {
+                } else if (sectorController.isInitialized()) {
                     this.sectorController.setSeatSelectionListener(this);
                     this.sectorController.fill(this.reservation.getPerformance(), reservationDTOS);
                 }
