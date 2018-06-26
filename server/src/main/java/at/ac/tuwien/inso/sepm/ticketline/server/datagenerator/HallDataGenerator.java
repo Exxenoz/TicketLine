@@ -135,7 +135,7 @@ public class HallDataGenerator implements DataGenerator {
     public SectorCategory createSectorCategory() {
         LOGGER.debug("Could net set sector category since the corresponding repository is empty");
         SectorCategory sectorCategory = new SectorCategory();
-        sectorCategory.setBasePriceMod(valueOf(faker.number().digit()));
+        sectorCategory.setBasePriceMod(valueOf(faker.number().numberBetween(0, 60)));
         sectorCategory.setName(faker.hipster().word());
         return sectorCategory;
     }
