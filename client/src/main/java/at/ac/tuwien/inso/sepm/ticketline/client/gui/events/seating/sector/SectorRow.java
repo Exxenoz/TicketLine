@@ -22,15 +22,23 @@ public class SectorRow {
     }
 
     public void setSectorLabelText(String text) {
-
+        this.sectorLabel.setText(text);
     }
 
     public void setPriceLabelText(String text) {
-
+        this.priceLabel.setText(text);
     }
 
-    public void setSpinnerAmount() {
+    public void setSpinnerAmount(int amount) {
+        this.seatsSpinner.getValueFactory().setValue(amount);
+    }
 
+    public SectorDTO getSectorDTO() {
+        return sectorDTO;
+    }
+
+    public void setSectorDTO(SectorDTO sectorDTO) {
+        this.sectorDTO = sectorDTO;
     }
 }
 

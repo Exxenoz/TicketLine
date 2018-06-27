@@ -16,7 +16,9 @@ import javafx.scene.layout.VBox;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class SectorController {
@@ -177,4 +179,28 @@ public class SectorController {
         }
     }
 
+    public void fillForReservationEdit(ReservationDTO reservationDTO) {
+        Map<SectorDTO, Integer> map = getSeatCountMap(reservationDTO);
+
+        for(Map.Entry<SectorDTO, Integer> entry: map.entrySet()) {
+            for(SectorRow row: sectorRows) {
+                if(row.getSectorDTO().equals(row)) {
+                    row.setSpinnerAmount(entry.getValue());
+                }
+            }
+        }
+    }
+
+    private Map<SectorDTO, Integer> getSeatCountMap(ReservationDTO reservationDTO) {
+        Map<SectorDTO, Integer> sectorCountMap = new HashMap();
+        for (SeatDTO s : reservationDTO.getSeats()) {
+            SectorDTO sector = s.getSector();
+            if (!sectorCountMap.containsKey(sector)) {
+                sectorCountMap.put(s.getSector(), 0);
+            } else {
+                sectorCountMap.put(s.getSector(), sectorCountMap.get(s.getSector()) + 1);
+            }
+        }
+        return sectorCountMap;
+    }
 }

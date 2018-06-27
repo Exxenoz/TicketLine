@@ -357,7 +357,6 @@ public class EventSearchController {
         stage.setScene(new Scene(parent));
         stage.setTitle(BundleManager.getBundle().getString("bookings.performance.details.title"));
 
-
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(bookButton.getScene().getWindow());
 
@@ -541,7 +540,7 @@ public class EventSearchController {
             performanceData.clear();
             performanceData.addAll(response.getContent());
             totalPages = response.getTotalPages();
-            initializeTableView();
+//            initializeTableView();
             foundEventsTableView.refresh();
             updateCurrentFlowPane();
         } catch (DataAccessException e) {

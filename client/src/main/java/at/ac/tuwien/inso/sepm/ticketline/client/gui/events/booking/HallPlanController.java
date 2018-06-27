@@ -299,7 +299,7 @@ public class HallPlanController implements SeatSelectionListener {
             if (seatMapController.isInitialized()) {
                 seatMapController.fillForReservationEdit(reservation);
             } else {
-
+                sectorController.fillForReservationEdit(reservation);
             }
         });
     }
