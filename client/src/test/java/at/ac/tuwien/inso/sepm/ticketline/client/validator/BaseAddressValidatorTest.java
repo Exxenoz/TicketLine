@@ -109,6 +109,34 @@ public class BaseAddressValidatorTest {
         validateCountry(textField);
     }
 
-    //TODO: VALIDATE POSTAL CODE
+    //VALIDATE POSTAL CODE
+
+    @Test
+    public void validatePostalCodeTest() throws AddressValidationException {
+        TextField textField = new TextField();
+        textField.setText("4840");
+        validatePostalCode(textField);
+    }
+
+    @Test(expected = AddressValidationException.class)
+    public void validatePostalCodeTooShortTest() throws AddressValidationException {
+        TextField textField = new TextField();
+        textField.setText("");
+        validatePostalCode(textField);
+    }
+
+    @Test(expected = AddressValidationException.class)
+    public void validatePostalCodeTooLongTest() throws AddressValidationException {
+        TextField textField = new TextField();
+        textField.setText("2222222222222222222222222222222222222222222222222222");
+        validatePostalCode(textField);
+    }
+
+    @Test(expected = AddressValidationException.class)
+    public void validatePostalCodeInvalidCharactersTest() throws AddressValidationException {
+        TextField textField = new TextField();
+        textField.setText("notaPostalc0de");
+        validatePostalCode(textField);
+    }
 
 }
