@@ -46,7 +46,7 @@
                                                 <TableColumn fx:id="nameColumn" text="%events.table.name" />
                                                 <TableColumn fx:id="eventColumn" text="%events.table.event" />
                                                 <TableColumn fx:id="startTimeColumn" text="%events.table.starttime" />
-                                                <TableColumn fx:id="locationColumn" text="%events.table.location" />
+                                                <TableColumn fx:id="locationColumn" minWidth="140.0" text="%events.table.location" />
                                             </columns>
                                             <columnResizePolicy>
                                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
