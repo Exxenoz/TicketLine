@@ -56,9 +56,11 @@ public class SimpleInvoiceService implements InvoiceService {
 
     @Override
     public void generateInvoice(String reservationNumber) throws InternalNotFoundException, InternalInvoiceGenerationException {
+        LOGGER.info("Generate Invoice for the Reservation with the number {}", reservationNumber);
         Reservation reservation = reservationService.findOneByReservationNumber(reservationNumber);
 
         if (reservation == null) {
+            LOGGER.warn("No Reservation found for the given ReservationNumber");
             throw new InternalNotFoundException("Could not find reservation for reservation number: " + reservationNumber);
         }
         //First we want to transform the reservation to HTML
@@ -70,21 +72,25 @@ public class SimpleInvoiceService implements InvoiceService {
         } else {
             source = htmlBuilderService.buildBasicInvoiceHtml(reservation);
         }
+        LOGGER.debug("Html Invoice was built successfully");
 
         //Then we render it to pdf and store it as file, we use the reservation number as invoice name
         try {
             runRendererBuilder(source, reservation.getReservationNumber());
-        } catch (ExternalRendererException | IOException e) {
-            e.printStackTrace();
+        } catch (ExternalRendererException e) {
+            LOGGER.error("An error occurred during the rendering and saving of the PDF: {}", e.getMessage());
             throw new InternalInvoiceGenerationException();
         }
+        LOGGER.debug("The Invoice was rendered and saved successfully as a PDF");
     }
 
     @Override
     public void generateCancellationInvoice(String reservationNumber) throws InternalNotFoundException, InternalInvoiceGenerationException {
+        LOGGER.info("Generate CancellationInvoice for the Reservation with the number {}", reservationNumber);
         Reservation reservation = reservationService.findOneByReservationNumber(reservationNumber);
 
         if (reservation == null) {
+            LOGGER.warn("No Reservation found for the given ReservationNumber");
             throw new InternalNotFoundException("Could not find reservation for reservation number: " + reservationNumber);
         }
         //Check pricing to decide on invoice type
@@ -94,13 +100,15 @@ public class SimpleInvoiceService implements InvoiceService {
         } else {
             source = htmlBuilderService.buildBasicCancellationHtml(reservation);
         }
+        LOGGER.debug("Html CancellationInvoice was built successfully");
 
         try {
             runRendererBuilder(source, reservation.getReservationNumber());
-        } catch (ExternalRendererException | IOException e) {
-            e.printStackTrace();
+        } catch (ExternalRendererException e) {
+            LOGGER.error("An error occurred during the Rendering of the PDF: {}", e.getMessage());
             throw new InternalInvoiceGenerationException();
         }
+        LOGGER.debug("The CancellationInvoice was rendered and saved successfully as a PDF");
     }
 
     @Override
@@ -117,22 +125,27 @@ public class SimpleInvoiceService implements InvoiceService {
 
     @Override
     public Resource serveInvoice(String reservationNumber) throws InternalNotFoundException {
+        LOGGER.info("Serve Invoice to {}", reservationNumber);
         try {
             Path file = load(reservationNumber + ".pdf");
             Resource resource = new UrlResource(file.toUri());
 
             if (resource.exists() || resource.isReadable()) {
+                LOGGER.debug("Loaded Resource");
                 return resource;
             } else {
+                LOGGER.error("Could not load Resource");
                 throw new InternalNotFoundException("Could not find generated invoice file.");
             }
         } catch (MalformedURLException m) {
+            LOGGER.error("The path to the PDF was malformed: {}", m.getMessage());
             throw new InternalNotFoundException("URL for PDF itself could not be resolved.");
         }
     }
 
     @Override
     public void deletePDF(String reservationNumber) throws InternalNotFoundException {
+        LOGGER.info("Delete Invoice {}", reservationNumber);
         try {
             Path file = load(reservationNumber + ".pdf");
             Resource resource = new UrlResource(file.toUri());
@@ -140,19 +153,23 @@ public class SimpleInvoiceService implements InvoiceService {
             if (resource.exists() || resource.isReadable()) {
                 try {
                     resource.getFile().delete();
+                    LOGGER.debug("Deleted Invoice");
                 } catch (IOException i) {
-                    LOGGER.warn("Could not delete file {}", resource.getFilename());
+                    LOGGER.error("Could not delete file {}", resource.getFilename());
                     throw new InternalNotFoundException("Could not delete invoice file.");
                 }
             } else {
+                LOGGER.error("Could not access file {}", file);
                 throw new InternalNotFoundException("Could not find invoice file to delete.");
             }
         } catch (MalformedURLException m) {
+            LOGGER.error("Could not find invoice file: {}", m.getMessage());
             throw new InternalNotFoundException("URL for PDF itself could not be resolved.");
         }
     }
 
-    private void runRendererBuilder(String richText, String name) throws IOException, ExternalRendererException {
+    private void runRendererBuilder(String richText, String name) throws ExternalRendererException {
+        LOGGER.info("Render PDF {}", name);
         try {
             OutputStream outputStream = new FileOutputStream(invoiceLocation.toString() + "/" + name + ".pdf");
             PdfRendererBuilder pdfRendererBuilder = new PdfRendererBuilder();
@@ -160,6 +177,7 @@ public class SimpleInvoiceService implements InvoiceService {
             pdfRendererBuilder.toStream(outputStream);
             pdfRendererBuilder.run();
         } catch (Exception e) {
+            LOGGER.error("An error occurred during the rendering: {}", e.getMessage());
             throw new ExternalRendererException("Rendering did not complete.");
         }
     }

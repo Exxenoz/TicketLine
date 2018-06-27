@@ -47,7 +47,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import static at.ac.tuwien.inso.sepm.ticketline.client.validator.LocationAddressValidator.*;
 import static at.ac.tuwien.inso.sepm.ticketline.client.validator.PerformanceSearchValidator.*;
 import static javafx.collections.FXCollections.observableArrayList;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.CALENDAR_ALT;
@@ -151,7 +150,7 @@ public class EventSearchController {
 
     private ObservableList<PerformanceDTO> performanceData = observableArrayList();
     private int page = 0;
-    private int totalPages = 0;
+    private int totalPages = 1;
     private ArrayList<Text> textChunks = new ArrayList<Text>();
     private TableColumn sortedColumn;
     private enum Validate { artistFristName, artistLastName, eventName, duration, price, locationName, city, street, country, postalcode }
@@ -296,7 +295,7 @@ public class EventSearchController {
         LOGGER.debug("clearing the data");
         performanceData.clear();
         page = 0;
-        totalPages = 0;
+        totalPages = 1;
         ScrollBar scrollBar = getVerticalScrollbar(foundEventsTableView);
         if (scrollBar != null) {
             scrollBar.setValue(0);
@@ -304,6 +303,10 @@ public class EventSearchController {
     }
 
     private void loadPerformanceTable(int page) {
+        if (page < 0 || page >= totalPages) {
+            LOGGER.warn("Could not load Performances table page, because page parameter is invalid!");
+            return;
+        }
         LOGGER.debug("Loading Perfomances of Page {}", page);
         PageRequestDTO pageRequestDTO = null;
 

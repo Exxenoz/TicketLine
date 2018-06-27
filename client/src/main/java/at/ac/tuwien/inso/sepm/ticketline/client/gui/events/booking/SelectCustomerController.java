@@ -76,7 +76,7 @@ public class SelectCustomerController {
 
     private int currentPage = 0;
 
-    private int totalPages = 0;
+    private int totalPages = 1;
     private final SpringFxmlLoader fxmlLoader;
     private Stage stage;
     private boolean isReservation;
@@ -217,6 +217,10 @@ public class SelectCustomerController {
     }
 
     private void loadCustomersTable(int page) {
+        if (page < 0 || page >= totalPages) {
+            LOGGER.warn("Could not load customer table page, because page parameter is invalid!");
+            return;
+        }
         LOGGER.debug("Loading Customers of Page {}", page);
         PageRequestDTO pageRequestDTO = null;
         if (sortedColumn != null) {
@@ -243,6 +247,7 @@ public class SelectCustomerController {
         LOGGER.debug("clearing the data");
         items.clear();
         currentPage = 0;
+        totalPages = 1;
     }
 
     public void goBack(ActionEvent actionEvent) {

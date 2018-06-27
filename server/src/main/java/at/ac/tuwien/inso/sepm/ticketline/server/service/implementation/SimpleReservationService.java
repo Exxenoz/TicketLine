@@ -8,9 +8,9 @@ import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatRe
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
-import at.ac.tuwien.inso.sepm.ticketline.server.validator.HallPlanValidator;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.SeatsService;
+import at.ac.tuwien.inso.sepm.ticketline.server.validator.HallPlanValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,22 +67,26 @@ public class SimpleReservationService implements ReservationService {
     }
     @Override
     public List<Reservation> findAllByEventId(Long eventId) {
+        LOGGER.info("Get all Reservation connected to a event with id={}", eventId);
         return reservationRepository.findAllByEventId(eventId);
     }
 
     @Override
     public Reservation findOneByPaidFalseAndId(Long reservationId) {
+        LOGGER.info("Get unpaid Reservation with id={}", reservationId);
         return reservationRepository.findByPaidFalseAndId(reservationId);
     }
 
     @Override
     public Reservation findOneByReservationNumber(String reservationNr) {
+        LOGGER.info("Get Reservation with number={}", reservationNr);
         return reservationRepository.findByReservationNumber(reservationNr);
     }
 
     @Override
     public Page<Reservation> findAllByCustomerNameAndPerformanceName(ReservationSearch reservationSearch,
                                                                      Pageable pageable) {
+        LOGGER.info("Get Page {} of Reservations, satisfying the filter {}", pageable.getPageNumber(), reservationSearch);
         String firstName = reservationSearch.getFirstName();
         String lastName = reservationSearch.getLastName();
         String performanceName = reservationSearch.getPerformanceName();
@@ -92,14 +96,18 @@ public class SimpleReservationService implements ReservationService {
 
     @Override
     public Long getPaidReservationCountByEventId(Long eventId) {
+        LOGGER.info("Count purchased Reservations for the event with id={}", eventId);
         return reservationRepository.getPaidReservationCountByEventId(eventId);
     }
 
     @Override
     public Reservation purchaseReservation(Reservation reservation) {
+        LOGGER.info("Purchase Reservation {}", reservation);
         reservation.setPaid(true);
         reservation.setPaidAt(LocalDateTime.now());
-        return reservationRepository.save(reservation);
+        reservation = reservationRepository.save(reservation);
+        LOGGER.debug("Successfully purchased Reservation {}", reservation);
+        return reservation;
     }
 
     @Override
@@ -111,12 +119,14 @@ public class SimpleReservationService implements ReservationService {
 
     @Override
     public Page<Reservation> findAll(Pageable pageable) {
+        LOGGER.info("Get Page {} of all Reservations", pageable.getPageNumber());
         return reservationRepository.findAll(pageable);
     }
 
     @Override
     @Transactional
     public Reservation editReservation(Reservation reservation) throws InvalidReservationException {
+        LOGGER.info("Edit Reservation {}", reservation);
         List<Seat> changedSeats = reservation.getSeats();//the changed seats
         Reservation savedReservation = reservationRepository.findByPaidFalseAndId(reservation.getId());
         List<Seat> savedSeats = savedReservation.getSeats();//the old seat config
@@ -126,16 +136,18 @@ public class SimpleReservationService implements ReservationService {
         List<Sector> sectors = null;
         Performance performance = null;
         if (performanceRepository.findById(reservation.getPerformance().getId()).isPresent()) {
+            LOGGER.debug("Get Performance and Sectors connected to the Reservation");
             performance = performanceRepository.findById(reservation.getPerformance().getId()).get();
             sectors = performance.getHall().getSectors();
         }
 
         //Then, too fail fast, we check the integrity of the seats according to the hall plan and the sectors
+        LOGGER.debug("Check Integrity of the Seats with the hallplan");
         try {
             if (sectors != null) {
                 hallPlanValidator.checkSeatsAgainstSectors(onlyNewSeats, sectors);
             } else {
-                LOGGER.error("Could not find the the Sectors for this reservation");
+                LOGGER.warn("Could not find the the Sectors for this reservation");
                 throw new InvalidReservationException("The Performance was not set");
             }
         } catch (InternalHallValidationException i) {
@@ -147,6 +159,8 @@ public class SimpleReservationService implements ReservationService {
         if((performance.getEvent() != null &&
             performance.getEvent().getEventType() != null
             && performance.getEvent().getEventType() == EventType.SECTOR)) {
+            LOGGER.debug("Check if the Sectors have enough space");
+
             //For events with free seating just check if there is enough space in a given sector
             List<Reservation> reservations = reservationRepository.findAllByPerformanceId(reservation.getPerformance().getId());
 
@@ -165,6 +179,7 @@ public class SimpleReservationService implements ReservationService {
                 }
             }
         } else {
+            LOGGER.debug("Check if all new Seats are free");
             checkIfAllSeatsAreFreeIgnoreId(reservation.getId(), performance.getId(), onlyNewSeats);
         }
 
@@ -185,10 +200,11 @@ public class SimpleReservationService implements ReservationService {
                     removedSeats.add(seat);
                 }
             }
-            seatsService.deleteAll(removedSeats);
             LOGGER.debug("Delete removed Seats");
+            seatsService.deleteAll(removedSeats);
         }
 
+        LOGGER.debug("Successfully updated Reservation {}", out);
         return out;
     }
 
@@ -217,10 +233,10 @@ public class SimpleReservationService implements ReservationService {
         List<Reservation> allReservations = reservationRepository.findAllByPerformanceId(performanceId);
 
         for (Reservation reservation : allReservations) {
-            if (!reservation.getId().equals(reservationId)) {
-                for (Seat seat : seatsToCheck) {
-                    for (Seat otherSeat : reservation.getSeats()) {
-                        if (seat.equalsWithoutId(otherSeat)) {
+            if (!reservation.getId().equals(reservationId)) {//is different Reservation?
+                for (Seat seat : seatsToCheck) {//Seat to be checked
+                    for (Seat otherSeat : reservation.getSeats()) {//seat from the other reservation
+                        if (seat.equalsWithoutId(otherSeat)) {//same seat?
                             LOGGER.warn("The seat {} is already reserved", seat);
                             throw new InvalidReservationException("Seat " + seat + " is already reserved!");
                         }
@@ -233,8 +249,9 @@ public class SimpleReservationService implements ReservationService {
     private void checkIfAllSeatsAreFree(List<Seat> seatsToCheck) throws InvalidReservationException {
         List<Reservation> allReservations = reservationRepository.findAll();
         for (Reservation reservation : allReservations) {
-            for (Seat seat : seatsToCheck) {
+            for (Seat seat : seatsToCheck) {//Seat to be checked
                 if (reservation.getSeats().contains(seat)) {
+                    LOGGER.warn("The seat {} is already reserved", seat);
                     throw new InvalidReservationException("Seats are already reserved!");
                 }
             }
@@ -244,12 +261,14 @@ public class SimpleReservationService implements ReservationService {
     @Override
     @Transactional
     public Reservation createReservation(Reservation reservation) throws InvalidReservationException, InternalSeatReservationException {
+        LOGGER.info("Create Reservation {}", reservation);
         //First, get the picked performance for this reservation
         Performance performance = performanceRepository.findById(reservation.getPerformance().getId()).get();
 
         //Then, too fail fast, we check the integrity of the seats according to the hall plan and the sectors
+        LOGGER.debug("Check Integrity of the Seats with the hallplan");
         try {
-            List<Seat> seatst = reservation.getSeats();
+            List<Seat> seats = reservation.getSeats();
             Hall hall = performance.getHall();
             List<Sector> sectort = hall.getSectors();
             hallPlanValidator.checkSeatsAgainstSectors(reservation.getSeats(), performance.getHall().getSectors());
@@ -262,6 +281,8 @@ public class SimpleReservationService implements ReservationService {
         if(performance.getEvent() != null &&
             performance.getEvent().getEventType() != null
             && performance.getEvent().getEventType() == EventType.SECTOR) {
+            LOGGER.debug("Check if the Sectors have enough space");
+
             //For events with free seating just check if there is enough space in a given sector
             List<Reservation> reservations = reservationRepository.findAllByPerformanceId(reservation.getPerformance().getId());
 
@@ -280,11 +301,12 @@ public class SimpleReservationService implements ReservationService {
                 }
             }
         } else {
+            LOGGER.debug("Check if Seats are still free");
             //we check the seats against all reservations, and if they actually exist, for events with proper seating
             List<Reservation> reservations = reservationRepository.findAllByPerformanceId(reservation.getPerformance().getId());
             for (Reservation r : reservations) {
-                for (Seat existingSeat : r.getSeats()) {
-                    for (Seat requestedSeat : reservation.getSeats()) {
+                for (Seat existingSeat : r.getSeats()) {//get existing Seats
+                    for (Seat requestedSeat : reservation.getSeats()) {//Seats to be checked
                         if (requestedSeat.getSector().getId() == existingSeat.getSector().getId()
                             && requestedSeat.getPositionX() == existingSeat.getPositionX()
                             && requestedSeat.getPositionY() == existingSeat.getPositionY()) {
@@ -318,10 +340,12 @@ public class SimpleReservationService implements ReservationService {
 
         LOGGER.debug("Storing reservation");
         createdReservation = reservationRepository.save(reservation);
+        LOGGER.debug("Successfully created Reservation {}", createdReservation);
         return createdReservation;
     }
 
     public String generateReservationNumber() {
+        LOGGER.info("Generate Reservationnumber");
         String reservationNumber;
         Reservation previous = reservationRepository.findFirstByOrderByIdDesc();
         //if this is the first generated reservation
@@ -341,8 +365,10 @@ public class SimpleReservationService implements ReservationService {
 
     @Override
     public Reservation cancelReservation(Long id) throws InternalCancelationException {
+        LOGGER.info("Cancel Reservation with id={}", id);
         Reservation reservation = reservationRepository.findById(id).orElseThrow(InternalCancelationException::new);
         if (reservation.getPerformance().getPerformanceStart().isBefore(LocalDateTime.now())) {
+            LOGGER.warn("The Performance has already started and therefore can not be cancelled anymore");
             throw new InternalCancelationException("The performance has already started and the booking can't be canceled!");
         }
         List<Seat> seatsOfReservation = reservation.getSeats();
@@ -350,16 +376,19 @@ public class SimpleReservationService implements ReservationService {
         reservation.setCanceled(true);
         reservationRepository.save(reservation);
         seatsOfReservation.forEach(seat -> seatsService.deleteSeat(seat));
+        LOGGER.debug("Successfully cancelled Reservation {}", reservation);
         return reservation;
     }
 
     @Override
     public List<Reservation> findReservationsForPerformance(Long id) {
+        LOGGER.info("Get Reservation connected to Performance with the id={}", id);
         return reservationRepository.findAllByPerformanceId(id);
     }
 
     @Override
     public Long calculatePrice(Reservation reservation) {
+        LOGGER.info("Calculate price with TAX for {}", reservation);
         Long calculatedPrice = calculatePreTaxPrice(reservation);
 
         calculatedPrice += Math.round(calculatedPrice * priceCalculationProperties.getSalesTax());
@@ -368,6 +397,7 @@ public class SimpleReservationService implements ReservationService {
 
     @Override
     public Long calculatePreTaxPrice(Reservation reservation) {
+        LOGGER.info("Calculate price without TAX for {}", reservation);
         Long performancePrice = reservation.getPerformance().getPrice();
         Long calculatedPrice = 0l;
         for(Seat s: reservation.getSeats()) {
@@ -381,6 +411,7 @@ public class SimpleReservationService implements ReservationService {
      */
     @Override
     public Long calculateReimbursedAmount(Reservation reservation) {
+        LOGGER.info("Calculate the amount to be reimbused for the Reservation {}", reservation);
         Long calculatedPrice = calculatePreTaxPrice(reservation);
 
         calculatedPrice += Math.round(calculatedPrice * priceCalculationProperties.getSalesTax());

@@ -110,7 +110,7 @@ public class ReservationsController {
     private final PurchaseReservationSummaryController PRSController;
     private ObservableList<ReservationDTO> reservationList;
     private int page = 0;
-    private int totalPages = 0;
+    private int totalPages = 1;
     private static final int RESERVATIONS_PER_PAGE = 50;
     private static final int RESERVATION_FIRST_PAGE = 0;
     private final InvoiceService invoiceService;
@@ -294,6 +294,10 @@ public class ReservationsController {
     }
 
     private void loadReservationTable(int page) {
+        if (page < 0 || page >= totalPages) {
+            LOGGER.warn("Could not load Reservation table page, because page parameter is invalid!");
+            return;
+        }
         switch (rFilter) {
             case NONE:
                 LOGGER.debug("Load unfiltered Page {}", page);
@@ -458,7 +462,7 @@ public class ReservationsController {
         LOGGER.debug("Clearing the data");
         reservationList.clear();
         page = 0;
-        totalPages = 0;
+        totalPages = 1;
         ScrollBar scrollBar = getVerticalScrollbar(foundReservationsTableView);
         if (scrollBar != null) {
             scrollBar.setValue(0);
