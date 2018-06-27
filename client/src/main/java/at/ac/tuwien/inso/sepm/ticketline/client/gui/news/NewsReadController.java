@@ -130,6 +130,10 @@ public class NewsReadController {
             });
         }
 
+        // Clear news list here, because it could still contain data from the last login
+        vbNewsBoxChildren.clear();
+        loadedNews.clear();
+
         loadNewsList(FIRST_NEWS_LIST_PAGE);
     }
 
