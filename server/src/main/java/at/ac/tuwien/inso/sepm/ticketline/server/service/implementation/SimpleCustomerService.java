@@ -32,20 +32,27 @@ public class SimpleCustomerService implements CustomerService {
 
     @Override
     public CustomerDTO save(CustomerDTO customerDTO) throws CustomerValidationException {
+        LOGGER.info("Saving Customer {}", customerDTO);
         CustomerValidator.validateNewCustomer(customerDTO);
         var customer = customerMapper.customerDTOToCustomer(customerDTO);
-        return customerMapper.customerToCustomerDTO(customerRepository.save(customer));
+        customer = customerRepository.save(customer);
+        LOGGER.debug("Saved Customer {} successfully", customer);
+        return customerMapper.customerToCustomerDTO(customer);
     }
 
     @Override
     public CustomerDTO update(CustomerDTO customerDTO) throws CustomerValidationException {
+        LOGGER.info("Update Customer {}", customerDTO);
         CustomerValidator.validateExistingCustomer(customerDTO);
         var customer = customerMapper.customerDTOToCustomer(customerDTO);
-        return customerMapper.customerToCustomerDTO(customerRepository.save(customer));
+        customer = customerRepository.save(customer);
+        LOGGER.debug("Updated Customer {} successfully", customer);
+        return customerMapper.customerToCustomerDTO(customer);
     }
 
     @Override
     public PageResponseDTO<CustomerDTO> findAll(Pageable pageable) {
+        LOGGER.info("Get Page {} of Customers", pageable.getPageNumber());
         Page<Customer> customerPage = customerRepository.findAll(pageable);
         List<CustomerDTO> customerDTOList = customerMapper.customerToCustomerDTO(customerPage.getContent());
         return new PageResponseDTO<>(customerDTOList, customerPage.getTotalPages());
@@ -53,6 +60,7 @@ public class SimpleCustomerService implements CustomerService {
 
     @Override
     public Customer findOneById(Long id) {
+        LOGGER.info("Get Customer with id={}", id);
         return customerRepository.getOne(id);
     }
 }
