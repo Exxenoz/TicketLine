@@ -7,6 +7,8 @@ import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
+import at.ac.tuwien.inso.sepm.ticketline.client.validator.BaseAddressValidator;
+import at.ac.tuwien.inso.sepm.ticketline.client.validator.LocationAddressValidator;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
@@ -402,19 +404,19 @@ public class EventSearchController {
                         returnString = validatePrice(currentTextField);
                         break;
                     case locationName:
-                        returnString = validateLocationName(currentTextField);
+                        returnString = LocationAddressValidator.validateLocationName(currentTextField);
                         break;
                     case street:
-                        returnString = validateStreet(currentTextField);
+                        returnString = BaseAddressValidator.validateStreet(currentTextField);
                         break;
                     case city:
-                        returnString = validateCity(currentTextField);
+                        returnString = BaseAddressValidator.validateCity(currentTextField);
                         break;
                     case country:
-                        returnString = validateCountry(currentTextField);
+                        returnString = BaseAddressValidator.validateCountry(currentTextField);
                         break;
                     case postalcode:
-                        returnString = validatePostalCode(currentTextField);
+                        returnString = BaseAddressValidator.validatePostalCode(currentTextField);
                         break;
                 }
             }

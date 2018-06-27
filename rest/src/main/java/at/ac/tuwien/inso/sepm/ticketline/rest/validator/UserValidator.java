@@ -7,7 +7,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.util.DuplicateFinder;
 
 public abstract class UserValidator {
 
-    public static final String nameRegex = "^[-' a-zA-ZöüöäÜÖÄ0-9]+$";
+    public static final String nameRegex = "^[-' a-zA-ZöüäÜÖÄ0-9]+$";
 
     //validates newly created user
     public static void validateNewUser(UserCreateRequestDTO userCreateRequestDTO) throws UserValidatorException {
