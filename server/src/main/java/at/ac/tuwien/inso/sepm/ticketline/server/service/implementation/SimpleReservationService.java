@@ -321,8 +321,6 @@ public class SimpleReservationService implements ReservationService {
         return createdReservation;
     }
 
-
-
     public String generateReservationNumber() {
         String reservationNumber;
         Reservation previous = reservationRepository.findFirstByOrderByIdDesc();
@@ -399,7 +397,7 @@ public class SimpleReservationService implements ReservationService {
         for(Seat s: seats) {
             Sector sector = s.getSector();
             if(!sectorCountMap.containsKey(sector))  {
-                sectorCountMap.put(s.getSector(), 0);
+                sectorCountMap.put(s.getSector(), 1);
             } else {
                 sectorCountMap.put(s.getSector(), sectorCountMap.get(s.getSector()) + 1);
             }
@@ -413,7 +411,7 @@ public class SimpleReservationService implements ReservationService {
             for (Seat s : r.getSeats()) {
                 Sector sector = s.getSector();
                 if (!sectorCountMap.containsKey(sector)) {
-                    sectorCountMap.put(s.getSector(), 0);
+                    sectorCountMap.put(s.getSector(), 1);
                 } else {
                     sectorCountMap.put(s.getSector(), sectorCountMap.get(s.getSector()) + 1);
                 }

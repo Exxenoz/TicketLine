@@ -86,6 +86,7 @@ public class HallPlanController implements SeatSelectionListener {
 
     private boolean isReservation = false;
     private boolean changeDetails = false;
+    private boolean isSeatMapMode = false;
 
     public HallPlanController(SpringFxmlLoader fxmlLoader,
                               SelectCustomerController selectCustomerController,
@@ -105,6 +106,7 @@ public class HallPlanController implements SeatSelectionListener {
 
     @FXML
     private void initialize() {
+
         eventNameLabel.setText(reservation.getPerformance().getEvent().getName());
         performanceNameLabel.setText(reservation.getPerformance().getName());
         if (seats != null) {
@@ -117,8 +119,10 @@ public class HallPlanController implements SeatSelectionListener {
         Parent root;
         if (reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SEAT) {
             root = fxmlLoader.load("/fxml/reservation/seatMapPicker.fxml");
+            isSeatMapMode = true;
         } else {
             root = fxmlLoader.load("/fxml/reservation/sectorSeatPicker.fxml");
+            isSeatMapMode = false;
         }
         controllerPane.getChildren().add(root);
 
@@ -193,10 +197,10 @@ public class HallPlanController implements SeatSelectionListener {
         if (this.reservation != null && this.reservation.getPerformance() != null) {
             if (reservationDTOS != null) {
                 //Set this controller als seat selection listener for the seat map
-                if (seatMapController.isInitialized()) {
+                if (isSeatMapMode) {
                     this.seatMapController.setSeatSelectionListener(this);
                     this.seatMapController.fill(this.reservation.getPerformance(), reservationDTOS);
-                } else if (sectorController.isInitialized()) {
+                } else {
                     this.sectorController.setSeatSelectionListener(this);
                     this.sectorController.fill(this.reservation.getPerformance(), reservationDTOS);
                 }
@@ -296,7 +300,7 @@ public class HallPlanController implements SeatSelectionListener {
             updateSeatsInformation(reservation.getSeats());
             updatePrice(reservation.getSeats(), this.reservation.getPerformance());
 
-            if (seatMapController.isInitialized()) {
+            if (isSeatMapMode) {
                 seatMapController.fillForReservationEdit(reservation);
             } else {
                 sectorController.fillForReservationEdit(reservation);
