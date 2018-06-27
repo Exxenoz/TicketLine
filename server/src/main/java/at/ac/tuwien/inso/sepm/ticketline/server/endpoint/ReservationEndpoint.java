@@ -10,7 +10,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.reservation.ReservationSearchMapper;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InvalidReservationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpBadRequestException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpConflictException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpNotFoundException;
@@ -64,7 +64,7 @@ public class ReservationEndpoint {
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     @ApiOperation("Create a new Reservation for Seats in a Performance")
-    public ReservationDTO createNewReservation(@RequestBody CreateReservationDTO createReservationDTO) throws InvalidReservationException {
+    public ReservationDTO createNewReservation(@RequestBody CreateReservationDTO createReservationDTO) throws InternalReservationException {
         final var reservationToCreate = reservationMapper.createReservationDTOToReservation(createReservationDTO);
         try {
             final var createdReservation = reservationService.createReservation(reservationToCreate);
@@ -139,7 +139,7 @@ public class ReservationEndpoint {
             reservation = reservationService.editReservation(
                 reservationMapper.reservationDTOToReservation(reservationDTO)
             );
-        } catch (InvalidReservationException e) {
+        } catch (InternalReservationException e) {
             throw new HttpConflictException(e.getMessage());
         }
         return reservationMapper.reservationToReservationDTO(reservation);
@@ -148,7 +148,7 @@ public class ReservationEndpoint {
     @PostMapping("/createAndPay")
     @PreAuthorize("hasRole('USER')")
     @ApiOperation("Create and pay new Reservation for Seats in a Performance")
-    public ReservationDTO createAndPayReservation(@RequestBody CreateReservationDTO createReservationDTO) throws InvalidReservationException {
+    public ReservationDTO createAndPayReservation(@RequestBody CreateReservationDTO createReservationDTO) throws InternalReservationException {
         final var reservationToCreate = reservationMapper.createReservationDTOToReservation(createReservationDTO);
         try {
             final var createdReservation = reservationService.createAndPayReservation(reservationToCreate);

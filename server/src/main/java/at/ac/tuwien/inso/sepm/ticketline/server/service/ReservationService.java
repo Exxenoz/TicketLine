@@ -3,8 +3,8 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.ReservationSearch;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalCancelationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
 import org.springframework.data.domain.Page;
@@ -66,9 +66,9 @@ public interface ReservationService {
      *
      * @param reservation
      * @return created reservation
-     * @throws InvalidReservationException
+     * @throws InternalReservationException
      */
-    Reservation createReservation(Reservation reservation) throws InvalidReservationException, InternalSeatReservationException;
+    Reservation createReservation(Reservation reservation) throws InternalReservationException, InternalSeatReservationException;
 
     /**
      * Invoices an existing Reservation
@@ -84,16 +84,16 @@ public interface ReservationService {
      * @param reservation existing reservation with the new data
      * @return the edited reservation
      */
-    Reservation editReservation(Reservation reservation) throws InvalidReservationException;
+    Reservation editReservation(Reservation reservation) throws InternalReservationException;
 
     /**
      * Create a new reservation and set paid true
      *
      * @param reservation
      * @return created Reservation
-     * @throws InvalidReservationException
+     * @throws InternalReservationException
      */
-    Reservation createAndPayReservation(Reservation reservation) throws InvalidReservationException, InternalSeatReservationException;
+    Reservation createAndPayReservation(Reservation reservation) throws InternalReservationException, InternalSeatReservationException;
 
     /**
      * Cancel existing reservation
