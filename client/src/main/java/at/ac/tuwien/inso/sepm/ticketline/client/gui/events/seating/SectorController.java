@@ -165,13 +165,16 @@ public class SectorController {
                     if (newValue > oldValue) {
                         seatSelectionListener.onSeatSelected(seatDTO);
                     } else if (newValue < oldValue) {
-                        if(!sectorRow.getSeats().isEmpty()) {
+                        if(sectorRow.getSeats() != null && !sectorRow.getSeats().isEmpty()) {
                             SeatDTO s = sectorRow.getSeats().get(sectorRow.getSeats().size()-1);
                             //Remove from reservation seats
                             seatSelectionListener.onSeatDeselected(s);
 
                             //then remove it from the sector rows
                             sectorRow.getSeats().remove(s);
+                        } else {
+                            //Remove from reservation seats
+                            seatSelectionListener.onSeatDeselected(seatDTO);
                         }
                     }
                 }
