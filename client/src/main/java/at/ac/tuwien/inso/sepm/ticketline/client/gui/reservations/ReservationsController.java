@@ -274,7 +274,7 @@ public class ReservationsController {
             Alert errorAlert = new Alert(Alert.AlertType.ERROR);
             errorAlert.setTitle(BundleManager.getBundle().getString("bookings.cancel.alreadyStartedPerformance.title "));
             errorAlert.setContentText(BundleManager.getBundle().getString("bookings.cancel.alreadyStartedPerformance.text"));
-            alert.showAndWait();
+            errorAlert.showAndWait();
         } else {
             if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
                 try {

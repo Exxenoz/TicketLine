@@ -15,7 +15,7 @@
                     <children>
                         <Label fx:id="activeFiltersLabel" contentDisplay="TOP" prefHeight="27.0" text="%bookings.main.activefilters" />
                         <Label prefWidth="10.0" />
-                        <Label fx:id="activeFiltersListLabel" prefHeight="27.0" text="%bookings.main.criteria.placeholder" />
+                        <Label fx:id="activeFiltersListLabel" prefHeight="27.0" text=" "/>
                         <ButtonBar HBox.hgrow="ALWAYS">
                             <buttons>
                                 <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearFilters" text="%bookings.main.button.clear" textAlignment="CENTER" HBox.hgrow="ALWAYS">
