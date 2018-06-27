@@ -8,6 +8,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
 import at.ac.tuwien.inso.sepm.ticketline.client.validator.UserValidator;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationRequest;
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationTokenInfo;
+import com.sun.javafx.tools.packager.bundlers.Bundler;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -112,7 +113,7 @@ public class AuthenticationController {
                 }
 
                 if(usernameEmpty || passwordEmpty) {
-                    throw new DataAccessException("Missing credentials");
+                    throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.authentication.missing_credential"));
                 }
 
                 return authenticationService.authenticate(

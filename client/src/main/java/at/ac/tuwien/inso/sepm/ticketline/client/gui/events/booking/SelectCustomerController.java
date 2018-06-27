@@ -268,7 +268,7 @@ public class SelectCustomerController {
             LOGGER.warn("No selected Customer");
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
-            alert.setHeaderText("You need to choose a specific customer for this option.");
+            alert.setHeaderText(BundleManager.getExceptionBundle().getString("exception.select_customer.no_selection"));
             alert.showAndWait();
             return;
         }

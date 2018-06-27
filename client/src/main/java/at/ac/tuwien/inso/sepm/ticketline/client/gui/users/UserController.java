@@ -288,8 +288,12 @@ public class UserController {
         }
         userList.add(userDTO);
         userTable.sort();
+        // if the user is on the last entry, that means that he doesn't belong in this current page
         if (userList.get(userList.size() - 1) == userDTO) {
+            // remove user, because he should be loaded later on with an other page
             userList.remove(userDTO);
+        } else {
+            // user is part of first table
             // remove last item, so it doesn't appear twice when loading next page
             userList.remove(userList.size() - 1);
         }

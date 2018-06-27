@@ -64,10 +64,11 @@ public class PerformanceEndpoint {
         try {
             PerformanceSearchValidator.validatePerformanceSearchDTO(search);
             LocationAddressValidator.validateLocationAddressDTO(search.getLocationAddressDTO());
-            BaseAddressValidator.validate(search.getBaseAddressDTO());
+            BaseAddressValidator.validate(search.getBaseAddressDTO(), false);
         } catch (PerformanceSearchValidationException | AddressValidationException e) {
-            throw new HttpBadRequestException();
+            throw new HttpBadRequestException(e.getMessage());
         }
+
         Page<Performance> performancePage = performanceService.findAll(search, pageable);
         List<PerformanceDTO> performanceDTOList = performanceMapper.performanceToPerformanceDTO(performancePage.getContent());
         return new PageResponseDTO<>(performanceDTOList, performancePage.getTotalPages());

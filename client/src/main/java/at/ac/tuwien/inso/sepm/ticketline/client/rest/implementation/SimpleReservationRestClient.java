@@ -23,6 +23,7 @@ import java.util.List;
 
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.PUT;
 
 @Component
 public class SimpleReservationRestClient implements ReservationRestClient {
@@ -234,7 +235,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.info("Cancel Reservation with {}", uri);
             final var response =
                 restClient.exchange(
-                    new RequestEntity<>(POST, uri),
+                    new RequestEntity<>(PUT, uri),
                     new ParameterizedTypeReference<ReservationDTO>() {
                     });
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());

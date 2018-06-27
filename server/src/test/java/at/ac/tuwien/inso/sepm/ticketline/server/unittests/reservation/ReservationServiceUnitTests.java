@@ -2,8 +2,8 @@ package at.ac.tuwien.inso.sepm.ticketline.server.unittests.reservation;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalCancelationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
@@ -73,7 +73,7 @@ public class ReservationServiceUnitTests {
 
 
     @Test
-    public void createReservation() throws InvalidReservationException, InternalSeatReservationException {
+    public void createReservation() throws InternalReservationException, InternalSeatReservationException {
         Performance performance = newPerformance();
         Seat seat = newSeat();
         Customer customer = newCustomer();
@@ -100,7 +100,7 @@ public class ReservationServiceUnitTests {
     }
 
     @Test
-    public void cancel() throws InternalCancelationException, InternalSeatReservationException, InvalidReservationException {
+    public void cancel() throws InternalCancelationException, InternalSeatReservationException, InternalReservationException {
         Performance performance = newPerformance();
         Seat seat = newSeat();
         Customer customer = newCustomer();
@@ -151,7 +151,7 @@ public class ReservationServiceUnitTests {
     }
 
     @Test
-    public void addSeatToExistingReservation() throws InvalidReservationException {
+    public void addSeatToExistingReservation() throws InternalReservationException {
         Performance performance = newPerformance();
         performance.setId(PERFORMANCE_TEST_ID);
         Seat seat = newSeat();
@@ -203,7 +203,7 @@ public class ReservationServiceUnitTests {
     }
 
     @Test
-    public void removeSeatFromExistingReservation() throws InvalidReservationException {
+    public void removeSeatFromExistingReservation() throws InternalReservationException {
         Performance performance = newPerformance();
         performance.setId(PERFORMANCE_TEST_ID);
         Seat seat = newSeat();
@@ -247,8 +247,8 @@ public class ReservationServiceUnitTests {
         assertEquals(0, updatedReservation.getSeats().size());
     }
 
-    @Test(expected = InvalidReservationException.class)
-    public void tryToAddAlreadyReservedSeatToReservationShouldThrowInvalidReservationException() throws InvalidReservationException {
+    @Test(expected = InternalReservationException.class)
+    public void tryToAddAlreadyReservedSeatToReservationShouldThrowInvalidReservationException() throws InternalReservationException {
         Performance performance = newPerformance();
         performance.setId(PERFORMANCE_TEST_ID);
         Seat seat = newSeat();
@@ -321,7 +321,7 @@ public class ReservationServiceUnitTests {
     }
 
     @Test
-    public void addAndRemoveSeatsToAnExistingReservation() throws InvalidReservationException {
+    public void addAndRemoveSeatsToAnExistingReservation() throws InternalReservationException {
         Performance performance = newPerformance();
         performance.setId(PERFORMANCE_TEST_ID);
         Seat seat = newSeat();

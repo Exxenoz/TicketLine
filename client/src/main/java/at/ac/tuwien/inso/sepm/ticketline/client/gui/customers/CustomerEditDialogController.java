@@ -191,7 +191,7 @@ public class CustomerEditDialogController {
         }
 
         try {
-            locationAddressDTO.setStreet(BaseAddressValidator.validateStreet(streetTextfield));
+            locationAddressDTO.setStreet(BaseAddressValidator.validateStreet(streetTextfield, true));
             streetErrorLabel.setText("");
         } catch (AddressValidationException e) {
             valid = false;
@@ -200,7 +200,7 @@ public class CustomerEditDialogController {
         }
 
         try {
-            locationAddressDTO.setPostalCode(BaseAddressValidator.validatePostalCode(postalCodeTextfield));
+            locationAddressDTO.setPostalCode(BaseAddressValidator.validatePostalCode(postalCodeTextfield, true));
             postalCodeErrorLabel.setText("");
         } catch (AddressValidationException e) {
             valid = false;
@@ -209,7 +209,7 @@ public class CustomerEditDialogController {
         }
 
         try {
-            locationAddressDTO.setCity(BaseAddressValidator.validateCity(cityTextfield));
+            locationAddressDTO.setCity(BaseAddressValidator.validateCity(cityTextfield, true));
             cityErrorLabel.setText("");
         } catch (AddressValidationException e) {
             valid = false;
@@ -218,7 +218,7 @@ public class CustomerEditDialogController {
         }
 
         try {
-            locationAddressDTO.setCountry(BaseAddressValidator.validateCountry(countryTextfield));
+            locationAddressDTO.setCountry(BaseAddressValidator.validateCountry(countryTextfield, true));
             countryErrorLabel.setText("");
         } catch (AddressValidationException e) {
             valid = false;
