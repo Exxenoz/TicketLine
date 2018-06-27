@@ -419,16 +419,16 @@ public class EventSearchController {
                         returnString = LocationAddressValidator.validateLocationName(currentTextField);
                         break;
                     case street:
-                        returnString = BaseAddressValidator.validateStreet(currentTextField);
+                        returnString = BaseAddressValidator.validateStreet(currentTextField, false);
                         break;
                     case city:
-                        returnString = BaseAddressValidator.validateCity(currentTextField);
+                        returnString = BaseAddressValidator.validateCity(currentTextField, false);
                         break;
                     case country:
-                        returnString = BaseAddressValidator.validateCountry(currentTextField);
+                        returnString = BaseAddressValidator.validateCountry(currentTextField, false);
                         break;
                     case postalcode:
-                        returnString = BaseAddressValidator.validatePostalCode(currentTextField);
+                        returnString = BaseAddressValidator.validatePostalCode(currentTextField, false);
                         break;
                 }
             }

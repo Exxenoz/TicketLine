@@ -64,7 +64,7 @@ public class PerformanceEndpoint {
         try {
             PerformanceSearchValidator.validatePerformanceSearchDTO(search);
             LocationAddressValidator.validateLocationAddressDTO(search.getLocationAddressDTO());
-            BaseAddressValidator.validate(search.getBaseAddressDTO());
+            BaseAddressValidator.validate(search.getBaseAddressDTO(), false);
         } catch (PerformanceSearchValidationException | AddressValidationException e) {
             throw new HttpBadRequestException(e.getMessage());
         }

@@ -6,63 +6,65 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.exception.AddressValidationExcepti
 
 public class BaseAddressValidator {
 
-    private static final String STRING_REGEX = "^[-a-zA-Z ]+$";
+    private static final String ALPHABETIC_REGEX = "^[-' a-zA-ZöüäÜÖÄ]*$";
+    private static final String ALPHANUMERIC_REGEX= "^[-' a-zA-ZöüäÜÖÄ0-9]*$";
+    private static final String ALPHABETIC_REGEX_REQUIRED = "^[-' a-zA-ZöüäÜÖÄ]+$";
+    private static final String ALPHANUMERIC_REGEX_REQUIRED ="^[-' a-zA-ZöüäÜÖÄ0-9]+$";
+    private static final int MAX_LENGTH = 50;
 
-    public static void validate(BaseAddressDTO baseAddressDTO) throws AddressValidationException {
+    public static void validate(BaseAddressDTO baseAddressDTO, boolean required) throws AddressValidationException {
        if(baseAddressDTO != null) {
-           validateStreet(baseAddressDTO);
-           validateCity(baseAddressDTO);
-           validateCountry(baseAddressDTO);
-           validatePostalCode(baseAddressDTO);
+           validateStreet(baseAddressDTO, required);
+           validateCity(baseAddressDTO, required);
+           validateCountry(baseAddressDTO, required);
+           validatePostalCode(baseAddressDTO, required);
        } else {
            throw new AddressValidationException("Address not found");
        }
     }
 
-    private static final String ALPHABETIC_REGEX = "^[-' a-zA-ZöüäÜÖÄ]+$";
-    private static final String ALPHANUMERIC_REGEX="([A-Z0-9])\\w+";
-    private static final int MAX_LENGTH = 50;
-
-    public static void validateStreet(BaseAddressDTO baseAddressDTO) throws AddressValidationException {
-            String street = baseAddressDTO.getStreet();
-        if(street.length() >= 1) {
-            validateLength(street);
-            validateAlphabeticFormat(street);
-        }
+    public static void validateStreet(BaseAddressDTO baseAddressDTO, boolean required) throws AddressValidationException {
+        String street = baseAddressDTO.getStreet();
+        validateLength(street);
+        validateAlphabeticFormat(street, required);
     }
 
-    public static void validateCity(BaseAddressDTO baseAddressDTO) throws AddressValidationException {
+    public static void validateCity(BaseAddressDTO baseAddressDTO, boolean required) throws AddressValidationException {
         String city = baseAddressDTO.getCity();
-        if(city.length() >= 1) {
-            validateLength(city);
-            validateAlphabeticFormat(city);
-        }
+        validateLength(city);
+        validateAlphabeticFormat(city, required);
     }
 
-    public static void validateCountry(BaseAddressDTO baseAddressDTO) throws AddressValidationException {
+    public static void validateCountry(BaseAddressDTO baseAddressDTO, boolean required) throws AddressValidationException {
         String country = baseAddressDTO.getCountry();
-        if(country.length() >= 1) {
-            validateLength(country);
-            validateAlphabeticFormat(country);
-        }
+        validateLength(country);
+        validateAlphabeticFormat(country, required);
     }
 
-    public static void validatePostalCode(BaseAddressDTO baseAddressDTO) throws AddressValidationException {
+    public static void validatePostalCode(BaseAddressDTO baseAddressDTO, boolean required) throws AddressValidationException {
         String postalCode = baseAddressDTO.getPostalCode();
-        if(postalCode.length() >= 1) {
-            validateLength(postalCode);
-            validateAlphanumericFormat(postalCode);
-        }
+        validateLength(postalCode);
+        validateAlphanumericFormat(postalCode, required);
     }
 
-    private static void validateAlphabeticFormat(String text) throws AddressValidationException {
-        if(!text.matches(ALPHABETIC_REGEX)){
+    private static void validateAlphabeticFormat(String text, boolean required) throws AddressValidationException {
+        if (required) {
+            if (!text.matches(ALPHABETIC_REGEX_REQUIRED)) {
+                throw new AddressValidationException("the input can only be letters and can't be empty");
+            }
+        }
+        else if(!text.matches(ALPHABETIC_REGEX)){
             throw new AddressValidationException("the input can only be letters");
         }
     }
 
-    private static void validateAlphanumericFormat(String text) throws AddressValidationException {
-        if(!text.matches(ALPHANUMERIC_REGEX)){
+    private static void validateAlphanumericFormat(String text, boolean required) throws AddressValidationException {
+        if (required) {
+            if (!text.matches(ALPHANUMERIC_REGEX_REQUIRED)) {
+                throw new AddressValidationException("the input can only be letters and can't be empty");
+            }
+        }
+        else if(!text.matches(ALPHANUMERIC_REGEX)){
             throw new AddressValidationException("the input has to be alphanumeric");
         }
     }

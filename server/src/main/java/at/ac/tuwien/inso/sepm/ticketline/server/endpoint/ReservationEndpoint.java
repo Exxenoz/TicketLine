@@ -171,7 +171,7 @@ public class ReservationEndpoint {
         return new PageResponseDTO<>(reservationDTOList, reservationPage.getTotalPages());
     }
 
-    @PostMapping("/cancel/id/{id}")
+    @PutMapping("/cancel/id/{id}")
     @PreAuthorize("hasRole('USER')")
     @ApiOperation("Cancel created reservation")
     public ReservationDTO cancelReservation(@PathVariable("id") Long id) {
