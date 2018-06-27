@@ -40,6 +40,8 @@ public class SimpleReservationService implements ReservationService {
     @Autowired
     private SeatsService seatsService;
 
+    private static final long FIRST_RESERVATIONNUMBER = 16777216;
+
     private PriceCalculationProperties priceCalculationProperties;
     //   private long lastReservationNumber = 16777216;
 
@@ -327,8 +329,7 @@ public class SimpleReservationService implements ReservationService {
         //if this is the first generated reservation
         if (previous == null) {
             //First HEX Number with 7 Numbers
-            long first = 16777216;
-            reservationNumber = Long.toHexString(first);
+            reservationNumber = Long.toHexString(FIRST_RESERVATIONNUMBER);
             reservationNumber = reservationNumber.toUpperCase();
         } else {
             String lastNumber = previous.getReservationNumber();
