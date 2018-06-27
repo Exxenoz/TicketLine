@@ -108,6 +108,7 @@ public class MainController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize MainController");
         init(false);
     }
 

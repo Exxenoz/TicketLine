@@ -93,6 +93,7 @@ public class AuthenticationPasswordChangeController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize AuthenticationPasswordChangeController");
         ButtonBar.setButtonUniformSize(backButton, false);
         ButtonBar.setButtonUniformSize(btnAuthenticate, false);
 

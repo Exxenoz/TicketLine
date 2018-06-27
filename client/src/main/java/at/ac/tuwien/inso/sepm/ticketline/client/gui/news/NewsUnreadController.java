@@ -97,6 +97,7 @@ public class NewsUnreadController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize NewsUnreadController");
         tabHeaderController.setIcon(NEWSPAPER_ALT);
         tabHeaderController.setTitleBinding(BundleManager.getStringBinding("news.header.unread"));
         webView.getEngine().setJavaScriptEnabled(false);

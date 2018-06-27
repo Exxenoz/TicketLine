@@ -109,6 +109,7 @@ public class EventDetailViewController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize EventDetailViewController");
         initializeTableView();
         ButtonBar.setButtonUniformSize(backButton, false);
         ButtonBar.setButtonUniformSize(performanceDetailButton, false);

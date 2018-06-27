@@ -44,6 +44,7 @@ public class NewsElementController {
     }
 
     public void initializeData(SimpleNewsDTO simpleNewsDTO) {
+        LOGGER.info("Initialize NewsElementController");
         lblDate.setText(NEWS_DTF.format(simpleNewsDTO.getPublishedAt()));
         lblTitle.setText(simpleNewsDTO.getTitle());
         lblText.setText(simpleNewsDTO.getSummary());

@@ -97,6 +97,7 @@ public class NewsReadController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize NewsReadController");
         tabHeaderController.setIcon(NEWSPAPER_ALT);
         tabHeaderController.setTitleBinding(BundleManager.getStringBinding("news.header.read"));
         webView.getEngine().setJavaScriptEnabled(false);

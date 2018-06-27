@@ -99,6 +99,7 @@ public class UserController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize UserController");
         tabHeaderController.setIcon(LOCK);
         tabHeaderController.setTitleBinding(BundleManager.getStringBinding("usertab.header"));
 

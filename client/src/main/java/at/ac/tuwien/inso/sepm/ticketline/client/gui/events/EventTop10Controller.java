@@ -119,6 +119,7 @@ public class EventTop10Controller {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize EventTop10Controller");
         initYearChoiceBox();
         initMonthChoiceBox();
 

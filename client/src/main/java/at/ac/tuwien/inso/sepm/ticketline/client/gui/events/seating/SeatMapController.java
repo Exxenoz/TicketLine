@@ -54,6 +54,7 @@ public class SeatMapController {
 
     @FXML
     public void initialize() {
+        LOGGER.info("Initialize SeatMapController");
         this.gc = seatMapCanvas.getGraphicsContext2D();
         sectorSeatMap = new HashMap<>();
     }

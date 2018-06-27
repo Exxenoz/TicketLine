@@ -78,6 +78,7 @@ public class PerformanceDetailViewController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize PerformanceDetailViewController");
         reservation = new ReservationDTO();
         performanceHeader.setText(performance.getName());
         eventName.setText(performance.getEvent().getName());

@@ -101,6 +101,7 @@ public class SelectCustomerController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize SelectCustomerController");
         ButtonBar.setButtonUniformSize(btnBack, false);
         ButtonBar.setButtonUniformSize(btnWithCustomer, false);
         ButtonBar.setButtonUniformSize(btnWithoutCustomer, false);

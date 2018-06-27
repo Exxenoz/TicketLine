@@ -102,6 +102,7 @@ public class CustomerEditDialogController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize CustomerEditDialogController");
         // Reset customer to edit in case the whole controller object gets recycled...
         customerToEdit = null;
     }

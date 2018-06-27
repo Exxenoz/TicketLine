@@ -61,6 +61,7 @@ public class UserCreateDialogController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize UserCreateController");
         roleChoiceBox.getSelectionModel().select(0);
     }
 

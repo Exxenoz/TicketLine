@@ -98,6 +98,7 @@ public class NewsCreateController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize NewsCreateController");
         tabHeaderController.setIcon(NEWSPAPER_ALT);
         tabHeaderController.setTitleBinding(BundleManager.getStringBinding("news.header.create"));
         htmlEditor.addEventHandler(InputEvent.ANY, new EventHandler<InputEvent>() {

@@ -190,6 +190,7 @@ public class ReservationsController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize ReservationsController");
         tabHeaderController.setIcon(TICKET);
         tabHeaderController.setTitleBinding(BundleManager.getStringBinding("bookings.tab.header"));
 

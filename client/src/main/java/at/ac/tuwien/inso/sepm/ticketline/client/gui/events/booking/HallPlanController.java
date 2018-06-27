@@ -101,6 +101,7 @@ public class HallPlanController implements SeatSelectionListener {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize HallPlanController");
         eventNameLabel.setText(reservation.getPerformance().getEvent().getName());
         performanceNameLabel.setText(reservation.getPerformance().getName());
         if (seats != null) {

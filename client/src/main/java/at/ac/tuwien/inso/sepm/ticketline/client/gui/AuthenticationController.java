@@ -72,6 +72,7 @@ public class AuthenticationController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize AuthenticationController");
         initI18N();
     }
 

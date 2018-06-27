@@ -163,6 +163,7 @@ public class EventSearchController {
 
     //+++++++++++INITIALIZE+++++++++++++++
     public void initialize() {
+        LOGGER.info("Initialize EventSearchController");
         SpinnerValueFactory<Integer> beginTimeHoursFactory = buildSpinner(23);
         SpinnerValueFactory<Integer> beginTimeMinutesFactory = buildSpinner(59);
         seatingYesButton.setSelected(false);

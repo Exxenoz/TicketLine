@@ -7,10 +7,13 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.info.Info;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.info.GitProperties;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.lang.invoke.MethodHandles;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.time.Duration;
@@ -62,6 +65,9 @@ public class AboutController {
     @FXML
     private TicketlineInfoController ticketlineInfoController;
 
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
     private static final DateTimeFormatter ISO_DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -83,6 +89,7 @@ public class AboutController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize AboutController");
         labClientVersion.setText(gitProperties.get("build.version"));
         final var buildTimeString = gitProperties.get("build.time");
         LocalDateTime buildTime = null;

@@ -84,6 +84,7 @@ public class CustomerController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize CustomerController");
         tabHeaderController.setIcon(USERS);
         tabHeaderController.setTitleBinding(BundleManager.getStringBinding("customers.main.title"));
 

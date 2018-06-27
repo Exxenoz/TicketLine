@@ -41,6 +41,7 @@ public class NewsController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize NewsController");
         initI18N();
     }
 

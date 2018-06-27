@@ -70,6 +70,7 @@ public class PurchaseReservationSummaryController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize PurchaseReservationSummaryController");
         eventName.setText(reservation.getPerformance().getEvent().getName());
         performanceName.setText(reservation.getPerformance().getName());
         String totalAmountTickets = "" + reservation.getSeats().size();
