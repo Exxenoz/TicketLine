@@ -9,5 +9,11 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface EventSalesResultMapper {
 
+    /**
+     * Converts a list of event sales result entity objects to a list of event response top ten DTOs
+     *
+     * @param all the list to be converted
+     * @return the converted list
+     */
     List<EventResponseTopTenDTO> eventSalesResultListToEventResponseTopTenDTOList(List<EventSalesResult> all);
 }
