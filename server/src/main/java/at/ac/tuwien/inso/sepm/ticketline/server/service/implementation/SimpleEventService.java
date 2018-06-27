@@ -27,12 +27,13 @@ public class SimpleEventService implements EventService {
     }
 
     @Override
-    public Event findByPerformanceID(Long performanceID) {
-        return eventRepository.findByPerformanceId(performanceID);
-    }
-
     public List<Event> findAll() {
         return eventRepository.findAll();
+    }
+
+    @Override
+    public Event findByPerformanceID(Long performanceID) {
+        return eventRepository.findByPerformanceId(performanceID);
     }
 
     @Override

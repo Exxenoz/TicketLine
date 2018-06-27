@@ -8,15 +8,14 @@ import java.util.List;
 
 public interface EventService {
 
+    List<Event> findAll();
+
     /**
      * Finds Event filtered by the given performance id.
      * @param performanceID the performance id
      * @return the associated event is returned
      */
     Event findByPerformanceID(Long performanceID);
-
-
-    List<Event> findAll();
 
     /**
      * Find top 10 event entries by filter ordered by paid reservation count (descending).
