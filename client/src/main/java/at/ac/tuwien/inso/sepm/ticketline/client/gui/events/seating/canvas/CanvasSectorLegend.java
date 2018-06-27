@@ -41,7 +41,7 @@ public class CanvasSectorLegend implements CanvasComponent {
 
     @Override
     public void draw(GraphicsContext gc) {
-        LOGGER.debug("Draw sector legend in [{},{}]", xPos, yPos);
+        LOGGER.debug("Draw sector legend with {}", toString());
         //Draw rectangle
         gc.setFill(this.paint);
         gc.setLineWidth(1);
@@ -57,5 +57,13 @@ public class CanvasSectorLegend implements CanvasComponent {
         return false;
     }
 
-
+    @Override
+    public String toString() {
+        return "CanvasSectorLegend{" +
+            "paint=" + paint +
+            ", xPos=" + xPos +
+            ", yPos=" + yPos +
+            ", price=" + price +
+            '}';
+    }
 }

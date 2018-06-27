@@ -259,7 +259,7 @@ public class ReservationsController {
 
     @FXML
     public void cancelReservation(ActionEvent event) {
-        LOGGER.debug("User clicked the cancel button");
+        LOGGER.info("User clicked the cancel button");
         ResourceBundle ex = BundleManager.getExceptionBundle();
         int row = foundReservationsTableView.getSelectionModel().getFocusedIndex();
         ReservationDTO selected = reservationList.get(row);
@@ -316,6 +316,7 @@ public class ReservationsController {
 
     private void loadReservationWithReservationNumber() {
         if (reservationNumber == null) {
+            LOGGER.warn("ReservationNumber was null");
             return;
         }
         try {
@@ -453,7 +454,7 @@ public class ReservationsController {
     }
 
     private void clear() {
-        LOGGER.debug("clearing the data");
+        LOGGER.debug("Clearing the data");
         reservationList.clear();
         page = 0;
         totalPages = 0;
@@ -465,7 +466,7 @@ public class ReservationsController {
 
     @FXML
     public void searchForReservations(ActionEvent event) {
-        LOGGER.debug("User clicked the search button");
+        LOGGER.info("User clicked the search button");
         clearfilters();
 
         performanceName = performanceNameField.getText();
@@ -484,7 +485,7 @@ public class ReservationsController {
                 customerFirstNameErrorLabel.textProperty().unbind();
                 customerFirstNameErrorLabel.setText("");
             } catch (CustomerValidationException e) {
-                LOGGER.error("Error with customer first name value, ", e);
+                LOGGER.warn("Invalid customer first name value, {}", e);
                 customerFirstNameErrorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
             }
             try {
@@ -492,7 +493,7 @@ public class ReservationsController {
                 customerLastNameErrorLabel.textProperty().unbind();
                 customerLastNameErrorLabel.setText("");
             } catch (CustomerValidationException e) {
-                LOGGER.error("Error with customer last name value, ", e);
+                LOGGER.warn("Invalid customer last name value, {}", e);
                 customerLastNameErrorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
             }
 
@@ -513,7 +514,7 @@ public class ReservationsController {
                 performanceNameErrorLabel.setText("");
             } catch (ReservationSearchValidationException e) {
                 rFilter = ReservationFilter.NONE;
-                LOGGER.error("Error with performance name value, ", e);
+                LOGGER.warn("Invalid performance name value, {}", e);
                 performanceNameErrorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
             }
 
@@ -537,7 +538,7 @@ public class ReservationsController {
                 reservationNumberErrorLabel.setText("");
             } catch (ReservationSearchValidationException e) {
                 rFilter = ReservationFilter.NONE;
-                LOGGER.error("Error with given ReservationNumber", e.getMessage());
+                LOGGER.warn("Invalid ReservationNumber value: {}", e.getMessage());
                 reservationNumberErrorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
             }
         } else {
@@ -552,6 +553,7 @@ public class ReservationsController {
 
     @FXML
     public void clearFilters(ActionEvent actionEvent) {
+        LOGGER.debug("Clearing Filters");
         rFilter = ReservationFilter.NONE;
         activeFiltersListLabel.setText("");
         performanceNameField.setText("");
@@ -580,6 +582,7 @@ public class ReservationsController {
     }
 
     private void clearfilters() {
+        LOGGER.debug("Clearing ErrorLabels");
         reservationNumberErrorLabel.textProperty().unbind();
         customerLastNameErrorLabel.textProperty().unbind();
         customerFirstNameErrorLabel.textProperty().unbind();

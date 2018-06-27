@@ -102,7 +102,7 @@ public class PerformanceDetailViewController {
 
     @FXML
     void continueButton(ActionEvent event) {
-        LOGGER.debug("User clicked the continue button");
+        LOGGER.info("User clicked the continue button");
         reservation.setPerformance(performance);
         hallPlanController.fill(reservation, stage);
 
@@ -127,7 +127,7 @@ public class PerformanceDetailViewController {
 
     @FXML
     void changeToEventDetailView(ActionEvent event) {
-        LOGGER.debug("User clicked the change to EventDetailView button");
+        LOGGER.info("User clicked the change to EventDetailView button");
         Parent parent = fxmlLoader.load("/fxml/events/eventDetailView.fxml");
         eventDetailViewController.fill(performance.getEvent(), stage);
         stage.setScene(new Scene(parent));
@@ -137,7 +137,7 @@ public class PerformanceDetailViewController {
 
     @FXML
     void backButton(ActionEvent event) {
-        LOGGER.debug("User clicked the back button");
+        LOGGER.info("User clicked the back button");
         Stage stage = (Stage) performanceHeader.getScene().getWindow();
         stage.close();
     }

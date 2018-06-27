@@ -128,10 +128,10 @@ public class PurchaseReservationSummaryController {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == buttonTypeYes) {
-            LOGGER.debug("User wants to print invoice");
+            LOGGER.info("User wants to print invoice");
             handleInvoice(reservation);
         } else {
-            LOGGER.debug("User does not want to print invoice");
+            LOGGER.info("User does not want to print invoice");
         }
         closeWindow();
     }
@@ -156,12 +156,12 @@ public class PurchaseReservationSummaryController {
 
     @FXML
     public void openPDFFileAction() {
-        LOGGER.debug("User clicked the open invoice button");
+        LOGGER.info("User clicked the open invoice button");
         handleInvoice(reservation);
     }
 
     public void buyTicketsButton(ActionEvent event) throws DataAccessException {
-        LOGGER.debug("User clicked the buy button");
+        LOGGER.info("User clicked the buy button");
         CreateReservationDTO createReservationDTO = new CreateReservationDTO();
         createReservationDTO.setCustomerID(reservation.getCustomer() != null ? reservation.getCustomer().getId() : null);
         createReservationDTO.setPerformanceID(reservation.getPerformance().getId());
@@ -172,6 +172,7 @@ public class PurchaseReservationSummaryController {
 
         //only reserve tickets
         if (!showDetails && isReservation) {
+            LOGGER.debug("Reserve chosen Seats");
             ReservationDTO reservationDTO = reservationService.createNewReservation(createReservationDTO);
 
             TextArea textArea = new TextArea(BundleManager.getBundle().getString(
@@ -193,9 +194,11 @@ public class PurchaseReservationSummaryController {
 
             //reserve and buy tickets
         } else if (!showDetails) {
+            LOGGER.debug("Reserve and buy chosen Seats");
             reservation = reservationService.createAndPayReservation(createReservationDTO);
             printInvoiceDialog();
         } else {
+            LOGGER.debug("Buy reserved Seats");
             //buy already reserved tickets
             reservation = reservationService.purchaseReservation(reservation);
             printInvoiceDialog();
@@ -204,7 +207,7 @@ public class PurchaseReservationSummaryController {
 
     @FXML
     public void cancelButton(ActionEvent event) {
-        LOGGER.debug("User clicked the cancel button");
+        LOGGER.info("User clicked the cancel button");
         if (showDetails) {
             hallPlanController.changeReservationDetails(reservation, stage);
             Parent parent = fxmlLoader.load("/fxml/events/book/hallPlanView.fxml");
@@ -215,7 +218,7 @@ public class PurchaseReservationSummaryController {
     }
 
     public void backButton(ActionEvent event) {
-        LOGGER.debug("User clicked the back button");
+        LOGGER.info("User clicked the back button");
         if (showDetails) {
             closeWindow();
         } else {

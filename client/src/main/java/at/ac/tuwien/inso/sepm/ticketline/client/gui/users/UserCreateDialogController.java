@@ -78,7 +78,7 @@ public class UserCreateDialogController {
             usernameErrorLabel.setText("");
         } catch (UserValidationException e) {
             valid = false;
-            LOGGER.debug("User validation failed: " + e.getMessage());
+            LOGGER.warn("User validation failed: " + e.getMessage());
             usernameErrorLabel.setText(e.getMessage());
         }
 
@@ -88,7 +88,7 @@ public class UserCreateDialogController {
             passwordErrorLabel.setText("");
         } catch (UserValidationException e) {
             valid = false;
-            LOGGER.debug("User validation failed: " + e.getMessage());
+            LOGGER.warn("User validation failed: " + e.getMessage());
             passwordErrorLabel.setText(e.getMessage());
         }
 
@@ -97,13 +97,14 @@ public class UserCreateDialogController {
         userCreateRequestDTO.setRoles(getRoles());
 
         if (!valid) {
+            LOGGER.error("User was invalid");
             return;
         }
 
         try {
             userController.addUser(userService.create(userCreateRequestDTO));
         } catch (DataAccessException e) {
-            LOGGER.error("User creation failed: " + e.getMessage());
+            LOGGER.error("User creation failed: {}", e.getMessage());
 
             JavaFXUtils.createErrorDialog(
                 BundleManager.getBundle().getString("users.dialog.create.dialog.error.title"),

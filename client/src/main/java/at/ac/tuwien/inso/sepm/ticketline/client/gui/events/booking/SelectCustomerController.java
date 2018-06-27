@@ -246,7 +246,7 @@ public class SelectCustomerController {
     }
 
     public void goBack(ActionEvent actionEvent) {
-        LOGGER.debug("User clicked the back button");
+        LOGGER.info("User clicked the back button");
         Parent parent = fxmlLoader.load("/fxml/events/book/hallPlanView.fxml");
         stage.setScene(new Scene(parent));
         if (reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SEAT) {
@@ -258,8 +258,9 @@ public class SelectCustomerController {
     }
 
     public void goNextWithCustomer(ActionEvent event) {
-        LOGGER.debug("User clicked the go next with selected customer button");
+        LOGGER.info("User clicked the go next with selected customer button");
         if (chosenCustomer.getId() == null) {
+            LOGGER.warn("No selected Customer");
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("You need to choose a specific customer for this option.");
@@ -271,7 +272,7 @@ public class SelectCustomerController {
     }
 
     public void goNextWithoutCustomer(ActionEvent actionEvent) {
-        LOGGER.debug("User clicked the go next without customer button");
+        LOGGER.info("User clicked the go next without customer button");
         reservation.setCustomer(anonymousCustomer);
         continueOrReserve();
     }
@@ -291,7 +292,7 @@ public class SelectCustomerController {
     }
 
     public void createNewCustomer(ActionEvent actionEvent) {
-        LOGGER.debug("User clicked the go next with new customer button");
+        LOGGER.info("User clicked the go next with new customer button");
         customerEditDialogController.fill(reservationWithNewCustomer, reservation, isReservation, stage);
         Parent parent = fxmlLoader.load("/fxml/customers/customerEditDialog.fxml");
         stage.setScene(new Scene(parent));

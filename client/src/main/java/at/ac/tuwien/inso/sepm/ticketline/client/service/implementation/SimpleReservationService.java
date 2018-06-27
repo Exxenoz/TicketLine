@@ -14,7 +14,6 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
@@ -37,6 +36,7 @@ public class SimpleReservationService implements ReservationService {
     @Override
     public List<ReservationDTO> findAllByEvent(EventDTO event) throws DataAccessException {
         if(event == null) {
+            LOGGER.warn("Event not found");
             throw new DataAccessException("Event not found");
         }
 
@@ -46,6 +46,7 @@ public class SimpleReservationService implements ReservationService {
     @Override
     public Long getPaidReservationCountByEvent(EventDTO event) throws DataAccessException {
         if(event == null) {
+            LOGGER.warn("Event not found");
             throw new DataAccessException("Event not found");
         }
 
@@ -105,6 +106,7 @@ public class SimpleReservationService implements ReservationService {
 
     @Override
     public Long calculateCompletePrice(List<SeatDTO> seats, PerformanceDTO performanceDTO) {
+        LOGGER.debug("Calculating complete Price with {} Seat(s) and {}", seats.size(), performanceDTO);
         Long price = 0L;
 
         //Calculate the price based on category modificator and performance base price
@@ -118,6 +120,7 @@ public class SimpleReservationService implements ReservationService {
 
     @Override
     public Long calculateSinglePrice(SeatDTO seat, PerformanceDTO performanceDTO) {
+        LOGGER.debug("Calculating Price with {} and {}", seat, performanceDTO);
         Long price = seat.getSector().getCategory().getBasePriceMod() * performanceDTO.getPrice();
         price += Math.round(price * priceCalculationProperties.getSalesTax());
         return price;

@@ -204,7 +204,7 @@ public class EventTop10Controller {
 
     @FXML
     void showTopTenClicked(ActionEvent event) {
-        LOGGER.debug("User clicked the show button");
+        LOGGER.info("User clicked the show button");
         topTenEventChoiceBox.getItems().clear();
 
         Integer month = monthChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? monthChoiceBox.getSelectionModel().getSelectedIndex() + 1 : 1;
@@ -215,7 +215,7 @@ public class EventTop10Controller {
             categoryId = sectorCategories.get(categorySelectionIndex).getId();
         }
 
-        LOGGER.info("Show Top 10 Events for month: " + monthChoiceBox.getSelectionModel().getSelectedItem() + " and categoryId: " + categoryId);
+        LOGGER.debug("Showing Top 10 Events for month: " + monthChoiceBox.getSelectionModel().getSelectedItem() + " and categoryId: " + categoryId);
 
         try {
             List<EventResponseTopTenDTO> events = eventService.findTopTenByMonthAndCategory(new EventRequestTopTenDTO(month, year, categoryId));
@@ -307,7 +307,7 @@ public class EventTop10Controller {
 
     @FXML
     void bookTopTenEvent(ActionEvent event) {
-        LOGGER.debug("user clicked the book button");
+        LOGGER.info("User clicked the book button");
         int selectedIndex = topTenEventChoiceBox.getSelectionModel().getSelectedIndex() > 0 ? topTenEventChoiceBox.getSelectionModel().getSelectedIndex() : 0;
         if (currentEvents.size() > 0) {
             Stage stage = new Stage();

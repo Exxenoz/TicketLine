@@ -124,6 +124,7 @@ public class MainController {
 
     private void init(boolean reinit) {
         if (reinit) {
+            LOGGER.info("Reinitialize MainController");
             authenticationService.prepareAuthenticationContext();
         }
         runLater(() -> mbMain.setUseSystemMenuBar(true));
@@ -147,7 +148,7 @@ public class MainController {
 
     @FXML
     private void logout(ActionEvent actionEvent) {
-        LOGGER.debug("User clicked the logout button");
+        LOGGER.info("User clicked the logout button");
         //Remove authentication
         authenticationService.deAuthenticate();
 
@@ -161,7 +162,7 @@ public class MainController {
 
     @FXML
     private void aboutApplication(ActionEvent actionEvent) {
-        LOGGER.debug("User clicked the about button");
+        LOGGER.info("User clicked the about button");
         final var stage = (Stage) spMainContent.getScene().getWindow();
         final var dialog = new Stage();
         dialog.setResizable(false);
@@ -242,6 +243,7 @@ public class MainController {
 
     private void setAuthenticated(boolean authenticated) {
         if (authenticated) {
+            LOGGER.debug("Login and load first Page of Data");
             if (spMainContent.getChildren().contains(login)) {
                 spMainContent.getChildren().remove(login);
             } else spMainContent.getChildren().remove(loginNewPassword);
@@ -262,6 +264,7 @@ public class MainController {
     }
 
     public void switchToNewPasswordAuthentication(String username, String passwordChangeKey) {
+        LOGGER.debug("Switch to reset password View");
         spMainContent.getChildren().remove(login);
         SpringFxmlLoader.Wrapper<AuthenticationPasswordChangeController> wrapper =
             springFxmlLoader.loadAndWrap("/fxml/authenticationPasswordChangeComponent.fxml");
@@ -272,12 +275,13 @@ public class MainController {
     }
 
     public void switchBackToAuthentication() {
+        LOGGER.debug("Switch to AuthenticationView");
         spMainContent.getChildren().remove(loginNewPassword);
         spMainContent.getChildren().add(login);
     }
 
     public void onClickLanguageEnglish(ActionEvent actionEvent) {
-        LOGGER.debug("User clicked the changeToEnglish button");
+        LOGGER.info("User clicked the changeToEnglish button");
         if (BundleManager.getLocale().getLanguage().equals(ENGLISH.getLanguage())) {
             checkMenuItemLanguageEnglish.setSelected(true);
             return;
@@ -291,7 +295,7 @@ public class MainController {
     }
 
     public void onClickLanguageGerman(ActionEvent actionEvent) {
-        LOGGER.debug("User clicked the changeToGerman button");
+        LOGGER.info("User clicked the changeToGerman button");
         if (BundleManager.getLocale().getLanguage().equals(GERMAN.getLanguage())) {
             checkMenuItemLanguageGerman.setSelected(true);
             return;

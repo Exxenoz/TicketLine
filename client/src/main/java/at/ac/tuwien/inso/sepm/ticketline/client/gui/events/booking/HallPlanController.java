@@ -175,7 +175,7 @@ public class HallPlanController implements SeatSelectionListener {
 
     @FXML
     public void backButton(ActionEvent event) {
-        LOGGER.debug("User clicked the back button");
+        LOGGER.info("User clicked the back button");
         if (changeDetails) {
             closeWindow();
         } else {
@@ -188,20 +188,20 @@ public class HallPlanController implements SeatSelectionListener {
 
     @FXML
     public void continueButton(ActionEvent event) {
-        LOGGER.debug("User clicked the buy button");
+        LOGGER.info("User clicked the buy button");
         continueOrReserve();
     }
 
     @FXML
     public void reserveButton() {
-        LOGGER.debug("User clicked the reserve button");
+        LOGGER.info("User clicked the reserve button");
         isReservation = true;
         continueOrReserve();
     }
 
     @Override
     public void onSeatSelected(SeatDTO seatDTO) {
-        LOGGER.debug("User selected a Seat {}", seatDTO);
+        LOGGER.info("User selected a Seat {}", seatDTO);
         seats.add(seatDTO);
         updateSeatsInformation(this.seats);
         updatePrice(this.seats, this.reservation.getPerformance());
@@ -209,7 +209,7 @@ public class HallPlanController implements SeatSelectionListener {
 
     @Override
     public void onSeatDeselected(SeatDTO seatDTO) {
-        LOGGER.debug("User deselected a Seat {}", seatDTO);
+        LOGGER.info("User deselected a Seat {}", seatDTO);
         seats.remove(seatDTO);
         updateSeatsInformation(this.seats);
         updatePrice(this.seats, this.reservation.getPerformance());
@@ -225,6 +225,7 @@ public class HallPlanController implements SeatSelectionListener {
             stage.setTitle(BundleManager.getBundle().getString("bookings.hallplan.customer_select.title"));
             stage.centerOnScreen();
         } else {
+            LOGGER.debug("Reservation was changed, trying to update...");
             try {
                 reservation = reservationService.editReservation(reservation);
                 PRSController.showReservationDetails(reservation, stage);
@@ -232,7 +233,9 @@ public class HallPlanController implements SeatSelectionListener {
                 stage.setScene(new Scene(parent));
                 stage.setTitle(BundleManager.getBundle().getString("bookings.purchase.details.title"));
                 stage.centerOnScreen();
+                LOGGER.debug("Update of Reservation was successful");
             } catch (DataAccessException e) {
+                LOGGER.debug("An error occurred during the update: {}", e.getMessage());
                 JavaFXUtils.createErrorDialog(e.getMessage(), stage);
             }
         }

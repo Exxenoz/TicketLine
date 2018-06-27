@@ -131,9 +131,9 @@ public class NewsReadController {
     }
 
     private boolean loadNewsList(int page) {
-        LOGGER.debug("Loading the new of the Page {}", page);
+        LOGGER.debug("Loading the News of the Page {}", page);
         if (page < 0 || page >= totalPages) {
-            LOGGER.error("Could not load news table page, because page parameter is invalid: " + page);
+            LOGGER.warn("Could not load news table page, because page parameter is invalid: " + page);
             return false;
         }
 
@@ -161,6 +161,7 @@ public class NewsReadController {
             }
             loadedNews.addAll(response.getContent());
         } catch (DataAccessException e) {
+            LOGGER.error("Could not access News: {}", e.getMessage());
             JavaFXUtils.createErrorDialog(e.getMessage(),
                 vbNewsElements.getScene().getWindow()).showAndWait();
         }

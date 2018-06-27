@@ -210,6 +210,7 @@ public class SeatMapController {
     public void fillForReservationEdit(ReservationDTO reservationDTO) {
         //We have to find the corresponding reservation in the seatmap, and make those seats editable
         for (SeatDTO s : reservationDTO.getSeats()) {
+            LOGGER.debug("Seat {} is reserved, draw as such", s);
             for (Map.Entry<SectorDTO, List<CanvasSeat>> entry : sectorSeatMap.entrySet()) {
                 if (s.getSector().getId() == entry.getKey().getId()) {
                     for (CanvasSeat cs : entry.getValue()) {

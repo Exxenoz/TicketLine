@@ -88,7 +88,7 @@ public class AuthenticationController {
 
     @FXML
     private void handleAuthenticate(ActionEvent actionEvent) {
-        LOGGER.debug("User clicked the authenticate button");
+        LOGGER.info("User clicked the authenticate button");
         final var task = new Task<AuthenticationTokenInfo>() {
             @Override
             protected AuthenticationTokenInfo call() throws DataAccessException {

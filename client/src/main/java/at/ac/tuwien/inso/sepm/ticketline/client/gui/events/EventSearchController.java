@@ -352,7 +352,7 @@ public class EventSearchController {
     //++++++++++++++BUTTONS+++++++++++++++
     @FXML
     private void bookPerformanceButton(ActionEvent event) {
-        LOGGER.debug("User clicked the book button");
+        LOGGER.info("User clicked the book button");
         Stage stage = new Stage();
         int row = foundEventsTableView.getSelectionModel().getFocusedIndex();
         performanceDetailViewController.fill(performanceData.get(row), stage);
@@ -442,7 +442,7 @@ public class EventSearchController {
 
     @FXML
     void searchForPerformancesButton(ActionEvent event) {
-        LOGGER.debug("User clicked the search button");
+        LOGGER.info("User clicked the search button");
         clearErrorLabels();
         textChunks = new ArrayList<>();
         updateCurrentFlowPane();
@@ -585,7 +585,7 @@ public class EventSearchController {
 
     @FXML
     private void clearAndReloadButton(ActionEvent event) {
-        LOGGER.debug("User clicked the clear button");
+        LOGGER.info("User clicked the clear button");
         clear();
         loadPerformanceTable(0);
         foundEventsTableView.refresh();
@@ -612,6 +612,7 @@ public class EventSearchController {
     }
 
     private void clearErrorLabels(){
+        LOGGER.debug("Clearing the error labels");
         locationnameErrorLabel.textProperty().unbind();
         streetErrorLabel.textProperty().unbind();
         cityErrorLabel.textProperty().unbind();

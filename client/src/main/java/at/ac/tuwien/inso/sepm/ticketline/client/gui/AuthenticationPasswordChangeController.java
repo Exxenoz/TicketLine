@@ -130,7 +130,7 @@ public class AuthenticationPasswordChangeController {
 
     @FXML
     private void handleAuthenticate(ActionEvent actionEvent) {
-        LOGGER.debug("User clicked the reset button");
+        LOGGER.info("User clicked the reset button");
         final var task = new Task<AuthenticationTokenInfo>() {
             @Override
             protected AuthenticationTokenInfo call() throws DataAccessException {

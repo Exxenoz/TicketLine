@@ -5,7 +5,6 @@ import at.ac.tuwien.inso.sepm.ticketline.client.rest.EventRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventRequestTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventResponseTopTenDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
@@ -13,7 +12,6 @@ import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
@@ -39,7 +37,7 @@ public class SimpleEventRestClient implements EventRestClient {
     @Override
     public List<EventDTO> findAll() throws DataAccessException {
         try {
-            LOGGER.debug("Retrieving all events from {}", eventUri);
+            LOGGER.info("Retrieving all events from {}", eventUri);
             final var event =
                 restClient.exchange(
                     new RequestEntity<>(GET, eventUri),
@@ -48,8 +46,10 @@ public class SimpleEventRestClient implements EventRestClient {
             LOGGER.debug("Result status was {} with content {}", event.getStatusCode(), event.getBody());
             return event.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while trying to retrieve events: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while trying to retrieve events: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }
@@ -57,7 +57,7 @@ public class SimpleEventRestClient implements EventRestClient {
     @Override
     public EventDTO findByPerformanceID(Long performanceID) throws DataAccessException {
         try {
-            LOGGER.debug("Retrieving event of a specific performance from {}", eventUri);
+            LOGGER.info("Retrieving event of a specific performance from {}", eventUri);
 
             URI uri = restClient.getServiceURI("/event/findByPerformanceID" + performanceID);
 
@@ -69,8 +69,10 @@ public class SimpleEventRestClient implements EventRestClient {
             LOGGER.debug("Result status was {} with content {}", event.getStatusCode(), event.getBody());
             return event.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while retrieving event: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while retrieving event: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }
@@ -78,7 +80,7 @@ public class SimpleEventRestClient implements EventRestClient {
     @Override
     public List<EventResponseTopTenDTO> findTopTenByMonthAndCategory(EventRequestTopTenDTO eventRequestTopTen) throws DataAccessException {
         try {
-            LOGGER.debug("Retrieving top 10 events by sales from month: {}", topTenUri);
+            LOGGER.info("Retrieving top 10 events by sales from month: {}", topTenUri);
             final var event =
                 restClient.exchange(
                     new RequestEntity<>(eventRequestTopTen, POST, topTenUri),
@@ -87,8 +89,10 @@ public class SimpleEventRestClient implements EventRestClient {
             LOGGER.debug("Result status was {} with content {}", event.getStatusCode(), event.getBody());
             return event.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while retrieving the Top 10 Events: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while retrieving the Top 10 Events: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }

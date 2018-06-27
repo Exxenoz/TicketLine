@@ -138,9 +138,9 @@ public class NewsUnreadController {
     }
 
     private boolean loadNewsList(int page) {
-        LOGGER.debug("Loading news of Page {}", page);
+        LOGGER.debug("Loading thee News of Page {}", page);
         if (page < 0 || page >= totalPages) {
-            LOGGER.error("Could not load news table page, because page parameter is invalid: " + page);
+            LOGGER.warn("Could not load news table page, because page parameter is invalid: " + page);
             return false;
         }
 
@@ -168,6 +168,7 @@ public class NewsUnreadController {
             }
             loadedNews.addAll(response.getContent());
         } catch (DataAccessException e) {
+            LOGGER.error("Could not access News: {}", e.getMessage());
             JavaFXUtils.createErrorDialog(e.getMessage(),
                 vbNewsElements.getScene().getWindow()).showAndWait();
         }

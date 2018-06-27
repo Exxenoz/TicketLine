@@ -132,8 +132,9 @@ public class EventDetailViewController {
 
     @FXML
     public void changeToPerformanceDetailView(ActionEvent event) {
-        LOGGER.debug("User clicked the show performanceDetailView button with {}", chosenPerformance);
+        LOGGER.info("User clicked the show performanceDetailView button with {}", chosenPerformance);
         if (chosenPerformance == null) {
+            LOGGER.warn("No performance was chosen by the user");
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("You need to choose a specific performance.");
@@ -149,7 +150,7 @@ public class EventDetailViewController {
     }
 
     public void backButton(ActionEvent event) {
-        LOGGER.debug("User clicked the back button");
+        LOGGER.info("User clicked the back button");
         Stage stage = (Stage) eventHeading.getScene().getWindow();
         stage.close();
     }
@@ -183,7 +184,7 @@ public class EventDetailViewController {
             performanceDatesTableView.refresh();
 
         } catch (DataAccessException e) {
-            LOGGER.warn("Could not access performances!");
+            LOGGER.error("Could not access performances!");
         }
 
         final var artistString = performanceData.stream()

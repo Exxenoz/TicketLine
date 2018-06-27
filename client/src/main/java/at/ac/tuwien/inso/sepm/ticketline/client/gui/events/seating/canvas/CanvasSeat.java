@@ -65,19 +65,19 @@ public class CanvasSeat implements CanvasComponent {
     }
 
     public void drawSelectedState(GraphicsContext gc) {
-        LOGGER.debug("Draw selected seat on [{},{}]", xPos, yPos);
+        LOGGER.debug("Draw selected seat with {}", toString());
         gc.setFill(Color.ROYALBLUE);
         gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
     }
 
     public void drawDeselectedState(GraphicsContext gc) {
-        LOGGER.debug("Draw deselected seat on [{},{}]", xPos, yPos);
+        LOGGER.debug("Draw deselected seat with {}", toString());
         gc.setFill(this.paint);
         gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
     }
 
     public void drawAlreadyReservedState(GraphicsContext gc) {
-        LOGGER.debug("Draw already reserved seat on [{},{}]", xPos, yPos);
+        LOGGER.debug("Draw already reserved seat with {}", toString());
         gc.setFill(ALREADY_RESERVED_COLOR);
         gc.setLineWidth(1);
         gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
@@ -147,5 +147,17 @@ public class CanvasSeat implements CanvasComponent {
 
     public Long getSeatID() {
         return seatDTO.getId();
+    }
+
+    @Override
+    public String toString() {
+        return "CanvasSeat{" +
+            "paint=" + paint +
+            ", seatDTO=" + seatDTO +
+            ", xPos=" + xPos +
+            ", yPos=" + yPos +
+            ", selected=" + selected +
+            ", alreadyReserved=" + alreadyReserved +
+            '}';
     }
 }

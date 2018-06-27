@@ -199,7 +199,7 @@ public class CustomerController {
     public void loadCustomerTable(int page) {
         LOGGER.debug("Loading Customers of page {}", page);
         if (page < 0 || page >= customerTablePageCount) {
-            LOGGER.error("Could not load customer table page, because page parameter is invalid!");
+            LOGGER.warn("Could not load customer table page, because page parameter is invalid!");
             return;
         }
         PageRequestDTO pageRequestDTO = null;
@@ -224,7 +224,7 @@ public class CustomerController {
                 }
             }
         } catch (DataAccessException e) {
-            LOGGER.warn("Could not access customers!");
+            LOGGER.error("Could not access customers!");
         }
     }
 
@@ -249,6 +249,7 @@ public class CustomerController {
     }
 
     public void clearCustomerList() {
+        LOGGER.debug("Clear Customers");
         customerList.clear();
 
         ScrollBar scrollBar = getVerticalScrollbar(customerTable);
@@ -259,7 +260,7 @@ public class CustomerController {
 
     @FXML
     public void onClickCreateCustomerButton(ActionEvent actionEvent) {
-        LOGGER.debug("User clicked create customer button");
+        LOGGER.info("User clicked create customer button");
 
         final var stage = (Stage) customerTable.getScene().getWindow();
         final var dialog = new Stage();
@@ -275,7 +276,7 @@ public class CustomerController {
 
     @FXML
     public void onClickEditCustomerButton(ActionEvent actionEvent) {
-        LOGGER.debug("User clicked edit customer button");
+        LOGGER.info("User clicked edit customer button");
 
         CustomerDTO selectedCustomerDTO = customerTable.getSelectionModel().getSelectedItem();
 
@@ -289,7 +290,7 @@ public class CustomerController {
         final var stage = (Stage) customerTable.getScene().getWindow();
         final var dialog = new Stage();
 
-        controller.SetCustomerToEdit(selectedCustomerDTO);
+        controller.setCustomerToEdit(selectedCustomerDTO);
 
         dialog.getIcons().add(new Image(CustomerController.class.getResourceAsStream("/image/ticketlineIcon.png")));
         dialog.setResizable(false);

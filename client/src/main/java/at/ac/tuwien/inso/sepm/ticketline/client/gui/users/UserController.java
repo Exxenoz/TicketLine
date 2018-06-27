@@ -236,7 +236,7 @@ public class UserController {
     public boolean loadUserTable(int page) {
         LOGGER.debug("Loading users of Page {}", page);
         if (page < 0 || page >= totalPages) {
-            LOGGER.error("Could not load user table page, because page parameter is invalid: " + page);
+            LOGGER.warn("Could not load user table page, because page parameter is invalid: " + page);
             return false;
         }
 
@@ -298,6 +298,7 @@ public class UserController {
     }
 
     public void clearUserList() {
+        LOGGER.debug("Clear Users");
         userList.clear();
 
         ScrollBar scrollBar = getVerticalScrollbar(userTable);
@@ -307,7 +308,7 @@ public class UserController {
     }
 
     public void toggleEnable(javafx.event.ActionEvent actionEvent) {
-        LOGGER.debug("User clicked toggle user button");
+        LOGGER.info("User clicked toggle user button");
         try {
             UserDTO userDTO = userTable.getSelectionModel().getSelectedItem();
             UserValidator.validateExistingUser(userDTO);
@@ -345,7 +346,7 @@ public class UserController {
     }
 
     public void onClickCreateUserButton(ActionEvent actionEvent) {
-        LOGGER.debug("Clicked create user button");
+        LOGGER.info("User clicked create user button");
 
         final var stage = (Stage) userTable.getScene().getWindow();
         final var dialog = new Stage();
@@ -360,13 +361,13 @@ public class UserController {
     }
 
     public void onClickResetPassword(ActionEvent actionEvent) {
-        LOGGER.debug("Clicked reset user password button");
+        LOGGER.info("User clicked reset user password button");
         UserDTO userDTO = userTable.getSelectionModel().getSelectedItem();
 
         try {
             UserValidator.validateExistingUser(userDTO);
         } catch (UserValidatorException e) {
-            LOGGER.error("User not valid / No User was selected");
+            LOGGER.warn("User not valid / No User was selected");
             JavaFXUtils.createErrorDialog(BundleManager.getExceptionBundle().getString("exception.no_selected_user"),
                 content.getScene().getWindow()).showAndWait();
             return;
@@ -385,7 +386,7 @@ public class UserController {
                 refreshAndSortUserTable();
             }
 
-            LOGGER.error("Password reset was successful");
+            LOGGER.debug("Password reset was successful");
 
             JavaFXUtils.createCopyTextDialog(
                 BundleManager.getBundle().getString("usertab.password_reset.dialog.success.title"),
@@ -395,6 +396,7 @@ public class UserController {
                 passwordResetButton.getScene().getWindow()
             ).showAndWait();
         } catch (DataAccessException e) {
+            LOGGER.error("Password reset was unsuccessful");
             JavaFXUtils.createErrorDialog(e.getMessage(),
                 content.getScene().getWindow()).showAndWait();
         }
