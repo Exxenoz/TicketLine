@@ -353,6 +353,7 @@ public class ReservationsController {
 
     private void loadFilteredReservationsPage(int page) {
         if (performanceName == null || customerFirstName == null || customerLastName == null) {
+            LOGGER.warn("The search parameters for filtering are invalid");
             return;
         }
         ReservationSearchDTO.Builder reservationSearchBuilder = ReservationSearchDTO.Builder.aReservationSearchDTO()
