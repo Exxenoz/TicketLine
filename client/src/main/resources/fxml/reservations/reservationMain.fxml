@@ -35,10 +35,10 @@
                                     <children>
                                         <TableView fx:id="foundReservationsTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                                             <columns>
-                                                <TableColumn fx:id="reservationIDColumn" minWidth="200.0" prefWidth="200.0" resizable="false" text="%bookings.table.reservationID" />
-                                                <TableColumn fx:id="eventColumn" minWidth="200.0" prefWidth="200.0" resizable="false" text="%bookings.table.event" />
-                                                <TableColumn fx:id="customerColumn" minWidth="200.0" prefWidth="200.0" resizable="false" text="%bookings.table.customer" />
-                                                <TableColumn fx:id="paidColumn" minWidth="200.0" prefWidth="200.0" resizable="false" text="%bookings.table.paid" />
+                                                <TableColumn fx:id="reservationIDColumn" text="%bookings.table.reservationID" />
+                                                <TableColumn fx:id="eventColumn" text="%bookings.table.event" />
+                                                <TableColumn fx:id="customerColumn" text="%bookings.table.customer" />
+                                                <TableColumn fx:id="paidColumn" text="%bookings.table.paid" />
                                             </columns>
                                             <columnResizePolicy>
                                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
