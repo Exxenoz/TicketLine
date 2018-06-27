@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface UserService {
 
-    int ALLOWED_STRIKES = 5;
+    int ALLOWED_STRIKES = 4;
     int STRIKE_RESET_VALUE = 0;
     /**
      * Enabling a user again, in order to allow him to authenticate

@@ -7,6 +7,8 @@ import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.PerformanceService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
+import at.ac.tuwien.inso.sepm.ticketline.client.validator.BaseAddressValidator;
+import at.ac.tuwien.inso.sepm.ticketline.client.validator.LocationAddressValidator;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
@@ -354,19 +356,25 @@ public class EventSearchController {
     private void bookPerformanceButton(ActionEvent event) {
         LOGGER.info("User clicked the book button");
         Stage stage = new Stage();
-        int row = foundEventsTableView.getSelectionModel().getFocusedIndex();
-        performanceDetailViewController.fill(performanceData.get(row), stage);
+        PerformanceDTO row = foundEventsTableView.getSelectionModel().getSelectedItem();
+        if (row != null) {
+            performanceDetailViewController.fill(row, stage);
 
-        final var parent = fxmlLoader.<Parent>load("/fxml/events/performanceDetailView.fxml");
+            final var parent = fxmlLoader.<Parent>load("/fxml/events/performanceDetailView.fxml");
 
-        stage.setScene(new Scene(parent));
-        stage.setTitle(BundleManager.getBundle().getString("bookings.performance.details.title"));
+            stage.setScene(new Scene(parent));
+            stage.setTitle(BundleManager.getBundle().getString("bookings.performance.details.title"));
 
 
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(bookButton.getScene().getWindow());
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(bookButton.getScene().getWindow());
 
-        stage.showAndWait();
+            stage.showAndWait();
+        } else {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setContentText(BundleManager.getBundle().getString("events.book.nothingselected"));
+            errorAlert.showAndWait();
+        }
     }
 
     String setActiveFiltersAndValidate(Validate toValidate,
@@ -405,19 +413,19 @@ public class EventSearchController {
                         returnString = validatePrice(currentTextField);
                         break;
                     case locationName:
-                        returnString = validateLocationName(currentTextField);
+                        returnString = LocationAddressValidator.validateLocationName(currentTextField);
                         break;
                     case street:
-                        returnString = validateStreet(currentTextField);
+                        returnString = BaseAddressValidator.validateStreet(currentTextField);
                         break;
                     case city:
-                        returnString = validateCity(currentTextField);
+                        returnString = BaseAddressValidator.validateCity(currentTextField);
                         break;
                     case country:
-                        returnString = validateCountry(currentTextField);
+                        returnString = BaseAddressValidator.validateCountry(currentTextField);
                         break;
                     case postalcode:
-                        returnString = validatePostalCode(currentTextField);
+                        returnString = BaseAddressValidator.validatePostalCode(currentTextField);
                         break;
                 }
             }
@@ -547,7 +555,7 @@ public class EventSearchController {
             performanceData.clear();
             performanceData.addAll(response.getContent());
             totalPages = response.getTotalPages();
-            initializeTableView();
+//            initializeTableView();
             foundEventsTableView.refresh();
             updateCurrentFlowPane();
         } catch (DataAccessException e) {

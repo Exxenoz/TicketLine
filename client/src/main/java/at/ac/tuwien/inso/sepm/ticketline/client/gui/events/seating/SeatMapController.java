@@ -42,11 +42,10 @@ public class SeatMapController {
     private GraphicsContext gc;
     private Map<SectorDTO, List<CanvasSeat>> sectorSeatMap;
     private List<CanvasSectorLegend> sectorLegendList;
-    private List<CanvasStateLegend> stateLegendList;
     private SeatSelectionListener seatSelectionListener;
 
     private PerformanceDTO performance;
-    private List<ReservationDTO> reservationDTOS;
+    private List<ReservationDTO> reservations;
 
     public SeatMapController(SeatMapService seatMapService) {
         this.seatMapService = seatMapService;
@@ -157,7 +156,6 @@ public class SeatMapController {
         LOGGER.debug("Draw the legend");
         List<SectorDTO> sectors = performance.getHall().getSectors();
         sectorLegendList = new ArrayList<>(sectors.size());
-        stateLegendList = new ArrayList<>(STATE_LEGEND_SIZE);
 
         double currentY = seatMapService.findMaxSectorY(sectors, false) * CanvasSectorLegend.HEIGHT;
         double currentX = CanvasSectorLegend.OFFSET_LEFT;
@@ -201,7 +199,7 @@ public class SeatMapController {
 
     public void fill(PerformanceDTO performance, List<ReservationDTO> reservationDTOS) {
         this.performance = performance;
-        this.reservationDTOS = reservationDTOS;
+        this.reservations = reservationDTOS;
 
         resizeCanvas(performance);
         drawSeatMap(performance, reservationDTOS);
@@ -246,5 +244,18 @@ public class SeatMapController {
 
         seatMapCanvas.setHeight(estimatedHeight);
         seatMapCanvas.setWidth(estimatedWidth);
+    }
+
+    /**
+     * Checks for all javafx views if they are correctly initialized
+     * to give us information about the controller state
+     * @return true if everything is initialized, else false
+     */
+    public boolean isInitialized() {
+        if(seatMapCanvas != null && seatMapScrollPane != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

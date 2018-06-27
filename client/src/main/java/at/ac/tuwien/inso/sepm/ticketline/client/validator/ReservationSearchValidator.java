@@ -8,7 +8,7 @@ import javafx.scene.control.*;
 public class ReservationSearchValidator {
 
     public static final String RESERVATION_NUMBER_REGEX = "^[ABCDEFGHJKLMNPQRSTUVWXYZ0123456789]+$";
-    public static final String PERFORMANCE_NAME_REGEX = "^[-' a-zA-ZöüöäÜÖÄ]+$";
+    public static final String PERFORMANCE_NAME_REGEX = "^[-' a-zA-ZöüäÜÖÄ]+$";
 
     public static String validateReservationNumber(TextField reservationNumberTextField) throws ReservationSearchValidationException {
         String reservationNumber = reservationNumberTextField.getText();

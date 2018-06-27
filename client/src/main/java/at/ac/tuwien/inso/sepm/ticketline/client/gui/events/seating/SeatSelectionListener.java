@@ -5,14 +5,14 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 public interface SeatSelectionListener {
 
     /**
-     *
-     * @param seatDTO
+     * Method to be called when a seat was selected by the user
+     * @param seatDTO the seat that was selected
      */
     void onSeatSelected(SeatDTO seatDTO);
 
     /**
-     *
-     * @param seatDTO
+     * Method to be called when a seat was de-selected by the user
+     * @param seatDTO the seat that was deselected
      */
     void onSeatDeselected(SeatDTO seatDTO);
 

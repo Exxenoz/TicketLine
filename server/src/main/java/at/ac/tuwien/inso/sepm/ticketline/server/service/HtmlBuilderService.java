@@ -6,6 +6,7 @@ public interface HtmlBuilderService {
 
     /**
      * Creates a basic Html invoice representation for a given reservation.
+     *
      * @param reservation the reservation we build a basic invoice Html representation for
      * @return the html source code
      */
@@ -13,6 +14,7 @@ public interface HtmlBuilderService {
 
     /**
      * Creates a detailed Html invoice representation for a given reservation
+     *
      * @param reservation the reservation we build a detailed invoice Html representation for
      * @return the html source code
      */
@@ -20,6 +22,7 @@ public interface HtmlBuilderService {
 
     /**
      * Creates a basic Html cancellation representation for a given reservation
+     *
      * @param reservation the reservation we build a basic cancellation Html representation for
      * @return the html source code
      */
@@ -27,6 +30,7 @@ public interface HtmlBuilderService {
 
     /**
      * Creates a detailed Html cancellation representation for a given reservation
+     *
      * @param reservation the reservation we build a detailed cancellation Html representation for
      * @return the html source code
      */

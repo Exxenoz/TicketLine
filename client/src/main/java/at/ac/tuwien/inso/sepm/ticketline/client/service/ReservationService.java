@@ -16,6 +16,7 @@ public interface ReservationService {
 
     /**
      * Find all reservations of given event
+     *
      * @param event event of performances
      * @return list of reservations
      * @throws DataAccessException in case something went wrong
@@ -24,6 +25,7 @@ public interface ReservationService {
 
     /**
      * Find number of paid reservations by given event
+     *
      * @param event event of performances
      * @return count of paid reservations
      * @throws DataAccessException in case something went wrong
@@ -32,6 +34,7 @@ public interface ReservationService {
 
     /**
      * Create a reservation with the given values within the createReservationDTO
+     *
      * @param createReservationDTO contains chosen values for the attributes of the reservation
      * @return a reservationDTO which includes the id
      * @throws DataAccessException in case something goes wrong while trying to create the reservation in the db
@@ -40,6 +43,7 @@ public interface ReservationService {
 
     /**
      * Create a reservation which is paid immediately with the given values within the createReservationDTO
+     *
      * @param createReservationDTO contains chosen values for the attributes of the reservation
      * @return a reservationDTO which includes the id
      * @throws DataAccessException in case something goes wrong while trying to create and set the reservation to paid in the db
@@ -104,6 +108,7 @@ public interface ReservationService {
 
     /**
      * Cancels a reservation.
+     *
      * @param id the id of the reservation that will be cancelled
      * @return the reservation that has been cancelled
      * @throws DataAccessException in case something goes wrong while cancelling the reservation
@@ -113,6 +118,7 @@ public interface ReservationService {
 
     /**
      * Finds all reservations for a performance
+     *
      * @param id the id of the performance
      * @return all reservations for the according performance
      * @throws DataAccessException in case something goes wrong while finding the reservations
@@ -121,6 +127,7 @@ public interface ReservationService {
 
     /**
      * Calculates the price of a reservation with a given list of seats, with tax.
+     *
      * @param seats list of picked seats.
      * @param performanceDTO the performance for which the seats are intended to be reserved
      * @return the calculated price for the complete reservation
@@ -129,10 +136,10 @@ public interface ReservationService {
 
     /**
      * Calculates the price for a single seat of a reservation with tax.
+     *
      * @param seat the seat whose price will be calculated
      * @param performanceDTO the performance for which the seats are intended to be reserved
      * @return the calculated price for a single seat
      */
     Long calculateSinglePrice(SeatDTO seat, PerformanceDTO performanceDTO);
-
 }

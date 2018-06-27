@@ -118,6 +118,7 @@ public class MainController {
         checkMenuItemLanguageEnglish.textProperty().bind(BundleManager.getStringBinding("menu.application.language.english"));
         checkMenuItemLanguageGerman.textProperty().bind(BundleManager.getStringBinding("menu.application.language.german"));
         applicationExitMenuItem.textProperty().bind(BundleManager.getStringBinding("menu.application.exit"));
+        applicationLogout.textProperty().bind(BundleManager.getStringBinding("menu.application.logout"));
         helpMenu.textProperty().bind(BundleManager.getStringBinding("menu.help"));
         helpAboutMenuItem.textProperty().bind(BundleManager.getStringBinding("menu.help.about"));
     }

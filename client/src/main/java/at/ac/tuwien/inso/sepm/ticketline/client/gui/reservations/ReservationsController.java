@@ -237,10 +237,10 @@ public class ReservationsController {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == buttonTypeYes) {
-            LOGGER.debug("User wants to print invoice");
+            LOGGER.info("User wants to print invoice");
             handleCancellationInvoice(reservationDTO);
         } else {
-            LOGGER.debug("User does not want to print invoice");
+            LOGGER.info("User does not want to print invoice");
         }
     }
 
@@ -276,7 +276,7 @@ public class ReservationsController {
             Alert errorAlert = new Alert(Alert.AlertType.ERROR);
             errorAlert.setTitle(BundleManager.getBundle().getString("bookings.cancel.alreadyStartedPerformance.title "));
             errorAlert.setContentText(BundleManager.getBundle().getString("bookings.cancel.alreadyStartedPerformance.text"));
-            alert.showAndWait();
+            errorAlert.showAndWait();
         } else {
             if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
                 try {
@@ -553,7 +553,7 @@ public class ReservationsController {
 
     @FXML
     public void clearFilters(ActionEvent actionEvent) {
-        LOGGER.debug("Clearing Filters");
+        LOGGER.info("User clicked the clear button");
         rFilter = ReservationFilter.NONE;
         activeFiltersListLabel.setText("");
         performanceNameField.setText("");

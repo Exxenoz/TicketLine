@@ -7,37 +7,54 @@ import javafx.scene.control.TextField;
 
 public class BaseAddressValidator{
 
-    private static final String STRING_REGEX = "^[-' a-zA-ZöüöäÜÖÄ]+$";
+    private static final String ALPHABETIC_REGEX = "^[-' a-zA-ZöüäÜÖÄ]+$";
+    private static final String ALPHANUMERIC_REGEX="([A-Z0-9])\\w+";
+    private static final int MIN_LENGTH = 1;
+    private static final int MAX_LENGTH = 50;
 
     public static String validateStreet(TextField streetTextField) throws AddressValidationException {
         String street = streetTextField.getText();
-        return validationOfLength(street);
+        validateLength(street);
+        validateAlphabeticFormat(street);
+        return street;
     }
 
     public static String validateCity(TextField cityTextField) throws AddressValidationException {
         String city = cityTextField.getText();
-        return validationOfLength(city);
+        validateLength(city);
+        validateAlphabeticFormat(city);
+        return city;
     }
 
     public static String validateCountry(TextField countryTextField) throws AddressValidationException {
         String country = countryTextField.getText();
-        return validationOfLength(country);
+        validateLength(country);
+        validateAlphabeticFormat(country);
+        return country;
     }
 
     public static String validatePostalCode(TextField postalCodeTextField) throws AddressValidationException {
         String postalCode = postalCodeTextField.getText();
-        return validationOfLength(postalCode);
+        validateLength(postalCode);
+        validateAlphanumericFormat(postalCode);
+        return postalCode;
     }
 
-    private static String validationOfLength(String stringToValidate) throws AddressValidationException {
-        if (stringToValidate.length() < 1 || stringToValidate.length() > 50) {
-            throw new AddressValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_length"), "exception.validator.reservation.performancename_length");
+    private static void validateAlphabeticFormat(String text) throws AddressValidationException {
+        if(!text.matches(ALPHABETIC_REGEX)){
+            throw new AddressValidationException(BundleManager.getExceptionBundle().getString("exception.validator.address.alphabetic_invalid"), "exception.validator.address.alphabetic_invalid");
         }
+    }
 
-        if(!stringToValidate.matches(STRING_REGEX)){
-            throw new AddressValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.string"), "exception.validator.performance.string");
+    private static void validateAlphanumericFormat(String text) throws AddressValidationException {
+        if(!text.matches(ALPHANUMERIC_REGEX)){
+            throw new AddressValidationException(BundleManager.getExceptionBundle().getString("exception.validator.address.alphanumeric_invalid"), "exception.validator.address.alphanumeric_invalid");
         }
+    }
 
-        return stringToValidate;
+    private static void validateLength(String text) throws AddressValidationException {
+        if (text.length() < MIN_LENGTH || text.length() > MAX_LENGTH) {
+            throw new AddressValidationException(BundleManager.getExceptionBundle().getString("exception.validator.address.invalid_length"), "exception.validator.address.invalid_length");
+        }
     }
 }

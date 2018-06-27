@@ -25,9 +25,10 @@ public interface AuthenticationRestClient {
     AuthenticationToken authenticate() throws DataAccessException;
 
     /**
+     * Get current token info
+     *
      * @return Informations about the current authentication
      * @throws DataAccessException in case something went wrong
      */
     AuthenticationTokenInfo tokenInfoCurrent() throws DataAccessException;
-
 }

@@ -9,12 +9,14 @@ public interface PerformanceService {
 
     /**
      * Returns a list of all performances.
+     *
      * @return list of performances
      */
     Page<Performance> findAll(Pageable pageable);
 
     /**
      * Finds a list of performances filtered by the given event id.
+     *
      * @param eventID event id
      * @return a list of the performances of the events.
      */
@@ -22,6 +24,7 @@ public interface PerformanceService {
 
     /**
      * Finds a list of performances filtered by the given filter criteria.
+     *
      * @param search a DTO filled with all the findAll criteria
      * @return a list of performances that match the findAll criteria
      */

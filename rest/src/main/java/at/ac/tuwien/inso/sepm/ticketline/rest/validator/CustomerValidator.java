@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class CustomerValidator {
 
-    public static final String nameRegex = "^[-' a-zA-ZöüöäÜÖÄ]+$";
+    public static final String nameRegex = "^[-' a-zA-ZöüäÜÖÄ]+$";
 
     // validate whole customer without id
     public static void validateNewCustomer(CustomerDTO customerDTO) throws CustomerValidationException {

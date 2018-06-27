@@ -1,8 +1,8 @@
 logging:
   level.: INFO
-  level.at.ac.tuwien.inso.sepm.ticketline.server.: DEBUG
-  level.org.hibernate.SQL: DEBUG
-  level.org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  level.at.ac.tuwien.inso.sepm.ticketline.server.: INFO
+  level.org.hibernate.SQL: INFO
+#  level.org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 application:
   authentication:

@@ -200,6 +200,9 @@ public class UserController {
         useraccountStatusCol.sortTypeProperty().addListener(tableColumnSortChangeListener);
         userAuthTriesCol.sortTypeProperty().addListener(tableColumnSortChangeListener);
 
+        // Clear user list here, because it could still contain data from the last login
+        userList.clear();
+
         loadUserTable(FIRST_USER_TABLE_PAGE);
     }
 

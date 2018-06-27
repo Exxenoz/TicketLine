@@ -9,6 +9,7 @@ public interface SectorCategoryService {
 
     /**
      * Find all categories
+     *
      * @return list of categories ordered by base price(ascending)
      * @throws DataAccessException in case something went wrong
      */
