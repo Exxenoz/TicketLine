@@ -5,9 +5,11 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.InvoiceFileException;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.InvoiceService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.CreateReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.util.PriceUtils;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -78,7 +80,7 @@ public class PurchaseReservationSummaryController {
         customerName.setText(reservation.getCustomer().getFirstName() + " " + reservation.getCustomer().getLastName());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
         performanceDate.setText(reservation.getPerformance().getPerformanceStart().format(formatter));
-        performancePrice.setText(reservation.getPerformance().getPrice().toString());
+        performancePrice.setText(PriceUtils.priceToRepresentation(reservationService.calculateCompletePrice(reservation.getSeats(), reservation.getPerformance())));
         printButton.setDisable(true);
         printButton.setVisible(false);
         printButton.setManaged(false);
@@ -159,7 +161,7 @@ public class PurchaseReservationSummaryController {
         handleInvoice(reservation);
     }
 
-    public void buyTicketsButton(ActionEvent event) throws DataAccessException {
+    public void buyTicketsButton(ActionEvent event) {
         CreateReservationDTO createReservationDTO = new CreateReservationDTO();
         createReservationDTO.setCustomerID(reservation.getCustomer() != null ? reservation.getCustomer().getId() : null);
         createReservationDTO.setPerformanceID(reservation.getPerformance().getId());
@@ -170,33 +172,46 @@ public class PurchaseReservationSummaryController {
 
         //only reserve tickets
         if (!showDetails && isReservation) {
-            ReservationDTO reservationDTO = reservationService.createNewReservation(createReservationDTO);
 
-            TextArea textArea = new TextArea(BundleManager.getBundle().getString(
-                "bookings.purchase.reservation.endtext") + reservationDTO.getReservationNumber());
-            textArea.setEditable(false);
-            textArea.setMaxSize(300, 100);
-            textArea.setWrapText(true);
+            try {
+                ReservationDTO reservationDTO = reservationService.createNewReservation(createReservationDTO);
+                TextArea textArea = new TextArea(BundleManager.getBundle().getString(
+                    "bookings.purchase.reservation.endtext") + reservationDTO.getReservationNumber());
+                textArea.setEditable(false);
+                textArea.setMaxSize(300, 100);
+                textArea.setWrapText(true);
 
-            GridPane gridPane = new GridPane();
-            gridPane.add(textArea, 0, 0);
+                GridPane gridPane = new GridPane();
+                gridPane.add(textArea, 0, 0);
 
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(BundleManager.getBundle().getString("bookings.purchase.reservationnumber"));
-            alert.getDialogPane().setContent(gridPane);
-            alert.showAndWait();
-            closeWindow();
-
-            closeWindow();
-
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle(BundleManager.getBundle().getString("bookings.purchase.reservationnumber"));
+                alert.getDialogPane().setContent(gridPane);
+                alert.showAndWait();
+                closeWindow();
+            } catch (DataAccessException d) {
+                JavaFXUtils.createErrorDialog(BundleManager.getExceptionBundle().getString("exception.reservation.general"),
+                    stage.getScene().getWindow()).showAndWait();
+            }
             //reserve and buy tickets
         } else if (!showDetails) {
-            reservation = reservationService.createAndPayReservation(createReservationDTO);
-            printInvoiceDialog();
+            try {
+                reservation = reservationService.createAndPayReservation(createReservationDTO);
+                printInvoiceDialog();
+            } catch (DataAccessException d) {
+                JavaFXUtils.createErrorDialog(BundleManager.getExceptionBundle().getString("exception.reservation.general"),
+                    stage.getScene().getWindow()).showAndWait();
+            }
         } else {
             //buy already reserved tickets
-            reservation = reservationService.purchaseReservation(reservation);
-            printInvoiceDialog();
+
+            try {
+                reservation = reservationService.purchaseReservation(reservation);
+                printInvoiceDialog();
+            } catch (DataAccessException d) {
+                JavaFXUtils.createErrorDialog(BundleManager.getExceptionBundle().getString("exception.reservation.general"),
+                    stage.getScene().getWindow()).showAndWait();
+            }
         }
     }
 

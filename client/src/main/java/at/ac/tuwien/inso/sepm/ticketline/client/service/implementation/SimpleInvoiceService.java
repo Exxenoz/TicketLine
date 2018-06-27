@@ -5,6 +5,7 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.InvoiceFileException;
 import at.ac.tuwien.inso.sepm.ticketline.client.rest.InvoiceRestClient;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.InvoiceService;
+import at.ac.tuwien.inso.sepm.ticketline.client.service.OSDeterminationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.DesktopApi;
 import org.slf4j.Logger;
@@ -25,10 +26,13 @@ public class SimpleInvoiceService implements InvoiceService {
 
     private final InvoiceRestClient restClient;
     private final InvoiceConfigurationProperties invoiceConfigurationProperties;
+    private final OSDeterminationService osDeterminationService;
 
-    public SimpleInvoiceService(InvoiceRestClient restClient, InvoiceConfigurationProperties invoiceConfigurationProperties) {
+    public SimpleInvoiceService(InvoiceRestClient restClient, InvoiceConfigurationProperties invoiceConfigurationProperties,
+                                OSDeterminationService osDeterminationService) {
         this.restClient = restClient;
         this.invoiceConfigurationProperties = invoiceConfigurationProperties;
+        this.osDeterminationService = osDeterminationService;
     }
 
     @Override
@@ -76,17 +80,22 @@ public class SimpleInvoiceService implements InvoiceService {
 
     @Override
     public void openInvoice(String reservationNumber) throws InvoiceFileException {
-        if (Desktop.isDesktopSupported()) {
-            try {
-                File file = new File(invoiceConfigurationProperties.getLocation() + "/" + reservationNumber + ".pdf");
-                Desktop.getDesktop().open(file);
-            } catch (IOException ex) {
-                LOGGER.warn("Couldn't open PDF-File");
-                throw new InvoiceFileException(BundleManager.getExceptionBundle().getString("exception.invoice.file.open"));
+        File file = new File(invoiceConfigurationProperties.getLocation() + "/" + reservationNumber + ".pdf");
+
+        try {
+            if (osDeterminationService.isWindows()) {
+                Runtime.getRuntime().exec(new String[]
+                    {"rundll32", "url.dll,FileProtocolHandler",
+                        file.getAbsolutePath()});
+
+            } else if (osDeterminationService.isMac()) {
+                Runtime.getRuntime().exec("open " + file.getPath());
+            } else if(osDeterminationService.isUnix()) {
+                Runtime.getRuntime().exec("xdg-open " + file.getPath());
             }
-        } else {
-            File myFile = new File(invoiceConfigurationProperties.getLocation() + "/" + reservationNumber + ".pdf");
-            DesktopApi.open(myFile);
+        } catch (IOException i) {
+            LOGGER.debug("Could not open PFD: {}", i.getMessage());
+            throw new InvoiceFileException(BundleManager.getExceptionBundle().getString("exception.invoice.file.open"));
         }
     }
 
