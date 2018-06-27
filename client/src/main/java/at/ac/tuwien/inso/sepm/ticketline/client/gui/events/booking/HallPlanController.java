@@ -259,25 +259,34 @@ public class HallPlanController implements SeatSelectionListener {
     }
 
     private void continueOrReserve() {
-        reservation.setSeats(seats);
-        if (!changeDetails) {
-            selectCustomerController.fill(reservation, isReservation, stage);
-            Parent parent = fxmlLoader.load("/fxml/events/book/selectCustomerView.fxml");
-            selectCustomerController.loadCustomers();
-            stage.setScene(new Scene(parent));
-            stage.setTitle(BundleManager.getBundle().getString("bookings.hallplan.customer_select.title"));
-            stage.centerOnScreen();
-        } else {
-            try {
-                reservation = reservationService.editReservation(reservation);
-                PRSController.showReservationDetails(reservation, stage);
-                Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
+        if(!seats.isEmpty()) {
+            reservation.setSeats(seats);
+            if (!changeDetails) {
+                selectCustomerController.fill(reservation, isReservation, stage);
+                Parent parent = fxmlLoader.load("/fxml/events/book/selectCustomerView.fxml");
+                selectCustomerController.loadCustomers();
                 stage.setScene(new Scene(parent));
-                stage.setTitle(BundleManager.getBundle().getString("bookings.purchase.details.title"));
+                stage.setTitle(BundleManager.getBundle().getString("bookings.hallplan.customer_select.title"));
                 stage.centerOnScreen();
-            } catch (DataAccessException e) {
-                JavaFXUtils.createErrorDialog(e.getMessage(), stage);
+            } else {
+                try {
+                    reservation = reservationService.editReservation(reservation);
+                    PRSController.showReservationDetails(reservation, stage);
+                    Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
+                    stage.setScene(new Scene(parent));
+                    stage.setTitle(BundleManager.getBundle().getString("bookings.purchase.details.title"));
+                    stage.centerOnScreen();
+                } catch (DataAccessException e) {
+                    JavaFXUtils.createErrorDialog(e.getMessage(),
+                        stage.getScene().getWindow()).showAndWait();
+                }
             }
+        } else {
+            JavaFXUtils.createInformationDialog(
+                BundleManager.getBundle().getString("events.seating.info.title"),
+                BundleManager.getBundle().getString("events.seating.info"),
+                BundleManager.getBundle().getString("events.seating.no.seats"),
+                stage.getScene().getWindow()).showAndWait();
         }
     }
 
