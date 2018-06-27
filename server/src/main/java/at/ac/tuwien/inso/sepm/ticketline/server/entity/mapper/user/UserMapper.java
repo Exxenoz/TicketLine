@@ -8,6 +8,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
+
     /**
      * Converts a user entity object to an user DTO
      *
@@ -39,5 +40,4 @@ public interface UserMapper {
      * @return the converted list
      */
     List<User> userListDTOToUserList(List<UserDTO> users);
-
 }

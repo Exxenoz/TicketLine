@@ -14,6 +14,7 @@ public interface PerformanceService {
 
     /**
      * Finds a list of all performances currently in the database.
+     *
      * @return list of all performances
      * @throws DataAccessException
      */
@@ -21,6 +22,7 @@ public interface PerformanceService {
 
     /**
      * Find all performances of given event
+     *
      * @param eventID of event of performances
      * @return list of performances
      * @throws DataAccessException in case something went wrong
@@ -29,10 +31,10 @@ public interface PerformanceService {
 
     /**
      * Finds a list of all performances that match the given search criteria.
+     *
      * @param searchDTO a DTO that contains all the given search criteria
      * @return returns a list of the matching performances
      * @throws DataAccessException in case something went wrong while trying to retrieve the performances from the database
      */
     PageResponseDTO<PerformanceDTO> findAll(SearchDTO searchDTO, PageRequestDTO pageRequestDTO) throws DataAccessException;
-
 }

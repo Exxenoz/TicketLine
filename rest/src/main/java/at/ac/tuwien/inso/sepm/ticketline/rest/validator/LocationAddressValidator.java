@@ -5,22 +5,30 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.exception.AddressValidationExcepti
 
 public class LocationAddressValidator extends BaseAddressValidator {
 
-    private static final String STRING_REGEX = "^[-' a-zA-ZöüöäÜÖÄ]+$";
+    private static final String ALPHABETIC_REGEX = "^[-' a-zA-ZöüäÜÖÄ]+$";
+    private static final int MIN_LENGTH = 1;
+    private static final int MAX_LENGTH = 50;
 
-    public static String validateLocationAddressDTO(LocationAddressDTO locationAddressDTO) throws AddressValidationException {
-        return  validateLocationName(locationAddressDTO);
+    public static void validateLocationAddressDTO(LocationAddressDTO locationAddressDTO) throws AddressValidationException {
+        validateLocationName(locationAddressDTO);
     }
 
-    static String validateLocationName(LocationAddressDTO locationAddressDTO) throws AddressValidationException {
-        if(!(locationAddressDTO.getLocationName().length() < 1)) {
-            if (locationAddressDTO.getLocationName().length() < 1 || locationAddressDTO.getLocationName().length() > 50) {
-                throw new AddressValidationException("the input hast to be at least 2 and max. 50 characters long");
-            }
+    public static void validateLocationName(LocationAddressDTO locationAddressDTO) throws AddressValidationException {
+        validateLength(locationAddressDTO);
+        validateAlphabeticFormat(locationAddressDTO);
+    }
 
-            if (!locationAddressDTO.getLocationName().matches(STRING_REGEX)) {
-                throw new AddressValidationException("the input can only be letters");
-            }
+    private static void validateLength(LocationAddressDTO locationAddressDTO) throws AddressValidationException {
+        String locationName = locationAddressDTO.getLocationName();
+        if (locationName.length() < MIN_LENGTH || locationName.length() > MAX_LENGTH) {
+            throw new AddressValidationException("the input hast to be at least 1 and max. 50 characters long");
         }
-        return  locationAddressDTO.getLocationName();
+    }
+
+    private static void validateAlphabeticFormat(LocationAddressDTO locationAddressDTO) throws AddressValidationException {
+        String locationName = locationAddressDTO.getLocationName();
+        if(!locationName.matches(ALPHABETIC_REGEX)){
+            throw new AddressValidationException("the input can only be letters");
+        }
     }
 }

@@ -17,7 +17,6 @@ public interface AuthenticationService {
 
     /**
      * Deauthenticate current user
-     *
      */
     void deAuthenticate();
 

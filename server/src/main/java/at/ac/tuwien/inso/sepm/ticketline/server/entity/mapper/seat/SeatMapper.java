@@ -7,7 +7,19 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface SeatMapper {
 
+    /**
+     * Converts a seat entity object to a seat DTO
+     *
+     * @param seat the object to be converted
+     * @return the converted DTO
+     */
     SeatDTO seatToSeatDTO(Seat seat);
 
+    /**
+     * Converts a seat DTO to a seat entity object
+     *
+     * @param seatDTO the object to be converted
+     * @return the converted entity object
+     */
     Seat seatDTOToSeat(SeatDTO seatDTO);
 }

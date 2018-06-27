@@ -20,9 +20,14 @@ public class SeatIdsToSeatsMapper {
     public @interface SeatIdToSeat {
     }
 
+    /**
+     * Creates a seat entity object using the given seat id
+     *
+     * @param seatId the seat id of the seat
+     * @return the created seat
+     */
     @SeatIdToSeat
     public Seat seatIDtoSeat(Long seatId) {
         return Seat.SeatBuilder.aSeat().withId(seatId).build();
     }
-
 }

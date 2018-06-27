@@ -14,14 +14,44 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = SeatIdsToSeatsMapper.class)
 public interface ReservationMapper {
 
+    /**
+     * Converts a list of reservation entity objects to a list of reservation DTOs
+     *
+     * @param reservations the list to be converted
+     * @return the converted list
+     */
     List<ReservationDTO> reservationToReservationDTO(List<Reservation> reservations);
 
+    /**
+     * Converts a reservation entity object to a reservation DTO
+     *
+     * @param reservation the object to be converted
+     * @return the converted DTO
+     */
     ReservationDTO reservationToReservationDTO(Reservation reservation);
 
+    /**
+     * Converts a list of reservation DTOs to a list of reservation entity objects
+     *
+     * @param reservations the list to be converted
+     * @return the converted list
+     */
     List<Reservation> reservationDTOToReservation(List<ReservationDTO> reservations);
 
+    /**
+     * Converts a reservation DTO to a reservation entity object
+     *
+     * @param reservation the object to be converted
+     * @return the converted entity object
+     */
     Reservation reservationDTOToReservation(ReservationDTO reservation);
 
+    /**
+     * Converts a create reservation DTO to a reservation entity object
+     *
+     * @param createReservationDTO the object to be converted
+     * @return the converted entity object
+     */
     @Mappings({
         @Mapping(target = "performance.id", source = "performanceID"),
         @Mapping(target = "customer.id", source = "customerID"),

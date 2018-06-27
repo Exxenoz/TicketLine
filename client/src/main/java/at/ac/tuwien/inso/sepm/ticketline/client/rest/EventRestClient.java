@@ -13,6 +13,7 @@ public interface EventRestClient {
 
     /**
      * Returns a list of all the events currently in the database.
+     *
      * @return a list of all events
      * @throws DataAccessException in case something went wrong while trying to retrieve the events from the database
      */
@@ -20,6 +21,7 @@ public interface EventRestClient {
 
     /**
      * Finds the associated event to the given performance id.
+     *
      * @param performanceID performance id
      * @return the associated event
      * @throws DataAccessException in case something went wrong while trying to retrieve the event from the database
