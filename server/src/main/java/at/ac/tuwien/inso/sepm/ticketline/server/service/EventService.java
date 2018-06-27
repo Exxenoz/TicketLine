@@ -8,10 +8,16 @@ import java.util.List;
 
 public interface EventService {
 
+    /**
+     * Find all events
+     *
+     * @return a list of all events
+     */
     List<Event> findAll();
 
     /**
-     * Finds Event filtered by the given performance id.
+     * Finds event filtered by the given performance id.
+     *
      * @param performanceID the performance id
      * @return the associated event is returned
      */

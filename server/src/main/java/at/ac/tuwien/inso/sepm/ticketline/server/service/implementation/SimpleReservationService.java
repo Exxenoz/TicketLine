@@ -8,7 +8,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatRe
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InvalidReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.PerformanceRepository;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.ReservationRepository;
-import at.ac.tuwien.inso.sepm.ticketline.server.service.HallPlanService;
+import at.ac.tuwien.inso.sepm.ticketline.server.validator.HallPlanValidator;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.SeatsService;
 import org.slf4j.Logger;
@@ -21,8 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SimpleReservationService implements ReservationService {
@@ -34,7 +36,7 @@ public class SimpleReservationService implements ReservationService {
     @Autowired
     private ReservationRepository reservationRepository;
     @Autowired
-    private HallPlanService hallPlanService;
+    private HallPlanValidator hallPlanValidator;
     @Autowired
     private SeatsService seatsService;
 
@@ -131,7 +133,7 @@ public class SimpleReservationService implements ReservationService {
         //Then, too fail fast, we check the integrity of the seats according to the hall plan and the sectors
         try {
             if (sectors != null) {
-                hallPlanService.checkSeatsAgainstSectors(onlyNewSeats, sectors);
+                hallPlanValidator.checkSeatsAgainstSectors(onlyNewSeats, sectors);
             } else {
                 LOGGER.error("Could not find the the Sectors for this reservation");
                 throw new InvalidReservationException("The Performance was not set");
@@ -140,8 +142,32 @@ public class SimpleReservationService implements ReservationService {
             LOGGER.warn("The sectors of the reservation do not match the hall '{}", performance.getHall());
             throw new InvalidReservationException("Hall plan is not coherent with sectors or seats.");
         }
-        //check if all new seats are free
-        checkIfAllSeatsAreFreeIgnoreId(reservation.getId(), performance.getId(), onlyNewSeats);
+
+        //Check if all new seats are free for regular events
+        if((performance.getEvent() != null &&
+            performance.getEvent().getEventType() != null
+            && performance.getEvent().getEventType() == EventType.SECTOR)) {
+            //For events with free seating just check if there is enough space in a given sector
+            List<Reservation> reservations = reservationRepository.findAllByPerformanceId(reservation.getPerformance().getId());
+
+            //Get the current count for all sectors, for existing reservations and requested reservations
+            Map<Sector, Integer> existingSeatCountMap = getExistingSeatCountMap(reservations);
+            Map<Sector, Integer> requestedSeatCountMap = getRequestedSeatCountMap(onlyNewSeats);
+
+            for(Map.Entry<Sector, Integer> e: existingSeatCountMap.entrySet()) {
+                if (requestedSeatCountMap.containsKey(e.getKey())) {
+                    //Calculate the size of the sector
+                    int sectorSize = e.getKey().getRows() * e.getKey().getSeatsPerRow();
+                    if (requestedSeatCountMap.get(e.getKey()) + existingSeatCountMap.get(e.getKey()) > sectorSize) {
+                        LOGGER.warn("Sector does not have enough space for this reservation.");
+                        throw new InvalidReservationException("This sector does not have enough space for the requested seats.");
+                    }
+                }
+            }
+        } else {
+            checkIfAllSeatsAreFreeIgnoreId(reservation.getId(), performance.getId(), onlyNewSeats);
+        }
+
         LOGGER.debug("The added seats are still free");
 
         //create the new Seats
@@ -226,23 +252,46 @@ public class SimpleReservationService implements ReservationService {
             List<Seat> seatst = reservation.getSeats();
             Hall hall = performance.getHall();
             List<Sector> sectort = hall.getSectors();
-            hallPlanService.checkSeatsAgainstSectors(reservation.getSeats(), performance.getHall().getSectors());
+            hallPlanValidator.checkSeatsAgainstSectors(reservation.getSeats(), performance.getHall().getSectors());
         } catch (InternalHallValidationException i) {
             LOGGER.warn("The sectors of the reservation do not match the hall '{}", performance.getHall());
             throw new InvalidReservationException("Hall plan is not coherent with sectors or seats.");
         }
 
-        //Then we check the seats against all reservations, and if they actually exist
-        List<Reservation> reservations = reservationRepository.findAllByPerformanceId(reservation.getPerformance().getId());
-        for(Reservation r: reservations) {
-            for(Seat existingSeat: r.getSeats()) {
-                for(Seat requestedSeat: reservation.getSeats()) {
-                    if(requestedSeat.getSector().getId() == existingSeat.getSector().getId()
-                        && requestedSeat.getPositionX() == existingSeat.getPositionX()
-                        && requestedSeat.getPositionY() == existingSeat.getPositionY()) {
 
-                        LOGGER.warn("seat '{}' is already reserved", requestedSeat);
-                        throw new InternalSeatReservationException("A seat is already reserved.", requestedSeat);
+        if(performance.getEvent() != null &&
+            performance.getEvent().getEventType() != null
+            && performance.getEvent().getEventType() == EventType.SECTOR) {
+            //For events with free seating just check if there is enough space in a given sector
+            List<Reservation> reservations = reservationRepository.findAllByPerformanceId(reservation.getPerformance().getId());
+
+            //Get the current count for all sectors, for existing reservations and requested reservations
+            Map<Sector, Integer> existingSeatCountMap = getExistingSeatCountMap(reservations);
+            Map<Sector, Integer> requestedSeatCountMap = getRequestedSeatCountMap(reservation.getSeats());
+
+            for(Map.Entry<Sector, Integer> e: existingSeatCountMap.entrySet()) {
+                if (requestedSeatCountMap.containsKey(e.getKey())) {
+                    //Calculate the size of the sector
+                    int sectorSize = e.getKey().getRows() * e.getKey().getSeatsPerRow();
+                    if (requestedSeatCountMap.get(e.getKey()) + existingSeatCountMap.get(e.getKey()) > sectorSize) {
+                        LOGGER.warn("Sector does not have enough space for this reservation.");
+                        throw new InternalSeatReservationException("This sector does not have enough space for the requested seats.");
+                    }
+                }
+            }
+        } else {
+            //we check the seats against all reservations, and if they actually exist, for events with proper seating
+            List<Reservation> reservations = reservationRepository.findAllByPerformanceId(reservation.getPerformance().getId());
+            for (Reservation r : reservations) {
+                for (Seat existingSeat : r.getSeats()) {
+                    for (Seat requestedSeat : reservation.getSeats()) {
+                        if (requestedSeat.getSector().getId() == existingSeat.getSector().getId()
+                            && requestedSeat.getPositionX() == existingSeat.getPositionX()
+                            && requestedSeat.getPositionY() == existingSeat.getPositionY()) {
+
+                            LOGGER.warn("seat '{}' is already reserved", requestedSeat);
+                            throw new InternalSeatReservationException("A seat is already reserved.", requestedSeat);
+                        }
                     }
                 }
             }
@@ -271,8 +320,6 @@ public class SimpleReservationService implements ReservationService {
         createdReservation = reservationRepository.save(reservation);
         return createdReservation;
     }
-
-
 
     public String generateReservationNumber() {
         String reservationNumber;
@@ -343,5 +390,33 @@ public class SimpleReservationService implements ReservationService {
     @Override
     public Double getRegularTaxRate() {
         return priceCalculationProperties.getSalesTax();
+    }
+
+    private Map<Sector, Integer> getRequestedSeatCountMap(List<Seat> seats) {
+        Map<Sector, Integer> sectorCountMap = new HashMap();
+        for(Seat s: seats) {
+            Sector sector = s.getSector();
+            if(!sectorCountMap.containsKey(sector))  {
+                sectorCountMap.put(s.getSector(), 1);
+            } else {
+                sectorCountMap.put(s.getSector(), sectorCountMap.get(s.getSector()) + 1);
+            }
+        }
+        return sectorCountMap;
+    }
+
+    private Map<Sector, Integer> getExistingSeatCountMap(List<Reservation> reservations) {
+        Map<Sector, Integer> sectorCountMap = new HashMap();
+        for(Reservation r: reservations) {
+            for (Seat s : r.getSeats()) {
+                Sector sector = s.getSector();
+                if (!sectorCountMap.containsKey(sector)) {
+                    sectorCountMap.put(s.getSector(), 1);
+                } else {
+                    sectorCountMap.put(s.getSector(), sectorCountMap.get(s.getSector()) + 1);
+                }
+            }
+        }
+        return sectorCountMap;
     }
 }

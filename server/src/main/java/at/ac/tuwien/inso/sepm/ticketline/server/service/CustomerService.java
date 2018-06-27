@@ -11,6 +11,7 @@ public interface CustomerService {
 
     /**
      * Create a new customer
+     *
      * @param customerDTO customer to create
      * @return customer with its id
      * @throws CustomerValidationException in case customer was invalid
@@ -28,10 +29,17 @@ public interface CustomerService {
 
     /**
      * Find all customer entries
+     *
      * @param pageable page filter
      * @return page response of customers
      */
     PageResponseDTO<CustomerDTO> findAll(Pageable pageable);
 
+    /**
+     * Find a customer by id
+     *
+     * @param id the id of the customer
+     * @return the customer with the given id
+     */
     Customer findOneById(Long id);
 }

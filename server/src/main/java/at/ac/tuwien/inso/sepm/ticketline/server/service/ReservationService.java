@@ -14,7 +14,11 @@ import java.util.List;
 
 public interface ReservationService {
 
-
+    /**
+     * Setter for the seat service
+     *
+     * @param seatsService the seat service
+     */
     void setSeatsService(SeatsService seatsService);
 
     /**
@@ -26,7 +30,7 @@ public interface ReservationService {
     List<Reservation> findAllByEventId(Long eventId);
 
     /**
-     * finds One not yet purchased Reservation
+     * Finds One not yet purchased Reservation
      *
      * @param  reservationId the id of the reservation
      * @return said reservation
@@ -34,7 +38,7 @@ public interface ReservationService {
     Reservation findOneByPaidFalseAndId(Long reservationId);
 
     /**
-     * finds one reservation with the given reservationnumber
+     * Finds one reservation with the given reservationnumber
      *
      * @param reservationNr the id of the reservation
      * @return said reservation
@@ -58,13 +62,14 @@ public interface ReservationService {
     Long getPaidReservationCountByEventId(Long eventId);
 
     /**
-     * create new reservation
+     * Create new reservation
      *
      * @param reservation
      * @return created reservation
      * @throws InvalidReservationException
      */
     Reservation createReservation(Reservation reservation) throws InvalidReservationException, InternalSeatReservationException;
+
     /**
      * Invoices an existing Reservation
      *
@@ -82,7 +87,7 @@ public interface ReservationService {
     Reservation editReservation(Reservation reservation) throws InvalidReservationException;
 
     /**
-     * create a new reservation and set paid true
+     * Create a new reservation and set paid true
      *
      * @param reservation
      * @return created Reservation
@@ -91,7 +96,7 @@ public interface ReservationService {
     Reservation createAndPayReservation(Reservation reservation) throws InvalidReservationException, InternalSeatReservationException;
 
     /**
-     * cancel existing reservation
+     * Cancel existing reservation
      *
      * @param id
      * @return canceled reservation
@@ -107,13 +112,14 @@ public interface ReservationService {
     Page<Reservation> findAll(Pageable pageable);
 
     /**
-     * create new reservation number with 6 alpha numeric values
+     * Create new reservation number with 6 alpha numeric values
      *
      * @return reservationnumber
      */
     String generateReservationNumber();
 
     /**
+     * Finds all reservations for the given performance id
      *
      * @param id the id of the performance with the according reservations we are looking for
      * @return the list of reservations we found
@@ -122,6 +128,7 @@ public interface ReservationService {
 
     /**
      * Calculates the price of a reservation with tax
+     *
      * @param reservation the reservation whose price will be checked
      * @return the price of this reservation in cents
      */
@@ -129,6 +136,7 @@ public interface ReservationService {
 
     /**
      * Calculates the price of a reservation without tax
+     *
      * @param reservation the reservation whose price will be checked
      * @return the price of this reservation in cents
      */
@@ -136,6 +144,7 @@ public interface ReservationService {
 
     /**
      * Calculates the reimbursed amount of a reservation
+     *
      * @param reservation the reservation for which we calculate the reimbursed amount
      * @return the calculated amount that has to be reimbursed
      */
@@ -143,24 +152,22 @@ public interface ReservationService {
 
     /**
      * Returns the regular tax rate of price calculation
+     *
      * @return the regular tax rate
      */
     Double getRegularTaxRate();
 
-
     /**
-     * setter for reservation repository
+     * Setter for reservation repository
      *
      * @param reservationRepository
      */
-    public void setReservationRepository(ReservationRepository reservationRepository);
+    void setReservationRepository(ReservationRepository reservationRepository);
 
     /**
-     * setter for performance repository
+     * Setter for performance repository
      *
      * @param performanceRepository
      */
-    public void setPerformanceRepository(PerformanceRepository performanceRepository);
-
-
+    void setPerformanceRepository(PerformanceRepository performanceRepository);
 }
