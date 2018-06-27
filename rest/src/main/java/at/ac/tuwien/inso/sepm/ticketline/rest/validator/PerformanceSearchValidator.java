@@ -4,52 +4,68 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.exception.PerformanceSearchValidat
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
 public class PerformanceSearchValidator {
 
-    private static final String NAME_REGEX = "[0-9]*";
+    private static final String NUMBER_REGEX = "[0-9]*";
+    private static final String PRICE_REGEX = "^\\d{0,8}(,\\d{2})?$";
+    private static final String STRING_REGEX = "^[-a-zA-Z ]+$";
 
-    public static void validateReservationSearchDTO(SearchDTO searchDTO) throws PerformanceSearchValidationException {
+    public static void validatePerformanceSearchDTO(SearchDTO searchDTO) throws PerformanceSearchValidationException {
         validateArtistFirstName(searchDTO);
         validateArtistLastName(searchDTO);
         validateEventName(searchDTO);
         validateDuration(searchDTO);
-        validateTime(searchDTO);
         validatePrice(searchDTO);
-        validateAddress(searchDTO);
-
     }
 
     static void validateArtistFirstName(SearchDTO searchDTO) throws PerformanceSearchValidationException {
-       validationForStingFields(searchDTO, "artist");
+        if(!(searchDTO.getFirstName().length() < 1)) {
+            validationForStingFields(searchDTO.getFirstName());
+
+            if (!searchDTO.getFirstName().matches(STRING_REGEX)) {
+                throw new PerformanceSearchValidationException("the first name of the artist contains invalid characters");
+            }
+        }
     }
 
     static void validateArtistLastName(SearchDTO searchDTO) throws PerformanceSearchValidationException {
-        validationForStingFields(searchDTO, "artist");
+        if(!(searchDTO.getLastName().length() < 1)) {
+            validationForStingFields(searchDTO.getLastName());
 
-        if (!searchDTO.getLastName().matches(NAME_REGEX)) {
-            throw new PerformanceSearchValidationException("the last name of the artist can only contain numbers");
+            if (!searchDTO.getLastName().matches(STRING_REGEX)) {
+                throw new PerformanceSearchValidationException("the last name of the artist contains invalid characters");
+            }
         }
     }
 
     static void validateEventName(SearchDTO searchDTO) throws PerformanceSearchValidationException {
-        validationForStingFields(searchDTO, "event");
+        if(!(searchDTO.getEventName().length() < 1)) {
+            validationForStingFields(searchDTO.getEventName());
+
+            if (!searchDTO.getEventName().matches(STRING_REGEX)) {
+                throw new PerformanceSearchValidationException("the event name contains invalid characters");
+            }
+        }
     }
 
-    static void validateDuration(SearchDTO searchDTO){}
-
-    static void validateTime(SearchDTO searchDTO){}
-
-    static void validatePrice(SearchDTO searchDTO){}
-
-    static void validateAddress(SearchDTO searchDTO){}
-
-    static void validationForStingFields(SearchDTO searchDTO, String string) throws PerformanceSearchValidationException {
-        if (searchDTO.getFirstName() == null) {
-            throw new PerformanceSearchValidationException("first name of the" + string + "for the search can not be null");
+    static void validateDuration(SearchDTO searchDTO) throws PerformanceSearchValidationException {
+        if(searchDTO.getDuration() != null) {
+            if (!searchDTO.getDuration().toString().matches(NUMBER_REGEX)) {
+                throw new PerformanceSearchValidationException("duration can only contain numbers");
+            }
         }
-        if (searchDTO.getFirstName().length() < 2) {
-            throw new PerformanceSearchValidationException("first name of the" + string + "for the search has to be at least 2 characters long");
+    }
+
+    static void validatePrice(SearchDTO searchDTO) throws PerformanceSearchValidationException {
+        if(searchDTO.getPrice() != null) {
+            if (!searchDTO.getPrice().toString().matches(PRICE_REGEX)) {
+                throw new PerformanceSearchValidationException("the format of price ist not correct");
+            }
         }
-        if (searchDTO.getFirstName().length() > 50) {
-            throw new PerformanceSearchValidationException("first name of the" + string + "for the search can not be longer than 50 characters");
+    }
+
+    static void validationForStingFields(String string) throws PerformanceSearchValidationException {
+
+        if (string.length() < 1 || string.length() > 50) {
+            throw new PerformanceSearchValidationException("the input has to be between 1 and 50 characters");
         }
     }
 }

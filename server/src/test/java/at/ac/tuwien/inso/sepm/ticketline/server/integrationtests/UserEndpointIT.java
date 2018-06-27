@@ -11,6 +11,7 @@ import at.ac.tuwien.inso.sepm.ticketline.server.entity.User;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.integrationtests.base.BaseIT;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.UserRepository;
+import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -160,7 +161,7 @@ public class UserEndpointIT extends BaseIT {
             .build();
 
         //try to login with bad credentials 5 times so that the user is disabled
-        for (int i = 0; i <= 4; i++) {
+        for (int i = 0; i < UserService.ALLOWED_STRIKES; i++) {
             var response = RestAssured
                 .given()
                 .contentType(io.restassured.http.ContentType.JSON)

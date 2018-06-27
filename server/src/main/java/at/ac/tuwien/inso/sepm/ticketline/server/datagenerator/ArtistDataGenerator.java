@@ -33,7 +33,7 @@ public class ArtistDataGenerator implements DataGenerator {
             LOGGER.info("generating {} artist entries", NUMBER_OF_ARTISTS_TO_GENERATE);
 
             for (int i = 0; i < NUMBER_OF_ARTISTS_TO_GENERATE; i++) {
-                artistRepository.save(new Artist(faker.rockBand().name(), String.valueOf(i)));
+                artistRepository.save(new Artist(faker.rockBand().name(), faker.music().instrument()));
             }
         }
     }

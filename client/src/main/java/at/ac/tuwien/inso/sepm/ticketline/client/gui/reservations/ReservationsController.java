@@ -37,15 +37,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
-import java.util.Optional;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static at.ac.tuwien.inso.sepm.ticketline.client.validator.CustomerValidator.validateFirstName;
 import static at.ac.tuwien.inso.sepm.ticketline.client.validator.CustomerValidator.validateLastName;
 import static at.ac.tuwien.inso.sepm.ticketline.client.validator.ReservationSearchValidator.validatePerformanceName;
 import static at.ac.tuwien.inso.sepm.ticketline.client.validator.ReservationSearchValidator.validateReservationNumber;
-import static javafx.application.Platform.runLater;
 import static javafx.scene.control.ButtonType.OK;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.TICKET;
 
@@ -54,6 +53,7 @@ import static org.controlsfx.glyphfont.FontAwesome.Glyph.TICKET;
 public class ReservationsController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
 
     public VBox content;
     public TabHeaderController tabHeaderController;
@@ -119,7 +119,57 @@ public class ReservationsController {
     private String performanceName = null;
     private String customerFirstName = null;
     private String customerLastName = null;
-    private boolean filtered = false;
+    private String reservationNumber = null;
+    private ReservationFilter rFilter = ReservationFilter.NONE;
+
+    private void loadReservations() {
+        final ScrollBar scrollBar = getVerticalScrollbar(foundReservationsTableView);
+        if (scrollBar != null) {
+            scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
+                double value = newValue.doubleValue();
+                if ((value == scrollBar.getMax()) && (!(page >= (totalPages - 1)))) {
+                    page++;
+                    LOGGER.debug("Getting next Page: {}", page);
+                    double targetValue = value * reservationList.size();
+                    loadReservationTable(page);
+                    scrollBar.setValue(targetValue / reservationList.size());
+                }
+            });
+
+            scrollBar.visibleProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                if (newValue == false) {
+                    // Scrollbar is invisible, load next page
+                    page++;
+                    loadReservationTable(page);
+                }
+            });
+        }
+
+        ChangeListener<TableColumn.SortType> tableColumnSortChangeListener = (observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                var property = (ObjectProperty<TableColumn.SortType>) observable;
+                sortedColumn = (TableColumn) property.getBean();
+                for (TableColumn tableColumn : foundReservationsTableView.getColumns()) {
+                    if (tableColumn != sortedColumn) {
+                        tableColumn.setSortType(null);
+                    }
+                }
+
+                clear();
+                loadReservationTable(RESERVATION_FIRST_PAGE);
+            }
+        };
+
+        for (TableColumn tableColumn : foundReservationsTableView.getColumns()) {
+            tableColumn.setSortType(null);
+        }
+        eventColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        customerColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        paidColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
+        reservationIDColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
+
+        loadReservationTable(RESERVATION_FIRST_PAGE);
+    }
 
     private TableColumn sortedColumn;
 
@@ -224,7 +274,7 @@ public class ReservationsController {
             Alert errorAlert = new Alert(Alert.AlertType.ERROR);
             errorAlert.setTitle(BundleManager.getBundle().getString("bookings.cancel.alreadyStartedPerformance.title "));
             errorAlert.setContentText(BundleManager.getBundle().getString("bookings.cancel.alreadyStartedPerformance.text"));
-            alert.showAndWait();
+            errorAlert.showAndWait();
         } else {
             if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
                 try {
@@ -241,60 +291,35 @@ public class ReservationsController {
         }
     }
 
-    public void loadReservations() {
-        final ScrollBar scrollBar = getVerticalScrollbar(foundReservationsTableView);
-        if (scrollBar != null) {
-            scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
-                double value = newValue.doubleValue();
-                if ((value == scrollBar.getMax()) && (!(page >= (totalPages - 1)))) {
-                    page++;
-                    LOGGER.debug("Getting next Page: {}", page);
-                    double targetValue = value * reservationList.size();
-                    loadReservationTable(page);
-                    scrollBar.setValue(targetValue / reservationList.size());
-                }
-            });
-
-            scrollBar.visibleProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                if (newValue == false) {
-                    // Scrollbar is invisible, load next page
-                    page++;
-                    loadReservationTable(page);
-                }
-            });
+    private void loadReservationTable(int page) {
+        switch (rFilter) {
+            case NONE:
+                loadUnfilteredReservationsTable(page);
+                break;
+            case RESERVATIONNUMBER:
+                loadReservationWithReservationNumber();
+                break;
+            case PERFORMANCE_AND_CUSTOMER:
+                loadFilteredReservationsPage(page);
+                break;
+            default:
+                break;
         }
-
-        ChangeListener<TableColumn.SortType> tableColumnSortChangeListener = (observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                var property = (ObjectProperty<TableColumn.SortType>) observable;
-                sortedColumn = (TableColumn) property.getBean();
-                for (TableColumn tableColumn : foundReservationsTableView.getColumns()) {
-                    if (tableColumn != sortedColumn) {
-                        tableColumn.setSortType(null);
-                    }
-                }
-
-                clear();
-                loadReservationTable(RESERVATION_FIRST_PAGE);
-            }
-        };
-
-        for (TableColumn tableColumn : foundReservationsTableView.getColumns()) {
-            tableColumn.setSortType(null);
-        }
-        eventColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
-        customerColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
-        paidColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
-        reservationIDColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
-
-        loadReservationTable(RESERVATION_FIRST_PAGE);
+        foundReservationsTableView.refresh();
     }
 
-    private void loadReservationTable(int page) {
-        if (filtered) {
-            loadFilteredReservationsTable(page);
-        } else {
-            loadUnfilteredReservationsTable(page);
+    private void loadReservationWithReservationNumber() {
+        if (reservationNumber == null) {
+            return;
+        }
+        try {
+            ReservationDTO response = reservationService.findOneByReservationNumber(reservationNumber);
+            reservationList.clear();
+            reservationList.addAll(response);
+        } catch (DataAccessException e) {
+            LOGGER.error("Couldn't fetch reservations from server!");
+            JavaFXUtils.createErrorDialog(e.getMessage(),
+                content.getScene().getWindow()).showAndWait();
         }
         foundReservationsTableView.refresh();
     }
@@ -319,11 +344,12 @@ public class ReservationsController {
         }
     }
 
-    private void loadFilteredReservationsTable(int page) {
+    private void loadFilteredReservationsPage(int page) {
+
+
         if (performanceName == null || customerFirstName == null || customerLastName == null) {
             return;
         }
-
         ReservationSearchDTO.Builder reservationSearchBuilder = ReservationSearchDTO.Builder.aReservationSearchDTO()
             .withPage(page)
             .withSize(RESERVATIONS_PER_PAGE)
@@ -349,7 +375,28 @@ public class ReservationsController {
             LOGGER.error("Couldn't fetch reservations from server!");
             //JavaFXUtils.createErrorDialog(e.getMessage(),
             //content.getScene().getWindow()).showAndWait();
+
         }
+    }
+
+    @FXML
+    public void showReservationDetailsButton(ActionEvent event) {
+        Stage stage = new Stage();
+        int row = foundReservationsTableView.getSelectionModel().getFocusedIndex();
+        PRSController.showReservationDetails(reservationList.get(row), stage);
+
+        Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
+
+        stage.setScene(new Scene(parent));
+        stage.setTitle(BundleManager.getBundle().getString("reservation.details.title"));
+
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(showReservationDetailsButton.getScene().getWindow());
+
+        stage.showAndWait();
+
+        clear();
+        loadData();
     }
 
     private String getColumnNameBy(TableColumn<ReservationDTO, ?> sortedColumn) {
@@ -412,33 +459,15 @@ public class ReservationsController {
         }
     }
 
-    public void showReservationDetailsButton() {
-        Stage stage = new Stage();
-        int row = foundReservationsTableView.getSelectionModel().getFocusedIndex();
-        PRSController.showReservationDetails(reservationList.get(row), stage);
-
-        Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
-
-        stage.setScene(new Scene(parent));
-        stage.setTitle(BundleManager.getBundle().getString("reservation.details.title"));
-
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(showReservationDetailsButton.getScene().getWindow());
-
-        stage.showAndWait();
-
-        clear();
-        loadData();
-    }
-
-    public void searchForReservations() {
+    @FXML
+    public void searchForReservations(ActionEvent event) {
 
         clearfilters();
 
         performanceName = performanceNameField.getText();
         customerFirstName = customerFirstNameField.getText();
         customerLastName = customerLastNameField.getText();
-        String reservationNumber = reservationNrField.getText();
+        reservationNumber = reservationNrField.getText();
         activeFilters = "";
 
         if ((!performanceName.equals(""))
@@ -472,13 +501,14 @@ public class ReservationsController {
                     + " " + customerFirstName
                     + " " + customerLastName;
 
-                loadFilteredReservationsTable(0);
+                loadFilteredReservationsPage(RESERVATION_FIRST_PAGE);
                 foundReservationsTableView.refresh();
-                filtered = true;
+                rFilter = ReservationFilter.PERFORMANCE_AND_CUSTOMER;
                 LOGGER.debug("Found {} page(s) satisfying the given criteria", totalPages);
                 performanceNameErrorLabel.textProperty().unbind();
                 performanceNameErrorLabel.setText("");
             } catch (ReservationSearchValidationException e) {
+                rFilter = ReservationFilter.NONE;
                 LOGGER.error("Error with performance name value, ", e);
                 performanceNameErrorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
             }
@@ -489,31 +519,25 @@ public class ReservationsController {
             && (!reservationNumber.equals(""))) {
 
             try {
+
                 reservationNumber = validateReservationNumber(reservationNrField);
 
                 clear();
                 activeFilters += BundleManager.getBundle().getString("bookings.main.activefilters.reservationnr") + " "
                     + reservationNumber;
-                try {
-                    ReservationDTO response =
-                        reservationService.findOneByReservationNumber(reservationNumber);
-                    reservationList.clear();
-                    reservationList.addAll(response);
-                } catch (DataAccessException e) {
-                    LOGGER.error("Couldn't fetch reservations from server!");
-                    JavaFXUtils.createErrorDialog(e.getMessage(),
-                        content.getScene().getWindow()).showAndWait();
-                }
+
+                loadReservationWithReservationNumber();
                 foundReservationsTableView.refresh();
-                filtered = true;
+                rFilter = ReservationFilter.RESERVATIONNUMBER;
                 reservationNumberErrorLabel.textProperty().unbind();
                 reservationNumberErrorLabel.setText("");
             } catch (ReservationSearchValidationException e) {
-                LOGGER.error("Error with given ReservationNumber", e);
+                rFilter = ReservationFilter.NONE;
+                LOGGER.error("Error with given ReservationNumber", e.getMessage());
                 reservationNumberErrorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
             }
         } else {
-            filtered = false;
+            rFilter = ReservationFilter.NONE;
             JavaFXUtils.createErrorDialog(
                 BundleManager.getExceptionBundle().getString("exception.search.invalid.parameters"),
                 content.getScene().getWindow()
@@ -522,8 +546,9 @@ public class ReservationsController {
         activeFiltersListLabel.setText(activeFilters);
     }
 
+    @FXML
     public void clearFilters(ActionEvent actionEvent) {
-        filtered = false;
+        rFilter = ReservationFilter.NONE;
         activeFiltersListLabel.setText("");
         performanceNameField.setText("");
         customerFirstNameField.setText("");
@@ -533,6 +558,7 @@ public class ReservationsController {
         performanceName = "";
         customerFirstName = "";
         customerLastName = "";
+        reservationNumber = "";
         activeFilters = "";
 
         reservationNumberErrorLabel.textProperty().unbind();
@@ -549,10 +575,17 @@ public class ReservationsController {
         loadData();
     }
 
-    private void clearfilters(){
+    private void clearfilters() {
+        reservationNumberErrorLabel.textProperty().unbind();
+        customerLastNameErrorLabel.textProperty().unbind();
+        customerFirstNameErrorLabel.textProperty().unbind();
+        performanceNameErrorLabel.textProperty().unbind();
+
         reservationNumberErrorLabel.setText("");
         customerLastNameErrorLabel.setText("");
         customerFirstNameErrorLabel.setText("");
         performanceNameErrorLabel.setText("");
     }
+
+    private enum ReservationFilter {NONE, RESERVATIONNUMBER, PERFORMANCE_AND_CUSTOMER}
 }
