@@ -144,9 +144,9 @@ public class SimpleReservationService implements ReservationService {
         }
 
         //Check if all new seats are free for regular events
-        if(performance.getEvent().getEventType() == EventType.SEAT) {
-            checkIfAllSeatsAreFreeIgnoreId(reservation.getId(), performance.getId(), onlyNewSeats);
-        } else {
+        if((performance.getEvent() != null &&
+            performance.getEvent().getEventType() != null
+            && performance.getEvent().getEventType() == EventType.SECTOR)) {
             //For events with free seating just check if there is enough space in a given sector
             List<Reservation> reservations = reservationRepository.findAllByPerformanceId(reservation.getPerformance().getId());
 
@@ -164,6 +164,8 @@ public class SimpleReservationService implements ReservationService {
                     }
                 }
             }
+        } else {
+            checkIfAllSeatsAreFreeIgnoreId(reservation.getId(), performance.getId(), onlyNewSeats);
         }
 
         LOGGER.debug("The added seats are still free");
@@ -256,7 +258,10 @@ public class SimpleReservationService implements ReservationService {
             throw new InvalidReservationException("Hall plan is not coherent with sectors or seats.");
         }
 
-        if(performance.getEvent().getEventType() == EventType.SECTOR) {
+
+        if(performance.getEvent() != null &&
+            performance.getEvent().getEventType() != null
+            && performance.getEvent().getEventType() == EventType.SECTOR) {
             //For events with free seating just check if there is enough space in a given sector
             List<Reservation> reservations = reservationRepository.findAllByPerformanceId(reservation.getPerformance().getId());
 
