@@ -7,7 +7,6 @@ import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
 import at.ac.tuwien.inso.sepm.ticketline.client.validator.UserValidator;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserCreateRequestDTO;
-import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
@@ -20,9 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Component
@@ -69,7 +66,7 @@ public class UserCreateDialogController {
 
     @FXML
     public void onClickCreateUserButton(ActionEvent actionEvent) {
-        LOGGER.debug("Clicked create user button");
+        LOGGER.debug("User clicked create user button");
 
         boolean valid = true;
         UserCreateRequestDTO userCreateRequestDTO = new UserCreateRequestDTO();

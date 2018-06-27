@@ -107,6 +107,7 @@ public class SeatMapController {
         drawLegend(gc);
 
         //Add mouse click event handler
+        LOGGER.debug("Adding MouseClickEventListener");
         seatMapCanvas.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             double eventX = event.getX();
             double eventY = event.getY();
@@ -148,6 +149,7 @@ public class SeatMapController {
                 }
             }
         });
+        LOGGER.debug("The SeatPlan was drawn successfully");
     }
 
     public void drawLegend(GraphicsContext gc) {
@@ -193,6 +195,7 @@ public class SeatMapController {
                 currentX = CanvasSectorLegend.OFFSET_LEFT + (i % CanvasSectorLegend.LEGEND_ROW_SIZE) * CanvasSectorLegend.ESTIMATED_WIDTH;
             }
         }
+        LOGGER.debug("Legend was drawn successfully");
     }
 
     public void fill(PerformanceDTO performance, List<ReservationDTO> reservationDTOS) {

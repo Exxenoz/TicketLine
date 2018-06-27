@@ -236,10 +236,10 @@ public class ReservationsController {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == buttonTypeYes) {
-            LOGGER.debug("print invoice");
+            LOGGER.debug("User wants to print invoice");
             handleCancellationInvoice(reservationDTO);
         } else {
-            LOGGER.debug("do not print invoice");
+            LOGGER.debug("User does not want to print invoice");
         }
     }
 
@@ -258,6 +258,7 @@ public class ReservationsController {
 
     @FXML
     public void cancelReservation(ActionEvent event) {
+        LOGGER.debug("User clicked the cancel button");
         ResourceBundle ex = BundleManager.getExceptionBundle();
         int row = foundReservationsTableView.getSelectionModel().getFocusedIndex();
         ReservationDTO selected = reservationList.get(row);
@@ -294,12 +295,16 @@ public class ReservationsController {
     private void loadReservationTable(int page) {
         switch (rFilter) {
             case NONE:
+                LOGGER.debug("Load unfiltered Page {}", page);
                 loadUnfilteredReservationsTable(page);
                 break;
             case RESERVATIONNUMBER:
+                LOGGER.debug("Load Reservation with reservation number {}", reservationNumber);
                 loadReservationWithReservationNumber();
                 break;
             case PERFORMANCE_AND_CUSTOMER:
+                LOGGER.debug("Load Reservation Page {} filtered for Customer \'{},{}\' and performance \'{}\' ", page,
+                    customerFirstName, customerLastName, performanceName);
                 loadFilteredReservationsPage(page);
                 break;
             default:
@@ -345,8 +350,6 @@ public class ReservationsController {
     }
 
     private void loadFilteredReservationsPage(int page) {
-
-
         if (performanceName == null || customerFirstName == null || customerLastName == null) {
             return;
         }
@@ -461,7 +464,7 @@ public class ReservationsController {
 
     @FXML
     public void searchForReservations(ActionEvent event) {
-
+        LOGGER.debug("User clicked the search button");
         clearfilters();
 
         performanceName = performanceNameField.getText();

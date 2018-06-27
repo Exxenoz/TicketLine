@@ -39,7 +39,7 @@ public class CanvasStateLegend implements CanvasComponent {
 
     @Override
     public void draw(GraphicsContext gc) {
-        LOGGER.debug("Draw state legend");
+        LOGGER.debug("Draw state legend on [{},{}]", xPos, yPos);
         gc.setFill(this.paint);
         gc.setLineWidth(1);
         gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);

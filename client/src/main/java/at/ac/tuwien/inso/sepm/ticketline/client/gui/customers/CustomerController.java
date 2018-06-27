@@ -228,7 +228,6 @@ public class CustomerController {
     }
 
     public void addCustomer(CustomerDTO customerDTO) {
-        LOGGER.debug("User clicked the add button");
         if (customerDTO == null) {
             LOGGER.warn("Could not add customer to table, because object reference is null!");
             return;
