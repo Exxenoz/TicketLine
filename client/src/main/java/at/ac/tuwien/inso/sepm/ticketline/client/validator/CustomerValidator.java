@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CustomerValidator {
-    public static final String nameRegex = "^[-' a-zA-ZöüöäÜÖÄ]+$";
+    public static final String nameRegex = "^[-' a-zA-ZöüäÜÖÄ]+$";
 
     public static String validateFirstName(TextField firstNameTextField) throws CustomerValidationException {
         String firstName = firstNameTextField.getText();

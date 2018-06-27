@@ -4,24 +4,28 @@ import at.ac.tuwien.inso.sepm.ticketline.client.exception.AddressValidationExcep
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import javafx.scene.control.TextField;
 
-public class LocationAddressValidator extends BaseAddressValidator{
+public class LocationAddressValidator {
 
-    private static final String STRING_REGEX = "^[-' a-zA-ZöüöäÜÖÄ]+$";
+    private static final String ALPHABETIC_REGEX = "^[-' a-zA-ZöüäÜÖÄ]+$";
+    private static final int MIN_LENGTH = 1;
+    private static final int MAX_LENGTH = 50;
 
     public static String validateLocationName(TextField locationNameTextField) throws AddressValidationException {
         String locationName = locationNameTextField.getText();
-        return validationOfLength(locationName);
+        validateLength(locationName);
+        validateAlphabeticFormat(locationName);
+        return locationName;
     }
 
-    private static String validationOfLength(String stringToValidate) throws AddressValidationException {
-        if (stringToValidate.length() < 1 || stringToValidate.length() > 50) {
-            throw new AddressValidationException(BundleManager.getExceptionBundle().getString("exception.validator.reservation.performancename_length"), "exception.validator.reservation.performancename_length");
+    private static void validateAlphabeticFormat(String text) throws AddressValidationException {
+        if(!text.matches(ALPHABETIC_REGEX)){
+            throw new AddressValidationException(BundleManager.getExceptionBundle().getString("exception.validator.address.alphabetic_invalid"), "exception.validator.address.alphabetic_invalid");
         }
+    }
 
-        if(!stringToValidate.matches(STRING_REGEX)){
-            throw new AddressValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.string"), "exception.validator.performance.string");
+    private static void validateLength(String text) throws AddressValidationException {
+        if (text.length() < MIN_LENGTH || text.length() > MAX_LENGTH) {
+            throw new AddressValidationException(BundleManager.getExceptionBundle().getString("exception.validator.address.invalid_length"), "exception.validator.address.invalid_length");
         }
-
-        return stringToValidate;
     }
 }

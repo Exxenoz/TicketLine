@@ -19,46 +19,50 @@ public class BaseAddressValidator {
        }
     }
 
-    public static String validateStreet(BaseAddressDTO baseAddressDTO) throws AddressValidationException {
+    private static final String ALPHABETIC_REGEX = "^[-' a-zA-ZöüäÜÖÄ]+$";
+    private static final String ALPHANUMERIC_REGEX="([A-Z0-9])\\w+";
+    private static final int MIN_LENGTH = 1;
+    private static final int MAX_LENGTH = 50;
+
+    public static void validateStreet(BaseAddressDTO baseAddressDTO) throws AddressValidationException {
         String street = baseAddressDTO.getStreet();
-        if(street.length() >= 1) {
-            return validationOfLength(street);
-        }
-        return street;
+        validateLength(street);
+        validateAlphabeticFormat(street);
     }
 
-    public static String validateCity(BaseAddressDTO baseAddressDTO) throws AddressValidationException {
+    public static void validateCity(BaseAddressDTO baseAddressDTO) throws AddressValidationException {
         String city = baseAddressDTO.getCity();
-        if(city.length() >= 1) {
-            return validationOfLength(city);
-        }
-        return city;
+        validateLength(city);
+        validateAlphabeticFormat(city);
     }
 
-    public static String validateCountry(BaseAddressDTO baseAddressDTO) throws AddressValidationException {
+    public static void validateCountry(BaseAddressDTO baseAddressDTO) throws AddressValidationException {
         String country = baseAddressDTO.getCountry();
-        if(country.length() >= 1) {
-            return validationOfLength(country);
-        }
-        return country;
+        validateLength(country);
+        validateAlphabeticFormat(country);
     }
 
-    public static String validatePostalCode(BaseAddressDTO baseAddressDTO) throws AddressValidationException {
+    public static void validatePostalCode(BaseAddressDTO baseAddressDTO) throws AddressValidationException {
         String postalCode = baseAddressDTO.getPostalCode();
-        if(postalCode.length() >= 1) {
-            return validationOfLength(postalCode);
-        }
-        return postalCode;
+        validateLength(postalCode);
+        validateAlphanumericFormat(postalCode);
     }
-    private static String validationOfLength(String stringToValidate) throws AddressValidationException {
-        if (stringToValidate.length() < 1 || stringToValidate.length() > 50) {
-            throw new AddressValidationException("the input hast to be at least 2 and max. 50 characters long");
-        }
 
-        if(!stringToValidate.matches(STRING_REGEX)){
+    private static void validateAlphabeticFormat(String text) throws AddressValidationException {
+        if(!text.matches(ALPHABETIC_REGEX)){
             throw new AddressValidationException("the input can only be letters");
         }
+    }
 
-        return stringToValidate;
+    private static void validateAlphanumericFormat(String text) throws AddressValidationException {
+        if(!text.matches(ALPHANUMERIC_REGEX)){
+            throw new AddressValidationException("the input has to be alphanumeric");
+        }
+    }
+
+    private static void validateLength(String text) throws AddressValidationException {
+        if (text.length() < MIN_LENGTH || text.length() > MAX_LENGTH) {
+            throw new AddressValidationException("the input hast to be at least 1 and max. 50 characters long");
+        }
     }
 }

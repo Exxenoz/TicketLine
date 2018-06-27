@@ -12,7 +12,7 @@ public class UserValidator {
     // all extended ascii characters allowed
     public static final String passwordRegex = "^[\\x00-\\xFF]*$";
 
-    public static final String nameRegex = "^[-' a-zA-ZöüöäÜÖÄ0-9]+$";
+    public static final String nameRegex = "^[-' a-zA-ZöüäÜÖÄ0-9]+$";
 
     public static final String passwordChangeKexRegex = "^[1-9a-zA-Z]{8}$";
 

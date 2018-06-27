@@ -1,13 +1,10 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventDTO;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Event;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventRequestTopTenDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventResponseTopTenDTO;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.Performance;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.event.EventRequestTopTenMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.event.EventMapper;
-import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.event.EventResponseTopTenMapper;
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.mapper.event.EventSalesResultMapper;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.EventService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,17 +20,14 @@ public class EventEndpoint {
 
     private final EventService eventService;
     private final EventMapper eventMapper;
-    private final EventRequestTopTenMapper eventRequestTopTenMapper;
-    private final EventResponseTopTenMapper eventResponseTopTenMapper;
 
-    public EventEndpoint(EventService eventService, EventMapper eventMapper, EventRequestTopTenMapper eventRequestTopTenMapper, EventResponseTopTenMapper eventResponseTopTenMapper) {
+    public EventEndpoint(EventService eventService, EventMapper eventMapper) {
         this.eventService = eventService;
         this.eventMapper = eventMapper;
-        this.eventRequestTopTenMapper = eventRequestTopTenMapper;
-        this.eventResponseTopTenMapper = eventResponseTopTenMapper;
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation("Get a list of all the events")
     public List<EventDTO> findAll() {
         return eventMapper.eventsToEventsDTO(eventService.findAll());
@@ -48,8 +42,7 @@ public class EventEndpoint {
 
     @PostMapping("/top_ten")
     @PreAuthorize("hasRole('USER')")
-    public List<EventResponseTopTenDTO> findTopTenByMonthAndCategory(@RequestBody final EventRequestTopTenDTO eventRequestTopTenDTO) {
-        var eventRequestTopTen = eventRequestTopTenMapper.eventRequestTopTenDTOToEventRequestTopTen(eventRequestTopTenDTO);
-        return eventResponseTopTenMapper.eventResponseTopTenToEventResponseTopTenDTO(eventService.findTopTenByMonthAndCategory(eventRequestTopTen));
+    public List<EventResponseTopTenDTO> findTopTenByFilter(@RequestBody final EventRequestTopTenDTO eventRequestTopTenDTO) {
+        return eventService.findTopTenByFilter(eventRequestTopTenDTO);
     }
 }
