@@ -60,6 +60,8 @@ public class HallPlanController implements SeatSelectionListener {
     @FXML
     private TableView seatsTableView;
     @FXML
+    private TableColumn sectorColumn;
+    @FXML
     public TableColumn seatsRowColumn;
     @FXML
     public TableColumn seatsSeatColumn;
@@ -125,6 +127,13 @@ public class HallPlanController implements SeatSelectionListener {
             isSeatMapMode = false;
         }
         controllerPane.getChildren().add(root);
+
+        sectorColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SeatDTO, Integer>, ObservableValue>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<SeatDTO, Integer> param) {
+                return new SimpleStringProperty("" + param.getValue().getSector().getHallNumber() + 1);
+            }
+        });
 
         //Initialize table view
         seatsRowColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SeatDTO, Integer>, ObservableValue>() {

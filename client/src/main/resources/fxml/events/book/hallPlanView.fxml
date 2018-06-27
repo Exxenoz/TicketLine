@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="800.0" prefWidth="733.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking.HallPlanController">
+<AnchorPane prefHeight="800.0" prefWidth="733.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking.HallPlanController">
    <children>
       <SplitPane dividerPositions="0.2824631860776439, 0.5" layoutX="-3.0" orientation="VERTICAL" prefHeight="800.0" prefWidth="730.0">
         <items>
@@ -51,9 +51,10 @@
                    <Button fx:id="continueButton" layoutX="617.0" layoutY="175.0" mnemonicParsing="false" onAction="#continueButton" text="Continue" />
                   <TableView fx:id="seatsTableView" layoutX="29.0" layoutY="32.0" prefHeight="126.0" prefWidth="670.0">
                     <columns>
-                      <TableColumn fx:id="seatsRowColumn" prefWidth="223.333333333" sortable="false" text="Row" />
-                      <TableColumn fx:id="seatsSeatColumn" prefWidth="223.333333333" sortable="false" text="Seat" />
-                        <TableColumn fx:id="seatsPriceColumn" prefWidth="223.333333333" sortable="false" text="Price with tax" />
+                        <TableColumn fx:id="sectorColumn" prefWidth="167.5" sortable="false" text="Sector" />
+                      <TableColumn fx:id="seatsRowColumn" prefWidth="167.5" sortable="false" text="Row" />
+                      <TableColumn fx:id="seatsSeatColumn" prefWidth="167.5" sortable="false" text="Seat" />
+                        <TableColumn fx:id="seatsPriceColumn" prefWidth="167.5" sortable="false" text="Price with tax" />
                     </columns>
                   </TableView>
                   <Label layoutX="28.0" layoutY="12.0" text="Chosen seats" />
