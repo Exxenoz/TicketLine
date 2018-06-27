@@ -14,6 +14,7 @@ public interface SeatsService {
 
     /**
      * A simple creation method without further logic.
+     *
      * @param seats a list of seats that was not yet fully initialized and/or is not yet
      *              represented in our persistence layer.
      */
@@ -21,6 +22,7 @@ public interface SeatsService {
 
     /**
      * A simple method to look up a fully specified seat in our peristence layer
+     *
      * @param seat the draft of the seat we are looking for
      * @return the fully specified seat for the matching draft.
      */

@@ -9,6 +9,7 @@ public interface InvoiceRestClient {
 
     /**
      * Creates an invoice for a reservation and fetches it
+     *
      * @param reservationNumber the reservation number of the reservation we create the invoice for
      * @throws DataAccessException in case anything goes wrong during invoice creation
      */
@@ -16,6 +17,7 @@ public interface InvoiceRestClient {
 
     /**
      * Simply fetches an invoice
+     *
      * @param reservationNumber the reservation number of the reservation that we want to fetch
      * @throws DataAccessException in case anything goes wrong during invoice fetching
      */
@@ -23,6 +25,7 @@ public interface InvoiceRestClient {
 
     /**
      * Creates and fetches a cancellaton invoice
+     *
      * @param reservationNumber the reservation number of the reservation that we create the cancellation invoice for
      * @throws DataAccessException in case anything goes wrong during cancellation invoice creation
      */
@@ -30,6 +33,7 @@ public interface InvoiceRestClient {
 
     /**
      * Deletes an invoice
+     *
      * @param reservationNumber the reservation number of the reservation that we want to delete
      * @throws DataAccessException in case anything goes wrong during deletion
      */

@@ -30,6 +30,7 @@ public interface NewsRestClient {
 
     /**
      * Retrieve detailed information for a specific news entry
+     *
      * @param id if of news to search by
      * @return detailed news
      * @throws DataAccessException in case something went wrong

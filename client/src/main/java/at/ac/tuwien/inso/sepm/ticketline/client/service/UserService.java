@@ -56,6 +56,8 @@ public interface UserService {
 
     /**
      * Reset a users password, so he has to specify a new one at his next login
+     *
+     * @param userPasswordResetRequestDTO information for the reset process
      * @throws DataAccessException in case something went wrong
      * @return the updated user
      */
@@ -63,6 +65,8 @@ public interface UserService {
 
     /**
      * Change a users password, with a given token to authenticate
+     *
+     * @param userPasswordChangeRequestDTO information for the change process
      * @throws DataAccessException in case something went wrong
      */
     void changePassword(UserPasswordChangeRequestDTO userPasswordChangeRequestDTO) throws DataAccessException;

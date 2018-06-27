@@ -14,6 +14,7 @@ public interface ReservationRestClient {
 
     /**
      * Find all reservations of given event
+     *
      * @param event event of performances
      * @return list of reservations
      * @throws DataAccessException in case something went wrong
@@ -22,6 +23,7 @@ public interface ReservationRestClient {
 
     /**
      * Find number of paid reservations by given event
+     *
      * @param event event of performances
      * @return count of paid reservations
      * @throws DataAccessException in case something went wrong
@@ -30,6 +32,7 @@ public interface ReservationRestClient {
 
     /**
      * Create a reservation with the given values within the createReservationDTO
+     *
      * @param createReservationDTO contains chosen values for the attributes of the reservation
      * @return a reservationDTO which includes the id
      * @throws DataAccessException in case something goes wrong while trying to create the reservation in the db
@@ -38,6 +41,7 @@ public interface ReservationRestClient {
 
     /**
      * Create a reservation which is paid immediately with the given values within the createReservationDTO
+     *
      * @param createReservationDTO contains chosen values for the attributes of the reservation
      * @return reservationDTO which includes the id
      * @throws DataAccessException in case something goes wrong while trying to create and set the reservation to paid in the db
@@ -109,6 +113,7 @@ public interface ReservationRestClient {
 
     /**
      * Find all reservations by performance id
+     *
      * @param id
      * @return
      * @throws DataAccessException
