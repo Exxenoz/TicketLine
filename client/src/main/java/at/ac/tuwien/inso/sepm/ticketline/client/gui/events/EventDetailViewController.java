@@ -134,7 +134,7 @@ public class EventDetailViewController {
         if (chosenPerformance == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
-            alert.setHeaderText("You need to choose a specific performance.");
+            alert.setHeaderText(BundleManager.getExceptionBundle().getString("exception.event_details.no_selection"));
             alert.showAndWait();
             return;
         }
