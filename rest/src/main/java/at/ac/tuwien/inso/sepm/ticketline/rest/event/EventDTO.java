@@ -1,10 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.rest.event;
 
-import at.ac.tuwien.inso.sepm.ticketline.rest.artist.ArtistDTO;
-
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 public class EventDTO {
 
