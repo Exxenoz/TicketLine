@@ -497,7 +497,7 @@ public class ReservationEndpointIT extends BaseIT {
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().post(RESERVATION_ENDPOINT + "/cancel/id/{id}", savedReservation.getId())
+            .when().put(RESERVATION_ENDPOINT + "/cancel/id/{id}", savedReservation.getId())
             .then().extract().response();
 
         //THEN
