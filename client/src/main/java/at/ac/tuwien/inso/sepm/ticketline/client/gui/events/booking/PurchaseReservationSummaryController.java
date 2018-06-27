@@ -86,18 +86,18 @@ public class PurchaseReservationSummaryController {
         printButton.setManaged(false);
 
         if (isReservation) {
-            performanceHeader.setText("Reservation Summary");
-            buyButtonPRS.setText("Continue");
+            performanceHeader.setText(BundleManager.getBundle().getString("bookings.purchase.reservation_summary"));
+            buyButtonPRS.setText(BundleManager.getBundle().getString("bookings.purchase.continue"));
             printButton.setDisable(true);
             printButton.setVisible(false);
             printButton.setManaged(false);
         }
 
         if (showDetails) {
-            performanceHeader.setText("Reservation Overview");
+            performanceHeader.setText(BundleManager.getBundle().getString("bookings.purchase.reservation_overview"));
             //make sure the reservation is still unpaid
             if (!reservation.isPaid() && !reservation.isCanceled()) {
-                cancelButtonPRS.setText("Edit Reservation");
+                cancelButtonPRS.setText(BundleManager.getBundle().getString("bookings.purchase.edit_reservation"));
                 printButton.setDisable(true);
                 printButton.setVisible(false);
                 printButton.setManaged(false);
@@ -105,7 +105,7 @@ public class PurchaseReservationSummaryController {
                 cancelButtonPRS.setDisable(true);
                 cancelButtonPRS.setVisible(false);
                 cancelButtonPRS.setManaged(false);
-                buyButtonPRS.setText("Buy");
+                buyButtonPRS.setText(BundleManager.getBundle().getString("bookings.purchase.buy"));
                 buyButtonPRS.setDisable(true);
                 buyButtonPRS.setVisible(false);
                 buyButtonPRS.setManaged(false);

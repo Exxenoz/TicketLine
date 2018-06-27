@@ -7,7 +7,7 @@
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="573.0" prefWidth="803.0" xmlns="http://javafx.com/javafx/10"
             fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventDetailViewController">
    <children>
-      <Label fx:id="eventHeading" layoutX="359.0" layoutY="39.0" text="Event Name">
+      <Label fx:id="eventHeading" layoutX="359.0" layoutY="39.0" text="%event_detail.name">
          <font>
             <Font name="System Bold" size="21.0" />
          </font>
@@ -52,8 +52,8 @@
       </Label>
       <ButtonBar layoutX="495.0" layoutY="524.0">
          <buttons>
-            <Button fx:id="backButton" mnemonicParsing="false" onAction="#backButton" text="Back" />
-            <Button fx:id="performanceDetailButton" mnemonicParsing="false" onAction="#changeToPerformanceDetailView" text="Performance Details" />
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#backButton" text="%event_detail.back" />
+            <Button fx:id="performanceDetailButton" mnemonicParsing="false" onAction="#changeToPerformanceDetailView" text="%event_detail.performance_details" />
          </buttons>
       </ButtonBar>
    </children>
