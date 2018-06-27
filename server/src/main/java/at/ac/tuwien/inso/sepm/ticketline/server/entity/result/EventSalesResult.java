@@ -1,16 +1,18 @@
-package at.ac.tuwien.inso.sepm.ticketline.server.entity;
+package at.ac.tuwien.inso.sepm.ticketline.server.entity.result;
+
+import at.ac.tuwien.inso.sepm.ticketline.server.entity.Event;
 
 import java.util.Objects;
 
-public class EventResponseTopTen {
+public class EventSalesResult {
 
     private Event event;
     private long sales;
 
-    public EventResponseTopTen() {
+    public EventSalesResult() {
     }
 
-    public EventResponseTopTen(Event event, long sales) {
+    public EventSalesResult(Event event, long sales) {
         this.event = event;
         this.sales = sales;
     }
@@ -33,7 +35,7 @@ public class EventResponseTopTen {
 
     @Override
     public String toString() {
-        return "EventResponseTopTen{" +
+        return "EventSalesResult{" +
             "event=" + event +
             ", sales=" + sales +
             '}';
@@ -43,7 +45,7 @@ public class EventResponseTopTen {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        EventResponseTopTen that = (EventResponseTopTen) o;
+        EventSalesResult that = (EventSalesResult) o;
         return sales == that.sales &&
             Objects.equals(event, that.event);
     }

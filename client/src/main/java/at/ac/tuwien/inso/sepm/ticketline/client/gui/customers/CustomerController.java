@@ -162,6 +162,9 @@ public class CustomerController {
         customerTableColumnEMail.sortTypeProperty().addListener(tableColumnSortChangeListener);
         customerTableColumnTelephoneNumber.sortTypeProperty().addListener(tableColumnSortChangeListener);
 
+        // Clear customer list here, because it could still contain data from the last login
+        customerList.clear();
+
         loadCustomerTable(FIRST_CUSTOMER_TABLE_PAGE);
     }
 
