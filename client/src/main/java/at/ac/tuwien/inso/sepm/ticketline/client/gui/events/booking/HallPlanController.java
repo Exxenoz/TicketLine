@@ -18,6 +18,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -25,12 +26,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.LinkedList;
 import java.util.List;
@@ -63,12 +66,13 @@ public class HallPlanController implements SeatSelectionListener {
     @FXML
     public TableColumn seatsPriceColumn;
     @FXML
-
     public Button continueButton;
     @FXML
     public Button backButton;
     @FXML
     public Button reserveButton;
+    @FXML
+    AnchorPane controllerPane;
 
     private final SpringFxmlLoader fxmlLoader;
     private final SelectCustomerController selectCustomerController;
@@ -82,6 +86,7 @@ public class HallPlanController implements SeatSelectionListener {
 
     private boolean isReservation = false;
     private boolean changeDetails = false;
+    private boolean isSeatMapMode = false;
 
     public HallPlanController(SpringFxmlLoader fxmlLoader,
                               SelectCustomerController selectCustomerController,
@@ -101,6 +106,7 @@ public class HallPlanController implements SeatSelectionListener {
 
     @FXML
     private void initialize() {
+
         eventNameLabel.setText(reservation.getPerformance().getEvent().getName());
         performanceNameLabel.setText(reservation.getPerformance().getName());
         if (seats != null) {
@@ -108,14 +114,48 @@ public class HallPlanController implements SeatSelectionListener {
         } else {
             amountOfTicketsLabel.setText("0");
         }
+
+        //Initialize correct seat picker layout
+        Parent root;
+        if (reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SEAT) {
+            root = fxmlLoader.load("/fxml/reservation/seatMapPicker.fxml");
+            isSeatMapMode = true;
+        } else {
+            root = fxmlLoader.load("/fxml/reservation/sectorSeatPicker.fxml");
+            isSeatMapMode = false;
+        }
+        controllerPane.getChildren().add(root);
+
         //Initialize table view
-        seatsRowColumn.setCellValueFactory(new PropertyValueFactory<SeatDTO, Integer>("positionY"));
-        seatsSeatColumn.setCellValueFactory(new PropertyValueFactory<SeatDTO, Integer>("positionX"));
+        seatsRowColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SeatDTO, Integer>, ObservableValue>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<SeatDTO, Integer> param) {
+                if (reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SEAT) {
+                    //Increase position by one so we dont start at position 0
+                    return new SimpleStringProperty(Integer.toString(param.getValue().getPositionY() + 1));
+                } else {
+                    return new SimpleStringProperty(BundleManager.getBundle().getString("events.seating.hallplan.freeseating"));
+                }
+            }
+        });
+
+        seatsSeatColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SeatDTO, Integer>, ObservableValue>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<SeatDTO, Integer> param) {
+                if (reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SEAT) {
+                    //Increase position by one so we dont start at position 0
+                    return new SimpleStringProperty(Integer.toString(param.getValue().getPositionX() + 1));
+                } else {
+                    return new SimpleStringProperty(BundleManager.getBundle().getString("events.seating.hallplan.freeseating"));
+                }
+            }
+        });
+
         seatsPriceColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SeatDTO, Long>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<SeatDTO, Long> param) {
-                return new SimpleStringProperty(Long.toString(
-                    reservationService.calculateSinglePrice(param.getValue(), reservation.getPerformance())));
+                return new SimpleStringProperty(
+                    PriceUtils.priceToRepresentation(reservationService.calculateSinglePrice(param.getValue(), reservation.getPerformance())));
             }
         });
 
@@ -153,14 +193,23 @@ public class HallPlanController implements SeatSelectionListener {
             d.printStackTrace();
         }
 
-        // Set performance detail to seat plan
+        // Set performance detail to seat or sector plan plan
         if (this.reservation != null && this.reservation.getPerformance() != null) {
             if (reservationDTOS != null) {
                 //Set this controller als seat selection listener for the seat map
-                this.seatMapController.setSeatSelectionListener(this);
-                this.seatMapController.fill(this.reservation.getPerformance(), reservationDTOS);
+                if (isSeatMapMode) {
+                    this.seatMapController.setSeatSelectionListener(this);
+                    this.seatMapController.fill(this.reservation.getPerformance(), reservationDTOS);
+                } else {
+                    this.sectorController.setSeatSelectionListener(this);
+                    this.sectorController.fill(this.reservation.getPerformance(), reservationDTOS);
+                }
             }
         }
+
+        //Just intialize fields
+        updateSeatsInformation(seats);
+        updatePrice(seats, reservation.getPerformance());
     }
 
     public void updateSeatsInformation(List<SeatDTO> seats) {
@@ -210,25 +259,34 @@ public class HallPlanController implements SeatSelectionListener {
     }
 
     private void continueOrReserve() {
-        reservation.setSeats(seats);
-        if (!changeDetails) {
-            selectCustomerController.fill(reservation, isReservation, stage);
-            Parent parent = fxmlLoader.load("/fxml/events/book/selectCustomerView.fxml");
-            selectCustomerController.loadCustomers();
-            stage.setScene(new Scene(parent));
-            stage.setTitle(BundleManager.getBundle().getString("bookings.hallplan.customer_select.title"));
-            stage.centerOnScreen();
-        } else {
-            try {
-                reservation = reservationService.editReservation(reservation);
-                PRSController.showReservationDetails(reservation, stage);
-                Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
+        if(!seats.isEmpty()) {
+            reservation.setSeats(seats);
+            if (!changeDetails) {
+                selectCustomerController.fill(reservation, isReservation, stage);
+                Parent parent = fxmlLoader.load("/fxml/events/book/selectCustomerView.fxml");
+                selectCustomerController.loadCustomers();
                 stage.setScene(new Scene(parent));
-                stage.setTitle(BundleManager.getBundle().getString("bookings.purchase.details.title"));
+                stage.setTitle(BundleManager.getBundle().getString("bookings.hallplan.customer_select.title"));
                 stage.centerOnScreen();
-            } catch (DataAccessException e) {
-                JavaFXUtils.createErrorDialog(e.getMessage(), stage);
+            } else {
+                try {
+                    reservation = reservationService.editReservation(reservation);
+                    PRSController.showReservationDetails(reservation, stage);
+                    Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");
+                    stage.setScene(new Scene(parent));
+                    stage.setTitle(BundleManager.getBundle().getString("bookings.purchase.details.title"));
+                    stage.centerOnScreen();
+                } catch (DataAccessException e) {
+                    JavaFXUtils.createErrorDialog(e.getMessage(),
+                        stage.getScene().getWindow()).showAndWait();
+                }
             }
+        } else {
+            JavaFXUtils.createInformationDialog(
+                BundleManager.getBundle().getString("events.seating.info.title"),
+                BundleManager.getBundle().getString("events.seating.info"),
+                BundleManager.getBundle().getString("events.seating.no.seats"),
+                stage.getScene().getWindow()).showAndWait();
         }
     }
 
@@ -250,7 +308,12 @@ public class HallPlanController implements SeatSelectionListener {
         runLater(() -> {
             updateSeatsInformation(reservation.getSeats());
             updatePrice(reservation.getSeats(), this.reservation.getPerformance());
-            seatMapController.fillForReservationEdit(reservation);
+
+            if (isSeatMapMode) {
+                seatMapController.fillForReservationEdit(reservation);
+            } else {
+                sectorController.fillForReservationEdit(reservation);
+            }
         });
     }
 

@@ -551,7 +551,7 @@ public class EventSearchController {
             performanceData.clear();
             performanceData.addAll(response.getContent());
             totalPages = response.getTotalPages();
-            initializeTableView();
+//            initializeTableView();
             foundEventsTableView.refresh();
             updateCurrentFlowPane();
         } catch (DataAccessException e) {

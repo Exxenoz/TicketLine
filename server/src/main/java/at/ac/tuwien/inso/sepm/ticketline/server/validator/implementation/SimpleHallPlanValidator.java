@@ -1,11 +1,11 @@
-package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
+package at.ac.tuwien.inso.sepm.ticketline.server.validator.implementation;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Hall;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Seat;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Sector;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalHallValidationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.HallRepository;
-import at.ac.tuwien.inso.sepm.ticketline.server.service.HallPlanService;
+import at.ac.tuwien.inso.sepm.ticketline.server.validator.HallPlanValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 @Service
-public class SimpleHallPlanService implements HallPlanService {
+public class SimpleHallPlanValidator implements HallPlanValidator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
