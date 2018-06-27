@@ -106,7 +106,7 @@ public class CustomerValidator {
     public static void validateAddress(CustomerDTO customerDTO) throws CustomerValidationException {
         validateDTO(customerDTO);
         try {
-            BaseAddressValidator.validate(customerDTO.getBaseAddress());
+            BaseAddressValidator.validate(customerDTO.getBaseAddress(), true);
         } catch (AddressValidationException e) {
             throw new CustomerValidationException(e.getMessage());
         }
