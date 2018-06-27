@@ -401,7 +401,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
                 ),
                 tr(
                     th(BundleManager.getBundle().getString("invoice.price.tax")),
-                    td(Double.toString(reservationService.getRegularTaxRate()) + "% " +
+                    td(Double.toString(reservationService.getRegularTaxRate() * 100) + "% " +
                         BundleManager.getBundle().getString("invoice.vat")))
                 ,
                 tr(
@@ -431,7 +431,15 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
                 ).withClass("regular-table")
             ).withClass("bordered-div");
         } else {
-            return div();
+           return div(
+                table(
+                    tr(
+                        th(BundleManager.getBundle().getString("invoice.total")),
+                        td(PriceUtils.priceToRepresentation(0L)
+                            + " " + BundleManager.getBundle().getString("invoice.include.vat"))
+                    )
+                ).withClass("regular-table")
+            ).withClass("bordered-div");
         }
     }
 
