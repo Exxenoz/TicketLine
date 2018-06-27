@@ -24,8 +24,8 @@ public class PerformanceSearchValidator {
     public static String validateArtistLastName(TextField artistLastNameTextField) throws PerformanceSearchValidationException {
         String artistLastName = artistLastNameTextField.getText();
 
-        if (!artistLastName.matches(NUMBER_REGEX)) {
-            throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.numberFormat"), "exception.validator.performance.numberFormat");
+        if (!artistLastName.matches(STRING_REGEX)) {
+            throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.string"), "exception.validator.performance.string");
         }
 
         return validationOfLength(artistLastName);

@@ -65,7 +65,7 @@ public abstract class ReservationSearchValidator {
             throw new ReservationSearchValidationException("the performance name for the search has to be at least 2 characters long");
         }
 
-        if (reservationSearchDTO.getPerformanceName().length() > 100) {
+        if (reservationSearchDTO.getPerformanceName().length() > 50) {
             throw new ReservationSearchValidationException("the performance name for the search can not be longer than 50 characters");
         }
 

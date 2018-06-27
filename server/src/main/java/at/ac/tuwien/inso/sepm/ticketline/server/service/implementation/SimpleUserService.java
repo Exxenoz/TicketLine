@@ -114,7 +114,6 @@ public class SimpleUserService implements UserService {
             userStrikes++;
 
             LOGGER.info("Increasing strikes for user: {} to amount: {}", user.getUsername(), userStrikes);
-
             user.setStrikes(userStrikes);
         }
 
@@ -123,6 +122,7 @@ public class SimpleUserService implements UserService {
             LOGGER.info("Disable user {}, because strike counter is greater than allowed strikes!", user.getUsername());
             user.setEnabled(false);
         }
+
 
         userRepository.save(user);
     }

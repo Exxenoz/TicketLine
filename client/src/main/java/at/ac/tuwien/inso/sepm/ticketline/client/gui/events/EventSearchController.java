@@ -190,7 +190,9 @@ public class EventSearchController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm");
         startTimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
             cellData.getValue().getPerformanceStart().format(formatter)));
-        locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLocationAddress().getCountry() + ", " +
+        locationColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
+            cellData.getValue().getLocationAddress().getLocationName() + ", " +
+            cellData.getValue().getLocationAddress().getCountry() + ", " +
             cellData.getValue().getLocationAddress().getCity()));
 
         startTimeColumn.setComparator((d1, d2) -> {
@@ -349,19 +351,25 @@ public class EventSearchController {
     @FXML
     private void bookPerformanceButton(ActionEvent event) {
         Stage stage = new Stage();
-        int row = foundEventsTableView.getSelectionModel().getFocusedIndex();
-        performanceDetailViewController.fill(performanceData.get(row), stage);
+        PerformanceDTO row = foundEventsTableView.getSelectionModel().getSelectedItem();
+        if (row != null) {
+            performanceDetailViewController.fill(row, stage);
 
-        final var parent = fxmlLoader.<Parent>load("/fxml/events/performanceDetailView.fxml");
+            final var parent = fxmlLoader.<Parent>load("/fxml/events/performanceDetailView.fxml");
 
-        stage.setScene(new Scene(parent));
-        stage.setTitle(BundleManager.getBundle().getString("bookings.performance.details.title"));
+            stage.setScene(new Scene(parent));
+            stage.setTitle(BundleManager.getBundle().getString("bookings.performance.details.title"));
 
 
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(bookButton.getScene().getWindow());
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(bookButton.getScene().getWindow());
 
-        stage.showAndWait();
+            stage.showAndWait();
+        } else {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setContentText(BundleManager.getBundle().getString("events.book.nothingselected"));
+            errorAlert.showAndWait();
+        }
     }
 
     String setActiveFiltersAndValidate(Validate toValidate,
