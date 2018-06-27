@@ -6,21 +6,24 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.exception.AddressValidationExcepti
 public class LocationAddressValidator extends BaseAddressValidator {
 
     private static final String ALPHABETIC_REGEX = "^[-' a-zA-ZöüäÜÖÄ]+$";
-    private static final int MIN_LENGTH = 1;
     private static final int MAX_LENGTH = 50;
 
     public static void validateLocationAddressDTO(LocationAddressDTO locationAddressDTO) throws AddressValidationException {
-        validateLocationName(locationAddressDTO);
+        if(locationAddressDTO.getLocationName().length() > 1) {
+            validateLocationName(locationAddressDTO);
+        }
     }
 
     public static void validateLocationName(LocationAddressDTO locationAddressDTO) throws AddressValidationException {
-        validateLength(locationAddressDTO);
-        validateAlphabeticFormat(locationAddressDTO);
+        if(locationAddressDTO.getLocationName().length() > 1) {
+            validateLength(locationAddressDTO);
+            validateAlphabeticFormat(locationAddressDTO);
+        }
     }
 
     private static void validateLength(LocationAddressDTO locationAddressDTO) throws AddressValidationException {
         String locationName = locationAddressDTO.getLocationName();
-        if (locationName.length() < MIN_LENGTH || locationName.length() > MAX_LENGTH) {
+        if (locationName.length() > MAX_LENGTH) {
             throw new AddressValidationException("the input hast to be at least 1 and max. 50 characters long");
         }
     }
