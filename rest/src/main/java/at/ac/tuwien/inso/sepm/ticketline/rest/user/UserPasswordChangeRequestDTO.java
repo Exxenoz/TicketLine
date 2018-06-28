@@ -46,9 +46,7 @@ public class UserPasswordChangeRequestDTO {
     @Override
     public String toString() {
         return "UserPasswordChangeRequestDTO{" +
-            "passwordChangeKey='" + passwordChangeKey + '\'' +
             ", username='" + username + '\'' +
-            ", password='" + password + '\'' +
             '}';
     }
 

@@ -22,7 +22,6 @@ public class UserCreateRequestDTO extends UserDTO {
     @Override
     public String toString() {
         return "UserCreateRequestDTO{" +
-            "password='" + password + '\'' +
             super.toString() +
             '}';
     }
