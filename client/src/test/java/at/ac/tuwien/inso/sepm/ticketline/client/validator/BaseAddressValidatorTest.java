@@ -18,34 +18,32 @@ public class BaseAddressValidatorTest {
 
     private final JFXPanel fxPanel = new JFXPanel();
 
-    //VALIDATE STREET
-
     @Test
     public void validateStreetNameTest() throws AddressValidationException {
         TextField textField = new TextField();
         textField.setText("street");
-        validateStreet(textField);
+        BaseAddressValidator.validateStreet(textField, true);
     }
 
     @Test(expected = AddressValidationException.class)
     public void validateStreetNameTooShortTest() throws AddressValidationException {
         TextField textField = new TextField();
         textField.setText("");
-        validateStreet(textField);
+        BaseAddressValidator.validateStreet(textField, true);
     }
 
     @Test(expected = AddressValidationException.class)
     public void validateStreetNameTooLongTest() throws AddressValidationException {
         TextField textField = new TextField();
         textField.setText("veBE2yN1cXvyMQahtUfppjH5x3MioudGCNHA5io6ZGFwkEJKQxN");
-        validateStreet(textField);
+        BaseAddressValidator.validateStreet(textField, true);
     }
 
     @Test(expected = AddressValidationException.class)
     public void validateStreetNameInvalidCharactersTest() throws AddressValidationException {
         TextField textField = new TextField();
         textField.setText("str*t");
-        validateStreet(textField);
+        BaseAddressValidator.validateStreet(textField, true);
     }
 
     //VALIDATE CITY
@@ -54,28 +52,28 @@ public class BaseAddressValidatorTest {
     public void validateCityTest() throws AddressValidationException {
         TextField textField = new TextField();
         textField.setText("city");
-        validateCity(textField);
+        BaseAddressValidator.validateCity(textField, true);
     }
 
     @Test(expected = AddressValidationException.class)
     public void validateCityTooShortTest() throws AddressValidationException {
         TextField textField = new TextField();
         textField.setText("");
-        validateCity(textField);
+        BaseAddressValidator.validateCity(textField, true);
     }
 
     @Test(expected = AddressValidationException.class)
     public void validateCityTooLongTest() throws AddressValidationException {
         TextField textField = new TextField();
         textField.setText("veBE2yN1cXvyMQahtUfppjH5x3MioudGCNHA5io6ZGFwkEJKQxN");
-        validateCity(textField);
+        BaseAddressValidator.validateCity(textField, true);
     }
 
     @Test(expected = AddressValidationException.class)
     public void validateCityInvalidCharactersTest() throws AddressValidationException {
         TextField textField = new TextField();
         textField.setText("str*t");
-        validateCity(textField);
+        BaseAddressValidator.validateCity(textField, true);
     }
 
     //VALIDATE COUNTRY
@@ -85,28 +83,28 @@ public class BaseAddressValidatorTest {
     public void validateCountryTest() throws AddressValidationException {
         TextField textField = new TextField();
         textField.setText("country");
-        validateCountry(textField);
+        BaseAddressValidator.validateCountry(textField, true);
     }
 
     @Test(expected = AddressValidationException.class)
     public void validateCountryTooShortTest() throws AddressValidationException {
         TextField textField = new TextField();
         textField.setText("");
-        validateCountry(textField);
+        BaseAddressValidator.validateCountry(textField, true);
     }
 
     @Test(expected = AddressValidationException.class)
     public void validateCountryTooLongTest() throws AddressValidationException {
         TextField textField = new TextField();
         textField.setText("veBE2yN1cXvyMQahtUfppjH5x3MioudGCNHA5io6ZGFwkEJKQxN");
-        validateCountry(textField);
+        BaseAddressValidator.validateCountry(textField, true);
     }
 
     @Test(expected = AddressValidationException.class)
     public void validateCountryInvalidCharactersTest() throws AddressValidationException {
         TextField textField = new TextField();
         textField.setText("str*t");
-        validateCountry(textField);
+        BaseAddressValidator.validateCountry(textField, true);
     }
 
     //VALIDATE POSTAL CODE
@@ -115,28 +113,28 @@ public class BaseAddressValidatorTest {
     public void validatePostalCodeTest() throws AddressValidationException {
         TextField textField = new TextField();
         textField.setText("4840");
-        validatePostalCode(textField);
+        BaseAddressValidator.validatePostalCode(textField, true);
     }
 
     @Test(expected = AddressValidationException.class)
     public void validatePostalCodeTooShortTest() throws AddressValidationException {
         TextField textField = new TextField();
         textField.setText("");
-        validatePostalCode(textField);
+        BaseAddressValidator.validatePostalCode(textField, true);
     }
 
     @Test(expected = AddressValidationException.class)
     public void validatePostalCodeTooLongTest() throws AddressValidationException {
         TextField textField = new TextField();
         textField.setText("2222222222222222222222222222222222222222222222222222");
-        validatePostalCode(textField);
+        BaseAddressValidator.validatePostalCode(textField, true);
     }
 
     @Test(expected = AddressValidationException.class)
     public void validatePostalCodeInvalidCharactersTest() throws AddressValidationException {
         TextField textField = new TextField();
-        textField.setText("notaPostalc0de");
-        validatePostalCode(textField);
+        textField.setText("notaPostalc0de^^");
+        BaseAddressValidator.validatePostalCode(textField, true);
     }
 
 }
