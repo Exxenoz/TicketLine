@@ -1,5 +1,6 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.service;
 
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalInvoiceAnonymousException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalInvoiceGenerationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalNotFoundException;
 import org.springframework.core.io.Resource;
@@ -13,8 +14,10 @@ public interface InvoiceService {
      * @return the path of generated PDF
      * @throws InternalNotFoundException in case the reservation for the given id was not found
      * @throws InternalInvoiceGenerationException in case anything goes wrong during PDF creation
+     * @throws InternalInvoiceAnonymousException in case the reservation price is above the threshold for anonymous users
+     *
      */
-    void generateInvoice(String reservationNumber) throws InternalNotFoundException, InternalInvoiceGenerationException;
+    void generateInvoice(String reservationNumber) throws InternalNotFoundException, InternalInvoiceGenerationException, InternalInvoiceAnonymousException;
 
     /**
      * Generates a cancellation invoice and returns the path of the file on the server
@@ -31,8 +34,9 @@ public interface InvoiceService {
      * @param reservationNumber the reservation number of the reservation for which we create an invoice
      * @return the generated PDF as resource
      * @throws InternalNotFoundException in case the reservation for the given id was not found
+     * @throws InternalInvoiceAnonymousException in case the reservation price is above the threshold for anonymous users
      */
-    Resource generateAndServeInvoice(String reservationNumber) throws InternalNotFoundException, InternalInvoiceGenerationException;
+    Resource generateAndServeInvoice(String reservationNumber) throws InternalNotFoundException, InternalInvoiceGenerationException, InternalInvoiceAnonymousException;
 
     /**
      * Combines the actions of generating a cancellation invoice and servin it

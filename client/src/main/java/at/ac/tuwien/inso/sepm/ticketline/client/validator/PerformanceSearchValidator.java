@@ -10,6 +10,7 @@ public class PerformanceSearchValidator {
     private static final String NUMBER_REGEX = "[0-9]*";
     private static final String PRICE_REGEX = "^\\d{0,8}([,.]\\d{1,2})?$";
     private static final String STRING_REGEX = "^[-' a-zA-ZöüäÜÖÄ]+$";
+    private static final int MAX_LONG_DIGITS = 18;
 
     public static String validateArtistFirstName(TextField artistFirstNameTextField) throws PerformanceSearchValidationException {
         String artistFirstName = artistFirstNameTextField.getText();
@@ -48,7 +49,11 @@ public class PerformanceSearchValidator {
             throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.validator.performance.numberFormat"), "exception.validator.performance.numberFormat");
         }
 
-        return validationOfLength(durationString);
+        if(durationString.isEmpty() || durationString.length() > MAX_LONG_DIGITS) {
+            throw new PerformanceSearchValidationException(BundleManager.getExceptionBundle().getString("exception.performance_search.long_digits_too_long"), "exception.performance_search.long_digits_too_long");
+        }
+
+        return durationString;
     }
 
     public static String validatePrice(TextField priceTextField) throws PerformanceSearchValidationException {

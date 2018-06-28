@@ -15,9 +15,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PerformanceRepository extends JpaRepository<Performance, Long>, JpaSpecificationExecutor<Performance> {
 
-
     /**
      * Finds a list of performances filtered by the given event id.
+     *
      * @param eventID event id
      * @return all performances of the given event
      */
@@ -25,6 +25,7 @@ public interface PerformanceRepository extends JpaRepository<Performance, Long>,
 
     /**
      * Finds a list of all performances that match the given criteria
+     *
      * @param searchDTO holds all given criteria
      * @return all performances that match the given criteria
      */
@@ -43,7 +44,6 @@ public interface PerformanceRepository extends JpaRepository<Performance, Long>,
             searchDTO.getPostalCode());
 
         SearchSpecBuilder searchSpecBuilder = new SearchSpecBuilder(artistSpecs, eventSpecs, performanceSpecs);
-
         return findAll(searchSpecBuilder, pageable);
     }
 }

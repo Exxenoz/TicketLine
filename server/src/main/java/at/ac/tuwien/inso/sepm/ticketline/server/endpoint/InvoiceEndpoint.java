@@ -1,6 +1,7 @@
 package at.ac.tuwien.inso.sepm.ticketline.server.endpoint;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpNotFoundException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalInvoiceAnonymousException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalInvoiceGenerationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalNotFoundException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.InvoiceService;
@@ -28,7 +29,7 @@ public class InvoiceEndpoint {
 
     private final InvoiceService invoiceService;
 
-    public InvoiceEndpoint(ReservationService reservationService, InvoiceService invoiceService) {
+    public InvoiceEndpoint(InvoiceService invoiceService) {
         this.invoiceService = invoiceService;
     }
 
@@ -45,6 +46,8 @@ public class InvoiceEndpoint {
             throw new HttpNotFoundException();
         } catch (InternalInvoiceGenerationException g) {
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (InternalInvoiceAnonymousException e) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST);
         }
     }
 

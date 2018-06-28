@@ -3,6 +3,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.service.implementation;
 import at.ac.tuwien.inso.sepm.ticketline.server.configuration.properties.InvoiceConfigurationProperties;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.Reservation;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.ExternalRendererException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalInvoiceAnonymousException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalInvoiceGenerationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalNotFoundException;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.HtmlBuilderService;
@@ -34,6 +35,8 @@ public class SimpleInvoiceService implements InvoiceService {
     private final HtmlBuilderService htmlBuilderService;
     private final InvoiceConfigurationProperties invoiceConfigurationProperties;
 
+    private final static String ANONYMOUS = "anonymous";
+
     private final Path invoiceLocation;
 
     public SimpleInvoiceService(ReservationService reservationService, HtmlBuilderService htmlBuilderService,
@@ -55,7 +58,7 @@ public class SimpleInvoiceService implements InvoiceService {
     }
 
     @Override
-    public void generateInvoice(String reservationNumber) throws InternalNotFoundException, InternalInvoiceGenerationException {
+    public void generateInvoice(String reservationNumber) throws InternalNotFoundException, InternalInvoiceGenerationException, InternalInvoiceAnonymousException {
         LOGGER.info("Generate Invoice for the Reservation with the number {}", reservationNumber);
         Reservation reservation = reservationService.findOneByReservationNumber(reservationNumber);
 
@@ -68,6 +71,10 @@ public class SimpleInvoiceService implements InvoiceService {
         String source = "";
 
         if (reservationService.calculatePrice(reservation) >= this.invoiceConfigurationProperties.getDetailedInvoiceLimit()) {
+            if(reservation.getCustomer().getFirstName().equals(ANONYMOUS) && reservation.getCustomer().getLastName().equals(ANONYMOUS)) {
+                throw new InternalInvoiceAnonymousException("Can not generate invoice for reservation with price above invoice limit for anonymous users.");
+            }
+
             source = htmlBuilderService.buildDetailedInvoiceHtml(reservation);
         } else {
             source = htmlBuilderService.buildBasicInvoiceHtml(reservation);
@@ -112,7 +119,7 @@ public class SimpleInvoiceService implements InvoiceService {
     }
 
     @Override
-    public Resource generateAndServeInvoice(String reservationNumber) throws InternalNotFoundException, InternalInvoiceGenerationException {
+    public Resource generateAndServeInvoice(String reservationNumber) throws InternalNotFoundException, InternalInvoiceGenerationException, InternalInvoiceAnonymousException {
         generateInvoice(reservationNumber);
         return serveInvoice(reservationNumber);
     }

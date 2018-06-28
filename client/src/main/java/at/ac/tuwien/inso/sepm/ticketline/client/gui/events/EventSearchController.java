@@ -285,7 +285,6 @@ public class EventSearchController {
             tableColumn.setSortType(null);
         }
         nameColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
-        eventColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
         startTimeColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
         locationColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
 
@@ -308,7 +307,7 @@ public class EventSearchController {
             LOGGER.warn("Could not load Performances table page, because page parameter is invalid!");
             return;
         }
-        LOGGER.debug("Loading Perfomances of Page {}", page);
+        LOGGER.debug("Loading Performances of Page {}", page);
         PageRequestDTO pageRequestDTO = null;
 
         if (sortedColumn != null) {
@@ -325,9 +324,14 @@ public class EventSearchController {
             }else {
                 responseDTO = performanceService.findAll(pageRequestDTO);
             }
-                performanceData.addAll(responseDTO.getContent());
-                totalPages = responseDTO.getTotalPages();
-                foundEventsTableView.refresh();
+
+            for (PerformanceDTO performanceDTO : responseDTO.getContent()) {
+                performanceData.remove(performanceDTO); // New created entries must be removed first, so they can be re-added at their sorted location in the next line
+                performanceData.add(performanceDTO);
+            }
+
+            totalPages = responseDTO.getTotalPages();
+            foundEventsTableView.refresh();
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch performance from server!");
         }
