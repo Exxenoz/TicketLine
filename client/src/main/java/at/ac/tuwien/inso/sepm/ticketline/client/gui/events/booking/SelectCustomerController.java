@@ -199,6 +199,7 @@ public class SelectCustomerController {
         customerTableColumnTelephoneNumber.sortTypeProperty().addListener(tableColumnSortChangeListener);
         customerTableColumnEMail.sortTypeProperty().addListener(tableColumnSortChangeListener);
 
+        items.clear();
         loadCustomersTable(0);
     }
 
