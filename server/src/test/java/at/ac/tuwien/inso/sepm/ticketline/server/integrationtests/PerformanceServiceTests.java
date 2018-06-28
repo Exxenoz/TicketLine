@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -29,6 +30,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("unit-test")
 public class PerformanceServiceTests {
 
+    private static final int FIRST_PAGE = 0;
+    private static final int PAGE_SIZE = 10;
     private static final Event EVENT = new Event("Event", EventType.SECTOR, "description");
 
     private static final Artist ARTIST_1 = new Artist("artist A", "0");
@@ -93,7 +96,7 @@ public class PerformanceServiceTests {
 
     @Test
     public void findAll() {
-        Pageable pageable = Pageable.unpaged();
+        Pageable pageable = PageRequest.of(FIRST_PAGE, PAGE_SIZE);
         createPerformances();
         Page<Performance> performances = service.findAll(pageable);
 
@@ -102,7 +105,7 @@ public class PerformanceServiceTests {
 
     @Test
     public void simpleSearchByPerformanceName() {
-        Pageable pageable = Pageable.unpaged();
+        Pageable pageable = PageRequest.of(FIRST_PAGE, PAGE_SIZE);
         createPerformances();
         SearchDTO searchDTO = new SearchDTO();
         searchDTO.setPerformanceName("zauberflöte");
@@ -113,7 +116,7 @@ public class PerformanceServiceTests {
 
     @Test
     public void searchByCity() {
-        Pageable pageable = Pageable.unpaged();
+        Pageable pageable = PageRequest.of(FIRST_PAGE, PAGE_SIZE);
         createPerformances();
         SearchDTO searchDTO = new SearchDTO();
         searchDTO.setCity("Vienna");
@@ -125,7 +128,7 @@ public class PerformanceServiceTests {
 
     @Test
     public void searchByFutureDate() {
-        Pageable pageable = Pageable.unpaged();
+        Pageable pageable = PageRequest.of(FIRST_PAGE, PAGE_SIZE);
         createPerformances();
         SearchDTO searchDTO = new SearchDTO();
         searchDTO.setPerformanceStart(LocalDateTime.now().plusDays(22));
@@ -137,7 +140,7 @@ public class PerformanceServiceTests {
 
     @Test
     public void searchByArtistFirstName() {
-        Pageable pageable = Pageable.unpaged();
+        Pageable pageable = PageRequest.of(FIRST_PAGE, PAGE_SIZE);
         createPerformances();
         SearchDTO searchDTO = new SearchDTO();
         searchDTO.setFirstName("artist C");
