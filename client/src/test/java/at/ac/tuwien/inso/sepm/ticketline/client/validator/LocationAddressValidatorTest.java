@@ -24,13 +24,6 @@ public class LocationAddressValidatorTest {
     }
 
     @Test(expected = AddressValidationException.class)
-    public void validateLocationNameTooShortTest() throws AddressValidationException {
-        TextField textField = new TextField();
-        textField.setText("");
-        LocationAddressValidator.validateLocationName(textField);
-    }
-
-    @Test(expected = AddressValidationException.class)
     public void validateLocationNameTooLongTest() throws AddressValidationException {
         TextField textField = new TextField();
         textField.setText("veBE2yN1cXvyMQahtUfppjH5x3MioudGCNHA5io6ZGFwkEJKQxN");
@@ -43,5 +36,4 @@ public class LocationAddressValidatorTest {
         textField.setText("ad*");
         LocationAddressValidator.validateLocationName(textField);
     }
-
 }
