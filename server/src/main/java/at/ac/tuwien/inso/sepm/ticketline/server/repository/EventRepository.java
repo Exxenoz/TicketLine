@@ -16,6 +16,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     /**
      * Find the associated event of a given performance id.
+     *
      * @param performanceId performance id
      * @return the associated event
      */
