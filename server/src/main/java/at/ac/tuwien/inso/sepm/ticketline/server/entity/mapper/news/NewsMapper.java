@@ -50,5 +50,4 @@ public interface NewsMapper {
      * @return the converted DTO
      */
     SimpleNewsDTO newsToSimpleNewsDTO(News one);
-
 }

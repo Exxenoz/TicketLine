@@ -104,5 +104,4 @@ public class NewsMapperTest {
         assertThat(news.getText()).isEqualTo(NEWS_TEXT);
         assertThat(news.getSummary()).isEqualTo(NEWS_SUMMARY);
     }
-
 }

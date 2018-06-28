@@ -72,6 +72,4 @@ public class ReservationSearchValidatorTest {
         textField.setText("na*e");
         validatePerformanceName(textField);
     }
-
-
 }

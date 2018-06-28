@@ -128,6 +128,4 @@ public class ReservationSearchValidatorTest {
         reservationSearchDTO.setPerformanceName("Per4mance");
         validatePerformanceName(reservationSearchDTO);
     }
-
-
 }

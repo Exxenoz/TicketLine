@@ -119,5 +119,4 @@ public interface ReservationRestClient {
      * @throws DataAccessException
      */
     List<ReservationDTO> findReservationsForPerformance(Long id) throws DataAccessException;
-
 }

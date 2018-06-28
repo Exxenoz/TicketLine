@@ -11,5 +11,4 @@ public class FontConfiguration {
     public FontAwesome fontAwesome() {
         return new FontAwesome();
     }
-
 }

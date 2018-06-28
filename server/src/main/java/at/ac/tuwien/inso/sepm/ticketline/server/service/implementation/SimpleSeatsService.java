@@ -62,6 +62,4 @@ public class SimpleSeatsService implements SeatsService {
         LOGGER.info("find Seat with id={}", id);
         return seatRepository.findById(id).get();
     }
-
-
 }

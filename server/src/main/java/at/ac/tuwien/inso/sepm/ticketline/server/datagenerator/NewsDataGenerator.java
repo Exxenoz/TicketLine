@@ -51,5 +51,4 @@ public class NewsDataGenerator implements DataGenerator {
             }
         }
     }
-
 }

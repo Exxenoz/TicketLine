@@ -160,5 +160,4 @@ public class AuthenticationController {
     private boolean credentialsEmpty() {
         return txtUsername.getText().isEmpty() || txtPassword.getText().isEmpty();
     }
-
 }

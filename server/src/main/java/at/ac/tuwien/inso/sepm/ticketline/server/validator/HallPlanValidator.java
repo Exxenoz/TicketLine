@@ -35,5 +35,4 @@ public interface HallPlanValidator {
      * @throws InternalHallValidationException
      */
     void checkSeatsAgainstSectors(List<Seat> seats, List<Sector> sectors) throws InternalHallValidationException;
-
 }

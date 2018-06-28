@@ -64,5 +64,4 @@ public interface InvoiceService {
      * @throws InternalNotFoundException in case the reservation for the given id was not found
      */
     void deletePDF(String reservationNumber) throws InternalNotFoundException;
-
 }

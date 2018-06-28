@@ -60,5 +60,4 @@ public interface AuthenticationInformationService {
          */
         void changed(AuthenticationTokenInfo authenticationInfo);
     }
-
 }

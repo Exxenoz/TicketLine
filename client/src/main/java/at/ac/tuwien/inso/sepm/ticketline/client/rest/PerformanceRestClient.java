@@ -37,5 +37,4 @@ public interface PerformanceRestClient {
      * @throws DataAccessException in case something went wrong while trying to retrieve the performances from the database
      */
     PageResponseDTO<PerformanceDTO> findAll(SearchDTO searchDTO, PageRequestDTO pageRequestDTO) throws DataAccessException;
-
 }

@@ -52,5 +52,4 @@ public interface NewsRepository extends JpaRepository<News, Long> {
      * @return ordered list of al news entries
      */
     List<News> findAllByOrderByPublishedAtDesc();
-
 }

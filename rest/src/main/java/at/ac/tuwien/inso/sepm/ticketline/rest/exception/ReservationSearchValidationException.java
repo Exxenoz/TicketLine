@@ -8,5 +8,4 @@ public class ReservationSearchValidationException extends Exception {
     public ReservationSearchValidationException(String message, Throwable cause) {
         super(message, cause);
     }
-
 }

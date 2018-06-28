@@ -614,7 +614,6 @@ public class EventSearchController {
         };
     }
 
-
     @FXML
     private void clearAndReloadButton(ActionEvent event) {
         LOGGER.info("User clicked the clear button");
@@ -681,6 +680,4 @@ public class EventSearchController {
         flowpane.getChildren().clear();
         flowpane.getChildren().addAll(textChunks);
     }
-
-
 }

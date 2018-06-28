@@ -44,5 +44,4 @@ public class SimpleNewsService implements NewsService {
     public SimpleNewsDTO publish(DetailedNewsDTO detailedNewsDTO) throws DataAccessException {
         return newsRestClient.publish(detailedNewsDTO);
     }
-
 }

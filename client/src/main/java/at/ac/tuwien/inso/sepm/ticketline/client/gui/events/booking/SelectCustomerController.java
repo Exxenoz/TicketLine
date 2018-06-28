@@ -310,5 +310,4 @@ public class SelectCustomerController {
         this.isReservation = isReservation;
         this.stage = stage;
     }
-
 }

@@ -152,5 +152,4 @@ public class PerformanceSearchValidatorTest {
         textField.setText("xy");
         validatePrice(textField);
     }
-
 }

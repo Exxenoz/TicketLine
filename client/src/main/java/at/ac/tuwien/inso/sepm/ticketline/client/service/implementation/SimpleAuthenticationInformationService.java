@@ -54,6 +54,4 @@ public class SimpleAuthenticationInformationService implements AuthenticationInf
     public void addAuthenticationChangeListener(AuthenticationChangeListener changeListener) {
         this.changeListener.add(changeListener);
     }
-
-
 }

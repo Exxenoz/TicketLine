@@ -112,6 +112,4 @@ public class UserValidatorTest {
         passwordField.setText("12dv45od*");
         validatePasswordChangeKey(passwordField);
     }
-
-
 }

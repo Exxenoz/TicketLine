@@ -77,5 +77,4 @@ public class TicketlineClientApplication extends SpringFxApplication {
         System.setProperty(JAVAFX_PRELOADER, System.getProperty(JAVAFX_PRELOADER, AppPreloader.class.getCanonicalName()));
         launch(TicketlineClientApplication.class, args);
     }
-
 }

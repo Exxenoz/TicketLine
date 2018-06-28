@@ -41,5 +41,4 @@ public interface PerformanceMapper {
      * @return the converted list
      */
     List<PerformanceDTO> performanceToPerformanceDTO(List<Performance> all);
-
 }

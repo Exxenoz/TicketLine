@@ -37,6 +37,4 @@ public class ArtistSpecification implements Specification<Artist> {
         }
         return builder.and(predicates.toArray(new Predicate[]{}));
     }
-
-
 }

@@ -13,5 +13,4 @@ public interface DataGenerator extends InitializingBean {
      * generates the necessary data
      */
     void generate();
-
 }

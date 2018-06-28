@@ -169,7 +169,5 @@ public class SpringFxmlLoader {
         public OBJECT getLoadedObject() {
             return loadedObject;
         }
-
     }
-
 }

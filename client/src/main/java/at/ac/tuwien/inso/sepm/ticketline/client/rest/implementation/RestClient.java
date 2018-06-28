@@ -70,5 +70,4 @@ public class RestClient extends RestTemplate {
 
         return message;
     }
-
 }

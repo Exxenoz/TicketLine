@@ -145,5 +145,4 @@ public class CustomerValidatorTest {
         textField.setText("notamailadress");
         validateEmail(textField);
     }
-
 }

@@ -112,5 +112,4 @@ public class SimpleAuthenticationService implements AuthenticationService, Dispo
         taskScheduler.setPoolSize(1);
         taskScheduler.initialize();
     }
-
 }

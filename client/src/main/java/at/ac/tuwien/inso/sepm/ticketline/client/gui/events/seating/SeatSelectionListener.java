@@ -15,5 +15,4 @@ public interface SeatSelectionListener {
      * @param seatDTO the seat that was deselected
      */
     void onSeatDeselected(SeatDTO seatDTO);
-
 }

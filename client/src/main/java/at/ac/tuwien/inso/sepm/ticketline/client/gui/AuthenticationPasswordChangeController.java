@@ -207,5 +207,4 @@ public class AuthenticationPasswordChangeController {
     public void handleBackToAuthentication(ActionEvent actionEvent) {
         mainController.switchBackToAuthentication();
     }
-
 }

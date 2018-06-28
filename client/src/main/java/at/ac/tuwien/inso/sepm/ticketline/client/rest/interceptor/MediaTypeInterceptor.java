@@ -22,5 +22,4 @@ public class MediaTypeInterceptor implements ClientHttpRequestInterceptor {
         headers.getAccept().add(APPLICATION_JSON);
         return execution.execute(request, body);
     }
-
 }

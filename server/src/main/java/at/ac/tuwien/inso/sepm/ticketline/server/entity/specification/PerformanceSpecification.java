@@ -125,5 +125,4 @@ public class PerformanceSpecification implements Specification<Performance> {
     private static Predicate fulltextSearch(CriteriaBuilder builder, Path<String> fieldPath, String searchString) {
         return builder.like(builder.lower(fieldPath), ("%" + searchString + "%").toLowerCase());
     }
-
 }

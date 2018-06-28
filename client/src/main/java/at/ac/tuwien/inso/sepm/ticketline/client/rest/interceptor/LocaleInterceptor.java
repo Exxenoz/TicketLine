@@ -21,5 +21,4 @@ public class LocaleInterceptor implements ClientHttpRequestInterceptor {
         headers.add(ACCEPT_LANGUAGE, LocaleContextHolder.getLocale().toLanguageTag());
         return execution.execute(request, body);
     }
-
 }

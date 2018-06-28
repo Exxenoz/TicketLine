@@ -64,5 +64,4 @@ public class ReservationMapperTest {
         assertThat(reservation.getSeats(), is(notNullValue()));
         assertThat(reservation.getSeats(), hasItems(SEAT_1, SEAT_2, SEAT_3));
     }
-
 }

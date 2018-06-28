@@ -35,5 +35,4 @@ public interface HtmlBuilderService {
      * @return the html source code
      */
     String buildDetailedCancellationHtml(Reservation reservation);
-
 }

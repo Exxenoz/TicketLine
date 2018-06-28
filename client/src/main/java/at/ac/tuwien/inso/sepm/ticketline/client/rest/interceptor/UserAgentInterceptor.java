@@ -29,5 +29,4 @@ public class UserAgentInterceptor implements ClientHttpRequestInterceptor {
         }
         return execution.execute(request, body);
     }
-
 }

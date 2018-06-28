@@ -12,5 +12,4 @@ public interface InfoRestClient {
      * @throws DataAccessException in case something went wrong
      */
     Info find() throws DataAccessException;
-
 }

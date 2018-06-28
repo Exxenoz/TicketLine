@@ -136,5 +136,4 @@ public class BaseAddressValidatorTest {
         textField.setText("notaPostalc0de^^");
         BaseAddressValidator.validatePostalCode(textField, true);
     }
-
 }

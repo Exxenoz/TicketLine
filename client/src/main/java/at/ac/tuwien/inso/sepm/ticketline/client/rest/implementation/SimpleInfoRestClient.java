@@ -48,5 +48,4 @@ public class SimpleInfoRestClient implements InfoRestClient {
             throw new DataAccessException(e.getMessage(), e);
         }
     }
-
 }

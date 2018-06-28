@@ -78,5 +78,4 @@ public class SwaggerConfiguration {
             .produces(new HashSet<>(Collections.singletonList(APPLICATION_JSON_VALUE)))
             ;
     }
-
 }

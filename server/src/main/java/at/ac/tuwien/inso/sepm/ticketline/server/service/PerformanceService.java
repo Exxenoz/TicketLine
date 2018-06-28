@@ -29,5 +29,4 @@ public interface PerformanceService {
      * @return a list of performances that match the findAll criteria
      */
     Page<Performance> findAll(SearchDTO search, Pageable pageable);
-
 }

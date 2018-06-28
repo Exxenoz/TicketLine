@@ -165,7 +165,5 @@ public class SecurityConfiguration {
             http.requestMatcher(to(InfoEndpoint.class)).authorizeRequests()
                 .anyRequest().permitAll();
         }
-
     }
-
 }

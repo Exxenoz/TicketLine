@@ -48,5 +48,4 @@ public interface HeaderTokenAuthenticationService {
      * @throws AuthenticationException when the authentication of the provided headerToken fails
      */
     User authenticate(String headerToken) throws AuthenticationException;
-
 }
