@@ -210,7 +210,7 @@ public class SeatMapController {
         for (SeatDTO s : reservationDTO.getSeats()) {
             LOGGER.debug("Seat {} is reserved, draw as such", s);
             for (Map.Entry<SectorDTO, List<CanvasSeat>> entry : sectorSeatMap.entrySet()) {
-                if (s.getSector().getId() == entry.getKey().getId()) {
+                if (s.getSector().getId().equals(entry.getKey().getId())) {
                     for (CanvasSeat cs : entry.getValue()) {
                         if (cs.getPlanX() == s.getPositionX()
                             && (cs.getPlanY() == s.getPositionY())) {
