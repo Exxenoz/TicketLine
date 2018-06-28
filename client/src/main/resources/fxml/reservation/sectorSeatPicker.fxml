@@ -10,7 +10,7 @@
       <Label layoutX="98.0" layoutY="14.0" text="%sector_picker.sector" />
       <Label layoutX="252.0" layoutY="14.0" text="%sector_picker.price" />
       <Label layoutX="411.0" layoutY="14.0" text="%sector_picker.amount" />
-      <ScrollPane fx:id="sectorScrollPane" hbarPolicy="NEVER" layoutX="60.0" layoutY="36.0" prefHeight="358.0" prefWidth="550.0">
+      <ScrollPane fx:id="sectorScrollPane" hbarPolicy="NEVER" layoutX="60.0" layoutY="36.0" prefHeight="358.0" prefWidth="620.0">
          <content>
             <VBox fx:id="sectorDetailsVBox" prefHeight="294.0" prefWidth="468.0" />
          </content>

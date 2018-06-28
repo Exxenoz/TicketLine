@@ -29,7 +29,8 @@ public class SectorController {
     private final static double INSET_RIGHT = 30;
     private final static double INSET_BOTTOM = 15;
     private final static double INSET_LEFT = 30;
-    private final static double SPINNER_WITH = 100;
+    private final static double SPINNER_WIDTH = 100;
+    private final static double LABEL_MIN_WIDTH= 80;
 
     private final static int SPINNER_DEFAULT_VALUE = 0;
 
@@ -88,11 +89,13 @@ public class SectorController {
         hBox.setPadding(new Insets(INSET_TOP, INSET_RIGHT, INSET_BOTTOM, INSET_LEFT));
         hBox.setSpacing(SPACING);
 
-        Label sectorLabel = createSectorLabel(count);
+        Label sectorLabel = createSectorLabel(sectorDTO);
+        sectorLabel.setMinWidth(LABEL_MIN_WIDTH);
         addLabelToHBox(hBox, sectorLabel);
 
         //Create and add price label
         Label priceLabel = createPriceLabel(sectorDTO);
+        priceLabel.setMinWidth(LABEL_MIN_WIDTH);
         addLabelToHBox(hBox, priceLabel);
 
         //Creating row
@@ -109,9 +112,9 @@ public class SectorController {
         return row;
     }
 
-    public Label createSectorLabel(int count) {
+    public Label createSectorLabel(SectorDTO sectorDTO) {
         Label sectorLabel = new Label();
-        sectorLabel.setText("Sector: " + count);
+        sectorLabel.setText("Sector: " + sectorDTO.getHallNumber() + 1);
         return sectorLabel;
     }
 
@@ -123,8 +126,8 @@ public class SectorController {
 
     public Spinner<Integer> createSpinner() {
         Spinner<Integer> spinner = new Spinner<>();
-        spinner.setMinWidth(SPINNER_WITH);
-        spinner.setMaxWidth(SPINNER_WITH);
+        spinner.setMinWidth(SPINNER_WIDTH);
+        spinner.setMaxWidth(SPINNER_WIDTH);
         return spinner;
     }
 

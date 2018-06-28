@@ -187,11 +187,11 @@ public class SeatMapController {
             }
 
             //Create a new legend row for every few items
-            if (i % CanvasSectorLegend.LEGEND_ROW_SIZE == 0 && i > 0) {
+            if (i % CanvasSectorLegend.LEGEND_ROW_SIZE == CanvasSectorLegend.LEGEND_ROW_SIZE - 1) {
                 currentY += CanvasSectorLegend.HEIGHT + CanvasSectorLegend.REGULAR_MARGIN;
                 currentX = CanvasSectorLegend.OFFSET_LEFT;
             } else {
-                currentX = CanvasSectorLegend.OFFSET_LEFT + (i % CanvasSectorLegend.LEGEND_ROW_SIZE) * CanvasSectorLegend.ESTIMATED_WIDTH;
+                currentX = CanvasSectorLegend.OFFSET_LEFT + ((i + 1) % CanvasSectorLegend.LEGEND_ROW_SIZE) * CanvasSectorLegend.ESTIMATED_WIDTH;
             }
         }
         LOGGER.debug("Legend was drawn successfully");
