@@ -307,7 +307,7 @@ public class EventSearchController {
             LOGGER.warn("Could not load Performances table page, because page parameter is invalid!");
             return;
         }
-        LOGGER.debug("Loading Perfomances of Page {}", page);
+        LOGGER.debug("Loading Performances of Page {}", page);
         PageRequestDTO pageRequestDTO = null;
 
         if (sortedColumn != null) {
