@@ -8,8 +8,8 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SectorController">
    <children>
       <Label layoutX="98.0" layoutY="14.0" text="%sector_picker.sector" />
-      <Label layoutX="252.0" layoutY="14.0" text="%sector_picker.price" />
-      <Label layoutX="411.0" layoutY="14.0" text="%sector_picker.amount" />
+      <Label layoutX="282.0" layoutY="14.0" text="%sector_picker.price" />
+      <Label layoutX="462.0" layoutY="14.0" text="%sector_picker.amount" />
       <ScrollPane fx:id="sectorScrollPane" hbarPolicy="NEVER" layoutX="60.0" layoutY="36.0" prefHeight="358.0" prefWidth="620.0">
          <content>
             <VBox fx:id="sectorDetailsVBox" prefHeight="294.0" prefWidth="468.0" />
