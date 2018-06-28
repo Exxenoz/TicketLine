@@ -176,6 +176,8 @@ public class PurchaseReservationSummaryController {
 
         } catch (DataAccessException d) {
             LOGGER.error("An Error occurred whilst handling the file: {}", d.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR, BundleManager.getExceptionBundle().getString("exception.invoice.create"), OK);
+            alert.showAndWait();
         } catch (InvoiceFileException i) {
             LOGGER.error("An error occured while trying to store the file: {}", i.getMessage());
             Alert alert = new Alert(Alert.AlertType.ERROR, BundleManager.getExceptionBundle().getString("exception.invoice.file"), OK);
