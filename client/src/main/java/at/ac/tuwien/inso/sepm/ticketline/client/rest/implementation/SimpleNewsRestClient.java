@@ -18,7 +18,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
-import java.util.List;
 
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
@@ -47,7 +46,7 @@ public class SimpleNewsRestClient implements NewsRestClient {
                 .queryParam("size", request.getSize());
 
             URI uri = builder.build().toUri();
-            LOGGER.debug("Retrieving all unread news from {}", uri);
+            LOGGER.info("Retrieving all unread News from {}", uri);
             final var news =
                 restClient.exchange(
                     new RequestEntity<>(request, GET, uri),
@@ -56,8 +55,10 @@ public class SimpleNewsRestClient implements NewsRestClient {
             LOGGER.debug("Result status was {} with content {}", news.getStatusCode(), news.getBody());
             return news.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while retrieving News: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while retrieving News: {}", e.getMessage());
             throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
         }
     }
@@ -71,7 +72,7 @@ public class SimpleNewsRestClient implements NewsRestClient {
                 .queryParam("size", request.getSize());
 
             URI uri = builder.build().toUri();
-            LOGGER.debug("Retrieving all read news from {}", uri);
+            LOGGER.info("Retrieving all read news from {}", uri);
             final var news =
                 restClient.exchange(
                     new RequestEntity<>(request, GET, uri),
@@ -80,8 +81,10 @@ public class SimpleNewsRestClient implements NewsRestClient {
             LOGGER.debug("Result status was {} with content {}", news.getStatusCode(), news.getBody());
             return news.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while retrieving News: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while retrieving News: {}", e.getMessage());
             throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
         }
     }
@@ -91,7 +94,7 @@ public class SimpleNewsRestClient implements NewsRestClient {
         try {
             URI uri = restClient.getServiceURI(newsUri.getPath() + "/" + id);
 
-            LOGGER.debug("Retrieving specific news from {}", uri);
+            LOGGER.info("Retrieving specific news from {}", uri);
             final var news =
                 restClient.exchange(
                     new RequestEntity<>(GET, uri),
@@ -100,8 +103,10 @@ public class SimpleNewsRestClient implements NewsRestClient {
             LOGGER.debug("Result status was {} with content {}", news.getStatusCode(), news.getBody());
             return news.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while retrieving News: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while retrieving News: {}", e.getMessage());
             throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
         }
     }
@@ -109,7 +114,7 @@ public class SimpleNewsRestClient implements NewsRestClient {
     @Override
     public SimpleNewsDTO publish(DetailedNewsDTO detailedNewsDTO) throws DataAccessException {
         try {
-            LOGGER.debug("Publish news with {}", newsUri);
+            LOGGER.info("Publish news with {}", newsUri);
             final var news =
                 restClient.exchange(
                     new RequestEntity<>(detailedNewsDTO, POST, newsUri),
@@ -118,8 +123,10 @@ public class SimpleNewsRestClient implements NewsRestClient {
             LOGGER.debug("Result status was {} with content {}", news.getStatusCode(), news.getBody());
             return news.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while publishing News: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while publishing News: {}", e.getMessage());
             throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
         }
     }

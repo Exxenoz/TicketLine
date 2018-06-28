@@ -3,8 +3,8 @@ package at.ac.tuwien.inso.sepm.ticketline.server.integrationtests;
 
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalCancelationException;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalReservationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import org.junit.After;
@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -34,10 +35,9 @@ public class ReservationServiceTests {
     @Autowired
     private ReservationService reservationService;
 
-    private static Long RESERVATION_TEST_ID = 1L;
-    private static Long CUSTOMER_TEST_ID = 1L;
     private static Long SEAT_TEST_ID = 1L;
-    private static Long PERFORMANCE_TEST_ID = 1L;
+    private static final int FIRST_PAGE = 0;
+    private static final int PAGE_SIZE = 10;
     @Autowired
     private PerformanceRepository performanceRepository;
     @Autowired
@@ -226,7 +226,7 @@ public class ReservationServiceTests {
 
 
         //search
-        Pageable pageable = Pageable.unpaged();
+        Pageable pageable = PageRequest.of(FIRST_PAGE, PAGE_SIZE);
         var reservationPage = reservationService.findAllByCustomerNameAndPerformanceName(
             reservationSearch, pageable);
         var reservations = reservationPage.getContent();
@@ -272,7 +272,7 @@ public class ReservationServiceTests {
 
 
         //search
-        Pageable pageable = Pageable.unpaged();
+        Pageable pageable = PageRequest.of(FIRST_PAGE, PAGE_SIZE);
         var reservationPage = reservationService.findAllByCustomerNameAndPerformanceName(
             reservationSearch, pageable);
         var reservations = reservationPage.getContent();
@@ -314,7 +314,7 @@ public class ReservationServiceTests {
 
 
         //search
-        Pageable pageable = Pageable.unpaged();
+        Pageable pageable = PageRequest.of(FIRST_PAGE, PAGE_SIZE);
         var reservationPage = reservationService.findAllByCustomerNameAndPerformanceName(
             reservationSearch, pageable);
         var reservations = reservationPage.getContent();

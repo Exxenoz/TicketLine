@@ -42,7 +42,7 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
                 .queryParam("size", pageRequestDTO.getSize());
 
             URI uri = builder.build().toUri();
-
+            LOGGER.info("Retrieving Performance from {}", uri);
             final var performance =
                 restClient.exchange(
                     new RequestEntity<>(GET, uri),
@@ -51,8 +51,10 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
             LOGGER.debug("Result status was {} with content {}", performance.getStatusCode(), performance.getBody());
             return performance.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while retrieving a Performance: {}", e.getStatusCode());
             throw new DataAccessException("Failed retrieve performances with status code " + e.getStatusCode().toString());
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while retrieving a Performance: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }
@@ -76,7 +78,7 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
                 uri = builder.build().toUri();
             }
 
-            LOGGER.debug("Entering findAllPerformances method with URI {}", uri);
+            LOGGER.info("Retrieving Performances from {}", uri);
             final var performance =
                 restClient.exchange(
                     new RequestEntity<>(GET, uri),
@@ -87,8 +89,10 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
             LOGGER.debug("Result status was {} with content {}", performance.getStatusCode(), performance.getBody());
             return performance.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while retrieving Performances: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while retrieving Performances: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }
@@ -143,7 +147,7 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
                 }
             }
             URI uri = builder.build().toUri();
-
+            LOGGER.info("Retrieving Performances from {}", uri);
             final var performance =
                 restClient.exchange(
                     new RequestEntity<>(GET, uri),
@@ -154,8 +158,10 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
             LOGGER.debug("Result status was {} with content {}", performance.getStatusCode(), performance.getBody());
             return performance.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while retrieving Performances: {}", e.getStatusCode());
             throw new DataAccessException("Failed retrieve performances with status code " + e.getStatusCode().toString(), e);
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while retrieving Performances: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }

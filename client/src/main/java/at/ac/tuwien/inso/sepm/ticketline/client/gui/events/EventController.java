@@ -1,18 +1,19 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events;
 
-import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Locale;
-
-import static org.controlsfx.glyphfont.FontAwesome.Glyph.CALENDAR_ALT;
 
 @Component
 public class EventController {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     @FXML
     public Tab mainTab1;
 
@@ -27,6 +28,7 @@ public class EventController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize EventController");
         initI18N();
     }
 

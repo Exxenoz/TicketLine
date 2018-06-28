@@ -1,4 +1,4 @@
-package at.ac.tuwien.inso.sepm.ticketline.server.unittests.customer;
+package at.ac.tuwien.inso.sepm.ticketline.server.integrationtests;
 
 import at.ac.tuwien.inso.sepm.ticketline.rest.address.BaseAddressDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.customer.CustomerDTO;
@@ -115,6 +115,7 @@ public class CustomerServiceTest {
         }
 
         dbCustomer.setFirstName("UpdatedFlo");
+        dbCustomer.setBaseAddress(newBaseAdress());
 
         service.update(dbCustomer);
 
@@ -131,5 +132,14 @@ public class CustomerServiceTest {
 
         Assert.assertNotNull(updatedCustomer);
         Assert.assertEquals(dbCustomer.getFirstName(), updatedCustomer.getFirstName());
+    }
+
+    private BaseAddressDTO newBaseAdress() {
+        BaseAddressDTO baseAddress = new BaseAddressDTO();
+        baseAddress.setCity("Vienna");
+        baseAddress.setCountry("Austria");
+        baseAddress.setPostalCode("1010");
+        baseAddress.setStreet("street");
+        return baseAddress;
     }
 }

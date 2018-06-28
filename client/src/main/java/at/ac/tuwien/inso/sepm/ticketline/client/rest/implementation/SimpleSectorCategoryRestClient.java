@@ -33,7 +33,7 @@ public class SimpleSectorCategoryRestClient implements SectorCategoryRestClient 
     @Override
     public List<SectorCategoryDTO> findAllOrderByBasePriceModAsc() throws DataAccessException {
         try {
-            LOGGER.debug("Retrieving all sector categories from {}", sectorCategoryUri);
+            LOGGER.info("Retrieving all sector categories from {}", sectorCategoryUri);
             final var sectorCategories =
                 restClient.exchange(
                     new RequestEntity<>(GET, sectorCategoryUri),
@@ -42,8 +42,10 @@ public class SimpleSectorCategoryRestClient implements SectorCategoryRestClient 
             LOGGER.debug("Result status was {} with content {}", sectorCategories.getStatusCode(), sectorCategories.getBody());
             return sectorCategories.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while retrieving Reservation: {}", e.getStatusCode());
             throw new DataAccessException("Failed retrieve sector categories with status code " + e.getStatusCode().toString());
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while retrieving Reservation: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }

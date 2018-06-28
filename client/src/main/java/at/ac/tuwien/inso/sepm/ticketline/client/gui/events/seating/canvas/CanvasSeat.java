@@ -4,8 +4,13 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
 
 public class CanvasSeat implements CanvasComponent {
+
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     //Drawing
     public final static double WIDTH = 30.0;
@@ -44,11 +49,7 @@ public class CanvasSeat implements CanvasComponent {
 
     @Override
     public boolean isClicked(double x, double y) {
-        if((x > xPos && x < xPos + WIDTH) && (y > yPos && y < yPos + HEIGHT)) {
-            return true;
-        } else {
-            return false;
-        }
+        return (x > xPos && x < xPos + WIDTH) && (y > yPos && y < yPos + HEIGHT);
     }
 
     @Override
@@ -56,7 +57,6 @@ public class CanvasSeat implements CanvasComponent {
         if(isAlreadyReserved()) {
             //Draw seat background as usual
            drawAlreadyReservedState(gc);
-
         } else {
             gc.setFill(this.paint);
             gc.setLineWidth(1);
@@ -65,16 +65,19 @@ public class CanvasSeat implements CanvasComponent {
     }
 
     public void drawSelectedState(GraphicsContext gc) {
+        LOGGER.debug("Draw selected seat with {}", toString());
         gc.setFill(Color.ROYALBLUE);
         gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
     }
 
     public void drawDeselectedState(GraphicsContext gc) {
+        LOGGER.debug("Draw deselected seat with {}", toString());
         gc.setFill(this.paint);
         gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
     }
 
     public void drawAlreadyReservedState(GraphicsContext gc) {
+        LOGGER.debug("Draw already reserved seat with {}", toString());
         gc.setFill(ALREADY_RESERVED_COLOR);
         gc.setLineWidth(1);
         gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
@@ -144,5 +147,17 @@ public class CanvasSeat implements CanvasComponent {
 
     public Long getSeatID() {
         return seatDTO.getId();
+    }
+
+    @Override
+    public String toString() {
+        return "CanvasSeat{" +
+            "paint=" + paint +
+            ", seatDTO=" + seatDTO +
+            ", xPos=" + xPos +
+            ", yPos=" + yPos +
+            ", selected=" + selected +
+            ", alreadyReserved=" + alreadyReserved +
+            '}';
     }
 }

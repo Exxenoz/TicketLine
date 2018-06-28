@@ -100,6 +100,7 @@ public class EventDetailViewController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize EventDetailViewController");
         initializeTableView();
         ButtonBar.setButtonUniformSize(backButton, false);
         ButtonBar.setButtonUniformSize(performanceDetailButton, false);
@@ -122,7 +123,9 @@ public class EventDetailViewController {
 
     @FXML
     public void changeToPerformanceDetailView(ActionEvent event) {
+        LOGGER.info("User clicked the show performanceDetailView button with {}", chosenPerformance);
         if (chosenPerformance == null) {
+            LOGGER.warn("No performance was chosen by the user");
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText(BundleManager.getExceptionBundle().getString("exception.event_details.no_selection"));
@@ -138,6 +141,7 @@ public class EventDetailViewController {
     }
 
     public void backButton(ActionEvent event) {
+        LOGGER.info("User clicked the back button");
         Stage stage = (Stage) eventHeading.getScene().getWindow();
         stage.close();
     }
@@ -163,7 +167,7 @@ public class EventDetailViewController {
             performanceDatesTableView.refresh();
 
         } catch (DataAccessException e) {
-            LOGGER.warn("Could not access performances!");
+            LOGGER.error("Could not access performances!");
         }
 
         final var artistString = performanceData.stream()

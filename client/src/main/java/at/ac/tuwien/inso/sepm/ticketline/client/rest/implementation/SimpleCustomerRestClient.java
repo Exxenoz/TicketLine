@@ -8,7 +8,6 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.Page;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -39,7 +38,7 @@ public class SimpleCustomerRestClient implements CustomerRestClient {
     @Override
     public PageResponseDTO<CustomerDTO> findAll(PageRequestDTO pageRequestDTO) throws DataAccessException {
         try {
-            LOGGER.debug("Retrieving all customers from {}", customerUri);
+            LOGGER.info("Retrieving all Customers from {}", customerUri);
             final var customer =
                 restClient.exchange(
                     new RequestEntity<>(pageRequestDTO, POST, customerUri),
@@ -48,8 +47,10 @@ public class SimpleCustomerRestClient implements CustomerRestClient {
             LOGGER.debug("Result status was {} with content {}", customer.getStatusCode(), customer.getBody());
             return customer.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while getting Customers: {}", e.getStatusCode());
             throw new DataAccessException("Failed retrieve customers with status code " + e.getStatusCode().toString());
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while getting Customers: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }
@@ -57,7 +58,7 @@ public class SimpleCustomerRestClient implements CustomerRestClient {
     @Override
     public CustomerDTO create(CustomerDTO customerDTO) throws DataAccessException {
         try {
-            LOGGER.debug("Creating a customer with {}", customerCreateUri);
+            LOGGER.info("Creating a customer with {}", customerCreateUri);
             final var customer =
                 restClient.exchange(
                     new RequestEntity<>(customerDTO, POST, customerCreateUri),
@@ -66,8 +67,10 @@ public class SimpleCustomerRestClient implements CustomerRestClient {
             LOGGER.debug("Result status was {} with content {}", customer.getStatusCode(), customer.getBody());
             return customer.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while creating a new Customer: {}", e.getStatusCode());
             throw new DataAccessException("Failed to create customer with status code " + e.getStatusCode().toString());
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while creating a new Customer: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }
@@ -75,7 +78,7 @@ public class SimpleCustomerRestClient implements CustomerRestClient {
     @Override
     public CustomerDTO update(CustomerDTO customerDTO) throws DataAccessException {
         try {
-            LOGGER.debug("Updating a customer with {}", customerUpdateUri);
+            LOGGER.info("Updating a Customer with {}", customerUpdateUri);
             final var customer =
                 restClient.exchange(
                     new RequestEntity<>(customerDTO, POST, customerUpdateUri),
@@ -84,8 +87,10 @@ public class SimpleCustomerRestClient implements CustomerRestClient {
             LOGGER.debug("Result status was {} with content {}", customer.getStatusCode(), customer.getBody());
             return customer.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while updating a Customer: {}", e.getStatusCode());
             throw new DataAccessException("Failed to update customer with status code " + e.getStatusCode().toString());
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while updating a Customer: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }

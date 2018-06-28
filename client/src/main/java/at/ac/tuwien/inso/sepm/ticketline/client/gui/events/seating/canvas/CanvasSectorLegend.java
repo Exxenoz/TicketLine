@@ -4,8 +4,13 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.util.PriceUtils;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
 
 public class CanvasSectorLegend implements CanvasComponent {
+
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     //Drawing
     public final static double WIDTH = 30;
     public final static double HEIGHT = 30;
@@ -36,6 +41,7 @@ public class CanvasSectorLegend implements CanvasComponent {
 
     @Override
     public void draw(GraphicsContext gc) {
+        LOGGER.debug("Draw sector legend with {}", toString());
         //Draw rectangle
         gc.setFill(this.paint);
         gc.setLineWidth(1);
@@ -51,5 +57,13 @@ public class CanvasSectorLegend implements CanvasComponent {
         return false;
     }
 
-
+    @Override
+    public String toString() {
+        return "CanvasSectorLegend{" +
+            "paint=" + paint +
+            ", xPos=" + xPos +
+            ", yPos=" + yPos +
+            ", price=" + price +
+            '}';
+    }
 }

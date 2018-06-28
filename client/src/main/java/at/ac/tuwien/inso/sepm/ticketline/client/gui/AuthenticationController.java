@@ -18,15 +18,22 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.RowConstraints;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.lang.invoke.MethodHandles;
+
 import static javafx.scene.control.ProgressIndicator.INDETERMINATE_PROGRESS;
 
 @Component
 public class AuthenticationController {
+
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @FXML
     public Label usernameLabel;
@@ -66,6 +73,7 @@ public class AuthenticationController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize AuthenticationController");
         initI18N();
     }
 
@@ -81,6 +89,7 @@ public class AuthenticationController {
 
     @FXML
     private void handleAuthenticate(ActionEvent actionEvent) {
+        LOGGER.info("User clicked the authenticate button");
         final var task = new Task<AuthenticationTokenInfo>() {
             @Override
             protected AuthenticationTokenInfo call() throws DataAccessException {

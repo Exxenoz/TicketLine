@@ -1,8 +1,8 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating;
 
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas.CanvasColorUtil;
-import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas.CanvasSectorLegend;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas.CanvasSeat;
+import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas.CanvasSectorLegend;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas.CanvasStateLegend;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.SeatMapService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
@@ -19,8 +19,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class SeatMapController {
@@ -51,6 +53,7 @@ public class SeatMapController {
 
     @FXML
     public void initialize() {
+        LOGGER.info("Initialize SeatMapController");
         this.gc = seatMapCanvas.getGraphicsContext2D();
         sectorSeatMap = new HashMap<>();
     }
@@ -60,6 +63,7 @@ public class SeatMapController {
         for (SectorDTO sector : performance.getHall().getSectors()) {
             Long price = sector.getCategory().getBasePriceMod() * performance.getPrice();
 
+            LOGGER.debug("Draw the sector {}", sector);
             //First draw all sectors and seats of this hall and check if these seats are in any reservation
             List<CanvasSeat> canvasSeats = new ArrayList<>(sector.getSeatsPerRow() * sector.getRows());
             for (int i = 0; i < sector.getSeatsPerRow(); i++) {
@@ -76,6 +80,7 @@ public class SeatMapController {
                             if (s.getSector().getId() == sector.getId()
                                 && s.getPositionX() == i
                                 && s.getPositionY() == j) {
+                                LOGGER.debug("The Seat {} is  reserved", s);
                                 isReserved = true;
                             }
                         }
@@ -91,6 +96,7 @@ public class SeatMapController {
         }
 
         //Finally draw
+        LOGGER.debug("Draw Seats");
         for (Map.Entry<SectorDTO, List<CanvasSeat>> entry : sectorSeatMap.entrySet()) {
             for (CanvasSeat seat : entry.getValue()) {
                 seat.draw(this.gc);
@@ -101,6 +107,7 @@ public class SeatMapController {
         drawLegend(gc);
 
         //Add mouse click event handler
+        LOGGER.debug("Adding MouseClickEventListener");
         seatMapCanvas.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             double eventX = event.getX();
             double eventY = event.getY();
@@ -142,9 +149,11 @@ public class SeatMapController {
                 }
             }
         });
+        LOGGER.debug("The SeatPlan was drawn successfully");
     }
 
     public void drawLegend(GraphicsContext gc) {
+        LOGGER.debug("Draw the legend");
         List<SectorDTO> sectors = performance.getHall().getSectors();
         sectorLegendList = new ArrayList<>(sectors.size());
 
@@ -185,6 +194,7 @@ public class SeatMapController {
                 currentX = CanvasSectorLegend.OFFSET_LEFT + ((i + 1) % CanvasSectorLegend.LEGEND_ROW_SIZE) * CanvasSectorLegend.ESTIMATED_WIDTH;
             }
         }
+        LOGGER.debug("Legend was drawn successfully");
     }
 
     public void fill(PerformanceDTO performance, List<ReservationDTO> reservationDTOS) {
@@ -198,6 +208,7 @@ public class SeatMapController {
     public void fillForReservationEdit(ReservationDTO reservationDTO) {
         //We have to find the corresponding reservation in the seatmap, and make those seats editable
         for (SeatDTO s : reservationDTO.getSeats()) {
+            LOGGER.debug("Seat {} is reserved, draw as such", s);
             for (Map.Entry<SectorDTO, List<CanvasSeat>> entry : sectorSeatMap.entrySet()) {
                 if (s.getSector().getId() == entry.getKey().getId()) {
                     for (CanvasSeat cs : entry.getValue()) {

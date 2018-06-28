@@ -3,9 +3,13 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
 
 public class CanvasStateLegend implements CanvasComponent {
 
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     //Drawing
     public final static double WIDTH = 30;
     public final static double HEIGHT = 30;
@@ -35,6 +39,7 @@ public class CanvasStateLegend implements CanvasComponent {
 
     @Override
     public void draw(GraphicsContext gc) {
+        LOGGER.debug("Draw state legend with {}", toString());
         gc.setFill(this.paint);
         gc.setLineWidth(1);
         gc.fillRoundRect(xPos, yPos, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
@@ -53,6 +58,17 @@ public class CanvasStateLegend implements CanvasComponent {
         //And draw text with it
         gc.setFill(Color.BLACK);
         gc.fillText(text, xPos + LEGEND_OFFSET_LEFT, yPos + HEIGHT / VERTICAL_ESTIMATE);
+    }
+
+    @Override
+    public String toString() {
+        return "CanvasStateLegend{" +
+            "paint=" + paint +
+            ", xPos=" + xPos +
+            ", yPos=" + yPos +
+            ", text='" + text + '\'' +
+            ", crossed=" + crossed +
+            '}';
     }
 
     @Override

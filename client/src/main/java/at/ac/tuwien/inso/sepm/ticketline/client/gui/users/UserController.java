@@ -3,7 +3,6 @@ package at.ac.tuwien.inso.sepm.ticketline.client.gui.users;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.MainController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.TabHeaderController;
-import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationInformationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.UserService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
@@ -40,7 +39,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.lang.invoke.MethodHandles;
-import java.security.SecureRandom;
 
 import static javafx.stage.Modality.APPLICATION_MODAL;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.LOCK;
@@ -101,6 +99,7 @@ public class UserController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize UserController");
         tabHeaderController.setIcon(LOCK);
         tabHeaderController.setTitleBinding(BundleManager.getStringBinding("usertab.header"));
 
@@ -165,6 +164,7 @@ public class UserController {
                 double scrollValue = newValue.doubleValue();
                 if (scrollValue == scrollBar.getMax() && (page + 1) < totalPages) {
                     double targetValue = scrollValue * userList.size();
+                    LOGGER.debug("Getting next Page {}", page + 1);
                     loadUserTable(page + 1);
                     scrollBar.setValue(targetValue / userList.size());
                 }
@@ -237,8 +237,9 @@ public class UserController {
     }
 
     public boolean loadUserTable(int page) {
+        LOGGER.debug("Loading users of Page {}", page);
         if (page < 0 || page >= totalPages) {
-            LOGGER.error("Could not load user table page, because page parameter is invalid: " + page);
+            LOGGER.warn("Could not load user table page, because page parameter is invalid: " + page);
             return false;
         }
 
@@ -265,7 +266,7 @@ public class UserController {
             if ((e.getCause().getClass()) == HttpClientErrorException.class) {
                 var httpErrorCode = ((HttpStatusCodeException) e.getCause()).getStatusCode();
                 if (httpErrorCode == HttpStatus.FORBIDDEN) {
-                    LOGGER.debug("The current user doesnt have the authorization to load the users-list");
+                    LOGGER.debug("The current user does not have the authorization to load the users-list");
                     mainController.getTpContent().getTabs().get(4).setDisable(true);
                 } else {
                     JavaFXUtils.createErrorDialog(e.getMessage(),
@@ -304,6 +305,7 @@ public class UserController {
     }
 
     public void clearUserList() {
+        LOGGER.debug("Clear Users");
         userList.clear();
 
         ScrollBar scrollBar = getVerticalScrollbar(userTable);
@@ -313,7 +315,7 @@ public class UserController {
     }
 
     public void toggleEnable(javafx.event.ActionEvent actionEvent) {
-        LOGGER.debug("Clicked toggle user button");
+        LOGGER.info("User clicked toggle user button");
         try {
             UserDTO userDTO = userTable.getSelectionModel().getSelectedItem();
             UserValidator.validateExistingUser(userDTO);
@@ -351,7 +353,7 @@ public class UserController {
     }
 
     public void onClickCreateUserButton(ActionEvent actionEvent) {
-        LOGGER.debug("Clicked create user button");
+        LOGGER.info("User clicked create user button");
 
         final var stage = (Stage) userTable.getScene().getWindow();
         final var dialog = new Stage();
@@ -366,13 +368,13 @@ public class UserController {
     }
 
     public void onClickResetPassword(ActionEvent actionEvent) {
-        LOGGER.debug("Clicked reset user password button");
+        LOGGER.info("User clicked reset user password button");
         UserDTO userDTO = userTable.getSelectionModel().getSelectedItem();
 
         try {
             UserValidator.validateExistingUser(userDTO);
         } catch (UserValidatorException e) {
-            LOGGER.error("User not valid / No User was selected");
+            LOGGER.warn("User not valid / No User was selected");
             JavaFXUtils.createErrorDialog(BundleManager.getExceptionBundle().getString("exception.no_selected_user"),
                 content.getScene().getWindow()).showAndWait();
             return;
@@ -391,7 +393,7 @@ public class UserController {
                 refreshAndSortUserTable();
             }
 
-            LOGGER.error("Password reset was successful");
+            LOGGER.debug("Password reset was successful");
 
             JavaFXUtils.createCopyTextDialog(
                 BundleManager.getBundle().getString("usertab.password_reset.dialog.success.title"),
@@ -401,6 +403,7 @@ public class UserController {
                 passwordResetButton.getScene().getWindow()
             ).showAndWait();
         } catch (DataAccessException e) {
+            LOGGER.error("Password reset was unsuccessful");
             JavaFXUtils.createErrorDialog(e.getMessage(),
                 content.getScene().getWindow()).showAndWait();
         }
