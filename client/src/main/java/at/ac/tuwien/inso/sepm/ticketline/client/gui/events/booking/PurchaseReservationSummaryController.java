@@ -114,7 +114,11 @@ public class PurchaseReservationSummaryController {
 
         if (isReservation) {
             performanceHeader.setText(BundleManager.getBundle().getString("bookings.purchase.reservation_summary"));
-            buyButton.setText(BundleManager.getBundle().getString("bookings.purchase.continue"));
+            if (showDetails) {
+                buyButton.setText(BundleManager.getBundle().getString("bookings.purchase.buy"));
+            } else {
+                buyButton.setText(BundleManager.getBundle().getString("bookings.purchase.continue"));
+            }
             printButton.setDisable(true);
             printButton.setVisible(false);
             printButton.setManaged(false);
