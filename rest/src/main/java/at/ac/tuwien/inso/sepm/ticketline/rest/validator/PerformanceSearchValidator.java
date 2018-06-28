@@ -4,7 +4,6 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.exception.PerformanceSearchValidat
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.SearchDTO;
 public class PerformanceSearchValidator {
 
-    private static final String NUMBER_REGEX = "[0-9]*";
     private static final String PRICE_REGEX = "^\\d{0,8}(,\\d{2})?$";
     private static final String STRING_REGEX = "^[-a-zA-Z ]+$";
 
@@ -48,8 +47,8 @@ public class PerformanceSearchValidator {
 
     static void validateDuration(SearchDTO searchDTO) throws PerformanceSearchValidationException {
         if(searchDTO.getDuration() != null) {
-            if (!searchDTO.getDuration().toString().matches(NUMBER_REGEX)) {
-                throw new PerformanceSearchValidationException("duration can only contain numbers");
+            if (searchDTO.getDuration().getSeconds() < 0) {
+                throw new PerformanceSearchValidationException("duration must be positive");
             }
         }
     }
