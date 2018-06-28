@@ -9,11 +9,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
-import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -79,19 +75,14 @@ public class EventDetailViewController {
     private TableColumn<PerformanceDTO, String> locationColumn;
 
     private ObservableList<PerformanceDTO> performanceData = FXCollections.observableArrayList();
-    private static final int PERFORMANCES_PER_PAGE = 10;
 
     private final SpringFxmlLoader fxmlLoader;
     private final PerformanceDetailViewController performanceDetailViewController;
     private final EventService eventService;
     private final PerformanceService performanceService;
     private Stage stage;
-    private int currentPage;
-    private int totalPages;
 
     private PerformanceDTO chosenPerformance;
-
-    private TableColumn sortedColumn;
 
     public EventDetailViewController(
         SpringFxmlLoader fxmlLoader,
@@ -158,25 +149,17 @@ public class EventDetailViewController {
         descriptionText.setText(event.getDescription());
         eventTypeEvent.setText(event.getEventType() == SEAT ? BundleManager.getBundle().getString("events.eventDetailView.seatingOption.yes") : BundleManager.getBundle().getString("events.eventDetailView.seatingOption.no"));
 
-        //find first page of performances for the given event
+        //find performances for the given event
         loadData();
     }
 
-    private void loadPerformanceTable(int page) {
-        LOGGER.debug("Loading Performances of page {}", page);
-        PageRequestDTO pageRequestDTO = null;
-        if (sortedColumn != null) {
-            Sort.Direction sortDirection =
-                (sortedColumn.getSortType() == TableColumn.SortType.ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
-            pageRequestDTO = new PageRequestDTO(page, PERFORMANCES_PER_PAGE, sortDirection, getColumnNameBy(sortedColumn));
-        } else {
-            pageRequestDTO = new PageRequestDTO(page, PERFORMANCES_PER_PAGE, Sort.Direction.ASC, null);
-        }
+    private void loadData() {
+        LOGGER.debug("Loading Performances");
+        PageRequestDTO pageRequestDTO = new PageRequestDTO(0, Integer.MAX_VALUE, Sort.Direction.ASC, null);
 
         try {
             PageResponseDTO<PerformanceDTO> response = performanceService.findAll(pageRequestDTO);
             performanceData.addAll(response.getContent());
-            totalPages = response.getTotalPages();
             performanceDatesTableView.refresh();
 
         } catch (DataAccessException e) {
@@ -191,77 +174,6 @@ public class EventDetailViewController {
         //.collect(Collectors.joining(", "));
 
         artistNameEvent.setText(artistString);
-    }
-
-    private String getColumnNameBy(TableColumn<PerformanceDTO, ?> sortedColumn) {
-        if (sortedColumn == nameColumn) {
-            return "name";
-        } else if (sortedColumn == locationColumn) {
-            return "locationAddress.country";
-        } else if (sortedColumn == startTimeColumn) {
-            return "performanceStart";
-        } else if (sortedColumn == endTimeColumn) {
-            return "duration";//needs to be switched with an actual endtime property
-        }
-        return "id";
-    }
-
-    private void loadData() {
-        Platform.runLater(() -> {
-            final ScrollBar scrollBar = getVerticalScrollbar(performanceDatesTableView);
-            if (scrollBar != null) {
-                scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
-                    double value = newValue.doubleValue();
-                    if ((value >= scrollBar.getMax()) && (currentPage + 1 < totalPages)) {
-                        currentPage++;
-                        LOGGER.debug("Getting next Page: {}", currentPage);
-                        double targetValue = value * performanceData.size();
-                        loadPerformanceTable(currentPage);
-                        scrollBar.setValue(targetValue / performanceData.size());
-                    }
-                });
-
-                scrollBar.visibleProperty().addListener((ObservableValue<? extends Boolean> observable,
-                                                         Boolean oldValue, Boolean newValue) -> {
-                    if (newValue == false) {
-                        // Scrollbar is invisible, load next page
-                        currentPage++;
-                        loadPerformanceTable(currentPage);
-                    }
-                });
-            }
-        });
-
-        ChangeListener<TableColumn.SortType> tableColumnSortChangeListener = (observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                var property = (ObjectProperty<TableColumn.SortType>) observable;
-                sortedColumn = (TableColumn) property.getBean();
-                for (TableColumn tableColumn : performanceDatesTableView.getColumns()) {
-                    if (tableColumn != sortedColumn) {
-                        tableColumn.setSortType(null);
-                    }
-                }
-
-                clear();
-                loadPerformanceTable(0);
-            }
-        };
-
-        for (TableColumn tableColumn : performanceDatesTableView.getColumns()) {
-            tableColumn.setSortType(null);
-        }
-        nameColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
-        startTimeColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
-        endTimeColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
-        locationColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
-
-        loadPerformanceTable(0);
-    }
-
-    private void clear() {
-        LOGGER.debug("clearing the data");
-        performanceData.clear();
-        currentPage = 0;
     }
 
     private void initializeTableView() {
@@ -286,7 +198,7 @@ public class EventDetailViewController {
         });
 
         performanceDatesTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        LOGGER.debug("loading the page into the table");
+        LOGGER.debug("loading events into the table");
         performanceDatesTableView.setItems(performanceData);
 
         performanceDatesTableView.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
@@ -295,5 +207,4 @@ public class EventDetailViewController {
             }
         });
     }
-
 }
