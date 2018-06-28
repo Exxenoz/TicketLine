@@ -385,7 +385,6 @@ public class ReservationsController {
             LOGGER.error("Couldn't fetch reservations from server!");
             //JavaFXUtils.createErrorDialog(e.getMessage(),
             //content.getScene().getWindow()).showAndWait();
-
         }
     }
 
