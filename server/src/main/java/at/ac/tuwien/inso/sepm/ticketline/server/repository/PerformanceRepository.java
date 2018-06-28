@@ -43,7 +43,6 @@ public interface PerformanceRepository extends JpaRepository<Performance, Long>,
             searchDTO.getPostalCode());
 
         SearchSpecBuilder searchSpecBuilder = new SearchSpecBuilder(artistSpecs, eventSpecs, performanceSpecs);
-
         return findAll(searchSpecBuilder, pageable);
     }
 }

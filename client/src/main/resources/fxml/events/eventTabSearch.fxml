@@ -15,7 +15,7 @@
                 <Separator />
                 <HBox>
                     <children>
-                        <Label fx:id="activeFiltersLabel" contentDisplay="TOP" prefHeight="27.0" text="%events.main.activefilters" />
+                        <Label fx:id="activeFiltersLabel" minWidth="80" contentDisplay="TOP" prefHeight="27.0" text="%events.main.activefilters" />
                         <Label prefWidth="10.0" />
                         <FlowPane fx:id="flowpane" nodeOrientation="LEFT_TO_RIGHT" prefHeight="0.0" prefWidth="800.0" rowValignment="BOTTOM">
                      <HBox.margin>

@@ -50,6 +50,10 @@ public class PerformanceSearchValidator {
             if (searchDTO.getDuration().getSeconds() < 0) {
                 throw new PerformanceSearchValidationException("duration must be positive");
             }
+
+            if (searchDTO.getDuration().getSeconds() > Long.MAX_VALUE) {
+                throw new PerformanceSearchValidationException("duration is too long");
+            }
         }
     }
 
@@ -62,7 +66,6 @@ public class PerformanceSearchValidator {
     }
 
     static void validationForStingFields(String string) throws PerformanceSearchValidationException {
-
         if (string.length() < 1 || string.length() > 50) {
             throw new PerformanceSearchValidationException("the input has to be between 1 and 50 characters");
         }
