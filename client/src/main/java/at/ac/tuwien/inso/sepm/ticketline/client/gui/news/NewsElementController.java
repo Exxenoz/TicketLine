@@ -44,6 +44,7 @@ public class NewsElementController {
     }
 
     public void initializeData(SimpleNewsDTO simpleNewsDTO) {
+        LOGGER.info("Initialize NewsElementController for {}", simpleNewsDTO);
         lblDate.setText(NEWS_DTF.format(simpleNewsDTO.getPublishedAt()));
         lblTitle.setText(simpleNewsDTO.getTitle());
         lblText.setText(simpleNewsDTO.getSummary());
@@ -54,6 +55,7 @@ public class NewsElementController {
 
         if(vbox != null) {
             String idString = vbox.getId();
+            LOGGER.info("User clicked the news element [{}]", idString);
             if(idString != null) {
                 if (idString.startsWith("unreadNews")) {
                     int id = Integer.valueOf(idString.substring(10));

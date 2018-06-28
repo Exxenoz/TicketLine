@@ -32,7 +32,7 @@ public class SimpleInfoRestClient implements InfoRestClient {
     @Override
     public Info find() throws DataAccessException {
         try {
-            LOGGER.debug("Retrieving server info from {}", infoUri);
+            LOGGER.info("Retrieving server info from {}", infoUri);
             final var info =
                 restClient.exchange(
                     new RequestEntity<>(GET, infoUri),
@@ -41,8 +41,10 @@ public class SimpleInfoRestClient implements InfoRestClient {
             LOGGER.debug("Result status was {} with content {}", info.getStatusCode(), info.getBody());
             return info.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while trying to get the ServerInfo: {}", e.getStatusCode());
             throw new DataAccessException("Failed retrieve news with status code " + e.getStatusCode().toString());
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while trying to get the ServerInfo: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }

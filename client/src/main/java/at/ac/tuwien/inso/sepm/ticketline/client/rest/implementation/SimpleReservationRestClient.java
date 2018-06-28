@@ -66,7 +66,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     @Override
     public List<ReservationDTO> findAllByEvent(EventDTO event) throws DataAccessException {
         try {
-            LOGGER.debug("Retrieving all reservations of a specific event from {}", reservationByEventUri);
+            LOGGER.info("Retrieving all reservations of a specific event from {}", reservationByEventUri);
             final var reservation =
                 restClient.exchange(
                     new RequestEntity<>(GET, reservationByEventUri.resolve(event.getId() + "")),
@@ -75,8 +75,10 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", reservation.getStatusCode(), reservation.getBody());
             return reservation.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while retrieving Reservations: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while retrieving Reservations: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }
@@ -84,7 +86,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     @Override
     public Long getPaidReservationCountByEvent(EventDTO event) throws DataAccessException {
         try {
-            LOGGER.debug("Retrieving paid reservation count of a specific event from {}", reservationByEventUri);
+            LOGGER.info("Retrieving paid reservation count of a specific event from {}", reservationByEventUri);
             final var reservation =
                 restClient.exchange(
                     new RequestEntity<>(GET, reservationByEventUri.resolve(event.getId() + "/count")),
@@ -93,8 +95,10 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", reservation.getStatusCode(), reservation.getBody());
             return reservation.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while retrieving Reservations: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while retrieving Reservations: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }
@@ -102,7 +106,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     @Override
     public ReservationDTO createNewReservation(CreateReservationDTO createReservationDTO) throws DataAccessException {
         try {
-            LOGGER.debug("Entering createNewReservation method with reservationCreateUri {}", reservationCreateUri);
+            LOGGER.info("Create new Reservation with {}", reservationCreateUri);
             final var response =
                 restClient.exchange(
                     new RequestEntity<>(createReservationDTO, POST, reservationCreateUri),
@@ -111,8 +115,10 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while creating Reservation: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while creating Reservation: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
 
@@ -121,16 +127,19 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     @Override
     public ReservationDTO createAndPayReservation(CreateReservationDTO createReservationDTO) throws DataAccessException {
         try {
-            LOGGER.debug("Entering createNewReservation method with reservationCreateAndPayUri {}", reservationCreateAndPayUri);
-            final var reservation =
+            LOGGER.info("Create and Pay a new Reservation from {}", reservationCreateAndPayUri);
+            final var response =
                 restClient.exchange(
                     new RequestEntity<>(createReservationDTO, POST, reservationCreateAndPayUri),
                     new ParameterizedTypeReference<ReservationDTO>() {
                     });
-            return reservation.getBody();
+            LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
+            return response.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while creating and paying a Reservation: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while creating and paying a Reservation: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }
@@ -139,7 +148,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     public ReservationDTO findOneByPaidFalseById(Long reservationId) throws DataAccessException {
         try {
             URI uri = restClient.getServiceURI(RESERVATION_FIND + "/" + reservationId);
-            LOGGER.debug("Entering findOneByPaidFalseById method with URI {}", uri);
+            LOGGER.info("Retrieving Reservation from {}", uri);
             final var response =
                 restClient.exchange(
                     new RequestEntity<>(POST, uri),
@@ -148,8 +157,10 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while retrieving Reservation: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while retrieving Reservation: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }
@@ -158,7 +169,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     public PageResponseDTO<ReservationDTO> findAllByCustomerNameAndByPerformanceName(
         ReservationSearchDTO reservationSearchDTO) throws DataAccessException {
         try {
-            LOGGER.debug("Entering findAllByCustomerNameAndByPerformanceName method with URI {}", reservationFindUri);
+            LOGGER.info("Retrieving alls Reservations from {}", reservationFindUri);
             final var response =
                 restClient.exchange(
                     new RequestEntity<>(reservationSearchDTO, POST, reservationFindUri),
@@ -167,8 +178,10 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while retrieving Reservations: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while retrieving Reservations: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }
@@ -176,7 +189,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     @Override
     public ReservationDTO purchaseReservation(ReservationDTO reservationDTO) throws DataAccessException {
         try {
-            LOGGER.debug("Entering purchaseReservation method with URI {}", reservationPurchaseUri);
+            LOGGER.info("Purchase Reservation with {}", reservationPurchaseUri);
             final var response =
                 restClient.exchange(
                     new RequestEntity<>(reservationDTO, POST, reservationPurchaseUri),
@@ -185,8 +198,10 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while purchasing Reservation: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while purchasing Reservation: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }
@@ -194,7 +209,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     @Override
     public ReservationDTO editReservation(ReservationDTO reservationDTO) throws DataAccessException {
         try {
-            LOGGER.debug("Entering editReservation method with URI {}", reservationEditUri);
+            LOGGER.info("Edit Reservation with {}", reservationEditUri);
             final var response =
                 restClient.exchange(
                     new RequestEntity<>(reservationDTO, POST, reservationEditUri),
@@ -203,8 +218,10 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while editing the Reservation: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while editing the Reservation: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }
@@ -215,7 +232,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             final URI uri = restClient.getServiceURI(
                 reservationCancelUri + "/" + id
             );
-            LOGGER.debug("Entering cancelReservation method with URI {}", uri);
+            LOGGER.info("Cancel Reservation with {}", uri);
             final var response =
                 restClient.exchange(
                     new RequestEntity<>(PUT, uri),
@@ -224,8 +241,10 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while canceling the Reservation: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while canceling the Reservation: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }
@@ -237,7 +256,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             final URI uri = restClient.getServiceURI(
                 RESERVATION_FIND_WITHRESERVATION_NR + "/" + reservationNr
             );
-            LOGGER.debug("Entering findOneByReservationNumber method with URI {}", uri);
+            LOGGER.info("Retrieving Reservation with {}", uri);
             final var response =
                 restClient.exchange(
                     new RequestEntity<>(GET, uri),
@@ -246,8 +265,10 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while retrieving Reservation: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while retrieving Reservation: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }
@@ -270,7 +291,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
                     .queryParam("size", pageRequestDTO.getSize())
                     .build().toUri();
             }
-            LOGGER.debug("Entering findAll method with URI {}", uri);
+            LOGGER.info("Retrieving all Reservations from {}", uri);
             final var response =
                 restClient.exchange(
                     new RequestEntity<>(GET, uri),
@@ -279,8 +300,10 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while retrieving Reservations: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while retrieving Reservations: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }
@@ -289,7 +312,7 @@ public class SimpleReservationRestClient implements ReservationRestClient {
     public List<ReservationDTO> findReservationsForPerformance(Long id) throws DataAccessException {
         try {
             URI uri = restClient.getServiceURI(RESERVATION + "/" + PERFORMANCE + "/" + id);
-            LOGGER.debug("Calling findReservationsForPerformance method with URI {}", uri);
+            LOGGER.info("Retrieving Reservation from {}", uri);
             final var response =
                 restClient.exchange(
                     new RequestEntity<>(GET, uri),
@@ -298,8 +321,10 @@ public class SimpleReservationRestClient implements ReservationRestClient {
             LOGGER.debug("Result status was {} with content {}", response.getStatusCode(), response.getBody());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while retrieving Reservations: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while retrieving Reservations: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
         }
     }

@@ -1,6 +1,5 @@
 package at.ac.tuwien.inso.sepm.ticketline.client.gui;
 
-import at.ac.tuwien.inso.sepm.ticketline.client.TicketlineClientApplication;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.customers.CustomerController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.EventController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.news.NewsController;
@@ -8,7 +7,6 @@ import at.ac.tuwien.inso.sepm.ticketline.client.gui.reservations.ReservationsCon
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.users.UserController;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationInformationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.AuthenticationService;
-import at.ac.tuwien.inso.sepm.ticketline.client.service.implementation.SimpleAuthenticationService;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.event.ActionEvent;
@@ -21,8 +19,12 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.controlsfx.glyphfont.FontAwesome;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.lang.invoke.MethodHandles;
 
 import static java.util.Locale.ENGLISH;
 import static java.util.Locale.GERMAN;
@@ -33,6 +35,9 @@ import static org.controlsfx.glyphfont.FontAwesome.Glyph.*;
 
 @Component
 public class MainController {
+
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static final int TAB_ICON_FONT_SIZE = 20;
 
@@ -103,6 +108,7 @@ public class MainController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize MainController");
         init(false);
     }
 
@@ -119,6 +125,7 @@ public class MainController {
 
     private void init(boolean reinit) {
         if (reinit) {
+            LOGGER.info("Reinitialize MainController");
             authenticationService.prepareAuthenticationContext();
         }
         runLater(() -> mbMain.setUseSystemMenuBar(true));
@@ -142,6 +149,7 @@ public class MainController {
 
     @FXML
     private void logout(ActionEvent actionEvent) {
+        LOGGER.info("User clicked the logout button");
         //Remove authentication
         authenticationService.deAuthenticate();
 
@@ -155,6 +163,7 @@ public class MainController {
 
     @FXML
     private void aboutApplication(ActionEvent actionEvent) {
+        LOGGER.info("User clicked the about button");
         final var stage = (Stage) spMainContent.getScene().getWindow();
         final var dialog = new Stage();
         dialog.setResizable(false);
@@ -235,11 +244,10 @@ public class MainController {
 
     private void setAuthenticated(boolean authenticated) {
         if (authenticated) {
+            LOGGER.debug("Login and load first Page of Data");
             if (spMainContent.getChildren().contains(login)) {
                 spMainContent.getChildren().remove(login);
-            } else if (spMainContent.getChildren().contains(loginNewPassword)) {
-                spMainContent.getChildren().remove(loginNewPassword);
-            }
+            } else spMainContent.getChildren().remove(loginNewPassword);
             newsController.loadNews();
             eventController.loadData();
             userController.loadUsers();
@@ -257,6 +265,7 @@ public class MainController {
     }
 
     public void switchToNewPasswordAuthentication(String username, String passwordChangeKey) {
+        LOGGER.debug("Switch to reset password View");
         spMainContent.getChildren().remove(login);
         SpringFxmlLoader.Wrapper<AuthenticationPasswordChangeController> wrapper =
             springFxmlLoader.loadAndWrap("/fxml/authenticationPasswordChangeComponent.fxml");
@@ -267,11 +276,13 @@ public class MainController {
     }
 
     public void switchBackToAuthentication() {
+        LOGGER.debug("Switch to AuthenticationView");
         spMainContent.getChildren().remove(loginNewPassword);
         spMainContent.getChildren().add(login);
     }
 
     public void onClickLanguageEnglish(ActionEvent actionEvent) {
+        LOGGER.info("User clicked the changeToEnglish button");
         if (BundleManager.getLocale().getLanguage().equals(ENGLISH.getLanguage())) {
             checkMenuItemLanguageEnglish.setSelected(true);
             return;
@@ -285,6 +296,7 @@ public class MainController {
     }
 
     public void onClickLanguageGerman(ActionEvent actionEvent) {
+        LOGGER.info("User clicked the changeToGerman button");
         if (BundleManager.getLocale().getLanguage().equals(GERMAN.getLanguage())) {
             checkMenuItemLanguageGerman.setSelected(true);
             return;

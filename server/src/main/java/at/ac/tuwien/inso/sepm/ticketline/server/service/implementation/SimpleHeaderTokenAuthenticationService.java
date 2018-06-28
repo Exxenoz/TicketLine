@@ -4,7 +4,6 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationToken
 import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationTokenInfo;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.server.configuration.properties.AuthenticationConfigurationProperties;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.endpoint.HttpBadRequestException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.HeaderTokenAuthenticationService;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.UserService;
@@ -76,23 +75,25 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
     public AuthenticationToken authenticate(String username, CharSequence password) throws InternalUserNotFoundException,
         InternalUserDisabledException, InternalPasswordResetException, InternalUserPasswordWrongException,
         InternalUserValidationException {
+
+        LOGGER.info("Try to authenticate User \'{}\'", username);
         UserDTO userDTO = null;
 
         //First of all find user, to check if he is in the password change key set
         try {
             userDTO = userService.findUserByName(username);
         } catch (InternalUserNotFoundException e) {
-            LOGGER.debug("Could not authenticate user '{}', because user could not be found!", username);
+            LOGGER.warn("Could not authenticate user '{}', because user could not be found!", username);
             throw new InternalUserNotFoundException();
         }
 
         if (userService.isPasswordChangeKeySet(userDTO)) {
-            LOGGER.debug("Could not authenticate user '{}', because password change key is set!", username);
+            LOGGER.warn("Could not authenticate user '{}', because password change key is set!", username);
             throw new InternalPasswordResetException();
         }
 
         if (!userDTO.isEnabled()) {
-            LOGGER.debug("Could not authenticate user '{}', because the user is disabled!", username);
+            LOGGER.warn("Could not authenticate user '{}', because the user is disabled!", username);
             throw new InternalUserDisabledException("User disabled");
         }
 
@@ -106,10 +107,10 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
         } catch (AuthenticationException a) {
             userService.increaseStrikesAndDisableUserIfStrikesAreTooHigh(userDTO);
             if (userService.findUserByName(username).isEnabled()) {
-                LOGGER.debug("Could not authenticate user '{}', because authentication details were invalid!", username);
+                LOGGER.warn("Could not authenticate user '{}', because authentication details were invalid!", username);
                 throw new InternalUserPasswordWrongException();
             } else {
-                LOGGER.debug("Could not authenticate user '{}', because the user is disabled!", username);
+                LOGGER.warn("Could not authenticate user '{}', because the user is disabled!", username);
                 throw new InternalUserDisabledException("User disabled");
             }
         }

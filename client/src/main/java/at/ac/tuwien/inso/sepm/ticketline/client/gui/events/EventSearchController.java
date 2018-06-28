@@ -47,11 +47,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import static at.ac.tuwien.inso.sepm.ticketline.client.validator.PerformanceSearchValidator.*;
 import static javafx.collections.FXCollections.observableArrayList;
 import static org.controlsfx.glyphfont.FontAwesome.Glyph.CALENDAR_ALT;
-
-import static at.ac.tuwien.inso.sepm.ticketline.client.validator.PerformanceSearchValidator.*;
-import static at.ac.tuwien.inso.sepm.ticketline.client.validator.LocationAddressValidator.*;
 
 @Component
 public class EventSearchController {
@@ -153,7 +151,7 @@ public class EventSearchController {
 
     private ObservableList<PerformanceDTO> performanceData = observableArrayList();
     private int page = 0;
-    private int totalPages = 0;
+    private int totalPages = 1;
     private ArrayList<Text> textChunks = new ArrayList<Text>();
     private TableColumn sortedColumn;
     private enum Validate { artistFristName, artistLastName, eventName, duration, price, locationName, city, street, country, postalcode }
@@ -167,6 +165,7 @@ public class EventSearchController {
 
     //+++++++++++INITIALIZE+++++++++++++++
     public void initialize() {
+        LOGGER.info("Initialize EventSearchController");
         SpinnerValueFactory<Integer> beginTimeHoursFactory = buildSpinner(23);
         SpinnerValueFactory<Integer> beginTimeMinutesFactory = buildSpinner(59);
         seatingYesButton.setSelected(false);
@@ -253,6 +252,7 @@ public class EventSearchController {
                 if ((value == scrollBar.getMax()) && (page + 1 < totalPages)) {
                     page++;
                     double targetValue = value * performanceData.size();
+                    LOGGER.debug("Getting next Page {}", page);
                     loadPerformanceTable(page);
                     scrollBar.setValue(targetValue / performanceData.size());
                 }
@@ -296,7 +296,7 @@ public class EventSearchController {
         LOGGER.debug("clearing the data");
         performanceData.clear();
         page = 0;
-        totalPages = 0;
+        totalPages = 1;
         ScrollBar scrollBar = getVerticalScrollbar(foundEventsTableView);
         if (scrollBar != null) {
             scrollBar.setValue(0);
@@ -304,6 +304,11 @@ public class EventSearchController {
     }
 
     private void loadPerformanceTable(int page) {
+        if (page < 0 || page >= totalPages) {
+            LOGGER.warn("Could not load Performances table page, because page parameter is invalid!");
+            return;
+        }
+        LOGGER.debug("Loading Perfomances of Page {}", page);
         PageRequestDTO pageRequestDTO = null;
 
         if (sortedColumn != null) {
@@ -358,6 +363,7 @@ public class EventSearchController {
     //++++++++++++++BUTTONS+++++++++++++++
     @FXML
     private void bookPerformanceButton(ActionEvent event) {
+        LOGGER.info("User clicked the book button");
         Stage stage = new Stage();
         PerformanceDTO row = foundEventsTableView.getSelectionModel().getSelectedItem();
         if (row != null) {
@@ -453,6 +459,7 @@ public class EventSearchController {
 
     @FXML
     void searchForPerformancesButton(ActionEvent event) {
+        LOGGER.info("User clicked the search button");
         clearErrorLabels();
         textChunks = new ArrayList<>();
         updateCurrentFlowPane();
@@ -592,6 +599,7 @@ public class EventSearchController {
 
     @FXML
     private void clearAndReloadButton(ActionEvent event) {
+        LOGGER.info("User clicked the clear button");
         searchDTO = null;
         clear();
         loadPerformanceTable(0);
@@ -619,6 +627,7 @@ public class EventSearchController {
     }
 
     private void clearErrorLabels(){
+        LOGGER.debug("Clearing the error labels");
         locationnameErrorLabel.textProperty().unbind();
         streetErrorLabel.textProperty().unbind();
         cityErrorLabel.textProperty().unbind();

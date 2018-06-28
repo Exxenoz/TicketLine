@@ -13,8 +13,11 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordChangeRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.user.UserPasswordResetRequestDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.validator.UserValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.lang.invoke.MethodHandles;
 import java.security.SecureRandom;
 import java.util.List;
 
@@ -22,6 +25,7 @@ import java.util.List;
 public class SimpleUserService implements UserService {
 
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final UserRestClient userRestClient;
     private AuthenticationInformationService authenticationInformationService;
 
@@ -46,6 +50,7 @@ public class SimpleUserService implements UserService {
         try {
             UserValidator.validateExistingUser(userDTO);
         } catch (UserValidatorException e) {
+            LOGGER.warn("User is invalid: {}", e.getMessage());
             throw new DataAccessException(e.getMessage());
         }
         userRestClient.enableUser(userDTO);
@@ -56,9 +61,11 @@ public class SimpleUserService implements UserService {
         try {
             UserValidator.validateExistingUser(userDTO);
             if (authenticationInformationService.getCurrentAuthenticationTokenInfo().get().getUsername().equals(userDTO.getUsername())) {
+                LOGGER.error("An Admin can not disable them self!");
                 throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.user.disable_self"));
             }
         } catch (UserValidatorException e) {
+            LOGGER.warn("User is invalid: {}", e.getMessage());
             throw new DataAccessException(e.getMessage());
         }
         userRestClient.disableUser(userDTO);

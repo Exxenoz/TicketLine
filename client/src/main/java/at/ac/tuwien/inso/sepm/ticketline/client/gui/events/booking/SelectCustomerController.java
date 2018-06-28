@@ -76,7 +76,7 @@ public class SelectCustomerController {
 
     private int currentPage = 0;
 
-    private int totalPages = 0;
+    private int totalPages = 1;
     private final SpringFxmlLoader fxmlLoader;
     private Stage stage;
     private boolean isReservation;
@@ -101,6 +101,7 @@ public class SelectCustomerController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize SelectCustomerController");
         ButtonBar.setButtonUniformSize(btnBack, false);
         ButtonBar.setButtonUniformSize(btnWithCustomer, false);
         ButtonBar.setButtonUniformSize(btnWithoutCustomer, false);
@@ -216,7 +217,11 @@ public class SelectCustomerController {
     }
 
     private void loadCustomersTable(int page) {
-        LOGGER.debug("Loading Customers of page {}", page);
+        if (page < 0 || page >= totalPages) {
+            LOGGER.warn("Could not load customer table page, because page parameter is invalid!");
+            return;
+        }
+        LOGGER.debug("Loading Customers of Page {}", page);
         PageRequestDTO pageRequestDTO = null;
         if (sortedColumn != null) {
             Sort.Direction sortDirection =
@@ -242,9 +247,11 @@ public class SelectCustomerController {
         LOGGER.debug("clearing the data");
         items.clear();
         currentPage = 0;
+        totalPages = 1;
     }
 
     public void goBack(ActionEvent actionEvent) {
+        LOGGER.info("User clicked the back button");
         Parent parent = fxmlLoader.load("/fxml/events/book/hallPlanView.fxml");
         stage.setScene(new Scene(parent));
         if (reservation.getPerformance().getEvent().getEventType() == EventTypeDTO.SEAT) {
@@ -256,7 +263,9 @@ public class SelectCustomerController {
     }
 
     public void goNextWithCustomer(ActionEvent event) {
+        LOGGER.info("User clicked the go next with selected customer button");
         if (chosenCustomer.getId() == null) {
+            LOGGER.warn("No selected Customer");
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText(BundleManager.getExceptionBundle().getString("exception.select_customer.no_selection"));
@@ -268,6 +277,7 @@ public class SelectCustomerController {
     }
 
     public void goNextWithoutCustomer(ActionEvent actionEvent) {
+        LOGGER.info("User clicked the go next without customer button");
         reservation.setCustomer(anonymousCustomer);
         continueOrReserve();
     }
@@ -287,6 +297,7 @@ public class SelectCustomerController {
     }
 
     public void createNewCustomer(ActionEvent actionEvent) {
+        LOGGER.info("User clicked the go next with new customer button");
         customerEditDialogController.fill(reservationWithNewCustomer, reservation, isReservation, stage);
         Parent parent = fxmlLoader.load("/fxml/customers/customerEditDialog.fxml");
         stage.setScene(new Scene(parent));

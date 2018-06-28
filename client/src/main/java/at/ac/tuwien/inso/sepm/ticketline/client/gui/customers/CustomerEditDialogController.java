@@ -102,11 +102,12 @@ public class CustomerEditDialogController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize CustomerEditDialogController");
         // Reset customer to edit in case the whole controller object gets recycled...
         customerToEdit = null;
     }
 
-    public void SetCustomerToEdit(CustomerDTO customerToEdit) {
+    public void setCustomerToEdit(CustomerDTO customerToEdit) {
         this.customerToEdit = customerToEdit;
 
         if (customerToEdit != null) {
@@ -140,7 +141,7 @@ public class CustomerEditDialogController {
     @FXML
     private void onClickSaveCustomerButton(ActionEvent actionEvent) {
 
-        LOGGER.debug("Clicked save customer button");
+        LOGGER.info("User clicked save customer button");
 
         CustomerDTO customerDTO = new CustomerDTO();
 
@@ -158,7 +159,7 @@ public class CustomerEditDialogController {
             firstNameErrorLabel.setText("");
         } catch (CustomerValidationException e) {
             valid = false;
-            LOGGER.debug("Customer validation failed: " + e.getMessage());
+            LOGGER.warn("Customer validation failed: " + e.getMessage());
             firstNameErrorLabel.setText(e.getMessage());
         }
 
@@ -167,7 +168,7 @@ public class CustomerEditDialogController {
             lastNameErrorLabel.setText("");
         } catch (CustomerValidationException e) {
             valid = false;
-            LOGGER.debug("Customer validation failed: " + e.getMessage());
+            LOGGER.warn("Customer validation failed: " + e.getMessage());
             lastNameErrorLabel.setText(e.getMessage());
         }
 
@@ -176,7 +177,7 @@ public class CustomerEditDialogController {
             telephoneNumberErrorLabel.setText("");
         } catch (CustomerValidationException e) {
             valid = false;
-            LOGGER.debug("Customer validation failed: " + e.getMessage());
+            LOGGER.warn("Customer validation failed: " + e.getMessage());
             telephoneNumberErrorLabel.setText(e.getMessage());
         }
 
@@ -185,7 +186,7 @@ public class CustomerEditDialogController {
             emailErrorLabel.setText("");
         } catch (CustomerValidationException e) {
             valid = false;
-            LOGGER.debug("Customer validation failed: " + e.getMessage());
+            LOGGER.warn("Customer validation failed: " + e.getMessage());
             emailErrorLabel.setText(e.getMessage());
         }
 
@@ -194,7 +195,7 @@ public class CustomerEditDialogController {
             streetErrorLabel.setText("");
         } catch (AddressValidationException e) {
             valid = false;
-            LOGGER.debug("Customer validation failed: " + e.getMessage());
+            LOGGER.warn("Customer validation failed: " + e.getMessage());
             streetErrorLabel.setText(e.getMessage());
         }
 
@@ -203,7 +204,7 @@ public class CustomerEditDialogController {
             postalCodeErrorLabel.setText("");
         } catch (AddressValidationException e) {
             valid = false;
-            LOGGER.debug("Customer validation failed: " + e.getMessage());
+            LOGGER.warn("Customer validation failed: " + e.getMessage());
             postalCodeErrorLabel.setText(e.getMessage());
         }
 
@@ -212,7 +213,7 @@ public class CustomerEditDialogController {
             cityErrorLabel.setText("");
         } catch (AddressValidationException e) {
             valid = false;
-            LOGGER.debug("Customer validation failed: " + e.getMessage());
+            LOGGER.warn("Customer validation failed: " + e.getMessage());
             cityErrorLabel.setText(e.getMessage());
         }
 
@@ -221,13 +222,14 @@ public class CustomerEditDialogController {
             countryErrorLabel.setText("");
         } catch (AddressValidationException e) {
             valid = false;
-            LOGGER.debug("Customer validation failed: " + e.getMessage());
+            LOGGER.warn("Customer validation failed: " + e.getMessage());
             countryErrorLabel.setText(e.getMessage());
         }
 
         firstNameTextfield.getScene().getWindow().sizeToScene();
 
         if (!valid) {
+            LOGGER.error("Customer data was invalid");
             return;
         }
 
@@ -296,6 +298,7 @@ public class CustomerEditDialogController {
     }
 
     private void reserveWithNewCustomer(CustomerDTO newCustomer) {
+        LOGGER.info("User clicked the reserve with customer button");
         reservation.setCustomer(newCustomer);
         PRSController.fill(reservation, isReservation, stage);
         Parent parent = fxmlLoader.load("/fxml/events/book/purchaseReservationSummary.fxml");

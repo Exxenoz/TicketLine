@@ -99,6 +99,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
 
     @Override
     public String buildBasicInvoiceHtml(Reservation reservation) {
+        LOGGER.info("Create basic invoice html for {}", reservation);
         String source =
             //Adding head manually to enable style sheet href
             html(
@@ -141,12 +142,13 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
                     ).withClasses("block", "large-font")
                 )
             ).render();
-        LOGGER.debug("Created html: {}", source);
+        LOGGER.debug("Created basic invoice html: {}", source);
         return source;
     }
 
     @Override
     public String buildDetailedInvoiceHtml(Reservation reservation) {
+        LOGGER.info("Create detailed invoice html for {}", reservation);
         String source =
             //Adding head manually to enable style sheet href
             html(
@@ -193,12 +195,13 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
                     ).withClasses("block", "large-font")
                 )
             ).render();
-        LOGGER.debug("Created html: {}", source);
+        LOGGER.debug("Created detailed invoice html: {}", source);
         return source;
     }
 
     @Override
     public String buildBasicCancellationHtml(Reservation reservation) {
+        LOGGER.info("Create basic cancellation invoice html for {}", reservation);
         String source =
             //Adding head manually to enable style sheet href
             html(
@@ -238,12 +241,14 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
                     ).withClasses("block", "large-font")
                 )
             ).render();
+        LOGGER.info("Created basic invoice html: {}", source);
 
         return source;
     }
 
     @Override
     public String buildDetailedCancellationHtml(Reservation reservation) {
+        LOGGER.info("Create detailed cancellation invoice html for {}", reservation);
         String source =
             //Adding head manually to enable style sheet href
             html(
@@ -289,7 +294,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
                     ).withClasses("block", "large-font")
                 )
             ).render();
-
+        LOGGER.debug("Created detailed cancellation invoice html: {}", source);
         return source;
     }
 
@@ -299,6 +304,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
      * @return the built company information div
      */
     private ContainerTag buildCompanyInformationAndDateDiv() {
+        LOGGER.debug("Build CompanyInfo and Date div-element");
         return div(
             table(
                 tbody(
@@ -333,6 +339,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
      * @return the built performance information div
      */
     private ContainerTag buildPerformanceInformationDiv(Reservation reservation) {
+        LOGGER.debug("Build PerformanceInfo div-element");
         return div(
             table(
                 tr(
@@ -363,6 +370,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
      * @return the built ticket information div
      */
     private ContainerTag buildTicketInformationDiv(Reservation reservation) {
+        LOGGER.debug("Build TicketInfo div-element");
         return div(
             //Ticket information
             table(
@@ -393,6 +401,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
      * @return the built pricing div
      */
     private ContainerTag buildPricingInformationDiv(Reservation reservation) {
+        LOGGER.debug("Build PricingInfo div-element");
         return div(
             table(
                 tr(
@@ -420,6 +429,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
      * @return the built cancellation pricing div
      */
     private ContainerTag buildCancellationPricingInformationDiv(Reservation reservation) {
+        LOGGER.debug("Build CancellationPricingInfo div-element");
         if(reservation.getElusivePrice() != null) {
             return div(
                 table(
@@ -450,6 +460,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
      * @return the built customer information div
      */
     private ContainerTag buildCustomerInformationDiv(Reservation reservation) {
+        LOGGER.debug("Build CustomerInfo div-element");
         return div(
             table(
                 tbody(
@@ -476,6 +487,7 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
      */
     private ContainerTag buildPaidDateDiv(Reservation reservation) {
         if(reservation.getPaidAt() != null) {
+            LOGGER.debug("Build PaidDate div-element");
             return div(
                 h4(BundleManager.getBundle().getString("invoice.performance.paidat")
                     + ":"
@@ -523,7 +535,6 @@ public class J2HtmlBuilderService implements HtmlBuilderService {
             }
             i++;
         }
-
         return out;
     }
 

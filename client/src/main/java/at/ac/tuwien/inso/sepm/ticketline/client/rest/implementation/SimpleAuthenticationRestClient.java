@@ -9,8 +9,6 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.authentication.AuthenticationToken
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -49,8 +47,10 @@ public class SimpleAuthenticationRestClient implements AuthenticationRestClient 
             LOGGER.debug("Authenticate {} status {}", authenticationRequest.getUsername(), response.getStatusCode());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while trying to authenticate: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while trying to authenticate: {}", e.getMessage());
             throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
         }
     }
@@ -67,8 +67,10 @@ public class SimpleAuthenticationRestClient implements AuthenticationRestClient 
             LOGGER.debug("Get AuthenticationToken status {}", response.getStatusCode());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while trying to get AuthenticationToken: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while trying to get AuthenticationToken: {}", e.getMessage());
             throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
         }
     }
@@ -85,8 +87,10 @@ public class SimpleAuthenticationRestClient implements AuthenticationRestClient 
             LOGGER.debug("Get AuthenticationTokenInfo status {}", response.getStatusCode());
             return response.getBody();
         } catch (HttpStatusCodeException e) {
+            LOGGER.error("A HTTP error occurred while trying to get AuthenticationTokenInfo: {}", e.getStatusCode());
             throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
+            LOGGER.error("An error occurred while trying to get AuthenticationTokenInfo: {}", e.getMessage());
             throw new DataAccessException(BundleManager.getExceptionBundle().getString("exception.internal"));
         }
     }

@@ -45,9 +45,9 @@ public class SimpleAuthenticationService implements AuthenticationService, Dispo
         AuthenticationRequest authenticationRequest
     ) throws DataAccessException {
         if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("trying to authenticate {}", authenticationRequest);
+            LOGGER.trace("Trying to authenticate {}", authenticationRequest);
         } else {
-            LOGGER.debug("trying to authenticate");
+            LOGGER.debug("Trying to authenticate");
         }
         return authenticateAndScheduleNextAuthentication(authenticationRequest);
     }
@@ -64,7 +64,7 @@ public class SimpleAuthenticationService implements AuthenticationService, Dispo
         } else {
             authenticationToken = authenticationRestClient.authenticate(authenticationRequest);
         }
-        LOGGER.debug("authentication result {}", authenticationToken);
+        LOGGER.debug("Authentication result {}", authenticationToken);
         authenticationInformationService.setCurrentAuthenticationToken(authenticationToken.getCurrentToken());
         final var authenticationTokenInfo = authenticationRestClient.tokenInfoCurrent();
         scheduleReAuthenticationTask(authenticationTokenInfo
@@ -77,9 +77,9 @@ public class SimpleAuthenticationService implements AuthenticationService, Dispo
     private void scheduleReAuthenticationTask(LocalDateTime runAt) {
         schedule = taskScheduler.schedule(
             () -> {
-                LOGGER.debug("setting current token to future token");
+                LOGGER.debug("Setting current token to future token");
                 authenticationInformationService.setCurrentAuthenticationToken(authenticationToken.getFutureToken());
-                LOGGER.debug("trying to re-authenticate {}", authenticationToken);
+                LOGGER.debug("Trying to re-authenticate {}", authenticationToken);
                 try {
                     authenticateAndScheduleNextAuthentication();
                 } catch (DataAccessException e) {
@@ -91,7 +91,7 @@ public class SimpleAuthenticationService implements AuthenticationService, Dispo
 
     @Override
     public void deAuthenticate() {
-        LOGGER.debug("de authenticating");
+        LOGGER.debug("De authenticating");
         authenticationInformationService.clearAuthentication();
         authenticationToken = null;
         taskScheduler.shutdown();

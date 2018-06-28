@@ -5,14 +5,14 @@ import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.PerformanceDetailView
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SeatMapController;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SeatSelectionListener;
 import at.ac.tuwien.inso.sepm.ticketline.client.gui.events.seating.SectorController;
-import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.service.ReservationService;
+import at.ac.tuwien.inso.sepm.ticketline.client.util.BundleManager;
 import at.ac.tuwien.inso.sepm.ticketline.client.util.JavaFXUtils;
-import at.ac.tuwien.inso.sepm.ticketline.rest.util.PriceUtils;
 import at.ac.tuwien.inso.sepm.ticketline.rest.event.EventTypeDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.performance.PerformanceDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.seat.SeatDTO;
+import at.ac.tuwien.inso.sepm.ticketline.rest.util.PriceUtils;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -109,6 +109,7 @@ public class HallPlanController implements SeatSelectionListener {
     @FXML
     private void initialize() {
 
+        LOGGER.info("Initialize HallPlanController");
         eventNameLabel.setText(reservation.getPerformance().getEvent().getName());
         performanceNameLabel.setText(reservation.getPerformance().getName());
         if (seats != null) {
@@ -232,6 +233,7 @@ public class HallPlanController implements SeatSelectionListener {
 
     @FXML
     public void backButton(ActionEvent event) {
+        LOGGER.info("User clicked the back button");
         if (changeDetails) {
             closeWindow();
         } else {
@@ -244,17 +246,20 @@ public class HallPlanController implements SeatSelectionListener {
 
     @FXML
     public void continueButton(ActionEvent event) {
+        LOGGER.info("User clicked the buy button");
         continueOrReserve();
     }
 
     @FXML
     public void reserveButton() {
+        LOGGER.info("User clicked the reserve button");
         isReservation = true;
         continueOrReserve();
     }
 
     @Override
     public void onSeatSelected(SeatDTO seatDTO) {
+        LOGGER.info("User selected a Seat {}", seatDTO);
         seats.add(seatDTO);
         updateSeatsInformation(this.seats);
         updatePrice(this.seats, this.reservation.getPerformance());
@@ -262,6 +267,7 @@ public class HallPlanController implements SeatSelectionListener {
 
     @Override
     public void onSeatDeselected(SeatDTO seatDTO) {
+        LOGGER.info("User deselected a Seat {}", seatDTO);
         seats.remove(seatDTO);
         updateSeatsInformation(this.seats);
         updatePrice(this.seats, this.reservation.getPerformance());
@@ -278,6 +284,7 @@ public class HallPlanController implements SeatSelectionListener {
                 stage.setTitle(BundleManager.getBundle().getString("bookings.hallplan.customer_select.title"));
                 stage.centerOnScreen();
             } else {
+                LOGGER.debug("Reservation was changed, trying to update...");
                 try {
                     reservation = reservationService.editReservation(reservation);
                     PRSController.showReservationDetails(reservation, stage);
@@ -285,7 +292,9 @@ public class HallPlanController implements SeatSelectionListener {
                     stage.setScene(new Scene(parent));
                     stage.setTitle(BundleManager.getBundle().getString("bookings.purchase.details.title"));
                     stage.centerOnScreen();
+                    LOGGER.debug("Update of Reservation was successful");
                 } catch (DataAccessException e) {
+                    LOGGER.debug("An error occurred during the update: {}", e.getMessage());
                     JavaFXUtils.createErrorDialog(e.getMessage(),
                         stage.getScene().getWindow()).showAndWait();
                 }

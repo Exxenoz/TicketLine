@@ -98,6 +98,7 @@ public class NewsCreateController {
 
     @FXML
     private void initialize() {
+        LOGGER.info("Initialize NewsCreateController");
         tabHeaderController.setIcon(NEWSPAPER_ALT);
         tabHeaderController.setTitleBinding(BundleManager.getStringBinding("news.header.create"));
         htmlEditor.addEventHandler(InputEvent.ANY, new EventHandler<InputEvent>() {
@@ -127,6 +128,7 @@ public class NewsCreateController {
     }
 
     private void clearInputs() {
+        LOGGER.debug("Clear Inputs");
         titleErrorLabel.textProperty().unbind();
         imageErrorLabel.textProperty().unbind();
         summaryErrorLabel.textProperty().unbind();
@@ -147,6 +149,7 @@ public class NewsCreateController {
     }
 
     public void onClickChooseImageFileButton(ActionEvent actionEvent) {
+        LOGGER.info("User clicked the choose img button");
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(BundleManager.getBundle().getString("news.filechooser.title"));
 
@@ -160,12 +163,12 @@ public class NewsCreateController {
             imageFileLabel.setText(imageFile.getAbsolutePath());
             imageFileLabel.setTextFill(Color.BLACK);
             clearImageButton.setDisable(false);
-            LOGGER.info("User chose image for news article");
+            LOGGER.debug("User chose image for news article");
         }
     }
 
     public void onClickSaveNewsClicked(ActionEvent actionEvent) {
-        LOGGER.debug("Clicked save news button");
+        LOGGER.info("User clicked save news button");
 
         DetailedNewsDTO detailedNewsDTO = new DetailedNewsDTO();
 
@@ -177,7 +180,7 @@ public class NewsCreateController {
             titleErrorLabel.setText("");
         } catch (NewsValidationException e) {
             valid = false;
-            LOGGER.debug("News validation failed: " + e.getMessage());
+            LOGGER.warn("News validation failed: " + e.getMessage());
             titleErrorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
         }
 
@@ -187,7 +190,7 @@ public class NewsCreateController {
             imageErrorLabel.setText("");
         } catch (NewsValidationException e) {
             valid = false;
-            LOGGER.debug("News validation failed: " + e.getMessage());
+            LOGGER.warn("News validation failed: " + e.getMessage());
             imageErrorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
         }
 
@@ -198,7 +201,7 @@ public class NewsCreateController {
             summaryErrorLabel.setMinHeight(0);
         } catch (NewsValidationException e) {
             valid = false;
-            LOGGER.debug("News validation failed: " + e.getMessage());
+            LOGGER.warn("News validation failed: " + e.getMessage());
             summaryErrorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
             summaryErrorLabel.setMinHeight(16);
         }
@@ -209,11 +212,12 @@ public class NewsCreateController {
             articleErrorLabel.setText("");
         } catch (NewsValidationException e) {
             valid = false;
-            LOGGER.debug("News validation failed: " + e.getMessage());
+            LOGGER.warn("News validation failed: " + e.getMessage());
             articleErrorLabel.textProperty().bind(BundleManager.getExceptionStringBinding(e.getExceptionBundleKey()));
         }
 
         if (!valid) {
+            LOGGER.error("News was invalid!");
             return;
         }
 
@@ -224,6 +228,7 @@ public class NewsCreateController {
         try {
             simpleNewsDTO = newsService.publish(detailedNewsDTO);
         } catch (DataAccessException e) {
+            LOGGER.error("An error occurred during the publishing of the News: {}", e.getMessage());
             JavaFXUtils.createErrorDialog(
                 BundleManager.getBundle().getString("news.dialog.create.dialog.error.title"),
                 BundleManager.getBundle().getString("news.dialog.create.dialog.error.header_text"),
@@ -249,6 +254,7 @@ public class NewsCreateController {
     }
 
     public void onClickClearImageButton(ActionEvent actionEvent) {
+        LOGGER.info("User clicked the clear image button");
         clearImageButton.setDisable(true);
         imageFileLabel.setText("");
         imageErrorLabel.textProperty().unbind();
