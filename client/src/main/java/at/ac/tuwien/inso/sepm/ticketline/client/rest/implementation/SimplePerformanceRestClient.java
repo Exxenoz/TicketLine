@@ -154,7 +154,7 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
             LOGGER.debug("Result status was {} with content {}", performance.getStatusCode(), performance.getBody());
             return performance.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new DataAccessException("Failed retrieve performances with status code " + e.getStatusCode().toString());
+            throw new DataAccessException("Failed retrieve performances with status code " + e.getStatusCode().toString(), e);
         } catch (RestClientException e) {
             throw new DataAccessException(e.getMessage(), e);
         }

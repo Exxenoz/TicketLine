@@ -149,6 +149,7 @@ public class EventSearchController {
     private final PerformanceService performanceService;
     private final PerformanceDetailViewController performanceDetailViewController;
     private static final int PERFORMANCES_PER_PAGE = 50;
+    private SearchDTO searchDTO;
 
     private ObservableList<PerformanceDTO> performanceData = observableArrayList();
     private int page = 0;
@@ -312,11 +313,16 @@ public class EventSearchController {
             pageRequestDTO = new PageRequestDTO(page, PERFORMANCES_PER_PAGE, Sort.Direction.ASC, null);
         }
 
+        PageResponseDTO<PerformanceDTO> responseDTO;
         try {
-            PageResponseDTO<PerformanceDTO> responseDTO = performanceService.findAll(pageRequestDTO);
-            performanceData.addAll(responseDTO.getContent());
-            totalPages = responseDTO.getTotalPages();
-            foundEventsTableView.refresh();
+            if(searchDTO != null){
+                responseDTO = performanceService.findAll(searchDTO, pageRequestDTO);
+            }else {
+                responseDTO = performanceService.findAll(pageRequestDTO);
+            }
+                performanceData.addAll(responseDTO.getContent());
+                totalPages = responseDTO.getTotalPages();
+                foundEventsTableView.refresh();
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch performance from server!");
         }
@@ -413,16 +419,16 @@ public class EventSearchController {
                         returnString = LocationAddressValidator.validateLocationName(currentTextField);
                         break;
                     case street:
-                        returnString = BaseAddressValidator.validateStreet(currentTextField);
+                        returnString = BaseAddressValidator.validateStreet(currentTextField, false);
                         break;
                     case city:
-                        returnString = BaseAddressValidator.validateCity(currentTextField);
+                        returnString = BaseAddressValidator.validateCity(currentTextField, false);
                         break;
                     case country:
-                        returnString = BaseAddressValidator.validateCountry(currentTextField);
+                        returnString = BaseAddressValidator.validateCountry(currentTextField, false);
                         break;
                     case postalcode:
-                        returnString = BaseAddressValidator.validatePostalCode(currentTextField);
+                        returnString = BaseAddressValidator.validatePostalCode(currentTextField, false);
                         break;
                 }
             }
@@ -532,9 +538,7 @@ public class EventSearchController {
 
 
 
-
-
-        SearchDTO searchParameters = new SearchDTO(
+        searchDTO = new SearchDTO(
             null, eventName,
             artistFirstName, artistLastName,
             eventType, beginDateAndTime,
@@ -547,11 +551,10 @@ public class EventSearchController {
             PageRequestDTO pageRequestDTO = new PageRequestDTO();
             pageRequestDTO.setPage(0);
             pageRequestDTO.setSize(PERFORMANCES_PER_PAGE);
-            PageResponseDTO<PerformanceDTO> response = performanceService.findAll(searchParameters, pageRequestDTO);
+            PageResponseDTO<PerformanceDTO> response = performanceService.findAll(searchDTO, pageRequestDTO);
             performanceData.clear();
             performanceData.addAll(response.getContent());
             totalPages = response.getTotalPages();
-//            initializeTableView();
             foundEventsTableView.refresh();
             updateCurrentFlowPane();
         } catch (DataAccessException e) {
@@ -589,6 +592,7 @@ public class EventSearchController {
 
     @FXML
     private void clearAndReloadButton(ActionEvent event) {
+        searchDTO = null;
         clear();
         loadPerformanceTable(0);
         foundEventsTableView.refresh();

@@ -6,8 +6,7 @@ import javafx.scene.control.TextField;
 
 public class LocationAddressValidator {
 
-    private static final String ALPHABETIC_REGEX = "^[-' a-zA-ZöüäÜÖÄ]+$";
-    private static final int MIN_LENGTH = 1;
+    private static final String ALPHABETIC_REGEX = "^[-' a-zA-ZöüäÜÖÄ]*$";
     private static final int MAX_LENGTH = 50;
 
     public static String validateLocationName(TextField locationNameTextField) throws AddressValidationException {
@@ -18,13 +17,13 @@ public class LocationAddressValidator {
     }
 
     private static void validateAlphabeticFormat(String text) throws AddressValidationException {
-        if(!text.matches(ALPHABETIC_REGEX)){
+        if (!text.matches(ALPHABETIC_REGEX)){
             throw new AddressValidationException(BundleManager.getExceptionBundle().getString("exception.validator.address.alphabetic_invalid"), "exception.validator.address.alphabetic_invalid");
         }
     }
 
     private static void validateLength(String text) throws AddressValidationException {
-        if (text.length() < MIN_LENGTH || text.length() > MAX_LENGTH) {
+        if (text.length() > MAX_LENGTH) {
             throw new AddressValidationException(BundleManager.getExceptionBundle().getString("exception.validator.address.invalid_length"), "exception.validator.address.invalid_length");
         }
     }

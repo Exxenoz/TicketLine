@@ -4,7 +4,7 @@ package at.ac.tuwien.inso.sepm.ticketline.server.integrationtests;
 import at.ac.tuwien.inso.sepm.ticketline.server.entity.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalCancelationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalSeatReservationException;
-import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InvalidReservationException;
+import at.ac.tuwien.inso.sepm.ticketline.server.exception.service.InternalReservationException;
 import at.ac.tuwien.inso.sepm.ticketline.server.repository.*;
 import at.ac.tuwien.inso.sepm.ticketline.server.service.ReservationService;
 import org.junit.After;
@@ -74,7 +74,7 @@ public class ReservationServiceTests {
 
 
     @Test
-    public void removeSeatFromReservation() throws InvalidReservationException {
+    public void removeSeatFromReservation() throws InternalReservationException {
         //get reservation
         Performance performance = newPerformance();
         Seat seat = seatRepository.save(newSeat());
@@ -112,8 +112,8 @@ public class ReservationServiceTests {
         Assert.assertFalse(seatOpt.isPresent());
     }
 
-    @Test(expected = InvalidReservationException.class)
-    public void addAlreadyReservedSeatToReservationShouldThrowInvalidReservationException() throws InvalidReservationException {
+    @Test(expected = InternalReservationException.class)
+    public void addAlreadyReservedSeatToReservationShouldThrowInvalidReservationException() throws InternalReservationException {
         Performance performance = newPerformance();
         Seat seat = seatRepository.save(newSeat());
         performance.setHall(hallforPerformances);
@@ -340,7 +340,7 @@ public class ReservationServiceTests {
         Reservation returned = null;
         try {
             returned = reservationService.createReservation(reservation);
-        } catch (InvalidReservationException e) {
+        } catch (InternalReservationException e) {
             fail();
         } catch (InternalSeatReservationException e) {
             e.printStackTrace();
@@ -357,7 +357,7 @@ public class ReservationServiceTests {
 
 
     @Test(expected = InternalSeatReservationException.class)
-    public void createInvalidReservation() throws InvalidReservationException, InternalSeatReservationException {
+    public void createInvalidReservation() throws InternalReservationException, InternalSeatReservationException {
         Performance performance = performanceRepository.save(newPerformance());
         Seat seat = newSeat();
         Customer customer = customerRepository.save(newCustomer());
@@ -398,7 +398,7 @@ public class ReservationServiceTests {
         Reservation returned = null;
         try {
             returned = reservationService.createAndPayReservation(reservation);
-        } catch (InvalidReservationException e) {
+        } catch (InternalReservationException e) {
             fail();
         } catch (InternalSeatReservationException e) {
             fail();
@@ -430,7 +430,7 @@ public class ReservationServiceTests {
         try {
             reservation = reservationService.createReservation(reservation);
             returned = reservationService.cancelReservation(reservation.getId());
-        } catch (InvalidReservationException e) {
+        } catch (InternalReservationException e) {
             fail();
         } catch (InternalSeatReservationException e) {
             fail();

@@ -15,7 +15,7 @@
    <children>
       <Group AnchorPane.leftAnchor="251.0" AnchorPane.rightAnchor="234.35205078125">
          <children>
-            <Label fx:id="performanceHeader" alignment="CENTER" contentDisplay="CENTER" layoutX="251.0" layoutY="16.0" text="Performance Name">
+            <Label fx:id="performanceHeader" alignment="CENTER" contentDisplay="CENTER" layoutX="251.0" layoutY="16.0" text="%event_detail.name">
                <font>
                   <Font name="System Bold" size="21.0" />
                </font>
@@ -38,18 +38,18 @@
              <Label text="%events.performanceDetailView.starttime" GridPane.rowIndex="2"/>
              <Label text="%events.performanceDetailView.artist" GridPane.rowIndex="3"/>
              <Label prefWidth="169.0" text="%events.performanceDetailView.eventname"/>
-            <Label fx:id="locationName" text="Location Name, City" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label fx:id="startTime" text="Date and Time" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label fx:id="artistNamePerformance" text="Artist Name" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Label fx:id="eventName" text="Event Name" GridPane.columnIndex="1" />
+            <Label fx:id="locationName" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label fx:id="startTime" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label fx:id="artistNamePerformance" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label fx:id="eventName" text="-" GridPane.columnIndex="1" />
          </children>
       </GridPane>
-      <Label fx:id="performancePrice" layoutX="535.0" layoutY="313.0" text="100€">
+      <Label fx:id="performancePrice" layoutX="535.0" layoutY="313.0" text="-">
          <font>
             <Font size="19.0" />
          </font>
       </Label>
-      <Label layoutX="410.0" layoutY="319.0" text="Tickets starting at" />
+      <Label layoutX="410.0" layoutY="319.0" text="%performance_details.tickets_starting_at" />
       <ButtonBar layoutX="326.0" layoutY="373.0">
          <buttons>
              <Button fx:id="eventButtonPerformance" mnemonicParsing="false" onAction="#backButton"

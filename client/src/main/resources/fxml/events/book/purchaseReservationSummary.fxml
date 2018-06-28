@@ -11,7 +11,7 @@
 
 <AnchorPane prefHeight="449.0" prefWidth="688.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking.PurchaseReservationSummaryController">
     <children>
-        <Label fx:id="performanceHeader" layoutX="239.0" layoutY="61.0" text="Purchase Summary">
+        <Label fx:id="performanceHeader" layoutX="239.0" layoutY="61.0" text="%purchase_reservation.summary">
             <font>
                 <Font name="System Bold" size="21.0" />
             </font>
@@ -29,29 +29,29 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <Label fx:id="eventLabel" text="Event:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <Label fx:id="performanceLabel" text="Performance: " GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                <Label fx:id="ticketLabel" text="Total Amount of Tickets: " GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                <Label fx:id="customerLabel" text="Customer:" />
-                <Label fx:id="performanceDateLabel" text="Performance Date &amp; Time: " GridPane.rowIndex="3" />
-                <Label fx:id="eventName" text="event name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Label fx:id="performanceName" text="performance name" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <Label fx:id="ticketsNr" text="number of tickets" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                <Label fx:id="customerName" text="customer name" GridPane.columnIndex="1" />
-                <Label fx:id="performanceDate" text="performance starttime" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <Label fx:id="eventLabel" text="%purchase_reservation.event" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Label fx:id="performanceLabel" text="%purchase_reservation.performance" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <Label fx:id="ticketLabel" text="%purchase_reservation.amount_tickets" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                <Label fx:id="customerLabel" text="%purchase_reservation.customer" />
+                <Label fx:id="performanceDateLabel" text="%purchase_reservation.performance_date" GridPane.rowIndex="3" />
+                <Label fx:id="eventName" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Label fx:id="performanceName" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <Label fx:id="ticketsNr" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <Label fx:id="customerName" text="-" GridPane.columnIndex="1" />
+                <Label fx:id="performanceDate" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             </children>
         </GridPane>
-        <Label fx:id="performancePrice" layoutX="532.0" layoutY="346.0" text="total price">
+        <Label fx:id="performancePrice" layoutX="532.0" layoutY="346.0" text="-">
             <font>
                 <Font size="19.0" />
             </font>
         </Label>
-        <Label layoutX="407.0" layoutY="352.0" text="Total Price:" />
+        <Label layoutX="407.0" layoutY="352.0" text="%purchase_reservation.total_price" />
         <HBox layoutX="372.0" layoutY="404.0" prefHeight="26.0" prefWidth="262.0" spacing="15.0">
             <children>
-            <Button fx:id="backButtonPRS" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#backButton" text="Back" />
-                <Button fx:id="cancelButtonPRS" mnemonicParsing="false" onAction="#cancelButton" text="Cancel" />
-                <Button fx:id="buyButtonPRS" mnemonicParsing="false" onAction="#buyTicketsButton" text="Buy" />
+            <Button fx:id="backButtonPRS" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#backButton" text="%purchase_reservation.back" />
+                <Button fx:id="cancelButtonPRS" mnemonicParsing="false" onAction="#cancelButton" text="%purchase_reservation.cancel" />
+                <Button fx:id="buyButtonPRS" mnemonicParsing="false" onAction="#buyTicketsButton" text="%purchase_reservation.buy" />
                 <Button fx:id="printButton" mnemonicParsing="false" onAction="#openPDFFileAction" text="%bookings.print.button" />
             </children>
         </HBox>
