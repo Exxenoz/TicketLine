@@ -8,7 +8,7 @@ import javafx.scene.control.TextField;
 public class PerformanceSearchValidator {
 
     private static final String NUMBER_REGEX = "[0-9]*";
-    private static final String PRICE_REGEX = "^\\d{0,8}(,\\d{2})?$";
+    private static final String PRICE_REGEX = "^\\d{0,8}([,.]\\d{1,2})?$";
     private static final String STRING_REGEX = "^[-' a-zA-ZöüäÜÖÄ]+$";
 
     public static String validateArtistFirstName(TextField artistFirstNameTextField) throws PerformanceSearchValidationException {

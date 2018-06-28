@@ -520,7 +520,8 @@ public class EventSearchController {
         Long price = null;
         if(priceString != null) {
             try {
-                price = Long.valueOf(priceString);
+                priceString = priceString.replace(',', '.');
+                price = (long)(Double.valueOf(priceString) * 100);
             }catch (NumberFormatException e){
                 //ignore;
             }
