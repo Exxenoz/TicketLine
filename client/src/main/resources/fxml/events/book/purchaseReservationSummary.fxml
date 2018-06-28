@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.ButtonBar?>
 <AnchorPane prefHeight="449.0" prefWidth="688.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.events.booking.PurchaseReservationSummaryController">
     <children>
         <Label fx:id="performanceHeader" layoutX="239.0" layoutY="61.0" text="%purchase_reservation.summary">
@@ -47,14 +48,14 @@
             </font>
         </Label>
         <Label layoutX="407.0" layoutY="352.0" text="%purchase_reservation.total_price" />
-        <HBox layoutX="372.0" layoutY="404.0" prefHeight="26.0" prefWidth="262.0" spacing="15.0">
-            <children>
-            <Button fx:id="backButtonPRS" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#backButton" text="%purchase_reservation.back" />
-                <Button fx:id="cancelButtonPRS" mnemonicParsing="false" onAction="#cancelButton" text="%purchase_reservation.cancel" />
-                <Button fx:id="buyButtonPRS" mnemonicParsing="false" onAction="#buyTicketsButton" text="%purchase_reservation.buy" />
+        <ButtonBar layoutX="342.0" layoutY="404.0" maxHeight="35.0" prefHeight="35.0" >
+            <buttons>
+                <Button fx:id="backButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#backButton" text="%purchase_reservation.back" />
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelButton" text="%purchase_reservation.cancel" />
+                <Button fx:id="buyButton" mnemonicParsing="false" onAction="#buyTicketsButton" text="%purchase_reservation.buy" />
                 <Button fx:id="printButton" mnemonicParsing="false" onAction="#openPDFFileAction" text="%bookings.print.button" />
-            </children>
-        </HBox>
+            </buttons>
+        </ButtonBar>
     </children>
 
 </AnchorPane>

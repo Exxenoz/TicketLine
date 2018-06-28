@@ -36,27 +36,48 @@ public class PurchaseReservationSummaryController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public Button buyButtonPRS;
-    public Button cancelButtonPRS;
-    private final HallPlanController hallPlanController;
-
+    @FXML
     public Label performancePrice;
+
+    @FXML
     public Label eventName;
+
+    @FXML
     public Label performanceName;
+
+    @FXML
     public Label ticketsNr;
+
+    @FXML
     public Label performanceHeader;
 
-    private final SpringFxmlLoader fxmlLoader;
+    @FXML
     public Label customerName;
-    public Label performanceDate;
-    public Button printButton;
-    private Stage stage;
 
+    @FXML
+    public Label performanceDate;
+
+    @FXML
+    public Button backButton;
+
+    @FXML
+    public Button cancelButton;
+
+    @FXML
+    public Button buyButton;
+
+    @FXML
+    public Button printButton;
+
+    private Stage stage;
     private ReservationDTO reservation;
     private final ReservationService reservationService;
     private boolean isReservation = false;
     private boolean showDetails = false;
+
     private final InvoiceService invoiceService;
+    private final HallPlanController hallPlanController;
+    private final SpringFxmlLoader fxmlLoader;
 
     PurchaseReservationSummaryController(
         SpringFxmlLoader fxmlLoader,
@@ -73,6 +94,12 @@ public class PurchaseReservationSummaryController {
     @FXML
     private void initialize() {
         LOGGER.info("Initialize PurchaseReservationSummaryController");
+
+        ButtonBar.setButtonUniformSize(backButton, false);
+        ButtonBar.setButtonUniformSize(cancelButton, false);
+        ButtonBar.setButtonUniformSize(buyButton, false);
+        ButtonBar.setButtonUniformSize(printButton, false);
+
         eventName.setText(reservation.getPerformance().getEvent().getName());
         performanceName.setText(reservation.getPerformance().getName());
         String totalAmountTickets = "" + reservation.getSeats().size();
@@ -87,7 +114,7 @@ public class PurchaseReservationSummaryController {
 
         if (isReservation) {
             performanceHeader.setText(BundleManager.getBundle().getString("bookings.purchase.reservation_summary"));
-            buyButtonPRS.setText(BundleManager.getBundle().getString("bookings.purchase.continue"));
+            buyButton.setText(BundleManager.getBundle().getString("bookings.purchase.continue"));
             printButton.setDisable(true);
             printButton.setVisible(false);
             printButton.setManaged(false);
@@ -97,18 +124,18 @@ public class PurchaseReservationSummaryController {
             performanceHeader.setText(BundleManager.getBundle().getString("bookings.purchase.reservation_overview"));
             //make sure the reservation is still unpaid
             if (!reservation.isPaid() && !reservation.isCanceled()) {
-                cancelButtonPRS.setText(BundleManager.getBundle().getString("bookings.purchase.edit_reservation"));
+                cancelButton.setText(BundleManager.getBundle().getString("bookings.purchase.edit_reservation"));
                 printButton.setDisable(true);
                 printButton.setVisible(false);
                 printButton.setManaged(false);
             } else {
-                cancelButtonPRS.setDisable(true);
-                cancelButtonPRS.setVisible(false);
-                cancelButtonPRS.setManaged(false);
-                buyButtonPRS.setText(BundleManager.getBundle().getString("bookings.purchase.buy"));
-                buyButtonPRS.setDisable(true);
-                buyButtonPRS.setVisible(false);
-                buyButtonPRS.setManaged(false);
+                cancelButton.setDisable(true);
+                cancelButton.setVisible(false);
+                cancelButton.setManaged(false);
+                buyButton.setText(BundleManager.getBundle().getString("bookings.purchase.buy"));
+                buyButton.setDisable(true);
+                buyButton.setVisible(false);
+                buyButton.setManaged(false);
                 printButton.setDisable(false);
                 printButton.setVisible(true);
                 printButton.setManaged(true);

@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="700.0" prefWidth="1100.0" spacing="5.0" style="-fx-background-color: derive(#3c3f41, 25%);" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.reservations.ReservationsController">
+<VBox prefHeight="700.0" prefWidth="1100.0" spacing="5.0" style="-fx-background-color: derive(#3c3f41, 25%);" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.inso.sepm.ticketline.client.gui.reservations.ReservationsController">
     <children>
         <VBox fx:id="content" prefHeight="700.0" prefWidth="1100.0" spacing="5.0" style="-fx-background-color: #f4f4f4; -fx-background-radius: 3 3 3 3;" VBox.vgrow="ALWAYS">
             <children>
@@ -15,7 +24,7 @@
                     <children>
                         <Label fx:id="activeFiltersLabel" contentDisplay="TOP" prefHeight="27.0" text="%bookings.main.activefilters" />
                         <Label prefWidth="10.0" />
-                        <Label fx:id="activeFiltersListLabel" prefHeight="27.0" text=" "/>
+                        <Label fx:id="activeFiltersListLabel" prefHeight="27.0" text=" " />
                         <ButtonBar HBox.hgrow="ALWAYS">
                             <buttons>
                                 <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearFilters" text="%bookings.main.button.clear" textAlignment="CENTER" HBox.hgrow="ALWAYS">
@@ -58,11 +67,11 @@
                                 </VBox>
                                 <VBox alignment="TOP_RIGHT" maxWidth="-Infinity" spacing="10.0" HBox.hgrow="ALWAYS">
                                     <children>
-                                        <Accordion maxHeight="1.7976931348623157E308" maxWidth="292.0" prefHeight="546.0" prefWidth="292.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                                        <Accordion maxHeight="1.7976931348623157E308" prefHeight="546.0"  HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                                             <panes>
                                                 <TitledPane fx:id="eventPerformanceTitledPane" animated="false" text="%bookings.main.search.eventperformance">
                                                     <content>
-                                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0">
                                                             <children>
                                                                 <VBox layoutX="14.0" layoutY="14.0" spacing="10.0">
                                                                     <children>
