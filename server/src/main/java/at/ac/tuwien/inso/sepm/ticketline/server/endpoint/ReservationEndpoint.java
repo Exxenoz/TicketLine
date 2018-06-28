@@ -162,7 +162,7 @@ public class ReservationEndpoint {
 
     @GetMapping
     @PreAuthorize("hasRole('USER')")
-    @ApiOperation("Finds a page of all exisiting Reservations")
+    @ApiOperation("Finds a page of all existing Reservations")
     public PageResponseDTO<ReservationDTO> findAll(Pageable pageable) {
         Page<Reservation> reservationPage = reservationService.findAll(pageable);
         List<ReservationDTO> reservationDTOList = reservationMapper.reservationToReservationDTO(

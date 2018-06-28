@@ -15,6 +15,7 @@ import at.ac.tuwien.inso.sepm.ticketline.rest.page.PageResponseDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationDTO;
 import at.ac.tuwien.inso.sepm.ticketline.rest.reservation.ReservationSearchDTO;
 import at.ac.tuwien.inso.springfx.SpringFxmlLoader;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -38,6 +39,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -265,7 +267,6 @@ public class ReservationsController {
         ResourceBundle ex = BundleManager.getExceptionBundle();
         int row = foundReservationsTableView.getSelectionModel().getFocusedIndex();
         ReservationDTO selected = reservationList.get(row);
-        ReservationDTO reservationDTO = null;
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(BundleManager.getBundle().getString("bookings.cancel.confirmationHeader"));
@@ -328,7 +329,7 @@ public class ReservationsController {
         try {
             ReservationDTO response = reservationService.findOneByReservationNumber(reservationNumber);
             reservationList.clear();
-            reservationList.addAll(response);
+            reservationList.add(response);
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch reservations from server!");
             JavaFXUtils.createErrorDialog(e.getMessage(),
@@ -349,7 +350,12 @@ public class ReservationsController {
 
         try {
             PageResponseDTO<ReservationDTO> response = reservationService.findAll(pageRequestDTO);
-            reservationList.addAll(response.getContent());
+
+            for (ReservationDTO reservationDTO : response.getContent()) {
+                reservationList.remove(reservationDTO); // New created entries must be removed first, so they can be re-added at their sorted location in the next line
+                reservationList.add(reservationDTO);
+            }
+
             totalPages = response.getTotalPages();
         } catch (DataAccessException e) {
             LOGGER.error("Couldn't fetch reservations from server!");
@@ -380,7 +386,12 @@ public class ReservationsController {
         try {
             PageResponseDTO<ReservationDTO> response =
                 reservationService.findAllByCustomerNameAndPerformanceName(reservationSearchBuilder.build());
-            reservationList.addAll(response.getContent());
+
+            for (ReservationDTO reservationDTO : response.getContent()) {
+                reservationList.remove(reservationDTO); // New created entries must be removed first, so they can be re-added at their sorted location in the next line
+                reservationList.add(reservationDTO);
+            }
+
             this.page = page;
             totalPages = response.getTotalPages();
         } catch (DataAccessException e) {
@@ -414,7 +425,7 @@ public class ReservationsController {
         if (sortedColumn == eventColumn) {
             return "performance.event.name";
         } else if (sortedColumn == customerColumn) {
-            return "customer.lastName";
+            return "customer.firstName";
         } else if (sortedColumn == paidColumn) {
             return "paid";
         } else if (sortedColumn == reservationIDColumn) {
@@ -428,9 +439,8 @@ public class ReservationsController {
             cellData.getValue().getReservationNumber()));
         eventColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
             cellData.getValue().getPerformance().getEvent().getName()));
-        customerColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
-            cellData.getValue().getCustomer().getFirstName() + " " +
-                cellData.getValue().getCustomer().getLastName()));
+        customerColumn.setCellValueFactory(cellData ->
+            new SimpleStringProperty(cellData.getValue().getCustomer().getFirstName() + " " + cellData.getValue().getCustomer().getLastName()));
         paidColumn.setCellValueFactory(cellData -> {
             if (cellData.getValue().isCanceled() == false) {
                 if (cellData.getValue().isPaid()) {
@@ -443,6 +453,12 @@ public class ReservationsController {
             }
         });
 
+        customerColumn.setComparator(new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.compareTo(o2);
+            }
+        });
         foundReservationsTableView.setItems(reservationList);
     }
 
