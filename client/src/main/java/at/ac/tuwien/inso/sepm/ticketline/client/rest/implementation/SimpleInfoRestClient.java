@@ -42,7 +42,7 @@ public class SimpleInfoRestClient implements InfoRestClient {
             return info.getBody();
         } catch (HttpStatusCodeException e) {
             LOGGER.error("A HTTP error occurred while trying to get the ServerInfo: {}", e.getStatusCode());
-            throw new DataAccessException("Failed retrieve news with status code " + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
             LOGGER.error("An error occurred while trying to get the ServerInfo: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);

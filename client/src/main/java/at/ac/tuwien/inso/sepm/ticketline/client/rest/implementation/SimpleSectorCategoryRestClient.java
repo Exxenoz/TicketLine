@@ -43,7 +43,7 @@ public class SimpleSectorCategoryRestClient implements SectorCategoryRestClient 
             return sectorCategories.getBody();
         } catch (HttpStatusCodeException e) {
             LOGGER.error("A HTTP error occurred while retrieving Reservation: {}", e.getStatusCode());
-            throw new DataAccessException("Failed retrieve sector categories with status code " + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
         } catch (RestClientException e) {
             LOGGER.error("An error occurred while retrieving Reservation: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);

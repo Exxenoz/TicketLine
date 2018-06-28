@@ -52,7 +52,7 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
             return performance.getBody();
         } catch (HttpStatusCodeException e) {
             LOGGER.error("A HTTP error occurred while retrieving a Performance: {}", e.getStatusCode());
-            throw new DataAccessException("Failed retrieve performances with status code " + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
             LOGGER.error("An error occurred while retrieving a Performance: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
@@ -90,7 +90,7 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
             return performance.getBody();
         } catch (HttpStatusCodeException e) {
             LOGGER.error("A HTTP error occurred while retrieving Performances: {}", e.getStatusCode());
-            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
             LOGGER.error("An error occurred while retrieving Performances: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
@@ -159,7 +159,7 @@ public class SimplePerformanceRestClient implements PerformanceRestClient {
             return performance.getBody();
         } catch (HttpStatusCodeException e) {
             LOGGER.error("A HTTP error occurred while retrieving Performances: {}", e.getStatusCode());
-            throw new DataAccessException("Failed retrieve performances with status code " + e.getStatusCode().toString(), e);
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
             LOGGER.error("An error occurred while retrieving Performances: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);

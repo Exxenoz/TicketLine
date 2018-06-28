@@ -48,7 +48,7 @@ public class SimpleCustomerRestClient implements CustomerRestClient {
             return customer.getBody();
         } catch (HttpStatusCodeException e) {
             LOGGER.error("A HTTP error occurred while getting Customers: {}", e.getStatusCode());
-            throw new DataAccessException("Failed retrieve customers with status code " + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
             LOGGER.error("An error occurred while getting Customers: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
@@ -68,7 +68,7 @@ public class SimpleCustomerRestClient implements CustomerRestClient {
             return customer.getBody();
         } catch (HttpStatusCodeException e) {
             LOGGER.error("A HTTP error occurred while creating a new Customer: {}", e.getStatusCode());
-            throw new DataAccessException("Failed to create customer with status code " + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
             LOGGER.error("An error occurred while creating a new Customer: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
@@ -88,7 +88,7 @@ public class SimpleCustomerRestClient implements CustomerRestClient {
             return customer.getBody();
         } catch (HttpStatusCodeException e) {
             LOGGER.error("A HTTP error occurred while updating a Customer: {}", e.getStatusCode());
-            throw new DataAccessException("Failed to update customer with status code " + e.getStatusCode().toString());
+            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()), e);
         } catch (RestClientException e) {
             LOGGER.error("An error occurred while updating a Customer: {}", e.getMessage());
             throw new DataAccessException(e.getMessage(), e);
