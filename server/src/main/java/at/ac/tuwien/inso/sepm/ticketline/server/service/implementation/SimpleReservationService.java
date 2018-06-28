@@ -309,9 +309,9 @@ public class SimpleReservationService implements ReservationService {
             for (Reservation r : reservations) {
                 for (Seat existingSeat : r.getSeats()) {//get existing Seats
                     for (Seat requestedSeat : reservation.getSeats()) {//Seats to be checked
-                        if (requestedSeat.getSector().getId() == existingSeat.getSector().getId()
-                            && requestedSeat.getPositionX() == existingSeat.getPositionX()
-                            && requestedSeat.getPositionY() == existingSeat.getPositionY()) {
+                        if (requestedSeat.getSector().getId().equals(existingSeat.getSector().getId())
+                            && requestedSeat.getPositionX().equals(existingSeat.getPositionX())
+                            && requestedSeat.getPositionY().equals(existingSeat.getPositionY())) {
 
                             LOGGER.warn("seat '{}' is already reserved", requestedSeat);
                             throw new InternalSeatReservationException("A seat is already reserved.", requestedSeat);
