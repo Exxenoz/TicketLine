@@ -77,7 +77,7 @@ public class SeatMapController {
                     //Check if this seat might be in a reservation
                     for (ReservationDTO r : reservationDTOS) {
                         for (SeatDTO s : r.getSeats()) {
-                            if (s.getSector().getId() == sector.getId()
+                            if (s.getSector().getId().equals(sector.getId())
                                 && s.getPositionX() == i
                                 && s.getPositionY() == j) {
                                 LOGGER.debug("The Seat {} is  reserved", s);
@@ -252,10 +252,6 @@ public class SeatMapController {
      * @return true if everything is initialized, else false
      */
     public boolean isInitialized() {
-        if(seatMapCanvas != null && seatMapScrollPane != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return seatMapCanvas != null && seatMapScrollPane != null;
     }
 }
