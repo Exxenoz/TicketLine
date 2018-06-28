@@ -544,7 +544,21 @@ public class EventSearchController {
         String postalCodeBundle = "events.search.postalcode";
         String postalCode = setActiveFiltersAndValidate(Validate.postalcode, postalCodeTextField, postalCodeBundle, cityTitledPane, postalcodeErrorLabel);
 
-
+        // Check if an error occurred
+        if (!locationnameErrorLabel.getText().isEmpty() ||
+            !streetErrorLabel.getText().isEmpty() ||
+            !cityErrorLabel.getText().isEmpty() ||
+            !postalcodeErrorLabel.getText().isEmpty() ||
+            !artistfirstnameErrorLabel.getText().isEmpty() ||
+            !artistlastnameErrorLabel.getText().isEmpty() ||
+            !eventnameErrorLabel.getText().isEmpty() ||
+            !eventdurationErrorLabel.getText().isEmpty() ||
+            !starttimeErrorLabel.getText().isEmpty() ||
+            !priceErrorLabel.getText().isEmpty() ||
+            !countryErrorLabel.getText().isEmpty())
+        {
+            return;
+        }
 
         searchDTO = new SearchDTO(
             null, eventName,
@@ -570,7 +584,6 @@ public class EventSearchController {
             JavaFXUtils.createErrorDialog(e.getMessage(),
                 priceTextField.getScene().getWindow()).showAndWait();
         }
-
     }
 
     private SpinnerValueFactory<Integer> buildSpinner(int maxValue) {
