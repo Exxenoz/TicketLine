@@ -3,7 +3,6 @@ package at.ac.tuwien.inso.sepm.ticketline.client.service;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.DataAccessException;
 import at.ac.tuwien.inso.sepm.ticketline.client.exception.InvoiceFileException;
 
-import java.io.File;
 
 public interface InvoiceService {
 

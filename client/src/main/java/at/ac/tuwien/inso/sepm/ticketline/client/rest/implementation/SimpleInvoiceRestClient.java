@@ -124,19 +124,4 @@ public class SimpleInvoiceRestClient implements InvoiceRestClient {
             throw new DataAccessException(e.getMessage(), e);
         }
     }
-
-    @Override
-    public void deleteInvoice(String reservationNumber) {
-        LOGGER.error("Deletion not implemented");
-//        try {
-//            ResponseEntity<String> response =
-//                restClient.exchange(
-//                    new RequestEntity<>(reservationNumber, DELETE, invoiceURI.resolve(reservationNumber), String);
-//
-//        } catch (HttpStatusCodeException e) {
-//            throw new DataAccessException(restClient.getMessageFromHttpStatusCode(e.getStatusCode()));
-//        } catch (RestClientException e) {
-//            throw new DataAccessException(e.getMessage(), e);
-//        }
-    }
 }
