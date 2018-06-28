@@ -60,7 +60,7 @@ public class SimpleUserService implements UserService {
         user.setStrikes(0);
 
         user = userRepository.save(user);
-        LOGGER.debug("Successfully enabled User \'{}\'", user.getUsername());
+        LOGGER.debug("Successfully enabled User");
     }
 
     @Override
@@ -89,7 +89,7 @@ public class SimpleUserService implements UserService {
         user.setEnabled(false);
 
         user = userRepository.save(user);
-        LOGGER.debug("Successfully disabled User \'{}\'", user.getUsername());
+        LOGGER.debug("Successfully disabled User");
     }
 
     @Override
