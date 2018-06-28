@@ -285,7 +285,6 @@ public class EventSearchController {
             tableColumn.setSortType(null);
         }
         nameColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
-        eventColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
         startTimeColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
         locationColumn.sortTypeProperty().addListener(tableColumnSortChangeListener);
 
